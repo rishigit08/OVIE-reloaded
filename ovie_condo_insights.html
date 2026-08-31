@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ovie: Condo policy insights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary:#6b4062; --primary-dark:#54324d; --ink:#111; --text:#333a3d;
+      --muted:#5f6368; --surface:#fff; --page:#f6f6f6; --canvas:#e3e3e3;
+      --success:#0d7d07; --warning:#8a5a06; --danger:#a63a33;
+      --plum-soft:#f5edf3; --warning-soft:#fff5df; --danger-soft:#ffeded;
+      --border:#d8dddb; --line:#ecefed; --overlay:rgba(17,24,23,.58);
+      --radius:12px; --pill:999px; --focus:0 0 0 3px rgba(107,64,98,.24);
+      --z-sticky:20; --z-modal:40; --z-toast:60;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--canvas);color:var(--ink);font:400 14px/20px "Figtree",system-ui,sans-serif}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    h1,h2,h3,p{margin:0}
+    h1,h2,h3,strong{font-weight:600}
+    img{display:block}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+    :where(button,input,textarea,summary):focus-visible{outline:0;box-shadow:var(--focus)}
+    .canvas{position:fixed;inset:0;display:flex;justify-content:center;overflow:auto}
+    .phone{position:relative;width:min(390px,100vw);height:100dvh;min-height:620px;overflow:auto;background:var(--page);scrollbar-width:thin;scrollbar-color:var(--border) var(--page);scroll-padding-bottom:96px}
+    .phone::-webkit-scrollbar,.sheet-body::-webkit-scrollbar{width:8px}
+    .phone::-webkit-scrollbar-track,.sheet-body::-webkit-scrollbar-track{background:var(--page)}
+    .phone::-webkit-scrollbar-thumb,.sheet-body::-webkit-scrollbar-thumb{background:var(--border);border:2px solid var(--page);border-radius:var(--pill)}
+    .topbar{position:sticky;top:0;z-index:var(--z-sticky);background:rgba(255,255,255,.97);border-bottom:1px solid var(--line)}
+    .statusbar{height:34px;padding:8px 22px 0;display:flex;justify-content:space-between;font-size:12px;font-weight:600}
+    .statusbar span:last-child{color:var(--muted)}
+    .titlebar{height:58px;padding:4px 18px 10px;display:flex;align-items:center;gap:8px}
+    .titlebar h1{font-size:18px;line-height:24px}
+    .icon-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;display:grid;place-items:center}
+    .icon-button:hover{background:var(--plum-soft)}
+    .icon-button img{width:22px;height:22px}
+    #shareButton{margin-left:auto}
+    main{padding:18px 16px 112px;display:flex;flex-direction:column;gap:18px}
+    .card{background:var(--surface);border-radius:var(--radius);overflow:hidden}
+    .card-pad{padding:16px}
+    .section-title{font-size:18px;line-height:24px;margin-bottom:14px}
+    .card-pad>.section-title:last-child{margin-bottom:0}
+    .heading-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .heading-row .section-title{margin:0}
+    .status-pill,.severity{display:inline-flex;align-items:center;gap:6px;border-radius:var(--pill);font-size:12px;line-height:16px;font-weight:600}
+    .status-pill{padding:6px 10px;background:var(--page);color:var(--muted)}
+    .status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+    .field{padding:12px 0;border-bottom:1px solid var(--line)}
+    .field:first-child{padding-top:0}.field:last-child{padding-bottom:0;border-bottom:0}
+    .label{color:var(--muted)}
+    .value{margin-top:3px;font-weight:600;overflow-wrap:anywhere}
+    .person{min-height:58px;display:flex;align-items:center;gap:12px}
+    .person-icon{width:40px;height:40px;border-radius:var(--radius);background:var(--plum-soft);display:grid;place-items:center}
+    .person-icon img{width:20px;height:20px}
+    .source-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;display:grid;place-items:center;flex:0 0 auto}
+    .source-button:hover{background:var(--plum-soft)}
+    .source-button img{width:19px;height:19px}
+    .coverage-list{display:flex;flex-direction:column}
+    .coverage-row{min-height:84px;padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+    .coverage-row:last-child{border-bottom:0}
+    .coverage-copy{flex:1;min-width:0}
+    .coverage-copy .value{font-size:18px;line-height:24px}
+    .coverage-description{margin-top:2px;color:var(--muted)}
+    .policy-details-header{padding:16px 16px 8px}
+    .policy-details-header .section-title{margin:0}
+    .policy-details-header+details{border-top:0}
+    .policy-detail-body{padding:0 16px 12px}
+    .summary-title{flex:1}
+    .count-pill{flex:0 0 auto;padding:3px 8px;border-radius:var(--pill);background:var(--plum-soft);color:var(--primary);font-size:12px;line-height:16px;font-weight:600}
+    .insight-item{position:relative;min-height:52px;padding:12px 44px 12px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;color:var(--text)}
+    .insight-item:last-child{border-bottom:0}
+    .insight-item::before{content:"";width:4px;height:4px;margin-right:10px;border-radius:50%;background:var(--text);flex:0 0 auto}
+    .insight-item .source-button{position:absolute;right:-10px;top:50%;transform:translateY(-50%)}
+    .spec-row,.deductible-row{padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--line)}
+    .spec-row:first-of-type,.deductible-row:first-of-type{border-top:0}
+    .card-pad+.spec-row,.card-pad+.deductible-row{border-top:0}
+    .spec-copy,.deductible-copy{flex:1;min-width:0}
+    .spec-copy p,.deductible-copy p{margin-top:3px;color:var(--muted)}
+    .spec-copy>.value{font-size:18px;line-height:24px;color:var(--ink)}
+    .tip{padding:14px 6px 14px 16px;background:var(--warning-soft);color:var(--warning);display:flex;align-items:flex-start;gap:10px}
+    .tip>img{width:22px;height:22px;margin-top:1px}.tip-copy{flex:1}.tip-copy p{margin-top:3px;color:var(--warning)}
+    .watchpoint{padding:12px 0;border-bottom:1px solid var(--line)}
+    .watchpoint:first-child{padding-top:0}
+    .watchpoint:last-child{padding-bottom:0;border-bottom:0}
+    .watchpoint-head{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .severity{flex:0 0 auto;padding:4px 8px}.severity.moderate{background:var(--warning-soft);color:var(--warning)}.severity.low{background:var(--plum-soft);color:var(--primary)}
+    .watchpoint p{color:var(--muted)}
+    .footer-card .card-pad>p{color:var(--muted);line-height:21px}
+    details{border-top:1px solid var(--line)}
+    summary{min-height:54px;padding:10px 10px 10px 16px;list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+    summary::-webkit-details-marker{display:none}
+    summary:hover{background:#fafafa}
+    summary span{flex:1}.chevron{width:18px;height:18px;transition:transform 180ms ease-out}details[open] .chevron{transform:rotate(180deg)}
+    .details-body{padding:0 16px 14px;color:var(--text)}
+    .details-body ul{margin:0;padding-left:18px}.details-body li+li{margin-top:8px}
+    .feedback{padding:0 16px;min-height:76px;display:flex;align-items:center;gap:8px}
+    .feedback-question{flex:1;font-weight:600}
+    .feedback-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;display:grid;place-items:center;transition:transform 180ms ease-out}
+    .feedback-button:hover{background:var(--surface)}.feedback-button:active{transform:scale(.96)}
+    .feedback-button img{width:25px;height:25px;filter:grayscale(1);opacity:.62}.feedback-button[aria-pressed="true"] img{filter:none;opacity:1}
+    .chat-dock{position:sticky;bottom:0;z-index:var(--z-sticky);min-height:74px;margin-top:-74px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;background:rgba(255,255,255,.3);backdrop-filter:blur(14px) saturate(1.1)}
+    .chat-input{min-width:0;flex:1;height:48px;padding:0 16px;border:1px solid var(--border);border-radius:var(--pill);background:rgba(255,255,255,.84);color:var(--ink)}
+    .chat-input::placeholder{color:var(--muted);opacity:1}.chat-input:focus{outline:0;border-color:var(--primary);box-shadow:var(--focus)}
+    .chat-send{width:48px;height:48px;border:0;border-radius:var(--radius);background:var(--primary);display:grid;place-items:center}.chat-send:hover{background:var(--primary-dark)}.chat-send img{width:22px;height:22px;filter:invert(1)}
+    dialog{width:min(390px,100vw);max-width:100vw;max-height:min(76dvh,680px);margin:auto auto 0;padding:0;border:0;border-radius:12px 12px 0 0;background:var(--surface);color:var(--ink);box-shadow:0 -6px 16px rgba(17,17,17,.14)}
+    dialog::backdrop{background:var(--overlay)}
+    .sheet-handle{width:40px;height:4px;margin:10px auto 3px;border-radius:2px;background:var(--border)}
+    .sheet-head{min-height:58px;padding:8px 10px 8px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.sheet-head h2{flex:1;font-size:18px;line-height:24px}
+    .sheet-body{padding:17px 18px calc(26px + env(safe-area-inset-bottom));overflow:auto;max-height:calc(76dvh - 75px);scrollbar-width:thin;scrollbar-color:var(--border) var(--page)}
+    .source-meta{color:var(--primary);font-weight:600}.source-excerpt{margin:10px 0 18px;padding:13px;border-radius:var(--radius);background:var(--page);line-height:21px}
+    .primary-action,.secondary-action{width:100%;min-height:44px;border-radius:var(--radius);font-weight:600}.primary-action{border:0;background:var(--primary);color:#fff}.primary-action:hover{background:var(--primary-dark)}.secondary-action{margin-top:8px;border:1px solid var(--border);background:#fff;color:var(--text)}
+    .feedback-form fieldset{margin:0;padding:0;border:0}.feedback-option{min-height:52px;padding:8px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}.feedback-option span{flex:1}.feedback-option input{width:20px;height:20px;accent-color:var(--primary)}
+    .feedback-followup{margin-top:14px}.feedback-followup label{display:block;margin-bottom:6px;font-weight:600}.feedback-followup textarea{width:100%;min-height:100px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);resize:none;color:var(--ink)}
+    .error{min-height:20px;margin-top:8px;color:var(--danger)}
+    .toast{position:fixed;left:50%;bottom:94px;z-index:var(--z-toast);transform:translate(-50%,18px);min-width:250px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:var(--radius);background:var(--ink);color:#fff;text-align:center;opacity:0;pointer-events:none;transition:opacity 180ms ease-out,transform 180ms ease-out}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:420px){.canvas{display:block}.phone{width:100vw}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <div class="canvas"><div class="phone" id="phone">
+    <header class="topbar">
+      <div class="statusbar"><span>9:41</span><span>5G&nbsp;&nbsp;96%</span></div>
+      <div class="titlebar">
+        <button class="icon-button" type="button" aria-label="Go back"><img src="assets/lucide/arrow-left.svg" alt=""></button>
+        <h1>Insights</h1>
+        <button class="icon-button" id="shareButton" type="button" aria-label="Share insights"><img src="assets/lucide/share-2.svg" alt=""></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card card-pad" aria-labelledby="simplified-title">
+        <div class="heading-row"><h2 class="section-title" id="simplified-title">Policy simplified</h2><span class="status-pill">Expired</span></div>
+        <div class="field"><div class="label">Policyholder</div><div class="value">Rachel M. Thompson</div></div>
+        <div class="field"><div class="label">Policy number</div><div class="value">NV-HO6-AL-384729</div></div>
+        <div class="field"><div class="label">Carrier</div><div class="value">Allstate Fire and Casualty Insurance Company</div></div>
+        <div class="field"><div class="label">Policy type</div><div class="value">Condominium (HO-6) Unit-Owners</div></div>
+        <div class="field"><div class="label">Insured unit</div><div class="value">4121 Lakeview Parkway, Unit 208<br>Henderson, NV 89011</div></div>
+        <div class="field"><div class="label">Coverage period</div><div class="value">May 1, 2025–May 1, 2026</div></div>
+        <div class="field"><div class="label">Annual premium</div><div class="value">$663</div></div>
+      </section>
+
+      <section class="card card-pad" aria-labelledby="people-title">
+        <h2 class="section-title" id="people-title">Individuals covered</h2>
+        <div class="person"><span class="person-icon"><img src="assets/lucide/user-round.svg" alt=""></span><strong>Rachel M. Thompson</strong></div>
+      </section>
+
+      <section class="card" aria-labelledby="coverage-limits-title">
+        <div class="card-pad"><h2 class="section-title" id="coverage-limits-title">Property covered</h2></div>
+        <div class="coverage-list">
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Coverage A</div><div class="value">$95,000</div><div class="coverage-description">Interior walls and improvements you are responsible for</div></div><button class="source-button" type="button" aria-label="View source for Coverage A" data-title="Coverage A" data-meta="Page 2 · AS270 Declarations" data-excerpt="Coverage A for interior improvements is limited to $95,000."><img src="assets/lucide/info.svg" alt=""></button></div>
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Coverage C</div><div class="value">$65,000</div><div class="coverage-description">Personal property</div></div><button class="source-button" type="button" aria-label="View source for Coverage C" data-title="Coverage C — Personal property" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Personal Property Protection: $65,000."><img src="assets/lucide/info.svg" alt=""></button></div>
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Coverage D</div><div class="value">$20,000</div><div class="coverage-description">Loss of use</div></div><button class="source-button" type="button" aria-label="View source for Coverage D" data-title="Coverage D — Loss of use" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Additional Living Expense: $20,000."><img src="assets/lucide/info.svg" alt=""></button></div>
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Coverage E</div><div class="value">$300,000</div><div class="coverage-description">Family liability</div></div><button class="source-button" type="button" aria-label="View source for Coverage E" data-title="Coverage E — Family liability" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Family Liability Protection: $300,000."><img src="assets/lucide/info.svg" alt=""></button></div>
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Coverage F</div><div class="value">$5,000</div><div class="coverage-description">Guest medical</div></div><button class="source-button" type="button" aria-label="View source for Coverage F" data-title="Coverage F — Guest medical" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Guest Medical Protection: $5,000."><img src="assets/lucide/info.svg" alt=""></button></div>
+        </div>
+      </section>
+
+      <section class="card disclosure-card" aria-labelledby="policy-details-title">
+        <div class="policy-details-header"><h2 class="section-title" id="policy-details-title">Policy details</h2></div>
+        <details open>
+          <summary><span class="summary-title">What's included</span><span class="count-pill">4</span><img class="chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item">Interior walls, floors, ceilings, cabinets and built-in fixtures<button class="source-button" type="button" aria-label="View source for interior improvements" data-title="Interior improvements" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Coverage A applies to interior walls, floors, ceilings, cabinets, fixtures and built-in appliances that are the unit owner’s responsibility."><img src="assets/lucide/info.svg" alt=""></button></div>
+            <div class="insight-item">Personal belongings<button class="source-button" type="button" aria-label="View source for personal belongings" data-title="Personal belongings" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Personal Property Protection is listed with a $65,000 limit."><img src="assets/lucide/info.svg" alt=""></button></div>
+            <div class="insight-item">Temporary housing after a covered loss<button class="source-button" type="button" aria-label="View source for temporary housing" data-title="Additional living expense" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Additional Living Expense is listed with a $20,000 limit."><img src="assets/lucide/info.svg" alt=""></button></div>
+            <div class="insight-item">Personal liability and guest medical<button class="source-button" type="button" aria-label="View source for liability and medical" data-title="Liability and guest medical" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Family Liability Protection is $300,000 and Guest Medical Protection is $5,000."><img src="assets/lucide/info.svg" alt=""></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">What's not included</span><span class="count-pill">2</span><img class="chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item">Coverage B: Other Structures is not shown as applicable<button class="source-button" type="button" aria-label="View source for Coverage B" data-title="Coverage B: Other Structures" data-meta="Pages 1–3 · AS270 Declarations" data-excerpt="Coverage B, Other Structures, is not listed as an applicable coverage on the supplied condominium declarations."><img src="assets/lucide/info.svg" alt=""></button></div>
+            <div class="insight-item">Losses above the stated policy limits<button class="source-button" type="button" aria-label="View source for policy limits" data-title="Losses above policy limits" data-meta="Pages 1–3 · AS270 Declarations" data-excerpt="The declarations state the maximum amount shown for each listed coverage."><img src="assets/lucide/info.svg" alt=""></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">Coverage limitations</span><span class="count-pill">2</span><img class="chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item">Coverage A is capped at $95,000<button class="source-button" type="button" aria-label="View source for Coverage A limit" data-title="Coverage A maximum" data-meta="Page 2 · AS270 Declarations" data-excerpt="Coverage A for interior improvements is limited to $95,000."><img src="assets/lucide/info.svg" alt=""></button></div>
+            <div class="insight-item">Loss assessment applies only to covered events, up to $25,000<button class="source-button" type="button" aria-label="View source for loss assessment limitation" data-title="Loss assessment limitation" data-meta="Pages 1–3 · AS270 Declarations" data-excerpt="Loss Assessment is listed with a $25,000 limit and remains subject to the policy terms."><img src="assets/lucide/info.svg" alt=""></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">Coverage watch points</span><span class="count-pill">4</span><img class="chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+          <div class="policy-detail-body">
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for loss assessment exposure" data-title="Loss assessment exposure" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Loss Assessment is listed with a $25,000 limit and remains subject to the policy terms."><img src="assets/lucide/info.svg" alt=""></button></div><p>Loss assessment exposure if the HOA levies unit owners after a covered event.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for master deductible exposure" data-title="Master-policy deductible exposure" data-meta="Not available in the pages analyzed" data-excerpt="The HOA master policy and its deductible schedule were not included with the supplied HO-6 documents."><img src="assets/lucide/info.svg" alt=""></button></div><p>An HOA master-policy deductible may be passed through; this file does not establish the amount or circumstances.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for interior upgrade limit" data-title="Interior upgrade watch point" data-meta="Page 2 · AS270 Declarations" data-excerpt="Coverage A for interior improvements is limited to $95,000. The supplied pages do not value the unit’s upgrades."><img src="assets/lucide/info.svg" alt=""></button></div><p>Interior upgrades may exceed the $95,000 Coverage A limit.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity low">Low</span><button class="source-button" type="button" aria-label="View source for valuables sublimits" data-title="Valuables sublimits" data-meta="Not available in the pages analyzed" data-excerpt="Detailed personal-property category sublimits were not included in the supplied pages."><img src="assets/lucide/info.svg" alt=""></button></div><p>Valuables may be subject to category sublimits not shown in the analyzed pages.</p></div>
+          </div>
+        </details>
+      </section>
+
+      <section class="card" aria-labelledby="specs-title">
+        <div class="card-pad"><h2 class="section-title" id="specs-title">Policy specifications</h2></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Loss assessment coverage</strong><div class="value">$25,000</div><p>Adds coverage for certain HOA-levied assessments after a covered event.</p></div><button class="source-button" type="button" aria-label="View source for loss assessment coverage" data-title="Loss assessment coverage" data-meta="Pages 1–2 · AS270 Declarations" data-excerpt="Loss Assessment: $25,000."><img src="assets/lucide/info.svg" alt=""></button></div>
+        <div class="spec-row"><div class="spec-copy"><strong>AS323: Nevada Amendatory Endorsement</strong><p>Applies Nevada-specific changes to the policy.</p></div><button class="source-button" type="button" aria-label="View source for AS323 endorsement" data-title="Nevada amendatory endorsement" data-meta="AS323 · Policy endorsement" data-excerpt="AS323 is identified as the Nevada Amendatory Endorsement included with this policy."><img src="assets/lucide/info.svg" alt=""></button></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Additional interest</strong><p>Lakeview Condominiums Association is listed as an additional interest, not a lienholder.</p></div><button class="source-button" type="button" aria-label="View source for additional interest" data-title="Additional interest" data-meta="Page 3 · AS270 Declarations" data-excerpt="No lienholder is listed. Lakeview Condominiums Association appears as an Additional Interest."><img src="assets/lucide/info.svg" alt=""></button></div>
+      </section>
+
+      <section class="card" aria-labelledby="deductibles-title">
+        <div class="card-pad"><h2 class="section-title" id="deductibles-title">Deductibles</h2></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>$1,000 · All Other Perils</strong><p>Applies to covered HO-6 losses subject to this deductible.</p></div><button class="source-button" type="button" aria-label="View source for All Other Perils deductible" data-title="All Other Perils deductible" data-meta="Page 2 · AS270 Declarations" data-excerpt="All Other Perils deductible: $1,000."><img src="assets/lucide/info.svg" alt=""></button></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>$1,000 · Water damage</strong><p>Applies when the water-damage deductible is applicable.</p></div><button class="source-button" type="button" aria-label="View source for water damage deductible" data-title="Water damage deductible" data-meta="Page 2 · AS270 Declarations" data-excerpt="Water Damage deductible: $1,000, if applicable."><img src="assets/lucide/info.svg" alt=""></button></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>HOA master-policy deductible</strong><p>Not a deductible stated under this HO-6 policy. The amount and any unit-owner exposure are not available in the supplied file.</p></div><button class="source-button" type="button" aria-label="View source for HOA deductible availability" data-title="HOA master-policy deductible" data-meta="Not available in the pages analyzed" data-excerpt="The supplied HO-6 file does not include the HOA master policy or its deductible schedule."><img src="assets/lucide/info.svg" alt=""></button></div>
+        <div class="tip"><img src="assets/lucide/shield-alert-amber.svg" alt=""><div class="tip-copy"><strong>Consumer tip</strong><p>Ask your HOA for its current declarations and deductible schedule. Review that separate policy with your agent.</p></div></div>
+      </section>
+
+      <section class="card footer-card" aria-labelledby="about-title">
+        <div class="card-pad"><h2 class="section-title" id="about-title">About these insights</h2><p>Insights are based on the documents provided; incomplete or missing documents may result in incomplete or inaccurate insights. OVIE is not intended to serve as evidence of insurance for third parties, nor does OVIE provide advice or guidance on the adequacy of coverage. Users should consult their agent or insurance carrier for coverage-related questions or determinations.</p></div>
+        <details><summary><span>Document sources</span><img class="chevron" src="assets/lucide/chevron-down.svg" alt=""></summary><div class="details-body"><ul><li>AS270 — Condominium Owners’ Policy Jacket and declarations, pages 1–3</li><li>AS323 — Nevada Amendatory Endorsement</li><li>Nevada HO-6 Coverage Form</li></ul></div></details>
+        <details><summary><span>Not available in the pages analyzed</span><img class="chevron" src="assets/lucide/chevron-down.svg" alt=""></summary><div class="details-body"><ul><li>HOA master-policy limits and deductible schedule</li><li>Complete form-level exclusions</li><li>Detailed personal-property category sublimits</li></ul></div></details>
+      </section>
+
+      <div class="feedback" role="group" aria-labelledby="feedback-question">
+        <span class="feedback-question" id="feedback-question">Were these insights helpful?</span>
+        <button class="feedback-button" type="button" data-feedback="up" aria-label="Yes, these insights were helpful" aria-pressed="false"><img src="assets/lucide/thumbs-up.svg" alt=""></button>
+        <button class="feedback-button" type="button" data-feedback="down" aria-label="No, these insights were not helpful" aria-pressed="false"><img src="assets/lucide/thumbs-down.svg" alt=""></button>
+      </div>
+    </main>
+
+    <form class="chat-dock" id="chatForm" novalidate>
+      <label class="sr-only" for="chatInput">Ask Ovie about this policy</label>
+      <input class="chat-input" id="chatInput" placeholder="Ask Ovie…" autocomplete="off">
+      <button class="chat-send" type="submit" aria-label="Ask Ovie"><img src="assets/lucide/mic.svg" alt=""></button>
+    </form>
+  </div></div>
+
+  <dialog id="sourceSheet" aria-labelledby="sourceTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head"><h2 id="sourceTitle">Source from your policy</h2><button class="icon-button" id="closeSource" type="button" aria-label="Close source"><img src="assets/lucide/x.svg" alt=""></button></div>
+    <div class="sheet-body" id="sourceBody"></div>
+  </dialog>
+
+  <dialog id="feedbackSheet" aria-labelledby="feedbackTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head"><h2 id="feedbackTitle">Tell us more</h2><button class="icon-button" id="closeFeedback" type="button" aria-label="Close feedback form"><img src="assets/lucide/x.svg" alt=""></button></div>
+    <div class="sheet-body">
+      <form class="feedback-form" id="feedbackForm" novalidate>
+        <fieldset><legend class="sr-only">What could be improved?</legend>
+          <label class="feedback-option"><span>Insights are unclear or confusing</span><input type="radio" name="reason" value="unclear"></label>
+          <label class="feedback-option"><span>Information is incorrect</span><input type="radio" name="reason" value="incorrect"></label>
+          <label class="feedback-option"><span>Missing or incomplete details</span><input type="radio" name="reason" value="missing"></label>
+          <label class="feedback-option"><span>Other (tell us more)</span><input type="radio" name="reason" value="other"></label>
+        </fieldset>
+        <div class="feedback-followup" id="feedbackFollowup" hidden><label for="feedbackConcern">Enter your concern here</label><textarea id="feedbackConcern" name="concern" placeholder="Type here"></textarea></div>
+        <p class="error" id="feedbackError" role="alert" aria-live="polite"></p>
+        <button class="primary-action" type="submit">Submit</button><button class="secondary-action" id="cancelFeedback" type="button">Cancel</button>
+      </form>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const sourceSheet=document.getElementById('sourceSheet');
+    const sourceTitle=document.getElementById('sourceTitle');
+    const sourceBody=document.getElementById('sourceBody');
+    const feedbackSheet=document.getElementById('feedbackSheet');
+    const feedbackForm=document.getElementById('feedbackForm');
+    const feedbackFollowup=document.getElementById('feedbackFollowup');
+    const feedbackConcern=document.getElementById('feedbackConcern');
+    const feedbackError=document.getElementById('feedbackError');
+    const toast=document.getElementById('toast');
+    let lastTrigger=null,toastTimer;
+
+    function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
+    function closeDialog(dialog){dialog.close()}
+    function bindBackdrop(dialog){dialog.addEventListener('click',event=>{const b=dialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)dialog.close()})}
+    function sheetNode(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text)node.textContent=text;return node}
+    function openSource(button){lastTrigger=button;sourceTitle.textContent=button.dataset.title;const action=sheetNode('button','primary-action','View in document');action.type='button';action.addEventListener('click',()=>showToast('Document view is not connected in this mock.'));sourceBody.replaceChildren(sheetNode('div','source-meta',button.dataset.meta),sheetNode('div','source-excerpt',button.dataset.excerpt),action);sourceSheet.showModal();document.getElementById('closeSource').focus({preventScroll:true})}
+
+    document.querySelectorAll('.source-button').forEach(button=>button.addEventListener('click',()=>openSource(button)));
+    document.getElementById('closeSource').addEventListener('click',()=>closeDialog(sourceSheet));
+    sourceSheet.addEventListener('close',()=>{if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});lastTrigger=null});
+    bindBackdrop(sourceSheet);bindBackdrop(feedbackSheet);
+
+    document.querySelectorAll('.feedback-button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.feedback-button').forEach(option=>option.setAttribute('aria-pressed',String(option===button)));if(button.dataset.feedback==='up'){showToast('Thanks for your feedback.')}else{lastTrigger=button;feedbackForm.reset();feedbackFollowup.hidden=true;feedbackError.textContent='';feedbackSheet.showModal();document.getElementById('closeFeedback').focus({preventScroll:true})}}));
+    feedbackForm.addEventListener('change',event=>{if(event.target.name==='reason'){feedbackFollowup.hidden=event.target.value!=='other';feedbackError.textContent=''}});
+    feedbackForm.addEventListener('submit',event=>{event.preventDefault();const reason=new FormData(feedbackForm).get('reason');if(!reason){feedbackError.textContent='Select one reason to continue.';feedbackForm.querySelector('input[name="reason"]').focus();return}if(reason==='other'&&!feedbackConcern.value.trim()){feedbackError.textContent='Enter your concern to continue.';feedbackConcern.focus();return}feedbackSheet.close();showToast('Thanks for helping us improve these insights.')});
+    feedbackSheet.addEventListener('close',()=>{if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});lastTrigger=null});
+    document.getElementById('closeFeedback').addEventListener('click',()=>feedbackSheet.close());
+    document.getElementById('cancelFeedback').addEventListener('click',()=>feedbackSheet.close());
+    document.getElementById('shareButton').addEventListener('click',()=>showToast('Share options opened.'));
+    document.getElementById('chatForm').addEventListener('submit',event=>{event.preventDefault();const input=document.getElementById('chatInput');showToast(input.value.trim()?'Opening Ask Ovie with your question.':'Ask Ovie voice input would start here.')});
+  </script>
+</body>
+</html>
