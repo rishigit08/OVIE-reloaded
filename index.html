@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ovie — Umbrella Policy Insights</title>
+  <title>Ovie — Corrected Umbrella Policy Insights</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
@@ -26,7 +27,7 @@
       --text-primary: #111111;
       --text-secondary: #333a3d;
       --text-tertiary: #5f6368;
-      --text-muted: #73787b;
+      --text-muted: #5f6368;
       --border-default: #d8dddb;
       --border-subtle: #ecefed;
       --radius-sm: 12px;
@@ -36,6 +37,10 @@
       --shadow-sm: 0 2px 8px rgba(17, 17, 17, 0.07);
       --shadow-md: 0 6px 16px rgba(17, 17, 17, 0.12);
       --focus: 0 0 0 3px rgba(107, 64, 98, 0.24);
+      --z-sticky: 120;
+      --z-backdrop: 500;
+      --z-sheet: 700;
+      --z-toast: 900;
     }
 
     * { box-sizing: border-box; }
@@ -83,7 +88,7 @@
 
     .phone {
       position: relative;
-      width: min(390px, 100vw);
+      width: min(480px, 100vw);
       height: 100dvh;
       min-height: 680px;
       overflow-y: auto;
@@ -99,7 +104,7 @@
     .top-shell {
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: var(--z-sticky);
       background: rgba(255, 255, 255, 0.97);
       border-bottom: 1px solid var(--border-subtle);
     }
@@ -309,13 +314,13 @@
     .list-card { overflow: hidden; }
     .policy-row {
       width: 100%;
-      min-height: 76px;
+      min-height: 92px;
       padding: 12px 14px;
       border: 0;
       border-bottom: 1px solid var(--border-subtle);
       background: var(--bg-primary);
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 11px;
       text-align: left;
       cursor: pointer;
@@ -328,7 +333,8 @@
     .policy-copy { flex: 1; min-width: 0; }
     .policy-name { display: block; font-size: 14px; line-height: 20px; font-weight: 600; }
     .policy-meta { display: block; margin-top: 2px; font-size: 14px; line-height: 20px; color: var(--text-tertiary); }
-    .review-status { font-size: 12px; line-height: 16px; font-weight: 600; color: var(--status-warning); text-align: right; }
+    .policy-requirement { display: block; margin-top: 5px; font-size: 12px; line-height: 17px; color: var(--text-secondary); }
+    .policy-requirement strong { color: var(--text-primary); }
     .row-chevron { width: 17px; height: 17px; opacity: .55; }
 
     .people { display: flex; flex-direction: column; overflow: hidden; }
@@ -337,6 +343,7 @@
     .person-row:last-child { border-bottom: 0; }
     .person-row img { width: 20px; height: 20px; }
     .person-row span { font-size: 14px; font-weight: 600; }
+    .covered-note { margin: 0; padding: 0 14px 12px; color: var(--text-secondary); font-size: 14px; line-height: 20px; }
 
     .disclosure-card { overflow: hidden; }
     details { border-bottom: 1px solid var(--border-subtle); }
@@ -362,6 +369,15 @@
     .detail-body ul { margin: 0; padding-left: 20px; }
     .detail-body li { margin: 6px 0; font-size: 14px; line-height: 20px; }
     .document-impact { color: var(--text-tertiary); }
+    .evidence-gap { margin: 12px 0 0; padding: 12px; border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text-secondary); }
+    .evidence-gap strong { display: block; margin-bottom: 3px; color: var(--text-primary); }
+    .watchpoint-list { display: flex; flex-direction: column; gap: 12px; }
+    .watchpoint { display: grid; grid-template-columns: auto 1fr auto; gap: 9px; align-items: start; }
+    .severity { min-width: 62px; padding: 3px 7px; border-radius: 12px; font-size: 11px; line-height: 16px; font-weight: 600; text-align: center; }
+    .severity.critical { color: #7a3000; background: #fff0dc; }
+    .severity.moderate { color: #634106; background: var(--bg-warning); }
+    .severity.low { color: var(--action-primary-dark); background: var(--bg-info); }
+    .watchpoint p { margin: 0; }
     .detail-item { padding: 12px 0; border-top: 1px solid var(--border-subtle); }
     .detail-item:first-child { border-top: 0; padding-top: 0; }
     .detail-title-row { display: flex; align-items: flex-start; gap: 6px; }
@@ -371,10 +387,28 @@
     .empty-state strong { font-size: 14px; line-height: 20px; font-weight: 600; }
     .empty-state p { margin: 4px 0 0; font-size: 14px; line-height: 20px; color: var(--text-tertiary); }
 
+    .policy-footer { padding: 16px; color: var(--text-secondary); }
+    .policy-footer h2 { margin: 0 0 12px; font-size: 18px; line-height: 24px; }
+    .policy-footer h3 { margin: 16px 0 6px; font-size: 14px; line-height: 20px; }
+    .policy-footer p { margin: 0; font-size: 14px; line-height: 21px; }
+    .policy-footer ul { margin: 6px 0 0; padding-left: 20px; }
+    .policy-footer li { margin: 5px 0; font-size: 14px; line-height: 20px; }
+    .source-line { color: var(--text-tertiary); }
+    .footer-disclosures { margin: 12px -16px 0; border-top: 1px solid var(--border-subtle); }
+    .footer-disclosures .detail-body { padding-bottom: 16px; }
+    .footer-disclosures .source-line { margin-top: 0; }
+    .feedback-row { min-height: 52px; padding: 4px 16px; display: flex; align-items: center; gap: 4px; }
+    .feedback-question { flex: 1; font-size: 14px; line-height: 20px; color: var(--text-secondary); }
+    .feedback-button { width: 44px; height: 44px; flex: 0 0 auto; border: 0; border-radius: 12px; background: transparent; color: var(--text-tertiary); display: grid; place-items: center; cursor: pointer; transition: color 180ms ease-out; }
+    .feedback-button:hover { color: var(--text-secondary); background: transparent; }
+    .feedback-button[data-feedback="up"][aria-pressed="true"] { color: var(--status-success); }
+    .feedback-button[data-feedback="down"][aria-pressed="true"] { color: var(--status-danger); }
+    .feedback-button svg { width: 20px; height: 20px; }
+
     .chat-dock {
       position: sticky;
       bottom: 0;
-      z-index: 16;
+      z-index: var(--z-sticky);
       width: 100%;
       min-height: 74px;
       margin-top: -74px;
@@ -420,7 +454,8 @@
     .chat-send img { width: 22px; height: 22px; filter: invert(1); }
 
     dialog {
-      width: min(390px, 100vw);
+      width: min(480px, 100vw);
+      min-width: min(480px, 100vw);
       max-width: 100vw;
       max-height: min(76dvh, 680px);
       margin: auto auto 0;
@@ -430,6 +465,7 @@
       color: var(--text-primary);
       background: var(--bg-primary);
       box-shadow: var(--shadow-md);
+      z-index: var(--z-sheet);
     }
 
     dialog::backdrop { background: rgba(17, 24, 23, .58); }
@@ -444,11 +480,32 @@
     .sheet-note { margin-top: 14px; padding: 12px; border-radius: var(--radius-md); background: var(--bg-warning); color: #634106; font-size: 14px; line-height: 20px; }
     .sheet-action { width: 100%; min-height: 44px; margin-top: 18px; border: 0; border-radius: 12px; background: var(--action-primary); color: white; font-weight: 600; cursor: pointer; }
 
+    .feedback-dialog { max-height: min(86dvh, 720px); }
+    .feedback-dialog .sheet-body { max-height: calc(86dvh - 75px); padding-top: 8px; }
+    .feedback-form fieldset { margin: 0; padding: 0; border: 0; }
+    .feedback-option { min-height: 50px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .feedback-option:last-child { border-bottom: 0; }
+    .feedback-option span { flex: 1; font-size: 14px; line-height: 20px; }
+    .feedback-option input { width: 20px; height: 20px; margin: 0; flex: 0 0 auto; accent-color: var(--action-primary); cursor: pointer; }
+    .feedback-followup { margin-top: 16px; }
+    .feedback-followup[hidden] { display: none; }
+    .feedback-followup label { display: block; margin-bottom: 8px; font-size: 14px; line-height: 20px; color: var(--text-secondary); }
+    .feedback-followup textarea { width: 100%; min-height: 112px; padding: 12px; resize: vertical; border: 1px solid var(--border-default); border-radius: 12px; background: var(--bg-primary); color: var(--text-primary); font: inherit; }
+    .feedback-followup textarea::placeholder { color: var(--text-tertiary); }
+    .feedback-followup textarea:focus-visible { outline: none; box-shadow: var(--focus); border-color: var(--action-primary); }
+    .feedback-error { min-height: 20px; margin: 8px 0 0; color: var(--status-danger); font-size: 14px; line-height: 20px; }
+    .feedback-actions { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .feedback-submit, .feedback-cancel { min-height: 44px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+    .feedback-submit { border: 0; background: var(--action-primary); color: white; }
+    .feedback-submit:hover { background: var(--action-primary-dark); }
+    .feedback-cancel { border: 1px solid var(--border-default); background: var(--bg-primary); color: var(--text-secondary); }
+    .feedback-cancel:hover { background: var(--bg-secondary); }
+
     .toast {
       position: fixed;
       left: 50%;
       bottom: 94px;
-      z-index: 60;
+      z-index: var(--z-toast);
       transform: translate(-50%, 18px);
       min-width: 250px;
       max-width: calc(100vw - 32px);
@@ -546,20 +603,7 @@
             </div>
             <button class="source-button" type="button" aria-label="View source for annual limit" data-source-title="Annual total limit" data-source-meta="Page 2 · Declarations" data-source-excerpt="Annual Total Limit of Liability: $10,000,000 for the annual policy period."><img src="assets/lucide/info.svg" alt=""></button>
           </div>
-          <div class="coverage-bottom">
-            <div>
-              <div class="field-label">When underlying insurance does not apply</div>
-              <div class="aggregate-number">$250 retained limit</div>
-            </div>
-            <button class="source-button" type="button" aria-label="View source for retained limit" data-source-title="Retained limit" data-source-meta="Page 2 · Declarations" data-source-excerpt="The insured must pay the first $250 of each covered loss when the required underlying insurance does not apply."><img src="assets/lucide/info.svg" alt=""></button>
-          </div>
         </section>
-
-        <button class="insights-note" type="button" id="aboutInsights">
-          <img src="assets/lucide/info.svg" alt="">
-          <span><strong>About these insights</strong><span>Based on the policy documents provided</span></span>
-          <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
-        </button>
 
         <section class="alert-card" aria-labelledby="verify-title">
           <img src="assets/lucide/shield-alert-amber.svg" alt="">
@@ -573,29 +617,32 @@
         <section aria-labelledby="linked-title">
           <div class="card list-card">
             <div class="section-heading card-section-heading">
-              <div><h2 id="linked-title">Linked policies</h2></div>
+              <div><h2 id="linked-title">Underlying policies</h2></div>
             </div>
             <button class="policy-row linked-policy" type="button" data-policy="Automobile" data-number="A6BJ988340" data-requirement="$250k / $500k / $100k, or $500k combined single limit" data-source="Pages 2–3 · Underlying policies">
               <span class="policy-icon"><img src="assets/lucide/car.svg" alt=""></span>
-              <span class="policy-copy"><span class="policy-name">Automobile</span><span class="policy-meta">HANOVER/CITIZENS · ••••8340</span></span>
-              <span class="review-status">Limit not<br>available</span><img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
+              <span class="policy-copy"><span class="policy-name">Personal auto</span><span class="policy-meta">HANOVER/CITIZENS · ••••8340</span><span class="policy-requirement"><strong>Required:</strong> $250k/$500k/$100k or $500k CSL</span></span>
+              <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
             </button>
             <button class="policy-row linked-policy" type="button" data-policy="Homeowners" data-number="H6BJ988341" data-requirement="$300,000 personal or premises liability" data-source="Pages 2–3 · Underlying policies">
               <span class="policy-icon"><img src="assets/lucide/house.svg" alt=""></span>
-              <span class="policy-copy"><span class="policy-name">Homeowners</span><span class="policy-meta">HANOVER/CITIZENS · ••••8341</span></span>
-              <span class="review-status">Limit not<br>available</span><img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
+              <span class="policy-copy"><span class="policy-name">Homeowners</span><span class="policy-meta">HANOVER/CITIZENS · ••••8341</span><span class="policy-requirement"><strong>Required:</strong> $300,000 personal or premises liability</span></span>
+              <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
             </button>
             <button class="policy-row linked-policy" type="button" data-policy="Watercraft" data-number="P6BJ988345" data-requirement="$250k / $500k / $100k, or $300k combined single limit" data-source="Pages 2–3 · Underlying policies">
               <span class="policy-icon"><img src="assets/lucide/sailboat.svg" alt=""></span>
-              <span class="policy-copy"><span class="policy-name">Watercraft</span><span class="policy-meta">HANOVER/CITIZENS · ••••8345</span></span>
-              <span class="review-status">Limit not<br>available</span><img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
+              <span class="policy-copy"><span class="policy-name">Watercraft</span><span class="policy-meta">HANOVER/CITIZENS · ••••8345</span><span class="policy-requirement"><strong>Required:</strong> $250k/$500k/$100k or $300k CSL</span></span>
+              <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
             </button>
           </div>
         </section>
 
         <section aria-labelledby="insured-title">
           <div class="card people">
-            <div class="section-heading card-section-heading"><div><h2 id="insured-title">Named insureds</h2></div></div>
+            <div class="section-heading card-section-heading">
+              <div><h2 id="insured-title">Who is covered</h2></div>
+              <button class="source-button" type="button" aria-label="View source for named insureds" data-source-title="Named insureds" data-source-meta="Page 2 · Declarations" data-source-excerpt="Named Insured(s): Samir Pimputkar and Avani Pimputkar. The supplied pages do not fully detail other covered people or classes of insureds."><img src="assets/lucide/info.svg" alt=""></button>
+            </div>
             <div class="person-row"><span class="policy-icon" style="width:34px;height:34px"><img src="assets/lucide/user-round.svg" alt=""></span><span>Samir Pimputkar</span></div>
             <div class="person-row"><span class="policy-icon" style="width:34px;height:34px"><img src="assets/lucide/user-round.svg" alt=""></span><span>Avani Pimputkar</span></div>
           </div>
@@ -605,45 +652,73 @@
           <div class="card disclosure-card">
             <div class="section-heading card-section-heading"><div><h2 id="details-title">Policy details</h2></div></div>
             <details open>
-              <summary><span class="summary-title">What this policy may protect</span><span class="count-pill">5</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+              <summary><span class="summary-title">What's included</span><span class="count-pill">5</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
               <div class="detail-body">
-                <ul><li>Personal and premises liability</li><li>Private-passenger auto liability</li><li>Recreational vehicle liability</li><li>Watercraft liability</li><li>Rental property liability</li></ul>
+                <p>This policy provides excess liability protection above the required underlying insurance for scheduled exposures.</p>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Personal and premises liability</span><button class="source-button" type="button" aria-label="View source for personal and premises liability" data-source-title="Personal and premises liability" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Personal or Premises Liability is listed as a covered exposure requiring at least $300,000 in underlying liability insurance."><img src="assets/lucide/info.svg" alt=""></button></div><p>Excess protection for scheduled personal activities and premises.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Private-passenger auto liability</span><button class="source-button" type="button" aria-label="View source for auto liability" data-source-title="Auto liability" data-source-meta="Pages 2–3 · Required limits and exposure information" data-source-excerpt="Private-passenger auto liability is listed among the scheduled exposures and requires $250,000/$500,000/$100,000, or a $500,000 combined single limit, in underlying insurance."><img src="assets/lucide/info.svg" alt=""></button></div><p>Excess liability above the required scheduled auto insurance.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Recreational vehicle liability</span><button class="source-button" type="button" aria-label="View source for recreational vehicle liability" data-source-title="Recreational vehicle liability" data-source-meta="Pages 2–3 · Required limits and exposure information" data-source-excerpt="Recreational vehicle liability is listed among the scheduled exposures and requires $250,000/$500,000/$100,000, or a $500,000 combined single limit, in underlying insurance."><img src="assets/lucide/info.svg" alt=""></button></div><p>Excess liability for properly scheduled recreational vehicles.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Watercraft liability</span><button class="source-button" type="button" aria-label="View source for watercraft liability" data-source-title="Watercraft liability" data-source-meta="Pages 2–3 · Required limits and exposure information" data-source-excerpt="Watercraft liability is listed among the scheduled exposures and requires $250,000/$500,000/$100,000, or a $300,000 combined single limit, in underlying insurance."><img src="assets/lucide/info.svg" alt=""></button></div><p>Excess liability above the required scheduled watercraft insurance.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Rental property liability</span><button class="source-button" type="button" aria-label="View source for rental property liability" data-source-title="Rental property liability" data-source-meta="Page 3 · Exposure information" data-source-excerpt="Rental properties are categorized among the premises scheduled in the supplied exposure information."><img src="assets/lucide/info.svg" alt=""></button></div><p>Liability for rental properties listed among scheduled premises.</p></div>
+                <div class="evidence-gap"><strong>Not available in the supplied pages</strong>Coverage territory and whether defense costs are inside or outside the liability limit.</div>
               </div>
             </details>
             <details>
-              <summary><span class="summary-title">Underlying insurance requirements</span><span class="count-pill">6</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body">
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Personal or premises liability</span><button class="source-button" type="button" aria-label="View source" data-source-title="Personal or premises liability" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Personal or Premises Liability requires a minimum underlying limit of $300,000."><img src="assets/lucide/info.svg" alt=""></button></div><p>$300,000 minimum underlying liability</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Auto and recreational vehicles</span><button class="source-button" type="button" aria-label="View source" data-source-title="Auto liability requirement" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Auto and Recreational Vehicle Liability requires $250,000/$500,000/$100,000, or a $500,000 combined single limit."><img src="assets/lucide/info.svg" alt=""></button></div><p>$250k/$500k/$100k or $500k combined single limit</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Uninsured or underinsured motorists</span><button class="source-button" type="button" aria-label="View source" data-source-title="Uninsured or underinsured motorists" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="If this coverage is elected, Uninsured/Underinsured Motorists Liability requires $250,000/$500,000/$100,000, or a $500,000 combined single limit."><img src="assets/lucide/info.svg" alt=""></button></div><p>$250k/$500k/$100k or $500k combined single limit, if elected</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Watercraft liability</span><button class="source-button" type="button" aria-label="View source" data-source-title="Watercraft requirement" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Watercraft Liability requires $250,000/$500,000/$100,000, or a $300,000 combined single limit."><img src="assets/lucide/info.svg" alt=""></button></div><p>$250k/$500k/$100k or $300k combined single limit</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Farmowners liability</span><button class="source-button" type="button" aria-label="View source" data-source-title="Farmowners liability" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Farmowners Liability requires a minimum underlying limit of $300,000."><img src="assets/lucide/info.svg" alt=""></button></div><p>$300,000 minimum underlying liability</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Personal injury</span><button class="source-button" type="button" aria-label="View source" data-source-title="Personal injury" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Personal Injury requires a minimum underlying limit of $300,000."><img src="assets/lucide/info.svg" alt=""></button></div><p>$300,000 minimum underlying liability</p></div>
-              </div>
+              <summary><span class="summary-title">What's not included</span><span class="count-pill">Not available</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+              <div class="detail-body"><p>The supplied pages do not contain the policy's exclusions. Review the complete Personal Umbrella Liability Policy form before relying on any exclusion summary.</p><div class="evidence-gap"><strong>No exclusions inferred</strong>Common exclusions such as business activity or intentional acts are not shown because they were not present in the pages analyzed.</div></div>
             </details>
             <details>
-              <summary><span class="summary-title">Coverage limitations</span><span class="count-pill">4</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body"><ul><li>Umbrella protection generally applies after required underlying coverage.</li><li>Only properly scheduled exposures may be eligible.</li><li>The annual total limit is $10 million.</li><li>Required underlying limits vary by exposure.</li></ul></div>
+              <summary><span class="summary-title">Coverage limitations</span><span class="count-pill">5</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+              <div class="detail-body">
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Underlying insurance must respond first</span><button class="source-button" type="button" aria-label="View source for underlying insurance trigger" data-source-title="Required underlying insurance" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="The policy provides excess liability protection after required underlying insurance has paid to its stated limit."><img src="assets/lucide/info.svg" alt=""></button></div><p>Umbrella protection applies after required underlying insurance has paid to its stated limit.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Scheduled exposures</span><button class="source-button" type="button" aria-label="View source for scheduled exposures" data-source-title="Scheduled exposures" data-source-meta="Pages 2–3 · Required limits and exposure information" data-source-excerpt="Eligibility for umbrella protection depends on the exposure being scheduled and the required underlying liability insurance being maintained."><img src="assets/lucide/info.svg" alt=""></button></div><p>Only properly scheduled exposures with the required underlying insurance may be eligible.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Annual total limit</span><button class="source-button" type="button" aria-label="View source for annual total limit" data-source-title="Annual total limit" data-source-meta="Page 2 · Declarations" data-source-excerpt="Annual Total Limit of Liability: $10,000,000 for the annual policy period."><img src="assets/lucide/info.svg" alt=""></button></div><p>The policy will not pay more than $10 million during the annual policy period.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Exposure-based requirements</span><button class="source-button" type="button" aria-label="View source for exposure-based requirements" data-source-title="Required limits by exposure" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Required minimum underlying liability limits vary for personal or premises, auto, recreational vehicle, watercraft, farmowners, personal injury, and elected uninsured or underinsured motorists coverage."><img src="assets/lucide/info.svg" alt=""></button></div><p>Required underlying limits vary by exposure and must be satisfied separately.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">$250 retained limit</span><button class="source-button" type="button" aria-label="View source for retained limit" data-source-title="Retained limit" data-source-meta="Page 2 · Declarations" data-source-excerpt="The insured must pay the first $250 of each covered loss when the required underlying insurance does not apply."><img src="assets/lucide/info.svg" alt=""></button></div><p>When required underlying insurance does not apply, the insured pays the first $250 before the umbrella responds.</p></div>
+                <div class="evidence-gap"><strong>Complete form needed</strong>The supplied pages do not contain the exact follow-form, coverage-broadening, or drop-down/DIC wording.</div>
+              </div>
             </details>
             <details>
               <summary><span class="summary-title">Coverage watchpoints</span><span class="count-pill">4</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body"><ul><li>Verify the limits on all three linked policies.</li><li>Keep underlying policies active at the required limits. If coverage does not apply, you must pay the $250 retained limit before the umbrella responds.</li><li>Confirm every residence, vehicle, recreational vehicle and watercraft is correctly scheduled.</li><li>This is excess coverage—it does not automatically replace missing underlying insurance.</li></ul></div>
+              <div class="detail-body"><div class="watchpoint-list">
+                <div class="watchpoint"><span class="severity critical">Critical</span><p>The current liability limits for all three underlying policies were not shown. Verify that each meets its required minimum.</p><button class="source-button" type="button" aria-label="View source for unconfirmed underlying limits" data-source-title="Underlying limits not confirmed" data-source-meta="Pages 2–3 · Underlying policies" data-source-excerpt="The declarations schedule the automobile, homeowners, and watercraft policies, but their current liability limits and policy periods are not listed in the supplied pages."><img src="assets/lucide/info.svg" alt=""></button></div>
+                <div class="watchpoint"><span class="severity critical">Critical</span><p>Keep the scheduled underlying policies active at the required limits. This umbrella is excess coverage and does not automatically replace missing underlying insurance.</p><button class="source-button" type="button" aria-label="View source for maintenance of underlying insurance" data-source-title="Maintain underlying insurance" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="The policy requires the scheduled underlying insurance to be maintained at or above the stated minimum liability limits."><img src="assets/lucide/info.svg" alt=""></button></div>
+                <div class="watchpoint"><span class="severity moderate">Moderate</span><p>Confirm every residence, vehicle, recreational vehicle and watercraft is correctly scheduled.</p><button class="source-button" type="button" aria-label="View source for scheduled exposure watchpoint" data-source-title="Scheduled exposure watchpoint" data-source-meta="Page 3 · Exposure information" data-source-excerpt="The supplied exposure information identifies residences, private-passenger autos, recreational vehicles, watercraft, and rental properties as scheduled exposure categories."><img src="assets/lucide/info.svg" alt=""></button></div>
+                <div class="watchpoint"><span class="severity low">Low</span><p>The policy states a $250 retained limit applies when required underlying insurance does not apply.</p><button class="source-button" type="button" aria-label="View source for retained limit watchpoint" data-source-title="Retained limit" data-source-meta="Page 2 · Declarations" data-source-excerpt="The insured must pay the first $250 of each covered loss when the required underlying insurance does not apply."><img src="assets/lucide/info.svg" alt=""></button></div>
+              </div></div>
             </details>
             <details>
-              <summary><span class="summary-title">Policy documents</span><span class="count-pill">2</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body"><p><strong>Personal Umbrella Liability Policy</strong><br>Form 231-6162 08 17<br><span class="document-impact">Main policy contract defining the umbrella coverage provisions.</span></p><p><strong>Amendment of Provisions — Michigan</strong><br>Form 231-6174 02 25<br><span class="document-impact">Adds state-specific provisions for Michigan.</span></p></div>
-            </details>
-            <details>
-              <summary><span class="summary-title">Not found in provided documents</span><span class="count-pill">4</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body"><ul><li>Complete classes of insureds beyond the two named insureds.</li><li>Definitions for insured, occurrence, loss, personal injury, bodily injury and property damage.</li><li>Whether defense costs are covered or how they relate to the liability limit.</li><li>The policy's coverage territory.</li></ul></div>
+              <summary><span class="summary-title">Other required minimums</span><span class="count-pill">4</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+              <div class="detail-body">
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Recreational vehicle liability</span><button class="source-button" type="button" aria-label="View source for recreational vehicle requirement" data-source-title="Recreational vehicle requirement" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Auto and Recreational Vehicle Liability requires $250,000/$500,000/$100,000, or a $500,000 combined single limit."><img src="assets/lucide/info.svg" alt=""></button></div><p>$250k/$500k/$100k or $500k combined single limit.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Uninsured or underinsured motorists</span><button class="source-button" type="button" aria-label="View source for uninsured or underinsured motorists requirement" data-source-title="Uninsured or underinsured motorists" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="If elected, Uninsured/Underinsured Motorists Liability requires $250,000/$500,000/$100,000, or a $500,000 combined single limit."><img src="assets/lucide/info.svg" alt=""></button></div><p>$250k/$500k/$100k or $500k combined single limit, if elected.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Farmowners liability</span><button class="source-button" type="button" aria-label="View source for farmowners liability requirement" data-source-title="Farmowners liability" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Farmowners Liability requires a minimum underlying limit of $300,000."><img src="assets/lucide/info.svg" alt=""></button></div><p>$300,000 minimum underlying liability.</p></div>
+                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Personal injury</span><button class="source-button" type="button" aria-label="View source for personal injury requirement" data-source-title="Personal injury" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Personal Injury requires a minimum underlying limit of $300,000."><img src="assets/lucide/info.svg" alt=""></button></div><p>$300,000 minimum underlying liability.</p></div>
+              </div>
             </details>
           </div>
         </section>
 
-        <section class="empty-state" aria-labelledby="exclusions-title">
-          <strong id="exclusions-title">Policy exclusions</strong>
-          <p>Exclusions were not available in the pages analyzed. Review the complete policy for details.</p>
+        <section class="card policy-footer" aria-labelledby="about-title">
+          <h2 id="about-title">About these insights</h2>
+          <p>Insights are based on the documents provided; incomplete or missing documents may result in incomplete or inaccurate insights. OVIE is not intended to serve as evidence of insurance for third parties, nor does OVIE provide advice or guidance on the adequacy of coverage. Users should consult their agent or insurance carrier for coverage-related questions or determinations.</p>
+          <div class="footer-disclosures">
+            <details>
+              <summary><span class="summary-title">Document sources</span><span class="count-pill">3</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+              <div class="detail-body"><ul class="source-line"><li>Declarations and required minimum underlying limits, pages 2–3</li><li>Personal Umbrella Liability Policy, form 231-6162 08 17</li><li>Amendment of Provisions — Michigan, form 231-6174 02 25</li></ul></div>
+            </details>
+            <details>
+              <summary><span class="summary-title">Not available in the pages analyzed</span><span class="count-pill">4</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
+              <div class="detail-body"><ul class="source-line"><li>Complete classes of insureds beyond the two named insureds</li><li>Definitions for insured, occurrence, loss, personal injury, bodily injury and property damage</li><li>Defense-cost treatment and coverage territory</li><li>Complete policy exclusions and exact follow-form/drop-down wording</li></ul></div>
+            </details>
+          </div>
         </section>
+
+        <div class="feedback-row" role="group" aria-labelledby="feedbackQuestion">
+          <span class="feedback-question" id="feedbackQuestion">Were these insights helpful?</span>
+          <button class="feedback-button" type="button" aria-label="Yes, these insights were helpful" aria-pressed="false" data-feedback="up"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg></button>
+          <button class="feedback-button" type="button" aria-label="No, these insights were not helpful" aria-pressed="false" data-feedback="down"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg></button>
+        </div>
 
       </main>
 
@@ -661,6 +736,34 @@
     <div class="sheet-body" id="sheetBody"></div>
   </dialog>
 
+  <dialog class="feedback-dialog" id="feedbackDialog" aria-labelledby="feedbackDialogTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="feedbackDialogTitle">Tell us more</h2>
+      <button class="icon-button" type="button" id="closeFeedback" aria-label="Close feedback form"><img src="assets/lucide/x.svg" alt=""></button>
+    </div>
+    <div class="sheet-body">
+      <form class="feedback-form" id="feedbackForm" novalidate>
+        <fieldset>
+          <legend class="sr-only">What could be improved?</legend>
+          <label class="feedback-option"><span>Insights are unclear or confusing</span><input type="radio" name="feedbackReason" value="unclear"></label>
+          <label class="feedback-option"><span>Information is incorrect</span><input type="radio" name="feedbackReason" value="incorrect"></label>
+          <label class="feedback-option"><span>Missing or incomplete details</span><input type="radio" name="feedbackReason" value="missing"></label>
+          <label class="feedback-option"><span>Other (tell us more)</span><input type="radio" name="feedbackReason" value="other"></label>
+        </fieldset>
+        <div class="feedback-followup" id="feedbackFollowup" hidden>
+          <label for="feedbackConcern">Enter your concern here</label>
+          <textarea id="feedbackConcern" name="feedbackConcern" placeholder="Type here"></textarea>
+        </div>
+        <p class="feedback-error" id="feedbackError" role="alert" aria-live="polite"></p>
+        <div class="feedback-actions">
+          <button class="feedback-submit" type="submit">Submit</button>
+          <button class="feedback-cancel" id="cancelFeedback" type="button">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
@@ -668,6 +771,11 @@
     const sheetTitle = document.getElementById('sheetTitle');
     const sheetBody = document.getElementById('sheetBody');
     const closeSheet = document.getElementById('closeSheet');
+    const feedbackDialog = document.getElementById('feedbackDialog');
+    const feedbackForm = document.getElementById('feedbackForm');
+    const feedbackFollowup = document.getElementById('feedbackFollowup');
+    const feedbackConcern = document.getElementById('feedbackConcern');
+    const feedbackError = document.getElementById('feedbackError');
     const toast = document.getElementById('toast');
     const phone = document.getElementById('phone');
     const topShell = document.querySelector('.top-shell');
@@ -770,18 +878,54 @@
 
     document.querySelectorAll('.linked-policy').forEach(button => button.addEventListener('click', () => openPolicy(button)));
 
-    document.getElementById('aboutInsights').addEventListener('click', () => {
-      sheetTitle.textContent = 'About these insights';
-      const paragraph = sheetElement('p', '', 'Insights are based on the documents provided. Missing or incomplete documents may produce incomplete insights. Ovie is not evidence of insurance and does not determine whether coverage is adequate. Contact your agent or carrier for coverage decisions.');
-      paragraph.style.cssText = 'margin:0;font-size:14px;line-height:22px;color:var(--text-secondary)';
-      sheetBody.replaceChildren(paragraph);
-      sheet.showModal();
-    });
-
     closeSheet.addEventListener('click', () => sheet.close());
     sheet.addEventListener('click', event => {
       const bounds = sheet.getBoundingClientRect();
       if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) sheet.close();
+    });
+
+    function openFeedbackDialog() {
+      feedbackForm.reset();
+      feedbackFollowup.hidden = true;
+      feedbackError.textContent = '';
+      feedbackDialog.showModal();
+    }
+
+    function closeFeedbackDialog() {
+      feedbackDialog.close();
+    }
+
+    document.getElementById('closeFeedback').addEventListener('click', closeFeedbackDialog);
+    document.getElementById('cancelFeedback').addEventListener('click', closeFeedbackDialog);
+    feedbackDialog.addEventListener('click', event => {
+      const bounds = feedbackDialog.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeFeedbackDialog();
+    });
+
+    feedbackForm.addEventListener('change', event => {
+      if (event.target.name !== 'feedbackReason') return;
+      feedbackFollowup.hidden = event.target.value !== 'other';
+      feedbackError.textContent = '';
+    });
+
+    feedbackForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const reason = new FormData(feedbackForm).get('feedbackReason');
+
+      if (!reason) {
+        feedbackError.textContent = 'Select one reason to continue.';
+        feedbackForm.querySelector('input[name="feedbackReason"]').focus();
+        return;
+      }
+
+      if (reason === 'other' && !feedbackConcern.value.trim()) {
+        feedbackError.textContent = 'Enter your concern to continue.';
+        feedbackConcern.focus();
+        return;
+      }
+
+      closeFeedbackDialog();
+      showToast('Thanks for helping us improve these insights.');
     });
 
     document.getElementById('shareButton').addEventListener('click', () => showToast('Share options opened.'));
@@ -790,6 +934,14 @@
       const input = document.getElementById('chatInput');
       showToast(input.value.trim() ? 'Opening Ask Ovie with your question.' : 'Ask Ovie voice input would start here.');
     });
+    document.querySelectorAll('.feedback-button').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('.feedback-button').forEach(option => option.setAttribute('aria-pressed', String(option === button)));
+      if (button.dataset.feedback === 'down') {
+        openFeedbackDialog();
+      } else {
+        showToast('Thanks for your feedback.');
+      }
+    }));
     document.querySelectorAll('.placeholder-action').forEach(button => button.addEventListener('click', () => showToast(button.dataset.message)));
   </script>
 </body>
