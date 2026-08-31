@@ -1,951 +1,854 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ovie — Corrected Umbrella Policy Insights</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Home | Ovie</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --action-primary: #6b4062;
-      --action-primary-dark: #54324d;
-      --action-secondary: #0396ff;
-      --status-success: #0d7d07;
-      --status-warning: #8a5a06;
-      --status-danger: #a63a33;
-      --bg-success: #e7fff4;
-      --bg-warning: #fff5df;
-      --bg-danger: #ffeded;
-      --bg-info: #f5edf3;
-      --bg-primary: #ffffff;
-      --bg-secondary: #f6f6f6;
-      --bg-canvas: #e3e3e3;
-      --neutral-900: #111111;
-      --text-primary: #111111;
-      --text-secondary: #333a3d;
-      --text-tertiary: #5f6368;
-      --text-muted: #5f6368;
-      --border-default: #d8dddb;
-      --border-subtle: #ecefed;
-      --radius-sm: 12px;
-      --radius-md: 12px;
-      --radius-lg: 12px;
-      --radius-full: 999px;
-      --shadow-sm: 0 2px 8px rgba(17, 17, 17, 0.07);
-      --shadow-md: 0 6px 16px rgba(17, 17, 17, 0.12);
-      --focus: 0 0 0 3px rgba(107, 64, 98, 0.24);
-      --z-sticky: 120;
-      --z-backdrop: 500;
-      --z-sheet: 700;
-      --z-toast: 900;
+      --primary: #6b4062;
+      --primary-dark: #54324d;
+      --primary-soft: #f5edf3;
+      --premium-auto: #6b4062;
+      --premium-home: #896681;
+      --premium-umbrella: #a68ca1;
+      --premium-renters: #c4b3c0;
+      --ink: #111111;
+      --copy: #333a3d;
+      --muted: #5f6368;
+      --surface: #ffffff;
+      --canvas: #f6f6f6;
+      --border: #d8dddb;
+      --border-soft: #ecefed;
+      --success: #0d7d07;
+      --success-soft: #e7fff4;
+      --warning: #8a5a06;
+      --warning-soft: #fff5df;
+      --warning-border: #e7c982;
+      --danger: #a63a33;
+      --focus: #6b4062;
+      --radius: 12px;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+      --nav-height: 72px;
+      --scrollbar-thumb: #a9afac;
+      --scrollbar-thumb-hover: #7c827f;
+      --scrollbar-track: #ecefed;
     }
 
     * { box-sizing: border-box; }
 
-    html, body { height: 100%; }
+    html {
+      color-scheme: light;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+      scrollbar-width: thin;
+    }
+
+    *::-webkit-scrollbar { width: 8px; height: 8px; }
+    *::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    *::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border: 2px solid var(--scrollbar-track); border-radius: 999px; }
+    *::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 
     body {
       margin: 0;
-      font-family: "Figtree", system-ui, sans-serif;
+      min-height: 100vh;
+      background: #e3e3e3;
+      color: var(--ink);
+      font-family: Figtree, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 14px;
       line-height: 20px;
-      font-weight: 400;
-      color: var(--text-primary);
-      background: var(--bg-canvas);
+      -webkit-font-smoothing: antialiased;
     }
 
-    button, summary { font: inherit; }
-    h1, h2, h3, strong { font-weight: 600; }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    svg { display: block; }
 
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+    :focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--focus) 58%, white);
+      outline-offset: 3px;
     }
 
-    button:focus-visible, summary:focus-visible {
-      outline: none;
-      box-shadow: var(--focus);
-    }
-
-    .page-canvas {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      overflow: auto;
-    }
-
-    .phone {
+    .app-shell {
       position: relative;
-      width: min(480px, 100vw);
-      height: 100dvh;
-      min-height: 680px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      scrollbar-width: none;
-      background: var(--bg-secondary);
-      box-shadow: var(--shadow-md);
-      scroll-padding-bottom: 92px;
+      width: min(100%, 480px);
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow: clip;
+      background: var(--canvas);
     }
-
-    .phone::-webkit-scrollbar { display: none; }
 
     .top-shell {
       position: sticky;
       top: 0;
-      z-index: var(--z-sticky);
-      background: rgba(255, 255, 255, 0.97);
-      border-bottom: 1px solid var(--border-subtle);
+      z-index: 20;
+      background: color-mix(in srgb, var(--surface) 96%, transparent);
+      border-bottom: 1px solid var(--border-soft);
     }
 
-    .status-row {
-      height: 34px;
+    .status-bar {
+      min-height: 36px;
+      padding: 8px 18px 2px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 8px 22px 0;
+      justify-content: space-between;
       font-size: 12px;
+      line-height: 16px;
       font-weight: 600;
     }
 
-    .system-status { display: flex; gap: 7px; color: var(--text-tertiary); }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
 
-    .icon-button {
+    .app-header {
+      padding: 8px 16px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .greeting { margin: 0 0 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .app-title { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; letter-spacing: -.012em; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+
+    .icon-button, .avatar-button {
+      position: relative;
       width: 44px;
       height: 44px;
-      border: 0;
-      border-radius: 12px;
-      background: transparent;
+      padding: 0;
       display: grid;
       place-items: center;
-      cursor: pointer;
-    }
-
-    .icon-button:hover { background: var(--bg-info); }
-    .icon-button img { width: 22px; height: 22px; }
-
-    .page-title-row {
-      min-height: 58px;
-      max-height: 58px;
-      padding: 4px 18px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow: hidden;
-      opacity: 1;
-      transform: translateY(0);
-      transition:
-        max-height 260ms cubic-bezier(.22, 1, .36, 1),
-        min-height 260ms cubic-bezier(.22, 1, .36, 1),
-        padding 260ms cubic-bezier(.22, 1, .36, 1),
-        opacity 180ms ease-out,
-        transform 260ms cubic-bezier(.22, 1, .36, 1);
-    }
-
-    .top-shell.title-hidden .page-title-row {
-      min-height: 0;
-      max-height: 0;
-      padding-top: 0;
-      padding-bottom: 0;
-      opacity: 0;
-      transform: translateY(-14px);
-      pointer-events: none;
-    }
-
-    .page-title-row h1 { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
-
-    .title-share {
-      min-width: 44px;
-      min-height: 44px;
-      margin-left: auto;
-      padding: 0;
       border: 0;
-      border-radius: 12px;
-      background: transparent;
-      color: var(--action-primary);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 600;
+      border-radius: var(--radius);
+      background: var(--canvas);
       cursor: pointer;
+      transition: background-color 180ms var(--ease), transform 180ms var(--ease);
     }
 
-    .title-share:hover { background: var(--bg-info); }
-    .title-share img { width: 19px; height: 19px; }
+    .icon-button:hover, .avatar-button:hover { background: var(--primary-soft); }
+    .icon-button:active, .avatar-button:active { transform: scale(.96); }
+    .avatar-button { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+    .notification-dot { position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border: 2px solid var(--canvas); border-radius: 50%; background: var(--danger); }
 
     main {
-      padding: 18px 16px 104px;
       display: flex;
       flex-direction: column;
       gap: 18px;
+      padding: 18px 16px calc(var(--nav-height) + 34px + env(safe-area-inset-bottom));
     }
+
+    section { scroll-margin-top: 112px; }
 
     .card {
-      background: var(--bg-primary);
-      border-radius: var(--radius-lg);
-      box-shadow: none;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--surface);
     }
 
-    .policy-card { padding: 18px; }
+    .section-heading {
+      margin: 0;
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 600;
+      letter-spacing: -.012em;
+      text-wrap: balance;
+    }
 
-    .card-heading {
+    .premium-card {
+      padding: 0 0 6px;
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .premium-label { margin: 0 14px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .premium-value { margin: 0; color: var(--ink); font-size: 32px; line-height: 36px; font-weight: 600; letter-spacing: -.035em; }
+    .premium-period { display: block; margin-top: 2px; color: var(--copy); font-size: 12px; line-height: 16px; font-weight: 400; }
+
+    .premium-visual {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .donut { position: relative; width: 184px; aspect-ratio: 1; margin: 2px auto 8px; }
+    .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+    .donut-segment {
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+    }
+    .donut-segment[data-category="auto"] { fill: var(--premium-auto); }
+    .donut-segment[data-category="home"] { fill: var(--premium-home); }
+    .donut-segment[data-category="umbrella"] { fill: var(--premium-umbrella); }
+    .donut-segment[data-category="renters"] { fill: var(--premium-renters); }
+    .donut-segment.dim { opacity: .22; }
+    .donut-segment.active { transform: scale(1.035); }
+
+    .donut-center {
+      position: absolute;
+      inset: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .donut-context { margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 16px; font-weight: 600; }
+    .premium-options { width: 100%; display: flex; flex-direction: column; }
+    .premium-category { border-bottom: 1px solid var(--border-soft); }
+    .premium-category:last-child { border-bottom: 0; }
+
+    .premium-option {
+      min-height: 64px;
+      width: 100%;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .premium-option:hover, .premium-option[aria-pressed="true"] { background: var(--primary-soft); }
+    .category-icon {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--category-color) 16%, white);
+      color: var(--category-color);
+    }
+    .category-icon.segment-auto { --category-color: var(--premium-auto); }
+    .category-icon.segment-home { --category-color: var(--premium-home); }
+    .category-icon.segment-umbrella { --category-color: var(--premium-umbrella); }
+    .category-icon.segment-renters { --category-color: var(--premium-renters); }
+    .premium-option-copy { min-width: 0; display: flex; flex: 1; align-items: center; justify-content: space-between; gap: 12px; }
+    .premium-option-info { min-width: 0; display: flex; flex-direction: column; }
+    .premium-option-name { color: var(--ink); font-size: 14px; line-height: 20px; font-weight: 600; }
+    .premium-option-meta { margin-top: 1px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .premium-option-value { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; }
+    .premium-option-amount { color: var(--ink); font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; }
+    .premium-option-share { margin-top: 1px; display: flex; align-items: center; gap: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .premium-option-share svg { transition: transform 200ms var(--ease); }
+    .premium-option[aria-expanded="true"] .premium-option-share svg { transform: rotate(90deg); }
+
+    .premium-accordion {
+      padding: 0 14px 6px 58px;
+      background: color-mix(in srgb, var(--primary-soft) 54%, white);
+    }
+
+    .premium-policy-row {
+      min-height: 48px;
+      padding: 8px 10px 8px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 14px;
+      border-top: 1px solid var(--border-soft);
     }
 
-    .card-heading h2 { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
+    .premium-policy-row:first-child { border-top: 0; }
+    .premium-policy-copy { min-width: 0; }
+    .premium-policy-name { display: block; color: var(--copy); font-weight: 600; }
+    .premium-policy-carrier { display: block; margin-top: 1px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .premium-policy-price { flex: 0 0 auto; color: var(--copy); font-weight: 600; white-space: nowrap; }
 
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      min-height: 28px;
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      background: var(--bg-success);
-      color: var(--status-success);
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-
-    .policy-list { display: flex; flex-direction: column; }
-    .policy-field {
-      min-height: 48px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-subtle);
+    .card-section-head {
+      min-height: 56px;
+      padding: 10px 14px 6px;
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-start;
-      gap: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
-    .policy-field:last-child { border-bottom: 0; padding-bottom: 0; }
-    .policy-field:first-child { padding-top: 0; }
-    .field-label { font-size: 14px; line-height: 20px; color: var(--text-muted); }
-    .field-value { width: 100%; max-width: none; font-size: 14px; line-height: 20px; font-weight: 600; text-align: left; overflow-wrap: anywhere; }
 
-    .coverage-card { overflow: hidden; }
-    .coverage-top { padding: 18px; background: var(--action-primary); color: #fff; }
-    .coverage-top-label { font-size: 14px; line-height: 20px; color: rgba(255,255,255,.82); }
-    .coverage-number { margin-top: 5px; font-size: 32px; line-height: 36px; font-weight: 600; letter-spacing: -0.02em; }
-    .coverage-caption { margin-top: 3px; font-size: 14px; line-height: 20px; }
-    .coverage-bottom { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-    .coverage-bottom + .coverage-bottom { border-top: 1px solid var(--border-subtle); }
-    .aggregate-number { font-size: 18px; line-height: 24px; font-weight: 600; }
+    .premium-card .card-section-head { min-height: 56px; padding: 10px 14px 4px; }
+    .premium-card .section-heading { color: var(--ink); }
 
-    .source-button {
-      width: 44px;
-      height: 44px;
-      margin: -10px -10px -10px 0;
-      display: grid;
-      place-items: center;
+    .text-button {
+      min-height: 44px;
+      margin: 0 -8px 0 0;
+      padding: 0 8px;
       border: 0;
-      border-radius: 12px;
+      border-radius: 8px;
       background: transparent;
+      color: var(--primary);
+      font-weight: 600;
       cursor: pointer;
     }
 
-    .source-button:hover { background: var(--bg-info); }
-    .source-button img { width: 19px; height: 19px; }
-    .source-button.on-dark img { filter: brightness(0) invert(1); opacity: .82; }
+    .text-button:hover { background: var(--primary-soft); }
+    .text-button:disabled { color: var(--muted); cursor: default; opacity: 1; }
+    .text-button:disabled:hover { background: transparent; }
 
-    .insights-note {
-      width: 100%;
-      min-height: 48px;
-      border: 0;
-      border-radius: var(--radius-md);
-      padding: 10px 12px;
-      background: var(--bg-primary);
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .insights-note:hover { background: var(--bg-info); }
-    .insights-note img { width: 19px; height: 19px; flex: 0 0 auto; }
-    .insights-note strong { display: block; font-size: 14px; line-height: 20px; font-weight: 600; }
-    .insights-note span { display: block; margin-top: 2px; font-size: 14px; line-height: 20px; color: var(--text-tertiary); }
-
-    .alert-card {
-      border: 1px solid #e7c982;
-      background: var(--bg-warning);
-      border-radius: var(--radius-md);
+    .attention {
       padding: 14px;
       display: flex;
       align-items: flex-start;
-      gap: 11px;
-    }
-
-    .alert-card > img { width: 22px; height: 22px; flex: 0 0 auto; margin-top: 1px; }
-    .alert-copy { flex: 1; }
-    .alert-title { font-size: 14px; line-height: 20px; font-weight: 600; color: #634106; }
-    .alert-text { margin-top: 3px; font-size: 14px; line-height: 20px; color: #71551f; }
-
-    .section-heading {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
       gap: 12px;
-      padding: 0 2px;
+      border: 1px solid var(--warning-border);
+      border-radius: var(--radius);
+      background: var(--warning-soft);
+      color: var(--copy);
     }
 
-    .section-heading h2 { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
+    .attention-icon { width: 36px; height: 22px; flex: 0 0 auto; display: grid; place-items: start center; color: var(--warning); }
+    .attention-copy { flex: 1; min-width: 0; }
+    .attention-title { margin: 0; color: #634106; font-weight: 600; }
+    .attention-text { margin: 2px 0 0; color: #71551f; }
 
-    .list-card { overflow: hidden; }
-    .policy-row {
-      width: 100%;
-      min-height: 92px;
+    .policy-list { display: flex; flex-direction: column; }
+
+    .policy {
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .policy:last-child { border-bottom: 0; }
+    .policy[hidden] { display: none; }
+
+    .policy summary {
+      min-height: 76px;
       padding: 12px 14px;
-      border: 0;
-      border-bottom: 1px solid var(--border-subtle);
-      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      list-style: none;
+      cursor: pointer;
+      transition: background-color 180ms var(--ease);
+    }
+
+    .policy summary::-webkit-details-marker { display: none; }
+    .policy summary:hover { background: var(--canvas); }
+
+    .policy-icon {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .policy-copy { min-width: 0; flex: 1; }
+    .policy-name { display: block; font-weight: 600; }
+    .policy-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .policy-status { display: block; margin-bottom: 2px; color: var(--success); font-size: 12px; line-height: 16px; font-weight: 600; text-align: right; }
+    .policy-premium { display: block; color: var(--copy); font-size: 12px; line-height: 16px; text-align: right; }
+    .policy-chevron { flex: 0 0 auto; color: var(--muted); transition: transform 220ms var(--ease); }
+    details[open] .policy-chevron { transform: rotate(180deg); }
+
+    .policy-detail {
+      padding: 0 14px 14px 66px;
+      color: var(--copy);
+    }
+
+    .policy-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+    .detail-label { display: block; color: var(--muted); font-size: 14px; line-height: 20px; }
+    .detail-value { display: block; margin-top: 2px; font-weight: 600; }
+
+    .expiry-list { display: flex; flex-direction: column; }
+    .expiry-row { min-height: 68px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-soft); }
+    .expiry-row:last-child { border-bottom: 0; }
+    .expiry-date { width: 42px; flex: 0 0 auto; text-align: center; }
+    .expiry-month { display: block; color: var(--muted); font-size: 11px; line-height: 16px; font-weight: 600; }
+    .expiry-day { display: block; margin-top: -1px; font-size: 14px; line-height: 20px; font-weight: 600; }
+    .expiry-copy { min-width: 0; flex: 1; }
+    .expiry-name { display: block; font-weight: 600; }
+    .expiry-carrier { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+
+    .status-pill { padding: 4px 8px; border-radius: 999px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; }
+    .status-pill.warning { background: var(--warning-soft); color: #634106; }
+    .status-pill.neutral { background: var(--canvas); color: var(--copy); }
+
+    .insight-list { display: flex; flex-direction: column; }
+    .insight {
+      width: 100%;
+      min-height: 74px;
+      padding: 14px;
       display: flex;
       align-items: flex-start;
-      gap: 11px;
+      gap: 12px;
+      border: 0;
+      border-bottom: 1px solid var(--border-soft);
+      background: transparent;
       text-align: left;
       cursor: pointer;
     }
 
-    .policy-row:last-child { border-bottom: 0; }
-    .policy-row:hover { background: #fafcfb; }
-    .policy-icon { width: 38px; height: 38px; border-radius: 12px; background: var(--bg-info); display: grid; place-items: center; flex: 0 0 auto; }
-    .policy-icon img { width: 19px; height: 19px; }
-    .policy-copy { flex: 1; min-width: 0; }
-    .policy-name { display: block; font-size: 14px; line-height: 20px; font-weight: 600; }
-    .policy-meta { display: block; margin-top: 2px; font-size: 14px; line-height: 20px; color: var(--text-tertiary); }
-    .policy-requirement { display: block; margin-top: 5px; font-size: 12px; line-height: 17px; color: var(--text-secondary); }
-    .policy-requirement strong { color: var(--text-primary); }
-    .row-chevron { width: 17px; height: 17px; opacity: .55; }
+    .insight:last-child { border-bottom: 0; }
+    .insight:hover { background: var(--canvas); }
+    .insight-icon { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; background: var(--primary-soft); color: var(--primary); }
+    .insight-copy { flex: 1; min-width: 0; }
+    .insight-title { display: block; font-weight: 600; }
+    .insight-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; font-weight: 600; }
+    .insight-text { display: block; margin-top: 2px; color: var(--muted); line-height: 20px; }
+    .insight .chevron { margin-top: 8px; color: var(--muted); }
 
-    .people { display: flex; flex-direction: column; overflow: hidden; }
-    .card-section-heading { padding: 16px 14px 8px; align-items: flex-start; }
-    .person-row { min-height: 58px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-subtle); }
-    .person-row:last-child { border-bottom: 0; }
-    .person-row img { width: 20px; height: 20px; }
-    .person-row span { font-size: 14px; font-weight: 600; }
-    .covered-note { margin: 0; padding: 0 14px 12px; color: var(--text-secondary); font-size: 14px; line-height: 20px; }
-
-    .disclosure-card { overflow: hidden; }
-    details { border-bottom: 1px solid var(--border-subtle); }
-    details:last-child { border-bottom: 0; }
-    summary {
-      min-height: 54px;
-      padding: 10px 10px 10px 14px;
-      list-style: none;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-    }
-
-    summary::-webkit-details-marker { display: none; }
-    summary:hover { background: #fafcfb; }
-    .summary-title { flex: 1; font-size: 14px; line-height: 20px; font-weight: 600; }
-    .count-pill { padding: 3px 8px; border-radius: var(--radius-full); background: var(--bg-info); color: var(--action-primary); font-size: 12px; font-weight: 600; }
-    .detail-chevron { width: 18px; height: 18px; transition: transform 180ms ease-out; }
-    details[open] .detail-chevron { transform: rotate(180deg); }
-    .detail-body { padding: 0 14px 15px; color: var(--text-secondary); }
-    .detail-body p { margin: 0 0 8px; font-size: 14px; line-height: 20px; color: var(--text-tertiary); }
-    .detail-body ul { margin: 0; padding-left: 20px; }
-    .detail-body li { margin: 6px 0; font-size: 14px; line-height: 20px; }
-    .document-impact { color: var(--text-tertiary); }
-    .evidence-gap { margin: 12px 0 0; padding: 12px; border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text-secondary); }
-    .evidence-gap strong { display: block; margin-bottom: 3px; color: var(--text-secondary); }
-    .watchpoint-list { display: flex; flex-direction: column; }
-    .watchpoint { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 9px; row-gap: 6px; align-items: start; padding: 12px 0; border-top: 1px solid var(--border-subtle); }
-    .watchpoint:first-child { padding-top: 0; border-top: 0; }
-    .watchpoint:last-child { padding-bottom: 0; }
-    .severity { grid-column: 1; grid-row: 1; justify-self: start; min-width: 62px; padding: 3px 7px; border-radius: 12px; font-size: 11px; line-height: 16px; font-weight: 600; text-align: center; }
-    .severity.critical { color: #7a3000; background: #fff0dc; }
-    .severity.moderate { color: #634106; background: var(--bg-warning); }
-    .severity.low { color: var(--action-primary-dark); background: var(--bg-info); }
-    .watchpoint p { grid-column: 1 / -1; grid-row: 2; margin: 0; }
-    .watchpoint .source-button { grid-column: 2; grid-row: 1; align-self: start; }
-    .detail-item { padding: 12px 0; border-top: 1px solid var(--border-subtle); }
-    .detail-item:first-child { border-top: 0; padding-top: 0; }
-    .detail-title-row { display: flex; align-items: flex-start; gap: 6px; }
-    .detail-title { flex: 1; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--text-primary); }
-
-    .empty-state { padding: 14px; background: var(--bg-primary); border: 0; border-radius: var(--radius-md); }
-    .empty-state strong { font-size: 14px; line-height: 20px; font-weight: 600; }
-    .empty-state p { margin: 4px 0 0; font-size: 14px; line-height: 20px; color: var(--text-tertiary); }
-
-    .policy-footer { padding: 16px; color: var(--text-secondary); }
-    .policy-footer h2 { margin: 0 0 12px; font-size: 18px; line-height: 24px; }
-    .policy-footer h3 { margin: 16px 0 6px; font-size: 14px; line-height: 20px; }
-    .policy-footer p { margin: 0; font-size: 14px; line-height: 21px; color: var(--text-tertiary); }
-    .policy-footer ul { margin: 6px 0 0; padding-left: 20px; }
-    .policy-footer li { margin: 5px 0; font-size: 14px; line-height: 20px; }
-    .source-line { color: var(--text-tertiary); }
-    .footer-disclosures { margin: 12px -16px 0; border-top: 1px solid var(--border-subtle); }
-    .footer-disclosures .detail-body { padding-bottom: 16px; }
-    .footer-disclosures .source-line { margin-top: 0; }
-    .feedback-row { min-height: 52px; padding: 4px 16px; display: flex; align-items: center; gap: 4px; }
-    .feedback-question { flex: 1; font-size: 14px; line-height: 20px; color: var(--text-tertiary); }
-    .feedback-button { width: 44px; height: 44px; flex: 0 0 auto; border: 0; border-radius: 12px; background: transparent; color: var(--text-tertiary); display: grid; place-items: center; cursor: pointer; transition: color 180ms ease-out; }
-    .feedback-button:hover { color: var(--text-secondary); background: transparent; }
-    .feedback-button[data-feedback="up"][aria-pressed="true"] { color: var(--status-success); }
-    .feedback-button[data-feedback="down"][aria-pressed="true"] { color: var(--status-danger); }
-    .feedback-button svg { width: 20px; height: 20px; }
-
-    .chat-dock {
-      position: sticky;
-      bottom: 0;
-      z-index: var(--z-sticky);
-      width: 100%;
-      min-height: 74px;
-      margin-top: -74px;
-      padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
-      border-top: 0;
-      background: rgba(255, 255, 255, 0.3);
-      -webkit-backdrop-filter: blur(14px) saturate(1.1);
-      backdrop-filter: blur(14px) saturate(1.1);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 -3px 10px rgba(17,17,17,.06);
-    }
-
-    .chat-input {
-      min-width: 0;
-      flex: 1;
-      height: 48px;
-      padding: 0 16px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-full);
-      background: rgba(255, 255, 255, 0.78);
-      color: var(--text-primary);
-      font-size: 14px;
-    }
-
-    .chat-input::placeholder { color: var(--text-muted); opacity: 1; }
-    .chat-input:focus { outline: none; border-color: var(--action-primary); box-shadow: var(--focus); }
-
-    .chat-send {
-      width: 48px;
-      height: 48px;
-      flex: 0 0 auto;
-      border: 0;
-      border-radius: 12px;
-      background: var(--action-primary);
+    .bottom-nav {
+      position: fixed;
+      z-index: 30;
+      left: 50%;
+      bottom: max(8px, env(safe-area-inset-bottom));
+      width: min(calc(100% - 24px), 456px);
+      min-height: var(--nav-height);
+      padding: 6px;
       display: grid;
-      place-items: center;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: center;
+      transform: translateX(-50%);
+      border: 1px solid var(--border-soft);
+      border-radius: 999px;
+      background: var(--surface);
+      box-shadow: 0 4px 8px rgba(17, 17, 17, .10);
+    }
+
+    .nav-link, .nav-button {
+      min-width: 0;
+      min-height: 58px;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 600;
+      text-decoration: none;
       cursor: pointer;
     }
 
-    .chat-send:hover { background: var(--action-primary-dark); }
-    .chat-send img { width: 22px; height: 22px; filter: invert(1); }
+    .nav-link:hover, .nav-button:hover { background: var(--canvas); color: var(--primary); }
+    .nav-link:active, .nav-button:active { color: var(--primary-dark); }
+    .nav-link[aria-current="page"] { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+    .nav-icon { width: 32px; height: 28px; display: grid; place-items: center; border-radius: 999px; }
+
+    .nav-upload {
+      width: 100%;
+      min-width: 0;
+      min-height: 58px;
+      margin: 0;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      align-self: center;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color 180ms var(--ease), color 180ms var(--ease);
+    }
+
+    .nav-upload .nav-icon {
+      position: relative;
+      color: var(--surface);
+    }
+    .nav-upload .nav-icon::before {
+      position: absolute;
+      z-index: 0;
+      inset: 50% auto auto 50%;
+      width: 40px;
+      height: 40px;
+      content: "";
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: var(--primary);
+      box-shadow: 0 2px 4px rgba(84, 50, 77, .22);
+      transition: background-color 180ms var(--ease);
+    }
+    .nav-upload .nav-icon svg { position: relative; z-index: 1; }
+    .nav-upload:hover { background: transparent; color: var(--surface); }
+    .nav-upload:hover .nav-icon::before { background: var(--primary-dark); }
+
+    .file-picker-input {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
 
     dialog {
-      width: min(480px, 100vw);
-      min-width: min(480px, 100vw);
-      max-width: 100vw;
-      max-height: min(76dvh, 680px);
+      width: min(calc(100% - 24px), 456px);
+      max-height: min(640px, calc(100dvh - 24px));
       margin: auto auto 0;
       padding: 0;
+      overflow: hidden;
       border: 0;
       border-radius: 12px 12px 0 0;
-      color: var(--text-primary);
-      background: var(--bg-primary);
-      box-shadow: var(--shadow-md);
-      z-index: var(--z-sheet);
+      background: var(--surface);
+      color: var(--ink);
     }
 
-    dialog::backdrop { background: rgba(17, 24, 23, .58); }
-    .sheet-handle { width: 40px; height: 4px; margin: 10px auto 3px; border-radius: 2px; background: var(--border-default); }
-    .sheet-head { min-height: 58px; padding: 9px 10px 9px 18px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 10px; }
-    .sheet-head h2 { flex: 1; margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
-    .sheet-body { padding: 17px 18px 26px; overflow-y: auto; max-height: calc(76dvh - 75px); }
-    .source-kicker { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--action-primary); }
-    .source-excerpt { margin: 10px 0 16px; padding: 13px; border-radius: var(--radius-md); background: var(--bg-secondary); font-size: 14px; line-height: 21px; }
-    .sheet-label { margin-top: 14px; font-size: 14px; line-height: 20px; color: var(--text-muted); }
-    .sheet-value { margin-top: 3px; font-size: 14px; line-height: 20px; font-weight: 600; }
-    .sheet-note { margin-top: 14px; padding: 12px; border-radius: var(--radius-md); background: var(--bg-warning); color: #634106; font-size: 14px; line-height: 20px; }
-    .sheet-action { width: 100%; min-height: 44px; margin-top: 18px; border: 0; border-radius: 12px; background: var(--action-primary); color: white; font-weight: 600; cursor: pointer; }
-
-    .feedback-dialog { max-height: min(86dvh, 720px); }
-    .feedback-dialog .sheet-body { max-height: calc(86dvh - 75px); padding-top: 8px; }
-    .feedback-form fieldset { margin: 0; padding: 0; border: 0; }
-    .feedback-option { min-height: 50px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 12px; cursor: pointer; }
-    .feedback-option:last-child { border-bottom: 0; }
-    .feedback-option span { flex: 1; font-size: 14px; line-height: 20px; }
-    .feedback-option input { width: 20px; height: 20px; margin: 0; flex: 0 0 auto; accent-color: var(--action-primary); cursor: pointer; }
-    .feedback-followup { margin-top: 16px; }
-    .feedback-followup[hidden] { display: none; }
-    .feedback-followup label { display: block; margin-bottom: 8px; font-size: 14px; line-height: 20px; color: var(--text-secondary); }
-    .feedback-followup textarea { width: 100%; min-height: 112px; padding: 12px; resize: vertical; border: 1px solid var(--border-default); border-radius: 12px; background: var(--bg-primary); color: var(--text-primary); font: inherit; }
-    .feedback-followup textarea::placeholder { color: var(--text-tertiary); }
-    .feedback-followup textarea:focus-visible { outline: none; box-shadow: var(--focus); border-color: var(--action-primary); }
-    .feedback-error { min-height: 20px; margin: 8px 0 0; color: var(--status-danger); font-size: 14px; line-height: 20px; }
-    .feedback-actions { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
-    .feedback-submit, .feedback-cancel { min-height: 44px; border-radius: 12px; font-weight: 600; cursor: pointer; }
-    .feedback-submit { border: 0; background: var(--action-primary); color: white; }
-    .feedback-submit:hover { background: var(--action-primary-dark); }
-    .feedback-cancel { border: 1px solid var(--border-default); background: var(--bg-primary); color: var(--text-secondary); }
-    .feedback-cancel:hover { background: var(--bg-secondary); }
+    dialog::backdrop { background: rgba(17,24,23,.58); }
+    .sheet-handle { width: 36px; height: 4px; margin: 10px auto 4px; border-radius: 999px; background: var(--border); }
+    .sheet-header { min-height: 54px; padding: 4px 8px 4px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border-soft); }
+    .sheet-title { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
+    .sheet-body { padding: 16px; color: var(--copy); }
+    .sheet-body p { margin: 0 0 14px; }
+    .prompt-list { display: flex; flex-direction: column; gap: 8px; }
+    .prompt-button { min-height: 46px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--copy); text-align: left; cursor: pointer; }
+    .prompt-button:hover { border-color: var(--primary); background: var(--primary-soft); }
 
     .toast {
       position: fixed;
+      z-index: 50;
       left: 50%;
-      bottom: 94px;
-      z-index: var(--z-toast);
-      transform: translate(-50%, 18px);
-      min-width: 250px;
-      max-width: calc(100vw - 32px);
-      padding: 12px 16px;
-      border-radius: var(--radius-md);
-      background: var(--neutral-900);
-      color: white;
-      font-size: 14px;
-      text-align: center;
+      bottom: calc(var(--nav-height) + 18px + env(safe-area-inset-bottom));
+      width: min(calc(100% - 32px), 448px);
+      padding: 12px 14px;
+      transform: translate(-50%, 16px);
+      border-radius: 10px;
+      background: var(--ink);
+      color: #fff;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 180ms ease-out, transform 180ms ease-out;
+      transition: opacity 180ms var(--ease), transform 180ms var(--ease);
     }
 
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    @media (max-width: 420px) {
-      .page-canvas { display: block; }
-      .phone { width: 100vw; box-shadow: none; }
+    @media (min-width: 481px) {
+      .app-shell { border-inline: 1px solid #d2d2d2; }
+    }
+
+    @media (max-width: 350px) {
+      .donut { width: 168px; }
+      .policy-detail { padding-left: 14px; }
+      .status-pill { white-space: normal; text-align: center; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+      /* Accessibility override must win over every component transition. */
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+
+    @media (forced-colors: active) {
+      * { scrollbar-color: auto; }
+      .premium-card, .attention, .status-pill, .policy-icon, .insight-icon, .nav-icon { forced-color-adjust: none; }
+      .nav-upload { background: ButtonFace; color: ButtonText; }
+      .nav-upload .nav-icon { color: ButtonText; }
+      .nav-upload .nav-icon::before { border: 2px solid ButtonText; background: ButtonFace; box-shadow: none; }
     }
   </style>
 </head>
 <body>
-  <div class="page-canvas">
-    <div class="phone" id="phone">
-      <header class="top-shell">
-        <div class="status-row" aria-hidden="true">
-          <span>9:41</span>
-          <span class="system-status">5G&nbsp;&nbsp;96%</span>
+  <div class="app-shell">
+    <header class="top-shell">
+      <div class="status-bar" aria-hidden="true">
+        <span>9:41</span>
+        <span class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M1 9h2v3H1zm4-3h2v6H5zm4-3h2v9H9zm4-3h2v12h-2z"/></svg>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5A9.2 9.2 0 0 1 15 4.5M4.7 7.2a5.4 5.4 0 0 1 7.6 0M7.2 9.7a1.8 1.8 0 0 1 2.6 0"/></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".5" y=".5" width="20" height="11" rx="3" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M22 4v4c1-.3 1.5-1 1.5-2S23 4.3 22 4Z" fill="currentColor" opacity=".45"/></svg>
+        </span>
+      </div>
+      <div class="app-header">
+        <div>
+          <p class="greeting">Hi,</p>
+          <h1 class="app-title">Rishi Verma</h1>
         </div>
-        <div class="page-title-row">
-          <button class="icon-button placeholder-action" type="button" aria-label="Go back" data-message="Back navigation is not connected in this mock."><img src="assets/lucide/arrow-left.svg" alt=""></button>
-          <h1>Insights</h1>
-          <button class="title-share" type="button" id="shareButton" aria-label="Share"><img src="assets/lucide/share-2.svg" alt=""></button>
+        <div class="header-actions">
+          <button class="icon-button" id="notificationsButton" type="button" aria-label="Go to expiry notifications">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+            <span class="notification-dot" aria-hidden="true"></span>
+          </button>
+          <button class="avatar-button" id="profileButton" type="button" aria-label="Open profile">RV</button>
         </div>
-      </header>
+      </div>
+    </header>
 
-      <main>
-        <section class="card policy-card" aria-labelledby="policy-summary-title">
-          <div class="card-heading">
-            <h2 id="policy-summary-title">Your policy simplified</h2>
-            <span class="status-pill"><span class="status-dot"></span>Active</span>
+    <main>
+      <section aria-labelledby="premium-heading">
+        <div class="card premium-card">
+          <div class="card-section-head">
+            <h2 class="section-heading" id="premium-heading">Overall premium</h2>
           </div>
-          <div class="policy-list">
-            <div class="policy-field">
-              <div class="field-label">Policy holders</div>
-              <div class="field-value">Samir Pimputkar, Avani Pimputkar</div>
-            </div>
-            <div class="policy-field">
-              <div class="field-label">Policy number</div>
-              <div class="field-value">M6BJ988389</div>
-            </div>
-            <div class="policy-field">
-              <div class="field-label">Carrier</div>
-              <div class="field-value">Citizens Ins Co of the Midwest</div>
-            </div>
-            <div class="policy-field">
-              <div class="field-label">Policy type</div>
-              <div class="field-value">Personal Umbrella Liability</div>
-            </div>
-            <div class="policy-field">
-              <div class="field-label">Coverage period</div>
-              <div class="field-value">Mar 11, 2026–Mar 11, 2027</div>
-            </div>
-            <div class="policy-field">
-              <div class="field-label">Total premium</div>
-              <div class="field-value">$2,298</div>
-            </div>
-            <div class="policy-field">
-              <div class="field-label">Policy term</div>
-              <div class="field-value">1 Year</div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card coverage-card" aria-label="Coverage limits">
-          <div class="coverage-top">
-            <div style="display:flex;align-items:flex-start;gap:10px">
-              <div style="flex:1">
-                <div class="coverage-top-label">Umbrella protection</div>
-                <div class="coverage-number">$5 million</div>
-                <div class="coverage-caption">For each covered occurrence</div>
+          <p class="premium-label">Across 5 active policies</p>
+          <div class="premium-visual">
+            <div class="donut">
+              <svg viewBox="0 0 164 164" role="img" aria-label="Annual premium breakdown: Auto 42 percent, Home 31 percent, Umbrella 17 percent, Renters 10 percent">
+                <path class="donut-segment" data-category="auto" d="M 151.886 85.998 A 70 70 0 0 1 27.811 126.312 Q 25.369 123.145 28.605 120.794 L 35.077 116.092 Q 38.313 113.74 40.782 116.886 A 54 54 0 0 0 135.852 85.996 Q 136 82 140 82 L 148 82 Q 152 82 151.886 85.998 Z"></path>
+                <path class="donut-segment" data-category="home" d="M 18.833 112.164 A 70 70 0 0 1 60.748 15.304 Q 64.592 14.199 65.586 18.074 L 67.576 25.822 Q 68.571 29.697 64.737 30.834 A 54 54 0 0 0 32.884 104.441 Q 34.679 108.015 31.174 109.942 L 24.164 113.796 Q 20.659 115.723 18.833 112.164 Z"></path>
+                <path class="donut-segment" data-category="umbrella" d="M 77.207 12.164 A 70 70 0 0 1 130.208 31.246 Q 133.028 34.082 130.112 36.82 L 124.28 42.296 Q 121.364 45.034 118.521 42.223 A 54 54 0 0 0 79.215 28.072 Q 75.232 28.426 74.731 24.457 L 73.728 16.52 Q 73.227 12.552 77.207 12.164 Z"></path>
+                <path class="donut-segment" data-category="renters" d="M 140.889 44.156 A 70 70 0 0 1 150.834 69.275 Q 151.448 73.227 147.48 73.728 L 139.543 74.731 Q 135.574 75.232 134.926 71.286 A 54 54 0 0 0 127.916 53.58 Q 125.687 50.26 128.923 47.908 L 135.395 43.206 Q 138.631 40.855 140.889 44.156 Z"></path>
+              </svg>
+              <div class="donut-center" aria-hidden="true">
+                <p class="premium-value" id="premiumValue">$4,860</p>
+                <span class="premium-period" id="premium-context">Total / year</span>
+                <span class="donut-context" id="premium-month">$405 / month</span>
               </div>
-              <button class="source-button on-dark" type="button" aria-label="View source for occurrence limit" data-source-title="Limit of liability" data-source-meta="Page 2 · Declarations" data-source-excerpt="Limit of Liability Each Occurrence: $5,000,000."><img src="assets/lucide/info.svg" alt=""></button>
             </div>
-          </div>
-          <div class="coverage-bottom">
-            <div>
-              <div class="field-label">Maximum during the policy year</div>
-              <div class="aggregate-number">$10 million</div>
-            </div>
-            <button class="source-button" type="button" aria-label="View source for annual limit" data-source-title="Annual total limit" data-source-meta="Page 2 · Declarations" data-source-excerpt="Annual Total Limit of Liability: $10,000,000 for the annual policy period."><img src="assets/lucide/info.svg" alt=""></button>
-          </div>
-        </section>
-
-        <section class="alert-card" aria-labelledby="verify-title">
-          <img src="assets/lucide/shield-alert-amber.svg" alt="">
-          <div class="alert-copy">
-            <div class="alert-title" id="verify-title">Verify 3 linked policy limits</div>
-            <div class="alert-text">The supplied documents list your home, auto and watercraft policies, but not their current liability limits.</div>
-          </div>
-          <button class="source-button" type="button" aria-label="View source for underlying policy warning" data-source-title="Underlying insurance" data-source-meta="Pages 2–3 · Declarations" data-source-excerpt="The policy requires minimum liability limits for underlying policies. The current limits for the scheduled policies were not shown in the supplied pages."><img src="assets/lucide/info-amber.svg" alt=""></button>
-        </section>
-
-        <section aria-labelledby="linked-title">
-          <div class="card list-card">
-            <div class="section-heading card-section-heading">
-              <div><h2 id="linked-title">Underlying policies</h2></div>
-            </div>
-            <button class="policy-row linked-policy" type="button" data-policy="Automobile" data-number="A6BJ988340" data-requirement="$250k / $500k / $100k, or $500k combined single limit" data-source="Pages 2–3 · Underlying policies">
-              <span class="policy-icon"><img src="assets/lucide/car.svg" alt=""></span>
-              <span class="policy-copy"><span class="policy-name">Personal auto</span><span class="policy-meta">HANOVER/CITIZENS · ••••8340</span><span class="policy-requirement"><strong>Required:</strong> $250k/$500k/$100k or $500k CSL</span></span>
-              <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
-            </button>
-            <button class="policy-row linked-policy" type="button" data-policy="Homeowners" data-number="H6BJ988341" data-requirement="$300,000 personal or premises liability" data-source="Pages 2–3 · Underlying policies">
-              <span class="policy-icon"><img src="assets/lucide/house.svg" alt=""></span>
-              <span class="policy-copy"><span class="policy-name">Homeowners</span><span class="policy-meta">HANOVER/CITIZENS · ••••8341</span><span class="policy-requirement"><strong>Required:</strong> $300,000 personal or premises liability</span></span>
-              <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
-            </button>
-            <button class="policy-row linked-policy" type="button" data-policy="Watercraft" data-number="P6BJ988345" data-requirement="$250k / $500k / $100k, or $300k combined single limit" data-source="Pages 2–3 · Underlying policies">
-              <span class="policy-icon"><img src="assets/lucide/sailboat.svg" alt=""></span>
-              <span class="policy-copy"><span class="policy-name">Watercraft</span><span class="policy-meta">HANOVER/CITIZENS · ••••8345</span><span class="policy-requirement"><strong>Required:</strong> $250k/$500k/$100k or $300k CSL</span></span>
-              <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
-            </button>
-          </div>
-        </section>
-
-        <section aria-labelledby="insured-title">
-          <div class="card people">
-            <div class="section-heading card-section-heading">
-              <div><h2 id="insured-title">Who is covered</h2></div>
-              <button class="source-button" type="button" aria-label="View source for named insureds" data-source-title="Named insureds" data-source-meta="Page 2 · Declarations" data-source-excerpt="Named Insured(s): Samir Pimputkar and Avani Pimputkar. The supplied pages do not fully detail other covered people or classes of insureds."><img src="assets/lucide/info.svg" alt=""></button>
-            </div>
-            <div class="person-row"><span class="policy-icon" style="width:34px;height:34px"><img src="assets/lucide/user-round.svg" alt=""></span><span>Samir Pimputkar</span></div>
-            <div class="person-row"><span class="policy-icon" style="width:34px;height:34px"><img src="assets/lucide/user-round.svg" alt=""></span><span>Avani Pimputkar</span></div>
-          </div>
-        </section>
-
-        <section aria-labelledby="details-title">
-          <div class="card disclosure-card">
-            <div class="section-heading card-section-heading"><div><h2 id="details-title">Policy details</h2></div></div>
-            <details open>
-              <summary><span class="summary-title">What's included</span><span class="count-pill">5</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body">
-                <p>This policy provides excess liability protection above the required underlying insurance for scheduled exposures.</p>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Personal and premises liability</span><button class="source-button" type="button" aria-label="View source for personal and premises liability" data-source-title="Personal and premises liability" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Personal or Premises Liability is listed as a covered exposure requiring at least $300,000 in underlying liability insurance."><img src="assets/lucide/info.svg" alt=""></button></div><p>Excess protection for scheduled personal activities and premises.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Private-passenger auto liability</span><button class="source-button" type="button" aria-label="View source for auto liability" data-source-title="Auto liability" data-source-meta="Pages 2–3 · Required limits and exposure information" data-source-excerpt="Private-passenger auto liability is listed among the scheduled exposures and requires $250,000/$500,000/$100,000, or a $500,000 combined single limit, in underlying insurance."><img src="assets/lucide/info.svg" alt=""></button></div><p>Excess liability above the required scheduled auto insurance.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Recreational vehicle liability</span><button class="source-button" type="button" aria-label="View source for recreational vehicle liability" data-source-title="Recreational vehicle liability" data-source-meta="Pages 2–3 · Required limits and exposure information" data-source-excerpt="Recreational vehicle liability is listed among the scheduled exposures and requires $250,000/$500,000/$100,000, or a $500,000 combined single limit, in underlying insurance."><img src="assets/lucide/info.svg" alt=""></button></div><p>Excess liability for properly scheduled recreational vehicles.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Watercraft liability</span><button class="source-button" type="button" aria-label="View source for watercraft liability" data-source-title="Watercraft liability" data-source-meta="Pages 2–3 · Required limits and exposure information" data-source-excerpt="Watercraft liability is listed among the scheduled exposures and requires $250,000/$500,000/$100,000, or a $300,000 combined single limit, in underlying insurance."><img src="assets/lucide/info.svg" alt=""></button></div><p>Excess liability above the required scheduled watercraft insurance.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Rental property liability</span><button class="source-button" type="button" aria-label="View source for rental property liability" data-source-title="Rental property liability" data-source-meta="Page 3 · Exposure information" data-source-excerpt="Rental properties are categorized among the premises scheduled in the supplied exposure information."><img src="assets/lucide/info.svg" alt=""></button></div><p>Liability for rental properties listed among scheduled premises.</p></div>
-                <div class="evidence-gap"><strong>Not available in the supplied pages</strong>Coverage territory and whether defense costs are inside or outside the liability limit.</div>
+            <div class="premium-options" aria-label="Premium by policy type">
+              <div class="premium-category">
+                <button class="premium-option" type="button" data-category="auto" data-value="$2,040" data-context="Auto / year" data-month="$170 / month" aria-pressed="false" aria-expanded="false" aria-controls="premium-policies-auto"><span class="category-icon segment-auto" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span><span class="premium-option-copy"><span class="premium-option-info"><span class="premium-option-name">Auto</span><span class="premium-option-meta">2 policies</span></span><span class="premium-option-value"><span class="premium-option-amount">$2,040</span><span class="premium-option-share">42% <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></span></span></button>
+                <div class="premium-accordion" id="premium-policies-auto" role="region" aria-label="Auto policies" hidden>
+                  <div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">2022 Honda CR-V</span><span class="premium-policy-carrier">State Farm</span></span><span class="premium-policy-price">$1,320 / yr</span></div>
+                  <div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">2018 Toyota Camry</span><span class="premium-policy-carrier">State Farm</span></span><span class="premium-policy-price">$720 / yr</span></div>
+                </div>
               </div>
-            </details>
-            <details>
-              <summary><span class="summary-title">What's not included</span><span class="count-pill">Not available</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body"><p>The supplied pages do not contain the policy's exclusions. Review the complete Personal Umbrella Liability Policy form before relying on any exclusion summary.</p><div class="evidence-gap"><strong>No exclusions inferred</strong>Common exclusions such as business activity or intentional acts are not shown because they were not present in the pages analyzed.</div></div>
-            </details>
-            <details>
-              <summary><span class="summary-title">Coverage limitations</span><span class="count-pill">5</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body">
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Underlying insurance must respond first</span><button class="source-button" type="button" aria-label="View source for underlying insurance trigger" data-source-title="Required underlying insurance" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="The policy provides excess liability protection after required underlying insurance has paid to its stated limit."><img src="assets/lucide/info.svg" alt=""></button></div><p>Umbrella protection applies after required underlying insurance has paid to its stated limit.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Scheduled exposures</span><button class="source-button" type="button" aria-label="View source for scheduled exposures" data-source-title="Scheduled exposures" data-source-meta="Pages 2–3 · Required limits and exposure information" data-source-excerpt="Eligibility for umbrella protection depends on the exposure being scheduled and the required underlying liability insurance being maintained."><img src="assets/lucide/info.svg" alt=""></button></div><p>Only properly scheduled exposures with the required underlying insurance may be eligible.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Annual total limit</span><button class="source-button" type="button" aria-label="View source for annual total limit" data-source-title="Annual total limit" data-source-meta="Page 2 · Declarations" data-source-excerpt="Annual Total Limit of Liability: $10,000,000 for the annual policy period."><img src="assets/lucide/info.svg" alt=""></button></div><p>The policy will not pay more than $10 million during the annual policy period.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Exposure-based requirements</span><button class="source-button" type="button" aria-label="View source for exposure-based requirements" data-source-title="Required limits by exposure" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Required minimum underlying liability limits vary for personal or premises, auto, recreational vehicle, watercraft, farmowners, personal injury, and elected uninsured or underinsured motorists coverage."><img src="assets/lucide/info.svg" alt=""></button></div><p>Required underlying limits vary by exposure and must be satisfied separately.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">$250 retained limit</span><button class="source-button" type="button" aria-label="View source for retained limit" data-source-title="Retained limit" data-source-meta="Page 2 · Declarations" data-source-excerpt="The insured must pay the first $250 of each covered loss when the required underlying insurance does not apply."><img src="assets/lucide/info.svg" alt=""></button></div><p>When required underlying insurance does not apply, the insured pays the first $250 before the umbrella responds.</p></div>
-                <div class="evidence-gap"><strong>Complete form needed</strong>The supplied pages do not contain the exact follow-form, coverage-broadening, or drop-down/DIC wording.</div>
+              <div class="premium-category">
+                <button class="premium-option" type="button" data-category="home" data-value="$1,510" data-context="Home / year" data-month="$126 / month" aria-pressed="false" aria-expanded="false" aria-controls="premium-policies-home"><span class="category-icon segment-home" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span class="premium-option-copy"><span class="premium-option-info"><span class="premium-option-name">Home</span><span class="premium-option-meta">Travelers</span></span><span class="premium-option-value"><span class="premium-option-amount">$1,510</span><span class="premium-option-share">31% <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></span></span></button>
+                <div class="premium-accordion" id="premium-policies-home" role="region" aria-label="Home policies" hidden><div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">Austin home</span><span class="premium-policy-carrier">Travelers</span></span><span class="premium-policy-price">$1,510 / yr</span></div></div>
               </div>
-            </details>
-            <details>
-              <summary><span class="summary-title">Coverage watchpoints</span><span class="count-pill">4</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body"><div class="watchpoint-list">
-                <div class="watchpoint"><span class="severity critical">Critical</span><p>The current liability limits for all three underlying policies were not shown. Verify that each meets its required minimum.</p><button class="source-button" type="button" aria-label="View source for unconfirmed underlying limits" data-source-title="Underlying limits not confirmed" data-source-meta="Pages 2–3 · Underlying policies" data-source-excerpt="The declarations schedule the automobile, homeowners, and watercraft policies, but their current liability limits and policy periods are not listed in the supplied pages."><img src="assets/lucide/info.svg" alt=""></button></div>
-                <div class="watchpoint"><span class="severity critical">Critical</span><p>Keep the scheduled underlying policies active at the required limits. This umbrella is excess coverage and does not automatically replace missing underlying insurance.</p><button class="source-button" type="button" aria-label="View source for maintenance of underlying insurance" data-source-title="Maintain underlying insurance" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="The policy requires the scheduled underlying insurance to be maintained at or above the stated minimum liability limits."><img src="assets/lucide/info.svg" alt=""></button></div>
-                <div class="watchpoint"><span class="severity moderate">Moderate</span><p>Confirm every residence, vehicle, recreational vehicle and watercraft is correctly scheduled.</p><button class="source-button" type="button" aria-label="View source for scheduled exposure watchpoint" data-source-title="Scheduled exposure watchpoint" data-source-meta="Page 3 · Exposure information" data-source-excerpt="The supplied exposure information identifies residences, private-passenger autos, recreational vehicles, watercraft, and rental properties as scheduled exposure categories."><img src="assets/lucide/info.svg" alt=""></button></div>
-                <div class="watchpoint"><span class="severity low">Low</span><p>The policy states a $250 retained limit applies when required underlying insurance does not apply.</p><button class="source-button" type="button" aria-label="View source for retained limit watchpoint" data-source-title="Retained limit" data-source-meta="Page 2 · Declarations" data-source-excerpt="The insured must pay the first $250 of each covered loss when the required underlying insurance does not apply."><img src="assets/lucide/info.svg" alt=""></button></div>
-              </div></div>
-            </details>
-            <details>
-              <summary><span class="summary-title">Other required minimums</span><span class="count-pill">4</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body">
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Recreational vehicle liability</span><button class="source-button" type="button" aria-label="View source for recreational vehicle requirement" data-source-title="Recreational vehicle requirement" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Auto and Recreational Vehicle Liability requires $250,000/$500,000/$100,000, or a $500,000 combined single limit."><img src="assets/lucide/info.svg" alt=""></button></div><p>$250k/$500k/$100k or $500k combined single limit.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Uninsured or underinsured motorists</span><button class="source-button" type="button" aria-label="View source for uninsured or underinsured motorists requirement" data-source-title="Uninsured or underinsured motorists" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="If elected, Uninsured/Underinsured Motorists Liability requires $250,000/$500,000/$100,000, or a $500,000 combined single limit."><img src="assets/lucide/info.svg" alt=""></button></div><p>$250k/$500k/$100k or $500k combined single limit, if elected.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Farmowners liability</span><button class="source-button" type="button" aria-label="View source for farmowners liability requirement" data-source-title="Farmowners liability" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Farmowners Liability requires a minimum underlying limit of $300,000."><img src="assets/lucide/info.svg" alt=""></button></div><p>$300,000 minimum underlying liability.</p></div>
-                <div class="detail-item"><div class="detail-title-row"><span class="detail-title">Personal injury</span><button class="source-button" type="button" aria-label="View source for personal injury requirement" data-source-title="Personal injury" data-source-meta="Page 2 · Required minimum limits" data-source-excerpt="Personal Injury requires a minimum underlying limit of $300,000."><img src="assets/lucide/info.svg" alt=""></button></div><p>$300,000 minimum underlying liability.</p></div>
+              <div class="premium-category">
+                <button class="premium-option" type="button" data-category="umbrella" data-value="$830" data-context="Umbrella / year" data-month="$69 / month" aria-pressed="false" aria-expanded="false" aria-controls="premium-policies-umbrella"><span class="category-icon segment-umbrella" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v7a2 2 0 0 0 4 0"/><path d="M12 2v2"/><path d="M20.992 13a1 1 0 0 0 .97-1.274 10.284 10.284 0 0 0-19.923 0A1 1 0 0 0 3 13z"/></svg></span><span class="premium-option-copy"><span class="premium-option-info"><span class="premium-option-name">Umbrella</span><span class="premium-option-meta">Chubb</span></span><span class="premium-option-value"><span class="premium-option-amount">$830</span><span class="premium-option-share">17% <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></span></span></button>
+                <div class="premium-accordion" id="premium-policies-umbrella" role="region" aria-label="Umbrella policies" hidden><div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">Family umbrella</span><span class="premium-policy-carrier">Chubb</span></span><span class="premium-policy-price">$830 / yr</span></div></div>
               </div>
-            </details>
+              <div class="premium-category">
+                <button class="premium-option" type="button" data-category="renters" data-value="$480" data-context="Renters / year" data-month="$40 / month" aria-pressed="false" aria-expanded="false" aria-controls="premium-policies-renters"><span class="category-icon segment-renters" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v18"/><path d="M6 12H4c-.6 0-1 .4-1 1v9"/><path d="M18 9h2c.6 0 1 .4 1 1v12"/><path d="M3 22h18"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span><span class="premium-option-copy"><span class="premium-option-info"><span class="premium-option-name">Renters</span><span class="premium-option-meta">Lemonade</span></span><span class="premium-option-value"><span class="premium-option-amount">$480</span><span class="premium-option-share">10% <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></span></span></button>
+                <div class="premium-accordion" id="premium-policies-renters" role="region" aria-label="Renters policies" hidden><div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">Downtown apartment</span><span class="premium-policy-carrier">Lemonade</span></span><span class="premium-policy-price">$480 / yr</span></div></div>
+              </div>
+            </div>
           </div>
-        </section>
-
-        <section class="card policy-footer" aria-labelledby="about-title">
-          <h2 id="about-title">About these insights</h2>
-          <p>Insights are based on the documents provided; incomplete or missing documents may result in incomplete or inaccurate insights. OVIE is not intended to serve as evidence of insurance for third parties, nor does OVIE provide advice or guidance on the adequacy of coverage. Users should consult their agent or insurance carrier for coverage-related questions or determinations.</p>
-          <div class="footer-disclosures">
-            <details>
-              <summary><span class="summary-title">Document sources</span><span class="count-pill">3</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body"><ul class="source-line"><li>Declarations and required minimum underlying limits, pages 2–3</li><li>Personal Umbrella Liability Policy, form 231-6162 08 17</li><li>Amendment of Provisions — Michigan, form 231-6174 02 25</li></ul></div>
-            </details>
-            <details>
-              <summary><span class="summary-title">Not available in the pages analyzed</span><span class="count-pill">4</span><img class="detail-chevron" src="assets/lucide/chevron-down.svg" alt=""></summary>
-              <div class="detail-body"><ul class="source-line"><li>Complete classes of insureds beyond the two named insureds</li><li>Definitions for insured, occurrence, loss, personal injury, bodily injury and property damage</li><li>Defense-cost treatment and coverage territory</li><li>Complete policy exclusions and exact follow-form/drop-down wording</li></ul></div>
-            </details>
-          </div>
-        </section>
-
-        <div class="feedback-row" role="group" aria-labelledby="feedbackQuestion">
-          <span class="feedback-question" id="feedbackQuestion">Were these insights helpful?</span>
-          <button class="feedback-button" type="button" aria-label="Yes, these insights were helpful" aria-pressed="false" data-feedback="up"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg></button>
-          <button class="feedback-button" type="button" aria-label="No, these insights were not helpful" aria-pressed="false" data-feedback="down"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg></button>
         </div>
+      </section>
 
-      </main>
+      <section aria-labelledby="attention-heading">
+        <div class="attention" id="expiryAttention">
+          <div class="attention-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div class="attention-copy">
+            <p class="attention-title" id="attention-heading">Home policy expires in 12 days</p>
+            <p class="attention-text">Review the Travelers renewal before September 12.</p>
+          </div>
+        </div>
+      </section>
 
-      <form class="chat-dock" id="chatForm" novalidate>
-        <label for="chatInput" class="sr-only">Ask Ovie about this policy</label>
-        <input class="chat-input" id="chatInput" type="text" placeholder="Ask Ovie…" autocomplete="off">
-        <button class="chat-send" type="submit" aria-label="Ask Ovie"><img src="assets/lucide/mic.svg" alt=""></button>
-      </form>
-    </div>
+      <section id="policies" aria-labelledby="policies-heading">
+        <div class="card policy-list">
+          <div class="card-section-head">
+            <h2 class="section-heading" id="policies-heading">Your policies</h2>
+            <button class="text-button" id="togglePolicies" type="button" aria-expanded="false">See all 5</button>
+          </div>
+          <details class="policy" id="policy-auto">
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">2022 Honda CR-V</span><span class="policy-meta">Auto · State Farm · •• 4721</span></span>
+              <span><span class="policy-status">Active</span><span class="policy-premium">$170 / mo</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Jan 20, 2026–2027</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$2,040</span></span></div></div>
+          </details>
+          <details class="policy" id="policy-home">
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">Austin home</span><span class="policy-meta">Home · Travelers · •• 1840</span></span>
+              <span><span class="policy-status">Active</span><span class="policy-premium">$126 / mo</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Sep 12, 2025–2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$1,510</span></span></div></div>
+          </details>
+          <details class="policy" id="policy-umbrella">
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v7a2 2 0 0 0 4 0"/><path d="M12 2v2"/><path d="M20.992 13a1 1 0 0 0 .97-1.274 10.284 10.284 0 0 0-19.923 0A1 1 0 0 0 3 13z"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">Family umbrella</span><span class="policy-meta">Umbrella · Chubb · •• 9062</span></span>
+              <span><span class="policy-status">Active</span><span class="policy-premium">$69 / mo</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Dec 5, 2025–2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$830</span></span></div></div>
+          </details>
+          <details class="policy extra-policy" hidden>
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">Downtown apartment</span><span class="policy-meta">Renters · Lemonade · •• 3218</span></span>
+              <span><span class="policy-status">Active</span><span class="policy-premium">$20 / mo</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Nov 2, 2025–2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$240</span></span></div></div>
+          </details>
+          <details class="policy extra-policy" hidden>
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">2018 Toyota Camry</span><span class="policy-meta">Auto · State Farm · •• 7784</span></span>
+              <span><span class="policy-status">Active</span><span class="policy-premium">$20 / mo</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Jul 8, 2026–2027</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$240</span></span></div></div>
+          </details>
+        </div>
+      </section>
+
+      <section id="expiries" aria-labelledby="expiries-heading">
+        <div class="card expiry-list">
+          <div class="card-section-head"><h2 class="section-heading" id="expiries-heading" tabindex="-1">Expiry notifications</h2></div>
+          <div class="expiry-row"><div class="expiry-date"><span class="expiry-month">Sep</span><span class="expiry-day">12</span></div><div class="expiry-copy"><span class="expiry-name">Austin home</span><span class="expiry-carrier">Travelers · Renewal available</span></div><span class="status-pill warning">12 days</span></div>
+          <div class="expiry-row"><div class="expiry-date"><span class="expiry-month">Nov</span><span class="expiry-day">02</span></div><div class="expiry-copy"><span class="expiry-name">Downtown apartment</span><span class="expiry-carrier">Lemonade</span></div><span class="status-pill neutral">63 days</span></div>
+          <div class="expiry-row"><div class="expiry-date"><span class="expiry-month">Dec</span><span class="expiry-day">05</span></div><div class="expiry-copy"><span class="expiry-name">Family umbrella</span><span class="expiry-carrier">Chubb</span></div><span class="status-pill neutral">96 days</span></div>
+        </div>
+      </section>
+
+      <section id="insights" aria-labelledby="insights-heading">
+        <div class="card insight-list">
+          <div class="card-section-head"><h2 class="section-heading" id="insights-heading">Ovie insights</h2><button class="text-button" type="button" id="openInsights">See all</button></div>
+          <button class="insight" type="button" data-insight="Austin home (Travelers, •• 1840): the supplied pages do not establish flood coverage. Check with Travelers before renewal.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">Flood coverage needs verification</span><span class="insight-meta">Austin home · Travelers · •• 1840</span><span class="insight-text">The analyzed home policy pages do not establish flood coverage.</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="insight" type="button" data-insight="2022 Honda CR-V and Family umbrella: the listed auto liability limit meets the umbrella schedule's $500,000 minimum.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">Auto limit matches umbrella requirement</span><span class="insight-meta">2022 Honda CR-V + Family umbrella</span><span class="insight-text">The listed auto liability limit meets the scheduled minimum.</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </section>
+    </main>
   </div>
 
-  <dialog id="bottomSheet" aria-labelledby="sheetTitle">
-    <div class="sheet-handle" aria-hidden="true"></div>
-    <div class="sheet-head"><h2 id="sheetTitle">Source from your policy</h2><button class="icon-button" type="button" id="closeSheet" aria-label="Close"><img src="assets/lucide/x.svg" alt=""></button></div>
-    <div class="sheet-body" id="sheetBody"></div>
-  </dialog>
+  <nav class="bottom-nav" aria-label="Primary navigation">
+    <a class="nav-link" href="#premium-heading" aria-current="page"><span class="nav-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg></span><span>Home</span></a>
+    <button class="nav-button" type="button" id="searchOvie"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></span><span>Search</span></button>
+    <button class="nav-upload" type="button" id="uploadPolicy" aria-label="Upload"><span class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg></span></button>
+    <a class="nav-link" href="#insights"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span><span>Insights</span></a>
+    <button class="nav-button" type="button" id="askOvie"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/></svg></span><span>Ask Ovie</span></button>
+  </nav>
+  <input class="file-picker-input" id="policyFilePicker" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple tabindex="-1" aria-hidden="true">
 
-  <dialog class="feedback-dialog" id="feedbackDialog" aria-labelledby="feedbackDialogTitle">
+  <dialog id="ovieSheet" aria-labelledby="sheetTitle">
     <div class="sheet-handle" aria-hidden="true"></div>
-    <div class="sheet-head">
-      <h2 id="feedbackDialogTitle">Tell us more</h2>
-      <button class="icon-button" type="button" id="closeFeedback" aria-label="Close feedback form"><img src="assets/lucide/x.svg" alt=""></button>
-    </div>
-    <div class="sheet-body">
-      <form class="feedback-form" id="feedbackForm" novalidate>
-        <fieldset>
-          <legend class="sr-only">What could be improved?</legend>
-          <label class="feedback-option"><span>Insights are unclear or confusing</span><input type="radio" name="feedbackReason" value="unclear"></label>
-          <label class="feedback-option"><span>Information is incorrect</span><input type="radio" name="feedbackReason" value="incorrect"></label>
-          <label class="feedback-option"><span>Missing or incomplete details</span><input type="radio" name="feedbackReason" value="missing"></label>
-          <label class="feedback-option"><span>Other (tell us more)</span><input type="radio" name="feedbackReason" value="other"></label>
-        </fieldset>
-        <div class="feedback-followup" id="feedbackFollowup" hidden>
-          <label for="feedbackConcern">Enter your concern here</label>
-          <textarea id="feedbackConcern" name="feedbackConcern" placeholder="Type here"></textarea>
-        </div>
-        <p class="feedback-error" id="feedbackError" role="alert" aria-live="polite"></p>
-        <div class="feedback-actions">
-          <button class="feedback-submit" type="submit">Submit</button>
-          <button class="feedback-cancel" id="cancelFeedback" type="button">Cancel</button>
-        </div>
-      </form>
-    </div>
+    <div class="sheet-header"><h2 class="sheet-title" id="sheetTitle">Ask Ovie</h2><button class="icon-button" type="button" id="closeSheet" aria-label="Close Ask Ovie"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <div class="sheet-body"><p>Ask a question grounded in the policy documents you uploaded.</p><div class="prompt-list"><button class="prompt-button" type="button">What should I review before my home policy renews?</button><button class="prompt-button" type="button">Does my umbrella policy list the required auto limit?</button><button class="prompt-button" type="button">Summarize my upcoming expirations</button></div></div>
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
-    const sheet = document.getElementById('bottomSheet');
-    const sheetTitle = document.getElementById('sheetTitle');
-    const sheetBody = document.getElementById('sheetBody');
-    const closeSheet = document.getElementById('closeSheet');
-    const feedbackDialog = document.getElementById('feedbackDialog');
-    const feedbackForm = document.getElementById('feedbackForm');
-    const feedbackFollowup = document.getElementById('feedbackFollowup');
-    const feedbackConcern = document.getElementById('feedbackConcern');
-    const feedbackError = document.getElementById('feedbackError');
-    const toast = document.getElementById('toast');
-    const phone = document.getElementById('phone');
-    const topShell = document.querySelector('.top-shell');
-    const titleRow = document.querySelector('.page-title-row');
-    let toastTimer;
-    let lastScrollTop = phone.scrollTop;
-    let scrollFramePending = false;
-    let titleTransitionLockedUntil = 0;
+    (() => {
+      const premiumValue = document.querySelector('#premiumValue');
+      const premiumContext = document.querySelector('#premium-context');
+      const premiumMonth = document.querySelector('#premium-month');
+      const premiumOptions = Array.from(document.querySelectorAll('.premium-option'));
+      const premiumAccordions = Array.from(document.querySelectorAll('.premium-accordion'));
+      const donutSegments = Array.from(document.querySelectorAll('.donut-segment'));
+      const toast = document.querySelector('#toast');
+      let toastTimer;
 
-    function updateTitleVisibility() {
-      const currentScrollTop = Math.max(0, phone.scrollTop);
-      const movement = currentScrollTop - lastScrollTop;
-
-      if (currentScrollTop <= 8) {
-        topShell.classList.remove('title-hidden');
-        titleRow.inert = false;
-      } else if (performance.now() < titleTransitionLockedUntil) {
-        scrollFramePending = false;
-        return;
-      } else if (Math.abs(movement) >= 6) {
-        const shouldHide = movement > 0 && currentScrollTop > 42;
-        const isHidden = topShell.classList.contains('title-hidden');
-
-        if (shouldHide !== isHidden) {
-          topShell.classList.toggle('title-hidden', shouldHide);
-          titleRow.inert = shouldHide;
-          titleTransitionLockedUntil = performance.now() + 320;
-          setTimeout(() => { lastScrollTop = phone.scrollTop; }, 320);
-        }
-
-        lastScrollTop = currentScrollTop;
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2600);
       }
 
-      scrollFramePending = false;
-    }
-
-    phone.addEventListener('scroll', () => {
-      if (scrollFramePending) return;
-      scrollFramePending = true;
-      requestAnimationFrame(updateTitleVisibility);
-    }, { passive: true });
-
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-    }
-
-    function sheetElement(tag, className, text) {
-      const element = document.createElement(tag);
-      if (className) element.className = className;
-      if (text) element.textContent = text;
-      return element;
-    }
-
-    function sheetAction(label, message) {
-      const button = sheetElement('button', 'sheet-action', label);
-      button.type = 'button';
-      button.addEventListener('click', () => showToast(message));
-      return button;
-    }
-
-    function openSource(button) {
-      sheetTitle.textContent = button.dataset.sourceTitle || 'Source from your policy';
-      sheetBody.replaceChildren(
-        sheetElement('div', 'source-kicker', button.dataset.sourceMeta || 'Policy document'),
-        sheetElement('div', 'source-excerpt', button.dataset.sourceExcerpt || ''),
-        sheetAction('View in document', 'Document view is not connected in this mock.')
-      );
-      sheet.showModal();
-    }
-
-    function openPolicy(button) {
-      sheetTitle.textContent = `${button.dataset.policy} policy`;
-      const status = sheetElement('div', 'sheet-value', 'Not available');
-      status.style.color = 'var(--status-warning)';
-      const note = sheetElement('div', 'sheet-note');
-      note.append(sheetElement('strong', '', 'Why this matters'), document.createElement('br'), document.createTextNode('Your umbrella policy requires the underlying policy to remain active at or above its required limit. This summary cannot confirm the current limit.'));
-      sheetBody.replaceChildren(
-        sheetElement('div', 'source-kicker', button.dataset.source),
-        sheetElement('div', 'sheet-label', 'Underlying policy number'),
-        sheetElement('div', 'sheet-value', button.dataset.number),
-        sheetElement('div', 'sheet-label', 'Policy period'),
-        sheetElement('div', 'sheet-value', 'Not available in provided documents'),
-        sheetElement('div', 'sheet-label', 'Current documented limit'),
-        status,
-        sheetElement('div', 'sheet-label', 'Required minimum'),
-        sheetElement('div', 'sheet-value', button.dataset.requirement),
-        note,
-        sheetAction('Review policy document', 'Policy document review is not connected in this mock.')
-      );
-      sheet.showModal();
-    }
-
-    document.querySelectorAll('.source-button').forEach(button => button.addEventListener('click', event => {
-      event.stopPropagation();
-      openSource(button);
-    }));
-
-    document.querySelectorAll('.linked-policy').forEach(button => button.addEventListener('click', () => openPolicy(button)));
-
-    closeSheet.addEventListener('click', () => sheet.close());
-    sheet.addEventListener('click', event => {
-      const bounds = sheet.getBoundingClientRect();
-      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) sheet.close();
-    });
-
-    function openFeedbackDialog() {
-      feedbackForm.reset();
-      feedbackFollowup.hidden = true;
-      feedbackError.textContent = '';
-      feedbackDialog.showModal();
-    }
-
-    function closeFeedbackDialog() {
-      feedbackDialog.close();
-    }
-
-    document.getElementById('closeFeedback').addEventListener('click', closeFeedbackDialog);
-    document.getElementById('cancelFeedback').addEventListener('click', closeFeedbackDialog);
-    feedbackDialog.addEventListener('click', event => {
-      const bounds = feedbackDialog.getBoundingClientRect();
-      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeFeedbackDialog();
-    });
-
-    feedbackForm.addEventListener('change', event => {
-      if (event.target.name !== 'feedbackReason') return;
-      feedbackFollowup.hidden = event.target.value !== 'other';
-      feedbackError.textContent = '';
-    });
-
-    feedbackForm.addEventListener('submit', event => {
-      event.preventDefault();
-      const reason = new FormData(feedbackForm).get('feedbackReason');
-
-      if (!reason) {
-        feedbackError.textContent = 'Select one reason to continue.';
-        feedbackForm.querySelector('input[name="feedbackReason"]').focus();
-        return;
+      function resetPremium() {
+        premiumValue.textContent = '$4,860';
+        premiumContext.textContent = 'Total / year';
+        premiumMonth.textContent = '$405 / month';
+        premiumOptions.forEach((option) => {
+          option.setAttribute('aria-pressed', 'false');
+          option.setAttribute('aria-expanded', 'false');
+        });
+        premiumAccordions.forEach((panel) => { panel.hidden = true; });
+        donutSegments.forEach((segment) => segment.classList.remove('active', 'dim'));
       }
 
-      if (reason === 'other' && !feedbackConcern.value.trim()) {
-        feedbackError.textContent = 'Enter your concern to continue.';
-        feedbackConcern.focus();
-        return;
-      }
+      premiumOptions.forEach((option) => {
+        option.addEventListener('click', () => {
+          const opening = option.getAttribute('aria-expanded') === 'false';
+          premiumOptions.forEach((item) => {
+            item.setAttribute('aria-pressed', String(opening && item === option));
+            item.setAttribute('aria-expanded', String(opening && item === option));
+          });
+          premiumAccordions.forEach((panel) => {
+            panel.hidden = !(opening && panel.id === option.getAttribute('aria-controls'));
+          });
+          if (!opening) {
+            resetPremium();
+            return;
+          }
+          premiumValue.textContent = option.dataset.value;
+          premiumContext.textContent = option.dataset.context;
+          premiumMonth.textContent = option.dataset.month;
+          donutSegments.forEach((segment) => {
+            const selected = segment.dataset.category === option.dataset.category;
+            segment.classList.toggle('active', selected);
+            segment.classList.toggle('dim', !selected);
+          });
+        });
+      });
 
-      closeFeedbackDialog();
-      showToast('Thanks for helping us improve these insights.');
-    });
+      const extraPolicies = Array.from(document.querySelectorAll('.extra-policy'));
+      const togglePolicies = document.querySelector('#togglePolicies');
+      togglePolicies.addEventListener('click', () => {
+        const opening = togglePolicies.getAttribute('aria-expanded') === 'false';
+        extraPolicies.forEach((policy) => { policy.hidden = !opening; });
+        togglePolicies.setAttribute('aria-expanded', String(opening));
+        togglePolicies.textContent = opening ? 'Show less' : 'See all 5';
+      });
 
-    document.getElementById('shareButton').addEventListener('click', () => showToast('Share options opened.'));
-    document.getElementById('chatForm').addEventListener('submit', event => {
-      event.preventDefault();
-      const input = document.getElementById('chatInput');
-      showToast(input.value.trim() ? 'Opening Ask Ovie with your question.' : 'Ask Ovie voice input would start here.');
-    });
-    document.querySelectorAll('.feedback-button').forEach(button => button.addEventListener('click', () => {
-      document.querySelectorAll('.feedback-button').forEach(option => option.setAttribute('aria-pressed', String(option === button)));
-      if (button.dataset.feedback === 'down') {
-        openFeedbackDialog();
-      } else {
-        showToast('Thanks for your feedback.');
-      }
-    }));
-    document.querySelectorAll('.placeholder-action').forEach(button => button.addEventListener('click', () => showToast(button.dataset.message)));
+      document.querySelector('#notificationsButton').addEventListener('click', () => {
+        document.querySelector('#expiries').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelector('#expiries-heading').focus({ preventScroll: true });
+      });
+
+      document.querySelector('#profileButton').addEventListener('click', () => showToast('Profile and settings'));
+
+      document.querySelectorAll('.insight').forEach((button) => {
+        button.addEventListener('click', () => showToast(button.dataset.insight));
+      });
+      document.querySelector('#openInsights').addEventListener('click', () => showToast('2 current insights from your policy documents'));
+
+      document.querySelector('#searchOvie').addEventListener('click', () => showToast('Search policies and documents'));
+
+      const uploadPolicy = document.querySelector('#uploadPolicy');
+      const policyFilePicker = document.querySelector('#policyFilePicker');
+      uploadPolicy.addEventListener('click', () => {
+        policyFilePicker.value = '';
+        policyFilePicker.click();
+      });
+      policyFilePicker.addEventListener('change', () => {
+        const files = Array.from(policyFilePicker.files || []);
+        if (!files.length) return;
+        showToast(files.length === 1 ? `${files[0].name} selected for upload` : `${files.length} documents selected for upload`);
+      });
+
+      document.querySelectorAll('.bottom-nav .nav-link').forEach((link) => {
+        link.addEventListener('click', () => {
+          document.querySelectorAll('.bottom-nav .nav-link').forEach((item) => item.removeAttribute('aria-current'));
+          link.setAttribute('aria-current', 'page');
+        });
+      });
+
+      const ovieSheet = document.querySelector('#ovieSheet');
+      const askOvie = document.querySelector('#askOvie');
+      const closeSheet = document.querySelector('#closeSheet');
+      askOvie.addEventListener('click', () => ovieSheet.showModal());
+      closeSheet.addEventListener('click', () => ovieSheet.close());
+      ovieSheet.addEventListener('click', (event) => {
+        if (event.target === ovieSheet) ovieSheet.close();
+      });
+      document.querySelectorAll('.prompt-button').forEach((button) => {
+        button.addEventListener('click', () => {
+          showToast('Question added to Ask Ovie');
+          ovieSheet.close();
+        });
+      });
+    })();
   </script>
 </body>
 </html>
