@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +12,8 @@
     :root {
       --action-primary: #6b4062;
       --action-primary-dark: #54324d;
+      --action-primary-disabled-bg: #e8dee5;
+      --action-primary-disabled-text: #795972;
       --action-secondary: #0396ff;
       --status-success: #0d7d07;
       --status-warning: #8a5a06;
@@ -39,6 +40,7 @@
       --shadow-md: 0 6px 16px rgba(17, 17, 17, 0.12);
       --focus: 0 0 0 3px rgba(107, 64, 98, 0.24);
       --z-sticky: 120;
+      --z-dropdown: 300;
       --z-backdrop: 500;
       --z-sheet: 700;
       --z-toast: 900;
@@ -166,10 +168,18 @@
 
     .page-title-row h1 { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
 
+    .title-actions {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .title-actions .icon-button img { width: 19px; height: 19px; }
+
     .title-share {
       min-width: 44px;
       min-height: 44px;
-      margin-left: auto;
+      margin-left: 0;
       padding: 0;
       border: 0;
       border-radius: 12px;
@@ -477,6 +487,10 @@
     .sheet-value { margin-top: 3px; font-size: 14px; line-height: 20px; font-weight: 600; }
     .sheet-note { margin-top: 14px; padding: 12px; border-radius: var(--radius-md); background: var(--bg-warning); color: #634106; font-size: 14px; line-height: 20px; }
     .sheet-action { width: 100%; min-height: 44px; margin-top: 18px; border: 0; border-radius: 12px; background: var(--action-primary); color: white; font-weight: 600; cursor: pointer; }
+    .share-confirm { margin-top: 18px; }
+    .share-disclaimer { margin-top: 0; color: var(--text-tertiary); font-size: 14px; line-height: 21px; }
+    .share-disclaimer p { margin: 0; }
+    .share-disclaimer p + p { margin-top: 10px; }
 
     .feedback-dialog { max-height: min(86dvh, 720px); }
     .feedback-dialog .sheet-body { max-height: calc(86dvh - 75px); padding-top: 8px; }
@@ -498,6 +512,75 @@
     .feedback-submit:hover { background: var(--action-primary-dark); }
     .feedback-cancel { border: 1px solid var(--border-default); background: var(--bg-primary); color: var(--text-secondary); }
     .feedback-cancel:hover { background: var(--bg-secondary); }
+
+    .share-page {
+      position: fixed;
+      inset: 0 auto auto 50%;
+      transform: translateX(-50%);
+      z-index: calc(var(--z-sheet) - 20);
+      width: min(480px, 100vw);
+      height: 100dvh;
+      min-height: 680px;
+      overflow-y: auto;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      scrollbar-width: none;
+    }
+
+    .share-page[hidden] { display: none; }
+    .share-page::-webkit-scrollbar { display: none; }
+    .share-page-header { position: sticky; top: 0; z-index: 1; background: rgba(255, 255, 255, .98); border-bottom: 1px solid var(--border-subtle); }
+    .share-page-title { min-height: 64px; padding: 8px 12px 12px 24px; display: grid; grid-template-columns: minmax(0, 1fr) 44px; column-gap: 8px; align-items: start; }
+    .share-page-title-copy { min-width: 0; }
+    .share-page-title h2 { margin: 0; text-align: left; font-size: 18px; line-height: 24px; font-weight: 600; }
+    .share-page-content { padding: 24px 24px calc(32px + env(safe-area-inset-bottom)); }
+    .share-intro { margin: 4px 0 0; font-size: 12px; line-height: 16px; font-weight: 400; color: var(--text-secondary); }
+
+    .shared-item { margin-top: 0; padding: 12px; border-radius: 12px; background: var(--bg-info); display: flex; align-items: center; gap: 12px; }
+    .shared-item-icon { width: 38px; height: 38px; flex: 0 0 auto; border-radius: 12px; background: var(--bg-primary); display: grid; place-items: center; }
+    .shared-item-icon img { width: 19px; height: 19px; }
+    .shared-item-copy { min-width: 0; display: flex; flex-direction: column; }
+    .shared-item-label { font-size: 12px; line-height: 16px; color: var(--text-tertiary); }
+    .shared-item-title { margin-top: 2px; font-size: 14px; line-height: 20px; font-weight: 600; overflow-wrap: anywhere; }
+    .shared-item-meta { margin-top: 1px; font-size: 12px; line-height: 16px; color: var(--text-tertiary); }
+
+    .share-masking { margin-top: 12px; }
+    .share-masking-copy { margin: 0; font-size: 14px; line-height: 20px; font-weight: 400; color: var(--text-secondary); }
+    .share-masking-action { position: relative; display: inline; margin: 0; padding: 0; border: 0; background: transparent; color: var(--action-primary); font: inherit; font-weight: 600; cursor: pointer; }
+    .share-masking-action::before { content: ""; position: absolute; inset: -12px -8px; }
+    .share-masking-action:hover { color: var(--action-primary-dark); }
+
+    .share-form { margin-top: 20px; }
+    .share-field { display: block; }
+    .share-field + .share-field { margin-top: 14px; }
+    .share-field > span { display: block; margin-bottom: 7px; font-size: 14px; line-height: 20px; font-weight: 600; }
+    .share-field input { width: 100%; min-height: 52px; padding: 13px 14px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background-color: var(--bg-primary); color: var(--text-primary); font: inherit; font-size: 14px; line-height: 20px; }
+    .share-field input::placeholder { color: var(--text-tertiary); }
+    .share-field input:focus-visible { outline: none; border-color: var(--action-primary); box-shadow: var(--focus); }
+    .share-select-trigger { width: 100%; min-height: 52px; padding: 13px 14px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-primary); color: var(--text-primary); display: flex; align-items: center; justify-content: space-between; gap: 12px; font: inherit; font-size: 14px; line-height: 20px; text-align: left; cursor: pointer; }
+    .share-select-trigger:hover { border-color: var(--action-primary); }
+    .share-select-trigger:focus-visible, .share-select-trigger[aria-expanded="true"] { outline: none; border-color: var(--action-primary); box-shadow: var(--focus); }
+    .share-select-chevron { width: 18px; height: 18px; flex: 0 0 auto; background: var(--action-primary); -webkit-mask: url('assets/lucide/chevron-down.svg') center / contain no-repeat; mask: url('assets/lucide/chevron-down.svg') center / contain no-repeat; transition: transform 180ms ease-out; }
+    .share-select-trigger[aria-expanded="true"] .share-select-chevron { transform: rotate(180deg); }
+    .share-select-menu { position: fixed; inset: auto; width: auto; max-height: 188px; margin: 0; padding: 6px; overflow-y: auto; border: 1px solid var(--action-primary); border-radius: var(--radius-md); background: var(--bg-primary); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+    .share-select-menu::backdrop { background: transparent; }
+    .share-select-option { width: 100%; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 8px; background: transparent; color: var(--text-secondary); display: block; font: inherit; font-size: 14px; line-height: 20px; text-align: left; cursor: pointer; }
+    .share-select-option:hover, .share-select-option:focus-visible { outline: none; background: var(--bg-info); color: var(--action-primary); box-shadow: none; }
+    .share-select-option[aria-selected="true"] { background: var(--bg-info); color: var(--action-primary); font-weight: 600; }
+    .share-page-actions { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .share-primary, .share-secondary { width: 100%; min-height: 48px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+    .share-primary { border: 0; background: var(--action-primary); color: white; }
+    .share-primary:hover:not(:disabled) { background: var(--action-primary-dark); }
+    .sheet-action:disabled, .feedback-submit:disabled, .share-primary:disabled { background: var(--action-primary-disabled-bg); color: var(--action-primary-disabled-text); box-shadow: none; opacity: 1; cursor: not-allowed; }
+    .share-secondary { border: 1px solid var(--border-default); background: var(--bg-primary); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .share-secondary:hover { background: var(--bg-secondary); }
+    .share-secondary img { width: 18px; height: 18px; }
+    .share-link-note { margin: 8px 0 0; font-size: 12px; line-height: 18px; font-style: normal; text-align: center; color: var(--text-tertiary); }
+    .share-legal { margin-top: 16px; text-align: center; }
+    .share-legal-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; }
+    .share-legal-separator { color: var(--text-tertiary); }
+    .share-legal-links button { min-height: 32px; padding: 4px 0; border: 0; background: transparent; color: var(--text-primary); font-size: 12px; line-height: 16px; font-weight: 600; cursor: pointer; }
+    .share-legal-links button:hover { color: var(--action-primary); }
 
     .toast {
       position: fixed;
@@ -523,6 +606,9 @@
     @media (max-width: 420px) {
       .page-canvas { display: block; }
       .phone { width: 100vw; box-shadow: none; }
+      .share-page { left: 0; width: 100vw; transform: none; }
+      .share-page-title { padding-left: 16px; }
+      .share-page-content { padding-right: 16px; padding-left: 16px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -541,7 +627,10 @@
         <div class="page-title-row">
           <button class="icon-button placeholder-action" type="button" aria-label="Go back" data-message="Back navigation is not connected in this mock."><img src="assets/lucide/arrow-left.svg" alt=""></button>
           <h1>Insights</h1>
-          <button class="title-share" type="button" id="shareButton" aria-label="Share"><img src="assets/lucide/share-2.svg" alt=""></button>
+          <div class="title-actions">
+            <button class="icon-button placeholder-action" type="button" aria-label="Search" data-message="Search is not connected in this mock."><img src="assets/lucide/search.svg" alt=""></button>
+            <button class="title-share" type="button" id="shareButton" aria-label="Share"><img src="assets/lucide/share-2.svg" alt=""></button>
+          </div>
         </div>
       </header>
 
@@ -723,6 +812,57 @@
         <input class="chat-input" id="chatInput" type="text" placeholder="Ask Ovie…" autocomplete="off">
         <button class="chat-send" type="submit" aria-label="Ask Ovie"><img src="assets/lucide/mic.svg" alt=""></button>
       </form>
+
+      <section class="share-page" id="sharePage" aria-labelledby="sharePageTitle" hidden>
+        <header class="share-page-header">
+          <div class="status-row" aria-hidden="true"><span>9:41</span><span class="system-status">5G&nbsp;&nbsp;96%</span></div>
+          <div class="share-page-title">
+            <div class="share-page-title-copy">
+              <h2 id="sharePageTitle">Share</h2>
+              <p class="share-intro">Send a secure, time-limited copy.</p>
+            </div>
+            <button class="icon-button" id="closeSharePage" type="button" aria-label="Close sharing page"><img src="assets/lucide/x.svg" alt=""></button>
+          </div>
+        </header>
+
+        <div class="share-page-content">
+          <div class="shared-item" aria-label="What you are sharing">
+            <span class="shared-item-icon"><img src="assets/lucide/brain-circuit-plum.svg" alt=""></span>
+            <span class="shared-item-copy">
+              <span class="shared-item-label">What you’re sharing</span>
+              <span class="shared-item-title">Personal Umbrella Liability insights</span>
+              <span class="shared-item-meta">Insights only · Based on policy ••8389</span>
+            </span>
+          </div>
+
+          <div class="share-masking">
+            <p class="share-masking-copy">Personal information will be masked. Sensitive details are hidden before sharing. <button class="share-masking-action placeholder-action" type="button" data-message="Sharing preferences are not connected in this mock.">Manage what’s shared</button></p>
+          </div>
+
+          <form class="share-form" id="shareForm" novalidate>
+            <label class="share-field" for="shareEmail"><span>Recipient email</span><input id="shareEmail" name="shareEmail" type="email" placeholder="name@example.com" autocomplete="email" required></label>
+            <div class="share-field">
+              <span id="shareExpiryLabel">Link expires after</span>
+              <input id="shareExpiry" name="shareExpiry" type="hidden" value="1-month">
+              <button class="share-select-trigger" id="shareExpiryTrigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="shareExpiryMenu" aria-labelledby="shareExpiryLabel shareExpiryValue" popovertarget="shareExpiryMenu" popovertargetaction="toggle"><span id="shareExpiryValue">1 month</span><span class="share-select-chevron" aria-hidden="true"></span></button>
+              <div class="share-select-menu" id="shareExpiryMenu" role="listbox" aria-labelledby="shareExpiryLabel" popover="auto">
+                <button class="share-select-option" type="button" role="option" data-value="7-days" aria-selected="false">7 days</button>
+                <button class="share-select-option" type="button" role="option" data-value="1-month" aria-selected="true">1 month</button>
+                <button class="share-select-option" type="button" role="option" data-value="3-months" aria-selected="false">3 months</button>
+              </div>
+            </div>
+            <div class="share-page-actions">
+              <button class="share-primary" id="inviteButton" type="submit" disabled>Share by email</button>
+              <button class="share-secondary" id="copyLinkButton" type="button"><img src="assets/lucide/link-2.svg" alt="">Copy secure link</button>
+            </div>
+            <p class="share-link-note">Anyone with the link can view the shared information until it expires.</p>
+          </form>
+
+          <div class="share-legal">
+            <div class="share-legal-links"><button class="placeholder-action" type="button" data-message="Privacy Policy is not connected in this mock.">Privacy Policy</button><span class="share-legal-separator" aria-hidden="true">·</span><button class="placeholder-action" type="button" data-message="Terms and Conditions are not connected in this mock.">Terms &amp; Conditions</button></div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 
@@ -776,7 +916,22 @@
     const phone = document.getElementById('phone');
     const topShell = document.querySelector('.top-shell');
     const titleRow = document.querySelector('.page-title-row');
+    const appMain = document.querySelector('main');
+    const chatDock = document.getElementById('chatForm');
+    const sharePage = document.getElementById('sharePage');
+    const closeSharePageButton = document.getElementById('closeSharePage');
+    const shareForm = document.getElementById('shareForm');
+    const shareEmail = document.getElementById('shareEmail');
+    const shareExpiry = document.getElementById('shareExpiry');
+    const shareExpiryTrigger = document.getElementById('shareExpiryTrigger');
+    const shareExpiryMenu = document.getElementById('shareExpiryMenu');
+    const shareExpiryValue = document.getElementById('shareExpiryValue');
+    const shareExpiryOptions = Array.from(shareExpiryMenu.querySelectorAll('[role="option"]'));
+    const inviteButton = document.getElementById('inviteButton');
+    const copyLinkButton = document.getElementById('copyLinkButton');
     let toastTimer;
+    let expiryTypeaheadTimer;
+    let expiryTypeahead = '';
     let lastScrollTop = phone.scrollTop;
     let scrollFramePending = false;
     let titleTransitionLockedUntil = 0;
@@ -867,6 +1022,85 @@
       sheet.showModal();
     }
 
+    function openShare() {
+      sheetTitle.textContent = 'Share';
+
+      const confirm = sheetElement('button', 'sheet-action share-confirm', 'Confirm Sharing');
+      confirm.type = 'button';
+      confirm.addEventListener('click', () => {
+        sheet.close();
+        openSharePage();
+      });
+
+      const disclaimer = sheetElement('div', 'share-disclaimer');
+      disclaimer.append(
+        sheetElement('p', '', 'This insight contains sensitive personal information protected under privacy laws. If you share it with individuals or organizations that are not legally bound by those laws, the information may be further disclosed and may no longer remain protected. OVIE is not responsible for consequences arising from your decision to share this information.'),
+        sheetElement('p', '', 'By selecting “Confirm Sharing,” you acknowledge and accept these terms.')
+      );
+
+      sheetBody.replaceChildren(disclaimer, confirm);
+      sheet.showModal();
+    }
+
+    function openSharePage() {
+      shareForm.reset();
+      setExpiry('1-month', '1 month');
+      inviteButton.disabled = true;
+      topShell.inert = true;
+      appMain.inert = true;
+      chatDock.inert = true;
+      sharePage.hidden = false;
+      requestAnimationFrame(() => shareEmail.focus());
+    }
+
+    function closeSharePage() {
+      if (shareExpiryMenu.matches(':popover-open')) shareExpiryMenu.hidePopover();
+      sharePage.hidden = true;
+      topShell.inert = false;
+      appMain.inert = false;
+      chatDock.inert = false;
+      document.getElementById('shareButton').focus();
+    }
+
+    function expiryLabel() {
+      return shareExpiryValue.textContent.toLowerCase();
+    }
+
+    function setExpiry(value, label) {
+      shareExpiry.value = value;
+      shareExpiryValue.textContent = label;
+      shareExpiryOptions.forEach(option => option.setAttribute('aria-selected', String(option.dataset.value === value)));
+      shareExpiry.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function positionExpiryMenu() {
+      const triggerBounds = shareExpiryTrigger.getBoundingClientRect();
+      const viewportGap = 8;
+      const menuGap = 6;
+      const menuWidth = triggerBounds.width;
+      shareExpiryMenu.style.width = `${menuWidth}px`;
+      shareExpiryMenu.style.left = `${Math.max(viewportGap, Math.min(triggerBounds.left, window.innerWidth - menuWidth - viewportGap))}px`;
+
+      const menuHeight = shareExpiryMenu.offsetHeight;
+      const below = triggerBounds.bottom + menuGap;
+      const above = triggerBounds.top - menuHeight - menuGap;
+      const fitsBelow = below + menuHeight <= window.innerHeight - viewportGap;
+      shareExpiryMenu.style.top = `${Math.max(viewportGap, fitsBelow ? below : above)}px`;
+    }
+
+    function openExpiryMenu(optionIndex = -1) {
+      if (!shareExpiryMenu.matches(':popover-open')) shareExpiryMenu.showPopover();
+      positionExpiryMenu();
+      const selectedIndex = shareExpiryOptions.findIndex(option => option.getAttribute('aria-selected') === 'true');
+      const focusIndex = optionIndex >= 0 ? optionIndex : Math.max(0, selectedIndex);
+      requestAnimationFrame(() => shareExpiryOptions[focusIndex].focus());
+    }
+
+    function closeExpiryMenu(restoreFocus = true) {
+      if (shareExpiryMenu.matches(':popover-open')) shareExpiryMenu.hidePopover();
+      if (restoreFocus) shareExpiryTrigger.focus();
+    }
+
     document.querySelectorAll('.source-button').forEach(button => button.addEventListener('click', event => {
       event.stopPropagation();
       openSource(button);
@@ -924,7 +1158,72 @@
       showToast('Thanks for helping us improve these insights.');
     });
 
-    document.getElementById('shareButton').addEventListener('click', () => showToast('Share options opened.'));
+    document.getElementById('shareButton').addEventListener('click', openShare);
+    closeSharePageButton.addEventListener('click', closeSharePage);
+    shareEmail.addEventListener('input', () => { inviteButton.disabled = !shareEmail.validity.valid; });
+    shareExpiryTrigger.addEventListener('keydown', event => {
+      const selectedIndex = Math.max(0, shareExpiryOptions.findIndex(option => option.getAttribute('aria-selected') === 'true'));
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        openExpiryMenu(selectedIndex);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        openExpiryMenu(0);
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        openExpiryMenu(shareExpiryOptions.length - 1);
+      }
+    });
+    shareExpiryOptions.forEach(option => option.addEventListener('click', () => {
+      setExpiry(option.dataset.value, option.textContent.trim());
+      closeExpiryMenu();
+    }));
+    shareExpiryMenu.addEventListener('keydown', event => {
+      const activeIndex = Math.max(0, shareExpiryOptions.indexOf(document.activeElement));
+      let nextIndex = activeIndex;
+
+      if (event.key === 'ArrowDown') nextIndex = (activeIndex + 1) % shareExpiryOptions.length;
+      else if (event.key === 'ArrowUp') nextIndex = (activeIndex - 1 + shareExpiryOptions.length) % shareExpiryOptions.length;
+      else if (event.key === 'Home') nextIndex = 0;
+      else if (event.key === 'End') nextIndex = shareExpiryOptions.length - 1;
+      else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeExpiryMenu();
+        return;
+      } else if (event.key.length === 1 && /[\p{L}\p{N}]/u.test(event.key)) {
+        clearTimeout(expiryTypeaheadTimer);
+        expiryTypeahead += event.key.toLowerCase();
+        expiryTypeaheadTimer = setTimeout(() => { expiryTypeahead = ''; }, 500);
+        const matchIndex = shareExpiryOptions.findIndex(option => option.textContent.trim().toLowerCase().startsWith(expiryTypeahead));
+        if (matchIndex >= 0) nextIndex = matchIndex;
+      } else {
+        return;
+      }
+
+      event.preventDefault();
+      shareExpiryOptions[nextIndex].focus();
+    });
+    shareExpiryMenu.addEventListener('toggle', event => {
+      const isOpen = event.newState === 'open';
+      shareExpiryTrigger.setAttribute('aria-expanded', String(isOpen));
+      if (isOpen) positionExpiryMenu();
+    });
+    sharePage.addEventListener('scroll', () => {
+      if (shareExpiryMenu.matches(':popover-open')) positionExpiryMenu();
+    }, { passive: true });
+    window.addEventListener('resize', () => {
+      if (shareExpiryMenu.matches(':popover-open')) positionExpiryMenu();
+    });
+    shareForm.addEventListener('submit', event => {
+      event.preventDefault();
+      if (!shareEmail.validity.valid) {
+        shareEmail.reportValidity();
+        shareEmail.focus();
+        return;
+      }
+      showToast(`Email share prepared for ${shareEmail.value.trim()}.`);
+    });
+    copyLinkButton.addEventListener('click', () => showToast(`Secure link copied. It expires after ${expiryLabel()}.`));
     document.getElementById('chatForm').addEventListener('submit', event => {
       event.preventDefault();
       const input = document.getElementById('chatInput');
