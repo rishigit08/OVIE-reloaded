@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -241,11 +242,7 @@
     .field-value { width: 100%; max-width: none; font-size: 14px; line-height: 20px; font-weight: 600; text-align: left; overflow-wrap: anywhere; }
 
     .coverage-card { overflow: hidden; }
-    .coverage-top { padding: 18px; background: var(--action-primary); color: #fff; }
-    .coverage-top-label { font-size: 14px; line-height: 20px; color: rgba(255,255,255,.82); }
-    .coverage-number { margin-top: 5px; font-size: 32px; line-height: 36px; font-weight: 600; letter-spacing: -0.02em; }
-    .coverage-caption { margin-top: 3px; font-size: 14px; line-height: 20px; }
-    .coverage-bottom { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .coverage-bottom { padding: 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .coverage-bottom + .coverage-bottom { border-top: 1px solid var(--border-subtle); }
     .aggregate-number { font-size: 18px; line-height: 24px; font-weight: 600; }
 
@@ -263,8 +260,6 @@
 
     .source-button:hover { background: var(--bg-info); }
     .source-button img { width: 19px; height: 19px; }
-    .source-button.on-dark img { filter: brightness(0) invert(1); opacity: .82; }
-
     .insights-note {
       width: 100%;
       min-height: 48px;
@@ -587,16 +582,14 @@
           </div>
         </section>
 
-        <section class="card coverage-card" aria-label="Coverage limits">
-          <div class="coverage-top">
-            <div style="display:flex;align-items:flex-start;gap:10px">
-              <div style="flex:1">
-                <div class="coverage-top-label">Umbrella protection</div>
-                <div class="coverage-number">$5 million</div>
-                <div class="coverage-caption">For each covered occurrence</div>
-              </div>
-              <button class="source-button on-dark" type="button" aria-label="View source for occurrence limit" data-source-title="Limit of liability" data-source-meta="Page 2 · Declarations" data-source-excerpt="Limit of Liability Each Occurrence: $5,000,000."><img src="assets/lucide/info.svg" alt=""></button>
+        <section class="card coverage-card" aria-labelledby="coverage-title">
+          <div class="section-heading card-section-heading"><div><h2 id="coverage-title">Umbrella protection</h2></div></div>
+          <div class="coverage-bottom">
+            <div>
+              <div class="field-label">For each covered occurrence</div>
+              <div class="aggregate-number">$5 million</div>
             </div>
+            <button class="source-button" type="button" aria-label="View source for occurrence limit" data-source-title="Limit of liability" data-source-meta="Page 2 · Declarations" data-source-excerpt="Limit of Liability Each Occurrence: $5,000,000."><img src="assets/lucide/info.svg" alt=""></button>
           </div>
           <div class="coverage-bottom">
             <div>
