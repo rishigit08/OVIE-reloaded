@@ -184,7 +184,6 @@
       color: var(--ink);
     }
 
-    .premium-label { margin: 0 14px; color: var(--muted); font-size: 12px; line-height: 16px; }
     .premium-value { margin: 0; color: var(--ink); font-size: 32px; line-height: 36px; font-weight: 600; letter-spacing: -.035em; }
     .premium-period { display: block; margin-top: 2px; color: var(--copy); font-size: 12px; line-height: 16px; font-weight: 400; }
 
@@ -267,13 +266,14 @@
     .premium-option[aria-expanded="true"] .premium-option-share svg { transform: rotate(90deg); }
 
     .premium-accordion {
-      padding: 0 14px 6px 58px;
-      background: color-mix(in srgb, var(--primary-soft) 54%, white);
+      width: 100%;
+      padding: 0;
+      background: var(--surface);
     }
 
     .premium-policy-row {
       min-height: 48px;
-      padding: 8px 10px 8px 0;
+      padding: 8px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -323,13 +323,12 @@
     .attention-title { margin: 0; color: var(--warning-ink); font-weight: 600; }
     .attention-source { margin: 2px 0 0; color: var(--copy); font-size: 12px; line-height: 16px; font-weight: 600; }
     .attention-text { margin: 4px 0 0; color: var(--copy); }
-    .attention-freshness { margin: 2px 0 0; color: var(--muted); font-size: 12px; line-height: 16px; }
     .attention-action { min-height: 44px; margin: 6px 0 -6px -8px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; border: 0; border-radius: 8px; background: transparent; color: var(--primary); font-weight: 600; cursor: pointer; }
     .attention-action:hover { background: var(--primary-soft); }
     .attention-action:active { color: var(--primary-dark); }
     .attention-action svg { flex: 0 0 auto; }
 
-    .policy-summary-strip { margin: 0 14px 6px; padding: 10px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; gap: 6px; border-radius: 10px; background: var(--canvas); }
+    .policy-summary-strip { margin: 0 14px 6px; padding: 10px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 6px; border-radius: 10px; background: var(--canvas); }
     .policy-summary-stat { min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
     .policy-summary-value { color: var(--ink); font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; }
     .policy-summary-label { color: var(--muted); font-size: 12px; line-height: 16px; }
@@ -371,7 +370,8 @@
     .policy-copy { min-width: 0; flex: 1; }
     .policy-name { display: block; font-weight: 600; }
     .policy-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
-    .policy-date { max-width: 100px; color: var(--copy); font-size: 12px; line-height: 16px; font-weight: 600; text-align: right; }
+    .policy-date { max-width: 100px; display: flex; flex-direction: column; align-items: flex-end; color: var(--copy); font-size: 12px; line-height: 16px; font-weight: 600; text-align: right; }
+    .policy-date span { display: block; white-space: nowrap; }
     .policy-chevron { flex: 0 0 auto; color: var(--muted); transition: transform 220ms var(--ease); }
     details[open] .policy-chevron { transform: rotate(180deg); }
 
@@ -383,11 +383,10 @@
     .policy-detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) max-content; justify-content: space-between; gap: 10px 32px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
     .detail-monthly { grid-column: 2; grid-row: 2; }
     .detail-source { grid-column: 1; grid-row: 2; }
-    .detail-label { display: block; color: var(--muted); font-size: 14px; line-height: 20px; }
+    .detail-label { display: block; color: var(--muted); font-size: 12px; line-height: 16px; }
     .detail-value { display: block; margin-top: 2px; font-weight: 600; }
 
     .ask-composer { min-height: 52px; margin-top: 10px; padding: 3px 3px 3px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-    .insight-list .ask-composer { margin: 14px; }
     .ask-composer:focus-within { border-color: var(--focus); outline: 3px solid color-mix(in srgb, var(--focus) 24%, transparent); }
     .ask-composer-input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--ink); }
     .ask-composer-input::placeholder { color: var(--muted); opacity: 1; }
@@ -396,6 +395,11 @@
     .ask-send:active { transform: scale(.96); }
     .ask-send:disabled { background: var(--primary-soft); color: var(--muted); cursor: default; }
     .ask-send:disabled:active { transform: none; }
+
+    .ask-home-card { padding: 14px; background: var(--primary); }
+    .ask-home-heading { margin: 0; color: var(--surface); font-size: 18px; line-height: 24px; font-weight: 600; }
+    .ask-home-card .ask-composer { margin-top: 10px; }
+    .ask-home-card .ask-composer:focus-within { border-color: var(--surface); outline-color: rgba(255, 255, 255, .38); }
 
     .expiry-list { display: flex; flex-direction: column; }
     .expiry-row { min-height: 68px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-soft); }
@@ -428,13 +432,16 @@
 
     .insight:last-child { border-bottom: 0; }
     .insight:hover { background: var(--canvas); }
-    .insight-icon { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; background: var(--primary-soft); color: var(--primary); }
+    .insight-icon { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; }
+    .insight.status-warning .insight-icon { background: var(--warning-soft); color: var(--warning); }
+    .insight.status-warning .insight-title { color: var(--warning-ink); }
+    .insight.status-success .insight-icon { background: var(--success-soft); color: var(--success); }
+    .insight.status-success .insight-title { color: var(--success); }
     .insight-copy { flex: 1; min-width: 0; }
     .insight-title { display: block; font-weight: 600; }
     .insight-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; font-weight: 600; }
-    .insight-text { display: block; margin-top: 2px; color: var(--muted); line-height: 20px; }
     .insight .chevron { margin-top: 8px; color: var(--muted); }
-    .section-support { margin: -2px 14px 8px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .section-support { margin: -10px 14px 8px; color: var(--muted); font-size: 12px; line-height: 16px; }
 
     .bottom-nav {
       position: fixed;
@@ -632,11 +639,10 @@
           <div class="attention-row urgent">
             <span class="attention-item-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
             <div class="attention-copy">
-              <p class="attention-title">Home policy term ends in 12 days</p>
+              <p class="attention-title">Home policy ends in 12 days</p>
               <p class="attention-source">Austin home · Travelers</p>
-              <p class="attention-text">Your uploaded policy shows a term ending Sep 12.</p>
-              <p class="attention-freshness">No newer policy document has been uploaded.</p>
-              <button class="attention-action" id="reviewPolicy" type="button">Review policy <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
+              <p class="attention-text">No newer policy document uploaded.</p>
+              <button class="attention-action" id="reviewPolicy" type="button">Review <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
             </div>
           </div>
           <div class="attention-row">
@@ -644,8 +650,8 @@
             <div class="attention-copy">
               <p class="attention-title">Flood coverage needs verification</p>
               <p class="attention-source">Austin home · Travelers</p>
-              <p class="attention-text">The uploaded policy pages do not establish flood coverage.</p>
-              <button class="attention-action" id="reviewInsight" type="button">Review insight <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
+              <p class="attention-text">Not established in uploaded policy.</p>
+              <button class="attention-action" id="reviewInsight" type="button">Review <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
             </div>
           </div>
         </div>
@@ -657,17 +663,16 @@
             <h2 class="section-heading" id="policies-heading">Your policies</h2>
             <button class="text-button" id="togglePolicies" type="button" aria-expanded="false">See all 5</button>
           </div>
-          <div class="policy-summary-strip" aria-label="5 policies, 4 policy types, 4 insurers, 4,860 dollars per year">
+          <div class="policy-summary-strip" aria-label="5 policies, 4 insurers, 4,860 dollars per year">
             <span class="policy-summary-stat"><span class="policy-summary-value">5</span><span class="policy-summary-label">Policies</span></span>
-            <span class="policy-summary-stat"><span class="policy-summary-value">4</span><span class="policy-summary-label">Policy types</span></span>
             <span class="policy-summary-stat"><span class="policy-summary-value">4</span><span class="policy-summary-label">Insurers</span></span>
             <span class="policy-summary-stat"><span class="policy-summary-value">$4,860</span><span class="policy-summary-label">Per year</span></span>
           </div>
           <details class="policy" id="policy-auto">
             <summary>
               <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>
-              <span class="policy-copy"><span class="policy-name">2022 Honda CR-V</span><span class="policy-meta">Auto · State Farm · •• 4721</span></span>
-              <span class="policy-date">Term through Jan 20, 2027</span>
+              <span class="policy-copy"><span class="policy-name">2022 Honda CR-V</span><span class="policy-meta">State Farm · •• 4721</span></span>
+              <span class="policy-date"><span>Ends</span><span>Jan 20, 2027</span></span>
               <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </summary>
             <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Jan 20, 2026–Jan 20, 2027</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$1,320</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">$110</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded State Farm policy</span></span></div></div>
@@ -675,8 +680,8 @@
           <details class="policy" id="policy-home">
             <summary>
               <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
-              <span class="policy-copy"><span class="policy-name">Austin home</span><span class="policy-meta">Home · Travelers · •• 1840</span></span>
-              <span class="policy-date">Policy term ends Sep 12</span>
+              <span class="policy-copy"><span class="policy-name">Austin home</span><span class="policy-meta">Travelers · •• 1840</span></span>
+              <span class="policy-date"><span>Ends</span><span>Sep 12</span></span>
               <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </summary>
             <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Sep 12, 2025–Sep 12, 2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$1,510</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">Approx. $126</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">Policy uploaded Aug 24</span></span></div></div>
@@ -684,8 +689,8 @@
           <details class="policy" id="policy-umbrella">
             <summary>
               <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v7a2 2 0 0 0 4 0"/><path d="M12 2v2"/><path d="M20.992 13a1 1 0 0 0 .97-1.274 10.284 10.284 0 0 0-19.923 0A1 1 0 0 0 3 13z"/></svg></span>
-              <span class="policy-copy"><span class="policy-name">Family umbrella</span><span class="policy-meta">Umbrella · Chubb · •• 9062</span></span>
-              <span class="policy-date">Term through Dec 5, 2026</span>
+              <span class="policy-copy"><span class="policy-name">Family umbrella</span><span class="policy-meta">Chubb · •• 9062</span></span>
+              <span class="policy-date"><span>Ends</span><span>Dec 5, 2026</span></span>
               <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </summary>
             <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Dec 5, 2025–Dec 5, 2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$830</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">Approx. $69</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded Chubb policy</span></span></div></div>
@@ -693,8 +698,8 @@
           <details class="policy extra-policy" hidden>
             <summary>
               <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
-              <span class="policy-copy"><span class="policy-name">Downtown apartment</span><span class="policy-meta">Renters · Lemonade · •• 3218</span></span>
-              <span class="policy-date">Term through Nov 2, 2026</span>
+              <span class="policy-copy"><span class="policy-name">Downtown apartment</span><span class="policy-meta">Lemonade · •• 3218</span></span>
+              <span class="policy-date"><span>Ends</span><span>Nov 2, 2026</span></span>
               <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </summary>
             <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Nov 2, 2025–Nov 2, 2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$480</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">$40</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded Lemonade policy</span></span></div></div>
@@ -702,8 +707,8 @@
           <details class="policy extra-policy" hidden>
             <summary>
               <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>
-              <span class="policy-copy"><span class="policy-name">2018 Toyota Camry</span><span class="policy-meta">Auto · State Farm · •• 7784</span></span>
-              <span class="policy-date">Term through Jul 8, 2027</span>
+              <span class="policy-copy"><span class="policy-name">2018 Toyota Camry</span><span class="policy-meta">State Farm · •• 7784</span></span>
+              <span class="policy-date"><span>Ends</span><span>Jul 8, 2027</span></span>
               <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </summary>
             <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Jul 8, 2026–Jul 8, 2027</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$720</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">$60</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded State Farm policy</span></span></div></div>
@@ -711,25 +716,31 @@
         </div>
       </section>
 
-      <section id="insights" aria-labelledby="insights-heading">
-        <div class="card insight-list">
-          <div class="card-section-head"><h2 class="section-heading" id="insights-heading">What Ovie noticed</h2><button class="text-button" type="button" id="openInsights">See all</button></div>
-          <p class="section-support">Based on uploaded policy documents</p>
-          <button class="insight" id="floodInsight" type="button" data-insight="Austin home (Travelers): the uploaded policy pages do not establish flood coverage.">
-            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
-            <span class="insight-copy"><span class="insight-title">Flood coverage needs verification</span><span class="insight-meta">Austin home · Travelers</span><span class="insight-text">The uploaded home policy pages do not establish flood coverage.</span></span>
-            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
-          <button class="insight" type="button" data-insight="2022 Honda CR-V and Family umbrella: the listed auto liability limit meets the umbrella schedule's $500,000 minimum.">
-            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
-            <span class="insight-copy"><span class="insight-title">Auto limit matches umbrella requirement</span><span class="insight-meta">2022 Honda CR-V + Family umbrella</span><span class="insight-text">The listed auto liability limit meets the umbrella policy's scheduled minimum.</span></span>
-            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
+      <section id="ask-home" aria-labelledby="ask-home-heading">
+        <div class="card ask-home-card">
+          <h2 class="ask-home-heading" id="ask-home-heading">Ask Ovie</h2>
           <form class="ask-composer" id="homeAskOvieForm" aria-label="Ask Ovie a question" novalidate>
             <label class="visually-hidden" for="homeAskOvieInput">Ask Ovie a question</label>
             <input class="ask-composer-input" id="homeAskOvieInput" name="question" type="text" placeholder="Ask anything about your policies..." autocomplete="off" maxlength="240">
             <button class="ask-send" id="homeAskOvieSend" type="submit" aria-label="Send question" disabled><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
           </form>
+        </div>
+      </section>
+
+      <section id="insights" aria-labelledby="insights-heading">
+        <div class="card insight-list">
+          <div class="card-section-head"><h2 class="section-heading" id="insights-heading">What Ovie noticed</h2><button class="text-button" type="button" id="openInsights">See all</button></div>
+          <p class="section-support">Based on uploaded documents</p>
+          <button class="insight status-warning" id="floodInsight" type="button" data-insight="Austin home (Travelers): the uploaded policy pages do not establish flood coverage.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">Flood coverage needs verification</span><span class="insight-meta">Austin home · Travelers</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="insight status-success" type="button" data-insight="2022 Honda CR-V and Family umbrella: the listed auto liability limit meets the umbrella schedule's $500,000 minimum.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">Auto + umbrella limits align</span><span class="insight-meta">2022 Honda CR-V · Family umbrella</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
         </div>
       </section>
 
@@ -748,7 +759,6 @@
           <div class="card-section-head">
             <h2 class="section-heading" id="premium-heading">Your premium breakdown</h2>
           </div>
-          <p class="premium-label">Based on uploaded policy documents</p>
           <div class="premium-visual">
             <div class="donut">
               <svg viewBox="0 0 164 164" role="img" aria-label="Annual premium breakdown: Auto 42 percent, Home 31 percent, Umbrella 17 percent, Renters 10 percent">
