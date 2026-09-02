@@ -13,10 +13,22 @@
       --primary: #6b4062;
       --primary-dark: #54324d;
       --primary-soft: #f5edf3;
+      --ai-gradient-start: #bd4ba5;
+      --ai-gradient-end: #5c2e8b;
       --premium-auto: #6b4062;
       --premium-home: #896681;
       --premium-umbrella: #a68ca1;
       --premium-renters: #c4b3c0;
+      --donut-shade-1: #40243a;
+      --donut-shade-2: #54324d;
+      --donut-shade-3: #6b4062;
+      --donut-shade-4: #7d5274;
+      --donut-shade-5: #916781;
+      --donut-shade-6: #a67d9b;
+      --donut-shade-7: #ba94b0;
+      --donut-shade-8: #cdafc5;
+      --donut-shade-9: #dfc9d9;
+      --donut-shade-10: #f0e5ed;
       --ink: #111111;
       --copy: #333a3d;
       --muted: #5f6368;
@@ -33,8 +45,21 @@
       --danger: #a63a33;
       --focus: #6b4062;
       --radius: 12px;
-      --ease: cubic-bezier(.22, 1, .36, 1);
+      --motion-duration-press: 160ms;
+      --motion-duration-standard: 200ms;
+      --motion-duration-overlay: 260ms;
+      --motion-ease-out: cubic-bezier(.23, 1, .32, 1);
+      --motion-ease-in-out: cubic-bezier(.77, 0, .175, 1);
+      --motion-ease-drawer: cubic-bezier(.32, .72, 0, 1);
+      --ease: var(--motion-ease-out);
+      --ease-drawer: var(--motion-ease-drawer);
       --nav-height: 72px;
+      --z-sticky: 100;
+      --z-navigation: 400;
+      --z-fab: 450;
+      --z-backdrop: 500;
+      --z-sheet: 700;
+      --z-toast: 900;
       --scrollbar-thumb: #a9afac;
       --scrollbar-thumb-hover: #7c827f;
       --scrollbar-track: #ecefed;
@@ -44,6 +69,7 @@
 
     html {
       color-scheme: light;
+      scrollbar-gutter: stable;
       scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
       scrollbar-width: thin;
     }
@@ -63,6 +89,8 @@
       line-height: 20px;
       -webkit-font-smoothing: antialiased;
     }
+
+    body.sheet-open { overflow: hidden; }
 
     button, input { font: inherit; }
     button, a { -webkit-tap-highlight-color: transparent; }
@@ -98,7 +126,7 @@
     .top-shell {
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: var(--z-sticky);
       background: color-mix(in srgb, var(--surface) 96%, transparent);
       border-bottom: 1px solid var(--border-soft);
       transform: translateY(0);
@@ -119,7 +147,7 @@
       font-weight: 600;
     }
 
-    .status-icons { display: flex; align-items: center; gap: 5px; }
+    .status-icons { display: flex; align-items: center; gap: 5px; color: var(--muted); }
 
     .app-header {
       padding: 8px 16px 14px;
@@ -145,6 +173,7 @@
       border: 0;
       border-radius: var(--radius);
       background: var(--canvas);
+      color: var(--muted);
       cursor: pointer;
       transition: background-color 180ms var(--ease), transform 180ms var(--ease);
     }
@@ -158,7 +187,7 @@
       display: flex;
       flex-direction: column;
       gap: 18px;
-      padding: 18px 16px calc(var(--nav-height) + 34px + env(safe-area-inset-bottom));
+      padding: 18px 16px calc(var(--nav-height) + 90px + env(safe-area-inset-bottom));
     }
 
     section { scroll-margin-top: 112px; }
@@ -202,10 +231,10 @@
       transform-origin: center;
       transition: opacity 220ms var(--ease), transform 220ms var(--ease);
     }
-    .donut-segment[data-category="auto"] { fill: var(--premium-auto); }
-    .donut-segment[data-category="home"] { fill: var(--premium-home); }
-    .donut-segment[data-category="umbrella"] { fill: var(--premium-umbrella); }
-    .donut-segment[data-category="renters"] { fill: var(--premium-renters); }
+    .donut-segment[data-category="auto"] { fill: var(--donut-shade-3); }
+    .donut-segment[data-category="home"] { fill: var(--donut-shade-5); }
+    .donut-segment[data-category="umbrella"] { fill: var(--donut-shade-7); }
+    .donut-segment[data-category="renters"] { fill: var(--donut-shade-9); }
     .donut-segment.dim { opacity: .22; }
     .donut-segment.active { transform: scale(1.035); }
 
@@ -249,7 +278,7 @@
       place-items: center;
       border-radius: 8px;
       background: color-mix(in srgb, var(--category-color) 16%, white);
-      color: var(--category-color);
+      color: var(--primary);
     }
     .category-icon.segment-auto { --category-color: var(--premium-auto); }
     .category-icon.segment-home { --category-color: var(--premium-home); }
@@ -315,19 +344,6 @@
     .text-button:disabled { color: var(--muted); cursor: default; opacity: 1; }
     .text-button:disabled:hover { background: transparent; }
 
-    .attention-list { display: flex; flex-direction: column; }
-    .attention-row { padding: 14px; display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid var(--border-soft); }
-    .attention-row:last-child { border-bottom: 0; }
-    .attention-item-icon { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; background: var(--warning-soft); color: var(--warning); }
-    .attention-copy { flex: 1; min-width: 0; }
-    .attention-title { margin: 0; color: var(--warning-ink); font-weight: 600; }
-    .attention-source { margin: 2px 0 0; color: var(--copy); font-size: 12px; line-height: 16px; font-weight: 600; }
-    .attention-text { margin: 4px 0 0; color: var(--copy); }
-    .attention-action { min-height: 44px; margin: 6px 0 -6px -8px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; border: 0; border-radius: 8px; background: transparent; color: var(--primary); font-weight: 600; cursor: pointer; }
-    .attention-action:hover { background: var(--primary-soft); }
-    .attention-action:active { color: var(--primary-dark); }
-    .attention-action svg { flex: 0 0 auto; }
-
     .policy-summary-strip { margin: 0 14px 6px; padding: 10px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 6px; border-radius: 10px; background: var(--canvas); }
     .policy-summary-stat { min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
     .policy-summary-value { color: var(--ink); font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; }
@@ -357,8 +373,8 @@
     .policy summary:hover { background: var(--canvas); }
 
     .policy-icon {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       flex: 0 0 auto;
       display: grid;
       place-items: center;
@@ -385,21 +401,6 @@
     .detail-source { grid-column: 1; grid-row: 2; }
     .detail-label { display: block; color: var(--muted); font-size: 12px; line-height: 16px; }
     .detail-value { display: block; margin-top: 2px; font-weight: 600; }
-
-    .ask-composer { min-height: 52px; margin-top: 10px; padding: 3px 3px 3px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-    .ask-composer:focus-within { border-color: var(--focus); outline: 3px solid color-mix(in srgb, var(--focus) 24%, transparent); }
-    .ask-composer-input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--ink); }
-    .ask-composer-input::placeholder { color: var(--muted); opacity: 1; }
-    .ask-send { width: 44px; height: 44px; flex: 0 0 auto; display: grid; place-items: center; border: 0; border-radius: 10px; background: var(--primary); color: var(--surface); cursor: pointer; }
-    .ask-send:hover { background: var(--primary-dark); }
-    .ask-send:active { transform: scale(.96); }
-    .ask-send:disabled { background: var(--primary-soft); color: var(--muted); cursor: default; }
-    .ask-send:disabled:active { transform: none; }
-
-    .ask-home-card { padding: 14px; background: var(--primary); }
-    .ask-home-heading { margin: 0; color: var(--surface); font-size: 18px; line-height: 24px; font-weight: 600; }
-    .ask-home-card .ask-composer { margin-top: 10px; }
-    .ask-home-card .ask-composer:focus-within { border-color: var(--surface); outline-color: rgba(255, 255, 255, .38); }
 
     .expiry-list { display: flex; flex-direction: column; }
     .expiry-row { min-height: 68px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-soft); }
@@ -435,17 +436,13 @@
     .insight-icon { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; }
     .insight.status-warning .insight-icon { background: var(--warning-soft); color: var(--warning); }
     .insight.status-warning .insight-title { color: var(--warning-ink); }
-    .insight.status-success .insight-icon { background: var(--success-soft); color: var(--success); }
-    .insight.status-success .insight-title { color: var(--success); }
     .insight-copy { flex: 1; min-width: 0; }
     .insight-title { display: block; font-weight: 600; }
     .insight-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; font-weight: 600; }
     .insight .chevron { margin-top: 8px; color: var(--muted); }
-    .section-support { margin: -10px 14px 8px; color: var(--muted); font-size: 12px; line-height: 16px; }
-
     .bottom-nav {
       position: fixed;
-      z-index: 30;
+      z-index: var(--z-navigation);
       left: 50%;
       bottom: max(8px, env(safe-area-inset-bottom));
       width: min(calc(100% - 24px), 456px);
@@ -514,8 +511,8 @@
       position: absolute;
       z-index: 0;
       inset: 50% auto auto 50%;
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       content: "";
       transform: translate(-50%, -50%);
       border-radius: 999px;
@@ -523,7 +520,7 @@
       box-shadow: 0 2px 4px rgba(84, 50, 77, .22);
       transition: background-color 180ms var(--ease);
     }
-    .nav-upload .nav-icon svg { position: relative; z-index: 1; }
+    .nav-upload .nav-icon svg { position: relative; z-index: 1; width: 22px; height: 22px; }
     .nav-upload:hover { background: transparent; color: var(--surface); }
     .nav-upload:hover .nav-icon::before { background: var(--primary-dark); }
 
@@ -536,34 +533,278 @@
       pointer-events: none;
     }
 
-    dialog {
-      width: min(calc(100% - 24px), 456px);
-      max-height: min(640px, calc(100dvh - 24px));
-      margin: auto auto 0;
+    .ask-fab {
+      position: fixed;
+      z-index: var(--z-fab);
+      right: max(18px, calc((100vw - 480px) / 2 + 18px));
+      bottom: calc(var(--nav-height) + 22px + env(safe-area-inset-bottom));
+      width: 56px;
+      height: 56px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--ai-gradient-start) 0%, var(--ai-gradient-end) 100%);
+      color: var(--surface);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 4px 8px rgba(84, 50, 77, .28);
+      cursor: pointer;
+      isolation: isolate;
+      transition: transform 160ms var(--ease);
+    }
+
+    .ask-fab::before {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      background: rgba(255, 255, 255, .10);
+      content: "";
+      opacity: 0;
+      transition: opacity 160ms var(--ease);
+    }
+
+    .ask-fab:active { transform: scale(.96); }
+
+    .ovie-assistant-mark {
+      width: 24px;
+      height: 24px;
+      display: block;
+      flex: 0 0 auto;
+      overflow: visible;
+    }
+
+    .ask-fab .ovie-assistant-mark { width: 28px; height: 28px; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ask-fab:hover::before { opacity: 1; }
+    }
+
+    .ask-sheet {
+      position: fixed;
+      z-index: var(--z-sheet);
+      inset: auto 0 0;
+      width: min(100%, 480px);
+      max-width: none;
+      max-height: min(88dvh, 560px);
+      margin: 0 auto;
       padding: 0;
       overflow: hidden;
       border: 0;
-      border-radius: 12px 12px 0 0;
+      border-radius: var(--radius) var(--radius) 0 0;
       background: var(--surface);
       color: var(--ink);
+      box-shadow: 0 -4px 8px rgba(17, 17, 17, .12);
+      opacity: 1;
+      transform: translateY(100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      will-change: transform;
     }
 
-    dialog::backdrop { background: rgba(17,24,23,.58); }
-    .sheet-handle { width: 36px; height: 4px; margin: 10px auto 4px; border-radius: 999px; background: var(--border); }
-    .sheet-header { min-height: 54px; padding: 4px 8px 4px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border-soft); }
-    .sheet-title { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
-    .sheet-body { padding: 16px; color: var(--copy); }
-    .sheet-body p { margin: 0 0 14px; }
-    .sheet-question { margin: 0 0 14px; padding: 12px; border-radius: 10px; background: var(--primary-soft); }
-    .sheet-question-label { display: block; color: var(--primary); font-size: 12px; line-height: 16px; font-weight: 600; }
-    .sheet-question p { margin: 2px 0 0; color: var(--ink); font-weight: 600; }
-    .prompt-list { display: flex; flex-direction: column; gap: 8px; }
-    .prompt-button { min-height: 46px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--copy); text-align: left; cursor: pointer; }
-    .prompt-button:hover { border-color: var(--primary); background: var(--primary-soft); }
+    .ask-sheet[open].is-visible { transform: translateY(0); }
+
+    .ask-sheet::backdrop {
+      z-index: var(--z-backdrop);
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+
+    .ask-sheet.is-visible::backdrop { opacity: 1; }
+
+    .ask-sheet-inner {
+      padding: 8px 16px calc(18px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      margin: 0 auto 8px;
+      border-radius: 999px;
+      background: var(--border);
+    }
+
+    .ask-sheet-header {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .ask-sheet-title { display: flex; align-items: center; gap: 8px; }
+    .ask-sheet-title .ovie-assistant-mark { width: 22px; height: 22px; color: var(--primary); }
+
+    .sheet-close {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color 160ms var(--ease), transform 160ms var(--ease);
+    }
+
+    .sheet-close:active { transform: scale(.96); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .sheet-close:hover { background: var(--primary-soft); color: var(--primary); }
+    }
+
+    .ask-sheet-form { margin-top: 8px; }
+
+    .ask-sheet-input-row {
+      min-height: 56px;
+      padding: 5px 5px 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .ask-sheet-input-row:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 18%, transparent);
+    }
+
+    .ask-sheet-input {
+      min-width: 0;
+      flex: 1;
+      padding: 8px 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      line-height: 20px;
+    }
+
+    .ask-sheet-input::placeholder { color: var(--muted); opacity: 1; }
+
+    .ask-sheet-send {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 10px;
+      background: var(--primary);
+      color: var(--surface);
+      cursor: pointer;
+      transition: background-color 160ms var(--ease), transform 160ms var(--ease);
+    }
+
+    .ask-sheet-send:active:not(:disabled) { transform: scale(.96); }
+    .ask-sheet-send:disabled { background: #e8dee5; color: #795972; cursor: default; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ask-sheet-send:hover:not(:disabled) { background: var(--primary-dark); }
+    }
+
+    .android-keyboard-preview {
+      display: none;
+      margin: 14px -16px -18px;
+      padding: 0 5px calc(7px + env(safe-area-inset-bottom));
+      background: #eef0f3;
+      color: #202124;
+      font-family: Roboto, system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 16px;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    .android-suggestions {
+      min-height: 38px;
+      margin-inline: -5px;
+      padding-inline: 6px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: center;
+      border-bottom: 1px solid #d5d8dc;
+      background: #f8f9fa;
+    }
+
+    .android-suggestion {
+      min-width: 0;
+      padding-inline: 8px;
+      overflow: hidden;
+      color: #3c4043;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .android-suggestion + .android-suggestion { border-left: 1px solid #dfe1e5; }
+
+    .keyboard-row {
+      display: grid;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .keyboard-row.ten { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    .keyboard-row.nine { grid-template-columns: repeat(9, minmax(0, 1fr)); padding-inline: 14px; }
+    .keyboard-row.shift { grid-template-columns: 1.35fr repeat(7, minmax(0, 1fr)) 1.35fr; }
+    .keyboard-row.android-bottom { grid-template-columns: 1.25fr .7fr .7fr 3.4fr .7fr 1.25fr; }
+
+    .keyboard-key {
+      min-width: 0;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: var(--surface);
+      box-shadow: 0 1px 1px rgba(60, 64, 67, .28);
+      white-space: nowrap;
+    }
+
+    .keyboard-key.utility {
+      background: #d8dce2;
+      color: #3c4043;
+      box-shadow: none;
+    }
+
+    .keyboard-key.space {
+      color: #5f6368;
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .keyboard-key.send {
+      background: #d9c8d4;
+      color: var(--primary-dark);
+    }
+
+    .android-gesture-bar {
+      height: 20px;
+      display: grid;
+      place-items: end center;
+    }
+
+    .android-gesture-bar::before {
+      width: 108px;
+      height: 4px;
+      border-radius: 999px;
+      background: #4a4d50;
+      content: "";
+    }
+
+    .ask-sheet.is-visible.show-android-keyboard-preview .android-keyboard-preview { display: block; }
 
     .toast {
       position: fixed;
-      z-index: 50;
+      z-index: var(--z-toast);
       left: 50%;
       bottom: calc(var(--nav-height) + 18px + env(safe-area-inset-bottom));
       width: min(calc(100% - 32px), 448px);
@@ -592,11 +833,18 @@
     @media (prefers-reduced-motion: reduce) {
       /* Accessibility override must win over every component transition. */
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+      .ask-sheet {
+        transform: translateY(0);
+        opacity: 0;
+        transition: opacity 120ms var(--motion-ease-out) !important;
+      }
+      .ask-sheet[open].is-visible { opacity: 1; }
+      .ask-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
     }
 
     @media (forced-colors: active) {
       * { scrollbar-color: auto; }
-      .premium-card, .attention, .status-pill, .policy-icon, .insight-icon, .nav-icon { forced-color-adjust: none; }
+      .premium-card, .status-pill, .policy-icon, .insight-icon, .nav-icon { forced-color-adjust: none; }
       .nav-upload { background: ButtonFace; color: ButtonText; }
       .nav-upload .nav-icon { color: ButtonText; }
       .nav-upload .nav-icon::before { border: 2px solid ButtonText; background: ButtonFace; box-shadow: none; }
@@ -604,7 +852,7 @@
   </style>
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app-shell" id="home">
     <header class="top-shell">
       <div class="status-bar" aria-hidden="true">
         <span>9:41</span>
@@ -633,27 +881,24 @@
     </header>
 
     <main>
-      <section id="attention" aria-labelledby="attention-heading">
-        <div class="card attention-list">
-          <div class="card-section-head"><h2 class="section-heading" id="attention-heading">Needs your attention</h2></div>
-          <div class="attention-row urgent">
-            <span class="attention-item-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-            <div class="attention-copy">
-              <p class="attention-title">Home policy ends in 12 days</p>
-              <p class="attention-source">Austin home · Travelers</p>
-              <p class="attention-text">No newer policy document uploaded.</p>
-              <button class="attention-action" id="reviewPolicy" type="button">Review <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
-            </div>
-          </div>
-          <div class="attention-row">
-            <span class="attention-item-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
-            <div class="attention-copy">
-              <p class="attention-title">Flood coverage needs verification</p>
-              <p class="attention-source">Austin home · Travelers</p>
-              <p class="attention-text">Not established in uploaded policy.</p>
-              <button class="attention-action" id="reviewInsight" type="button">Review <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
-            </div>
-          </div>
+      <section id="insights" aria-labelledby="insights-heading">
+        <div class="card insight-list">
+          <div class="card-section-head"><h2 class="section-heading" id="insights-heading" tabindex="-1">Needs your attention</h2></div>
+          <button class="insight status-warning" type="button" data-insight="Austin home (Travelers): no newer policy document has been uploaded and the current policy ends in 12 days.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">Home policy ends in 12 days</span><span class="insight-meta">Austin home · Travelers</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="insight status-warning" type="button" data-insight="Austin home and Downtown apartment: uploaded documents indicate coverage that may overlap. Review both policies to confirm whether the duplication is intentional.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">Possible duplicate coverage</span><span class="insight-meta">Austin home · Downtown apartment</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="insight status-warning" type="button" data-insight="2018 Toyota Camry (State Farm): the uploaded documents do not establish the state-required minimum liability coverage. Review the policy to address potential legal exposure.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">State minimum coverage not established</span><span class="insight-meta">2018 Toyota Camry · State Farm</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
         </div>
       </section>
 
@@ -716,35 +961,6 @@
         </div>
       </section>
 
-      <section id="ask-home" aria-labelledby="ask-home-heading">
-        <div class="card ask-home-card">
-          <h2 class="ask-home-heading" id="ask-home-heading">Ask Ovie</h2>
-          <form class="ask-composer" id="homeAskOvieForm" aria-label="Ask Ovie a question" novalidate>
-            <label class="visually-hidden" for="homeAskOvieInput">Ask Ovie a question</label>
-            <input class="ask-composer-input" id="homeAskOvieInput" name="question" type="text" placeholder="Ask anything about your policies..." autocomplete="off" maxlength="240">
-            <button class="ask-send" id="homeAskOvieSend" type="submit" aria-label="Send question" disabled><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
-          </form>
-        </div>
-      </section>
-
-      <section id="insights" aria-labelledby="insights-heading">
-        <div class="card insight-list">
-          <div class="card-section-head"><h2 class="section-heading" id="insights-heading">What Ovie noticed</h2><button class="text-button" type="button" id="openInsights">See all</button></div>
-          <p class="section-support">Based on uploaded documents</p>
-          <button class="insight status-warning" id="floodInsight" type="button" data-insight="Austin home (Travelers): the uploaded policy pages do not establish flood coverage.">
-            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
-            <span class="insight-copy"><span class="insight-title">Flood coverage needs verification</span><span class="insight-meta">Austin home · Travelers</span></span>
-            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
-          <button class="insight status-success" type="button" data-insight="2022 Honda CR-V and Family umbrella: the listed auto liability limit meets the umbrella schedule's $500,000 minimum.">
-            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>
-            <span class="insight-copy"><span class="insight-title">Auto + umbrella limits align</span><span class="insight-meta">2022 Honda CR-V · Family umbrella</span></span>
-            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
-        </div>
-      </section>
-
-
       <section id="expiries" aria-labelledby="expiries-heading">
         <div class="card expiry-list">
           <div class="card-section-head"><h2 class="section-heading" id="expiries-heading" tabindex="-1">Upcoming expiry dates</h2></div>
@@ -802,19 +1018,45 @@
   </div>
 
   <nav class="bottom-nav" aria-label="Primary navigation">
-    <a class="nav-link" href="#attention-heading" aria-current="page"><span class="nav-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg></span><span>Home</span></a>
+    <a class="nav-link" href="#home" aria-current="page"><span class="nav-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg></span><span>Home</span></a>
     <button class="nav-button" type="button" id="myFiles"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span>My Files</span></button>
-    <button class="nav-upload" type="button" id="uploadPolicy" aria-label="Upload"><span class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg></span></button>
-    <button class="nav-button" type="button" id="askOvie"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/></svg></span><span>Ask Ovie</span></button>
+    <button class="nav-upload" type="button" id="uploadPolicy" aria-label="Upload"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg></span></button>
+    <a class="nav-link" id="insightsNav" href="#insights-heading"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span><span>Insights</span></a>
     <button class="nav-button" type="button" id="moreMenu"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span>More</span></button>
   </nav>
-  <input class="file-picker-input" id="policyFilePicker" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple tabindex="-1" aria-hidden="true">
+  <button class="ask-fab" id="askOvieFab" type="button" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet">
+    <svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg>
+  </button>
 
-  <dialog id="ovieSheet" aria-labelledby="sheetTitle">
-    <div class="sheet-handle" aria-hidden="true"></div>
-    <div class="sheet-header"><h2 class="sheet-title" id="sheetTitle">Ask Ovie</h2><button class="icon-button" type="button" id="closeSheet" aria-label="Close Ask Ovie"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
-    <div class="sheet-body"><p>Ask a question grounded in the policy documents you uploaded.</p><div class="sheet-question" id="submittedQuestion" hidden><span class="sheet-question-label">Your question</span><p id="submittedQuestionText"></p></div><div class="prompt-list"><button class="prompt-button" type="button">What should I review before my home policy term ends?</button><button class="prompt-button" type="button">Does my umbrella policy list the required auto limit?</button><button class="prompt-button" type="button">Summarize my upcoming policy dates</button></div></div>
+  <dialog class="ask-sheet" id="askOvieSheet" aria-labelledby="askOvieTitle">
+    <div class="ask-sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="section-heading ask-sheet-title" id="askOvieTitle"><svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg><span>Ask Ovie</span></h2>
+        <button class="sheet-close" id="closeAskOvie" type="button" aria-label="Close Ask Ovie">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <form class="ask-sheet-form" id="askOvieForm" novalidate>
+        <label class="visually-hidden" for="askOvieInput">Ask anything about your policies</label>
+        <div class="ask-sheet-input-row">
+          <input class="ask-sheet-input" id="askOvieInput" name="question" type="text" inputmode="text" enterkeyhint="send" autocomplete="off" placeholder="Ask anything about your policies...">
+          <button class="ask-sheet-send" id="askOvieSend" type="submit" aria-label="Send question" disabled>
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </div>
+      </form>
+      <div class="android-keyboard-preview" aria-hidden="true">
+        <div class="android-suggestions"><span class="android-suggestion">your</span><span class="android-suggestion">coverage</span><span class="android-suggestion">policy</span></div>
+        <div class="keyboard-row ten"><span class="keyboard-key">Q</span><span class="keyboard-key">W</span><span class="keyboard-key">E</span><span class="keyboard-key">R</span><span class="keyboard-key">T</span><span class="keyboard-key">Y</span><span class="keyboard-key">U</span><span class="keyboard-key">I</span><span class="keyboard-key">O</span><span class="keyboard-key">P</span></div>
+        <div class="keyboard-row nine"><span class="keyboard-key">A</span><span class="keyboard-key">S</span><span class="keyboard-key">D</span><span class="keyboard-key">F</span><span class="keyboard-key">G</span><span class="keyboard-key">H</span><span class="keyboard-key">J</span><span class="keyboard-key">K</span><span class="keyboard-key">L</span></div>
+        <div class="keyboard-row shift"><span class="keyboard-key utility"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/><path d="M12 9v12"/></svg></span><span class="keyboard-key">Z</span><span class="keyboard-key">X</span><span class="keyboard-key">C</span><span class="keyboard-key">V</span><span class="keyboard-key">B</span><span class="keyboard-key">N</span><span class="keyboard-key">M</span><span class="keyboard-key utility"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6"/><path d="m12 9 6 6"/></svg></span></div>
+        <div class="keyboard-row android-bottom"><span class="keyboard-key utility">?123</span><span class="keyboard-key utility">,</span><span class="keyboard-key utility"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></span><span class="keyboard-key space">English (US)</span><span class="keyboard-key utility">.</span><span class="keyboard-key utility send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></div>
+        <div class="android-gesture-bar"></div>
+      </div>
+    </div>
   </dialog>
+  <input class="file-picker-input" id="policyFilePicker" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple tabindex="-1" aria-hidden="true">
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -828,7 +1070,14 @@
       const donutSegments = Array.from(document.querySelectorAll('.donut-segment'));
       const toast = document.querySelector('#toast');
       const topShell = document.querySelector('.top-shell');
+      const askOvieFab = document.querySelector('#askOvieFab');
+      const askOvieSheet = document.querySelector('#askOvieSheet');
+      const closeAskOvie = document.querySelector('#closeAskOvie');
+      const askOvieForm = document.querySelector('#askOvieForm');
+      const askOvieInput = document.querySelector('#askOvieInput');
+      const askOvieSend = document.querySelector('#askOvieSend');
       let toastTimer;
+      let sheetCloseTimer;
 
       let lastScrollY = Math.max(window.scrollY, 0);
       let downwardTravel = 0;
@@ -868,6 +1117,65 @@
         window.clearTimeout(toastTimer);
         toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2600);
       }
+
+      function openAskSheet() {
+        window.clearTimeout(sheetCloseTimer);
+        const showPreviewKeyboard = !window.matchMedia('(pointer: coarse)').matches;
+        askOvieSheet.classList.toggle('show-android-keyboard-preview', showPreviewKeyboard);
+        askOvieSheet.classList.remove('is-visible');
+        askOvieSheet.showModal();
+        document.body.classList.add('sheet-open');
+        askOvieInput.focus({ preventScroll: true });
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => askOvieSheet.classList.add('is-visible'));
+        });
+      }
+
+      function sheetTransitionDuration() {
+        const styles = window.getComputedStyle(askOvieSheet);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function closeAskSheet(returnFocus = true) {
+        if (!askOvieSheet.open) return;
+        askOvieSheet.classList.remove('is-visible');
+        window.clearTimeout(sheetCloseTimer);
+        sheetCloseTimer = window.setTimeout(() => {
+          askOvieSheet.close();
+          document.body.classList.remove('sheet-open');
+          if (returnFocus) askOvieFab.focus({ preventScroll: true });
+        }, sheetTransitionDuration() + 34);
+      }
+
+      askOvieFab.addEventListener('click', openAskSheet);
+      closeAskOvie.addEventListener('click', () => closeAskSheet());
+      askOvieSheet.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeAskSheet();
+      });
+      askOvieSheet.addEventListener('pointerdown', (event) => {
+        const bounds = askOvieSheet.getBoundingClientRect();
+        const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideSheet) closeAskSheet();
+      });
+      askOvieInput.addEventListener('input', () => {
+        askOvieSend.disabled = askOvieInput.value.trim().length === 0;
+      });
+      askOvieForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const question = askOvieInput.value.trim();
+        if (!question) return;
+        closeAskSheet(false);
+        window.setTimeout(() => {
+          showToast(`Opening Ask Ovie: “${question}”`);
+          askOvieInput.value = '';
+          askOvieSend.disabled = true;
+        }, 250);
+      });
 
       function resetPremium() {
         premiumValue.textContent = '$4,860';
@@ -915,19 +1223,6 @@
         togglePolicies.textContent = opening ? 'Show less' : 'See all 5';
       });
 
-      document.querySelector('#reviewPolicy').addEventListener('click', () => {
-        const homePolicy = document.querySelector('#policy-home');
-        homePolicy.open = true;
-        homePolicy.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        homePolicy.querySelector('summary').focus({ preventScroll: true });
-      });
-
-      document.querySelector('#reviewInsight').addEventListener('click', () => {
-        const floodInsight = document.querySelector('#floodInsight');
-        floodInsight.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        floodInsight.focus({ preventScroll: true });
-      });
-
       document.querySelector('#notificationsButton').addEventListener('click', () => {
         document.querySelector('#expiries').scrollIntoView({ behavior: 'smooth', block: 'start' });
         document.querySelector('#expiries-heading').focus({ preventScroll: true });
@@ -938,8 +1233,6 @@
       document.querySelectorAll('.insight').forEach((button) => {
         button.addEventListener('click', () => showToast(button.dataset.insight));
       });
-      document.querySelector('#openInsights').addEventListener('click', () => showToast('2 findings based on uploaded policy documents'));
-
       document.querySelector('#searchOvie').addEventListener('click', () => showToast('Search policies and documents'));
       document.querySelector('#myFiles').addEventListener('click', () => showToast('My Files'));
       document.querySelector('#moreMenu').addEventListener('click', () => showToast('More'));
@@ -963,48 +1256,6 @@
         });
       });
 
-      const ovieSheet = document.querySelector('#ovieSheet');
-      const askOvie = document.querySelector('#askOvie');
-      const homeAskOvieForm = document.querySelector('#homeAskOvieForm');
-      const homeAskOvieInput = document.querySelector('#homeAskOvieInput');
-      const homeAskOvieSend = document.querySelector('#homeAskOvieSend');
-      const submittedQuestion = document.querySelector('#submittedQuestion');
-      const submittedQuestionText = document.querySelector('#submittedQuestionText');
-      const closeSheet = document.querySelector('#closeSheet');
-
-      function openOvieSheet(question = '') {
-        const cleanQuestion = question.trim();
-        submittedQuestion.hidden = !cleanQuestion;
-        submittedQuestionText.textContent = cleanQuestion;
-        ovieSheet.showModal();
-      }
-
-      askOvie.addEventListener('click', () => openOvieSheet());
-      homeAskOvieInput.addEventListener('input', () => {
-        homeAskOvieSend.disabled = !homeAskOvieInput.value.trim();
-      });
-      homeAskOvieForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const question = homeAskOvieInput.value.trim();
-        if (!question) {
-          homeAskOvieInput.focus();
-          return;
-        }
-        openOvieSheet(question);
-        showToast('Question sent to Ask Ovie');
-        homeAskOvieInput.value = '';
-        homeAskOvieSend.disabled = true;
-      });
-      closeSheet.addEventListener('click', () => ovieSheet.close());
-      ovieSheet.addEventListener('click', (event) => {
-        if (event.target === ovieSheet) ovieSheet.close();
-      });
-      document.querySelectorAll('.prompt-button').forEach((button) => {
-        button.addEventListener('click', () => {
-          showToast('Question added to Ask Ovie');
-          ovieSheet.close();
-        });
-      });
     })();
   </script>
 </body>
