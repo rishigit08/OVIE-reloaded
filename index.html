@@ -58,6 +58,7 @@
       --z-navigation: 400;
       --z-fab: 450;
       --z-backdrop: 500;
+      --z-dialog: 600;
       --z-sheet: 700;
       --z-toast: 900;
       --scrollbar-thumb: #a9afac;
@@ -533,6 +534,174 @@
       pointer-events: none;
     }
 
+    .profile-drawer {
+      position: fixed;
+      z-index: var(--z-sheet);
+      inset: 0 auto 0 max(0px, calc(50% - 240px));
+      width: min(calc(100% - 36px), 400px);
+      max-width: none;
+      height: 100dvh;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 4px 0 8px rgba(17, 17, 17, .12);
+      opacity: 1;
+      transform: translateX(-100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      will-change: transform;
+    }
+
+    .profile-drawer[open].is-visible { transform: translateX(0); }
+
+    .profile-drawer::backdrop {
+      z-index: var(--z-backdrop);
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+
+    .profile-drawer.is-visible::backdrop { opacity: 1; }
+
+    .profile-drawer-inner {
+      height: 100%;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .profile-drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .profile-drawer-title { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
+
+    .profile-drawer-close {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .profile-drawer-close:active { transform: scale(.97); }
+
+    .profile-identity-card {
+      margin: 14px 0 18px;
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+    }
+
+    .profile-avatar-large {
+      width: 64px;
+      height: 64px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--primary);
+      font-size: 22px;
+      line-height: 28px;
+      font-weight: 600;
+    }
+
+    .profile-identity-copy { min-width: 0; flex: 1; }
+    .profile-name, .profile-id { display: block; }
+    .profile-name { font-size: 18px; line-height: 24px; font-weight: 600; }
+    .profile-id { margin-top: 2px; color: var(--copy); font-size: 12px; line-height: 16px; }
+
+    .profile-edit {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--primary);
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .profile-edit:active { transform: scale(.97); }
+    .profile-menu { display: grid; }
+
+    .profile-menu-item {
+      width: 100%;
+      min-height: 64px;
+      padding: 10px 8px;
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) 20px;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .profile-menu-item:active { transform: scale(.97); }
+    .profile-menu-icon { color: var(--muted); }
+    .profile-menu-copy { min-width: 0; }
+    .profile-menu-label, .profile-menu-description { display: block; }
+    .profile-menu-label { font-weight: 600; }
+    .profile-menu-description { margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .profile-menu-chevron { color: var(--muted); }
+    .profile-menu-item.logout .profile-menu-icon { color: var(--danger); }
+
+    .profile-legal-links {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-soft);
+      display: grid;
+    }
+
+    .profile-legal-links button {
+      min-height: 48px;
+      padding: 0 8px;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--ink);
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .profile-legal-links button:active { transform: scale(.97); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .profile-drawer-close:hover,
+      .profile-edit:hover,
+      .profile-menu-item:hover,
+      .profile-legal-links button:hover { background: var(--primary-soft); }
+    }
+
     .ask-fab {
       position: fixed;
       z-index: var(--z-fab);
@@ -752,6 +921,17 @@
     .ask-sheet-form { width: 100%; margin: 8px auto 0; flex: 0 0 auto; }
     .ask-sheet.chat-view .ask-sheet-form { margin-top: auto; }
 
+    .ask-ovie-disclaimer {
+      margin: 8px 8px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+    }
+
+    .ask-sheet.keyboard-visible .ask-ovie-disclaimer,
+    .ask-sheet.show-android-keyboard-preview .ask-ovie-disclaimer { display: none; }
+
     .ask-sheet-composer-row {
       display: flex;
       align-items: center;
@@ -896,7 +1076,8 @@
     }
 
     .android-gesture-bar {
-      height: 20px;
+      height: 30px;
+      position: relative;
       display: grid;
       place-items: end center;
     }
@@ -907,6 +1088,31 @@
       border-radius: 999px;
       background: #4a4d50;
       content: "";
+    }
+
+    .android-hide-keyboard {
+      position: absolute;
+      left: 2px;
+      bottom: -7px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #4a4d50;
+      cursor: pointer;
+    }
+
+    .android-hide-keyboard:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 1px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .android-hide-keyboard:hover { background: rgba(74, 77, 80, .08); }
     }
 
     .ask-sheet.is-visible.show-android-keyboard-preview .android-keyboard-preview { display: block; }
@@ -978,7 +1184,7 @@
       </div>
       <div class="app-header">
         <div class="header-identity">
-          <button class="avatar-button" id="profileButton" type="button" aria-label="Open profile">RV</button>
+          <button class="avatar-button" id="profileButton" type="button" aria-label="Open profile" aria-haspopup="dialog" aria-controls="profileDrawer" aria-expanded="false">RV</button>
           <div class="header-greeting">
             <p class="greeting">Hi,</p>
             <h1 class="app-title">Rishi</h1>
@@ -1138,6 +1344,60 @@
     <a class="nav-link" id="insightsNav" href="#insights-heading"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span><span>Insights</span></a>
     <button class="nav-button" type="button" id="moreMenu"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span>More</span></button>
   </nav>
+  <dialog class="profile-drawer" id="profileDrawer" aria-labelledby="profileDrawerTitle">
+    <div class="profile-drawer-inner">
+      <div class="profile-drawer-header">
+        <h2 class="profile-drawer-title" id="profileDrawerTitle">Your profile</h2>
+        <button class="profile-drawer-close" id="closeProfileDrawer" type="button" aria-label="Close profile">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="profile-identity-card">
+        <span class="profile-avatar-large" aria-hidden="true">RV</span>
+        <span class="profile-identity-copy"><span class="profile-name">Rishi Verma</span><span class="profile-id">OV20261112</span></span>
+        <button class="profile-edit" type="button" data-profile-action="My Profile" aria-label="Edit profile">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+        </button>
+      </div>
+      <div class="profile-menu" aria-label="Profile options">
+        <button class="profile-menu-item" type="button" data-profile-action="My Profile">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">My Profile</span><span class="profile-menu-description">Make changes to your account</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item" type="button" data-profile-action="Account Password">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m11 12 9-9"/><path d="m17 6 2 2"/><path d="m15 8 2 2"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">Account Password</span><span class="profile-menu-description">Password management</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item" type="button" data-profile-action="Manage Device Activity">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M9 18h6"/><path d="M9 6h6"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">Manage Device Activity</span><span class="profile-menu-description">Login activity</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item" type="button" data-profile-action="App Unlock">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">App Unlock</span><span class="profile-menu-description">Set biometric permission</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item" type="button" data-profile-action="Support">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">Support</span><span class="profile-menu-description">Help &amp; support</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item logout" type="button" data-profile-action="Log out">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 19V5a2 2 0 0 0-2-2h-6"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">Log out</span><span class="profile-menu-description">Sign out of your Ovie account</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="profile-legal-links" aria-label="Ovie information">
+        <button type="button" data-profile-action="About Us">About Us</button>
+        <button type="button" data-profile-action="Privacy Policy">Privacy Policy</button>
+        <button type="button" data-profile-action="Terms &amp; Conditions">Terms &amp; Conditions</button>
+      </div>
+    </div>
+  </dialog>
   <button class="ask-fab" id="askOvieFab" type="button" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet">
     <svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg>
   </button>
@@ -1181,13 +1441,18 @@
         </div>
         <p class="ask-attachment-status" id="askAttachmentStatus" aria-live="polite"></p>
       </form>
-      <div class="android-keyboard-preview" aria-hidden="true">
-        <div class="android-suggestions"><span class="android-suggestion">your</span><span class="android-suggestion">coverage</span><span class="android-suggestion">policy</span></div>
-        <div class="keyboard-row ten"><span class="keyboard-key">Q</span><span class="keyboard-key">W</span><span class="keyboard-key">E</span><span class="keyboard-key">R</span><span class="keyboard-key">T</span><span class="keyboard-key">Y</span><span class="keyboard-key">U</span><span class="keyboard-key">I</span><span class="keyboard-key">O</span><span class="keyboard-key">P</span></div>
-        <div class="keyboard-row nine"><span class="keyboard-key">A</span><span class="keyboard-key">S</span><span class="keyboard-key">D</span><span class="keyboard-key">F</span><span class="keyboard-key">G</span><span class="keyboard-key">H</span><span class="keyboard-key">J</span><span class="keyboard-key">K</span><span class="keyboard-key">L</span></div>
-        <div class="keyboard-row shift"><span class="keyboard-key utility"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/><path d="M12 9v12"/></svg></span><span class="keyboard-key">Z</span><span class="keyboard-key">X</span><span class="keyboard-key">C</span><span class="keyboard-key">V</span><span class="keyboard-key">B</span><span class="keyboard-key">N</span><span class="keyboard-key">M</span><span class="keyboard-key utility"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6"/><path d="m12 9 6 6"/></svg></span></div>
-        <div class="keyboard-row android-bottom"><span class="keyboard-key utility">?123</span><span class="keyboard-key utility">,</span><span class="keyboard-key utility"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></span><span class="keyboard-key space">English (US)</span><span class="keyboard-key utility">.</span><span class="keyboard-key utility send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></div>
-        <div class="android-gesture-bar"></div>
+      <p class="ask-ovie-disclaimer">Ovie provides policy summaries only and does not offer policy recommendations or insurance advice.</p>
+      <div class="android-keyboard-preview">
+        <div class="android-suggestions" aria-hidden="true"><span class="android-suggestion">your</span><span class="android-suggestion">coverage</span><span class="android-suggestion">policy</span></div>
+        <div class="keyboard-row ten" aria-hidden="true"><span class="keyboard-key">Q</span><span class="keyboard-key">W</span><span class="keyboard-key">E</span><span class="keyboard-key">R</span><span class="keyboard-key">T</span><span class="keyboard-key">Y</span><span class="keyboard-key">U</span><span class="keyboard-key">I</span><span class="keyboard-key">O</span><span class="keyboard-key">P</span></div>
+        <div class="keyboard-row nine" aria-hidden="true"><span class="keyboard-key">A</span><span class="keyboard-key">S</span><span class="keyboard-key">D</span><span class="keyboard-key">F</span><span class="keyboard-key">G</span><span class="keyboard-key">H</span><span class="keyboard-key">J</span><span class="keyboard-key">K</span><span class="keyboard-key">L</span></div>
+        <div class="keyboard-row shift" aria-hidden="true"><span class="keyboard-key utility"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/><path d="M12 9v12"/></svg></span><span class="keyboard-key">Z</span><span class="keyboard-key">X</span><span class="keyboard-key">C</span><span class="keyboard-key">V</span><span class="keyboard-key">B</span><span class="keyboard-key">N</span><span class="keyboard-key">M</span><span class="keyboard-key utility"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6"/><path d="m12 9 6 6"/></svg></span></div>
+        <div class="keyboard-row android-bottom" aria-hidden="true"><span class="keyboard-key utility">?123</span><span class="keyboard-key utility">,</span><span class="keyboard-key utility"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></span><span class="keyboard-key space">English (US)</span><span class="keyboard-key utility">.</span><span class="keyboard-key utility send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></div>
+        <div class="android-gesture-bar">
+          <button class="android-hide-keyboard" id="hidePreviewKeyboard" type="button" aria-label="Hide keyboard" title="Hide keyboard">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -1206,6 +1471,9 @@
       const donutSegments = Array.from(document.querySelectorAll('.donut-segment'));
       const toast = document.querySelector('#toast');
       const topShell = document.querySelector('.top-shell');
+      const profileButton = document.querySelector('#profileButton');
+      const profileDrawer = document.querySelector('#profileDrawer');
+      const closeProfileDrawerButton = document.querySelector('#closeProfileDrawer');
       const askOvieFab = document.querySelector('#askOvieFab');
       const askOvieSheet = document.querySelector('#askOvieSheet');
       const closeAskOvie = document.querySelector('#closeAskOvie');
@@ -1218,9 +1486,11 @@
       const askAttachmentButton = document.querySelector('#askAttachmentButton');
       const askAttachmentPicker = document.querySelector('#askAttachmentPicker');
       const askAttachmentStatus = document.querySelector('#askAttachmentStatus');
+      const hidePreviewKeyboard = document.querySelector('#hidePreviewKeyboard');
       const answerActions = Array.from(document.querySelectorAll('[data-answer-action]'));
       const visualViewport = window.visualViewport;
       let toastTimer;
+      let profileDrawerCloseTimer;
       let sheetCloseTimer;
       let sheetExpandAnimation;
       let askSheetLayoutHeight = window.innerHeight;
@@ -1264,8 +1534,67 @@
         toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2600);
       }
 
+      function profileDrawerTransitionDuration() {
+        const styles = window.getComputedStyle(profileDrawer);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function openProfileDrawer() {
+        window.clearTimeout(profileDrawerCloseTimer);
+        profileDrawer.classList.remove('is-visible');
+        profileDrawer.showModal();
+        profileButton.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('sheet-open');
+        closeProfileDrawerButton.focus({ preventScroll: true });
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => profileDrawer.classList.add('is-visible'));
+        });
+      }
+
+      function closeProfileDrawer(returnFocus = true) {
+        if (!profileDrawer.open) return;
+        profileDrawer.classList.remove('is-visible');
+        profileButton.setAttribute('aria-expanded', 'false');
+        window.clearTimeout(profileDrawerCloseTimer);
+        profileDrawerCloseTimer = window.setTimeout(() => {
+          profileDrawer.close();
+          document.body.classList.remove('sheet-open');
+          if (returnFocus) profileButton.focus({ preventScroll: true });
+        }, profileDrawerTransitionDuration() + 34);
+      }
+
+      profileButton.addEventListener('click', openProfileDrawer);
+      closeProfileDrawerButton.addEventListener('click', () => closeProfileDrawer());
+      profileDrawer.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeProfileDrawer();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && profileDrawer.open) {
+          event.preventDefault();
+          closeProfileDrawer();
+        }
+      });
+      profileDrawer.addEventListener('pointerdown', (event) => {
+        const bounds = profileDrawer.getBoundingClientRect();
+        const outsideDrawer = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideDrawer) closeProfileDrawer();
+      });
+      document.querySelectorAll('[data-profile-action]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const action = button.dataset.profileAction;
+          closeProfileDrawer();
+          window.setTimeout(() => showToast(`${action} is not connected in this prototype`), profileDrawerTransitionDuration() + 50);
+        });
+      });
+
       function syncAskSheetToViewport() {
         if (!askOvieSheet.open || document.activeElement !== askOvieInput || !visualViewport) {
+          askOvieSheet.classList.remove('keyboard-visible');
           askSheetLayoutHeight = window.innerHeight;
           document.documentElement.style.setProperty('--keyboard-inset', '0px');
           document.documentElement.style.setProperty('--visual-viewport-height', '100dvh');
@@ -1276,6 +1605,8 @@
         const visualViewportBottom = visualViewport.offsetTop + visualViewport.height;
         const layoutViewportResized = window.innerHeight < askSheetLayoutHeight - 80;
         const keyboardInset = layoutViewportResized ? 0 : Math.max(0, askSheetLayoutHeight - visualViewportBottom);
+        const keyboardVisible = layoutViewportResized || keyboardInset > 80 || visualViewport.height < askSheetLayoutHeight - 80;
+        askOvieSheet.classList.toggle('keyboard-visible', keyboardVisible);
         document.documentElement.style.setProperty('--keyboard-inset', `${keyboardInset}px`);
         document.documentElement.style.setProperty('--visual-viewport-height', `${visualViewport.height}px`);
         document.documentElement.style.setProperty('--visual-viewport-top', `${visualViewport.offsetTop}px`);
@@ -1285,6 +1616,19 @@
         visualViewport.addEventListener('resize', syncAskSheetToViewport);
         visualViewport.addEventListener('scroll', syncAskSheetToViewport);
       }
+
+      hidePreviewKeyboard.addEventListener('click', () => {
+        askOvieInput.blur();
+        askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+        syncAskSheetToViewport();
+      });
+
+      askOvieInput.addEventListener('focus', () => {
+        if (!window.matchMedia('(pointer: coarse)').matches) {
+          askOvieSheet.classList.add('show-android-keyboard-preview');
+        }
+        syncAskSheetToViewport();
+      });
 
       function openAskSheet() {
         window.clearTimeout(sheetCloseTimer);
@@ -1506,8 +1850,6 @@
         document.querySelector('#expiries').scrollIntoView({ behavior: 'smooth', block: 'start' });
         document.querySelector('#expiries-heading').focus({ preventScroll: true });
       });
-
-      document.querySelector('#profileButton').addEventListener('click', () => showToast('Profile and settings'));
 
       document.querySelectorAll('.insight').forEach((button) => {
         button.addEventListener('click', () => showToast(button.dataset.insight));
