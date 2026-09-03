@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Welcome home | Ovie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6b4062;
+      --primary-dark: #54324d;
+      --primary-soft: #f5edf3;
+      --ink: #111111;
+      --copy: #333a3d;
+      --muted: #5f6368;
+      --surface: #ffffff;
+      --canvas: #f6f6f6;
+      --border: #d8dddb;
+      --border-soft: #ecefed;
+      --success: #0d7d07;
+      --radius: 12px;
+      --nav-height: 72px;
+      --motion-duration-press: 160ms;
+      --motion-duration-standard: 200ms;
+      --motion-ease-out: cubic-bezier(.23, 1, .32, 1);
+      --z-navigation: 400;
+      --z-toast: 900;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { color-scheme: light; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #e3e3e3;
+      color: var(--ink);
+      font-family: Figtree, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    svg { display: block; }
+
+    :focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--primary) 58%, white);
+      outline-offset: 3px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .app-shell {
+      width: min(100%, 480px);
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--canvas);
+    }
+
+    .top-shell {
+      background: color-mix(in srgb, var(--surface) 96%, transparent);
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .status-bar {
+      min-height: 36px;
+      padding: 8px 18px 2px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+    }
+
+    .app-header {
+      padding: 8px 16px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-identity {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-greeting { min-width: 0; }
+
+    .greeting {
+      margin: 0 0 2px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+    }
+
+    .app-title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 600;
+      letter-spacing: -.012em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-button,
+    .avatar-button {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--canvas);
+      color: var(--muted);
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease;
+    }
+
+    .avatar-button {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .icon-button:active,
+    .avatar-button:active { transform: scale(.97); }
+
+    main {
+      min-height: calc(100vh - 102px);
+      padding: 28px 16px calc(var(--nav-height) + 42px + env(safe-area-inset-bottom));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .welcome {
+      width: 100%;
+      max-width: 390px;
+      padding: 34px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+    }
+
+    .welcome-title {
+      margin: 0;
+      max-width: 330px;
+      font-size: 24px;
+      line-height: 30px;
+      font-weight: 600;
+      letter-spacing: -.025em;
+    }
+
+    .welcome-message {
+      max-width: 330px;
+      margin: 14px 0 0;
+      color: var(--copy);
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    .upload-button {
+      min-height: 48px;
+      margin-top: 24px;
+      padding: 12px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease;
+    }
+
+    .upload-button:active { transform: scale(.97); }
+
+    .upload-status {
+      min-height: 20px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 20px;
+    }
+
+    .or-divider {
+      width: 100%;
+      margin: 18px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+      height: 1px;
+      flex: 1;
+      background: var(--border-soft);
+      content: "";
+    }
+
+    .inbox-block {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      text-align: left;
+    }
+
+    .inbox-heading {
+      margin: 0;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+    }
+
+    .inbox-copy {
+      margin: 3px 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .inbox-address-row {
+      min-height: 48px;
+      padding: 2px 2px 2px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--canvas);
+    }
+
+    .inbox-address {
+      min-width: 0;
+      flex: 1;
+      overflow-wrap: anywhere;
+      color: var(--copy);
+      font-weight: 600;
+    }
+
+    .copy-button {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--primary);
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease;
+    }
+
+    .copy-button:active { transform: scale(.97); }
+
+    .bottom-nav {
+      position: fixed;
+      z-index: var(--z-navigation);
+      left: 50%;
+      bottom: max(8px, env(safe-area-inset-bottom));
+      width: min(calc(100% - 24px), 456px);
+      min-height: var(--nav-height);
+      padding: 6px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: center;
+      transform: translateX(-50%);
+      border: 1px solid var(--border-soft);
+      border-radius: 999px;
+      background: var(--surface);
+      box-shadow: 0 4px 8px rgba(17, 17, 17, .10);
+    }
+
+    .nav-link,
+    .nav-button {
+      min-width: 0;
+      min-height: 58px;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), color var(--motion-duration-press) ease, background-color var(--motion-duration-press) ease;
+    }
+
+    .nav-link[aria-current="page"] {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .nav-link:active,
+    .nav-button:active { transform: scale(.97); }
+
+    .nav-icon {
+      width: 32px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+    }
+
+    .nav-upload {
+      width: 100%;
+      min-width: 0;
+      min-height: 58px;
+      margin: 0;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      align-self: center;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), color var(--motion-duration-press) ease;
+    }
+
+    .nav-upload:active { transform: scale(.97); }
+
+    .nav-upload .nav-icon {
+      position: relative;
+      color: var(--surface);
+    }
+
+    .nav-upload .nav-icon::before {
+      position: absolute;
+      z-index: 0;
+      inset: 50% auto auto 50%;
+      width: 48px;
+      height: 48px;
+      content: "";
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: var(--primary);
+      box-shadow: 0 2px 4px rgba(84, 50, 77, .22);
+      transition: background-color var(--motion-duration-press) ease;
+    }
+
+    .nav-upload .nav-icon svg {
+      position: relative;
+      z-index: 1;
+      width: 22px;
+      height: 22px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(var(--nav-height) + 22px + env(safe-area-inset-bottom));
+      z-index: var(--z-toast);
+      max-width: calc(100% - 32px);
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--ink);
+      color: white;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 12px);
+      transition: opacity var(--motion-duration-standard) ease, transform var(--motion-duration-standard) var(--motion-ease-out);
+    }
+
+    .toast.is-visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .upload-button:hover { background: var(--primary-dark); }
+      .copy-button:hover,
+      .icon-button:hover,
+      .avatar-button:hover { background: var(--primary-soft); }
+      .nav-link:hover,
+      .nav-button:hover { background: var(--canvas); color: var(--primary); }
+      .nav-upload:hover { color: var(--surface); }
+      .nav-upload:hover .nav-icon::before { background: var(--primary-dark); }
+    }
+
+    @media (max-height: 680px) {
+      main { align-items: flex-start; }
+      .welcome { padding-top: 28px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .upload-button,
+      .copy-button,
+      .icon-button,
+      .avatar-button,
+      .nav-link,
+      .nav-button,
+      .nav-upload { transition-property: background-color, color; }
+      .upload-button:active,
+      .copy-button:active,
+      .icon-button:active,
+      .avatar-button:active,
+      .nav-link:active,
+      .nav-button:active,
+      .nav-upload:active { transform: none; }
+      .toast { transform: translate(-50%, 0); transition-property: opacity; }
+    }
+
+    @media (min-width: 481px) {
+      .app-shell { border-inline: 1px solid #d2d2d2; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="home">
+    <header class="top-shell">
+      <div class="status-bar" aria-label="Device status">
+        <span>9:41</span>
+        <span class="status-icons" aria-hidden="true">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M1 9h2v3H1zm4-3h2v6H5zm4-3h2v9H9zm4-3h2v12h-2z"/></svg>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5A9.2 9.2 0 0 1 15 4.5M4.7 7.2a5.4 5.4 0 0 1 7.6 0M7.2 9.7a1.8 1.8 0 0 1 2.6 0"/></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".5" y=".5" width="20" height="11" rx="3" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M22 4v4c1-.3 1.5-1 1.5-2S23 4.3 22 4Z" fill="currentColor" opacity=".45"/></svg>
+        </span>
+      </div>
+      <div class="app-header">
+        <div class="header-identity">
+          <button class="avatar-button" type="button" aria-label="Open profile">RV</button>
+          <div class="header-greeting">
+            <p class="greeting">Hi,</p>
+            <h1 class="app-title">Rishi</h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-button" type="button" aria-label="Search policies and documents"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button>
+          <button class="icon-button" type="button" aria-label="Go to upcoming dates"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="welcome" aria-labelledby="welcome-heading">
+        <p class="eyebrow">Welcome to Ovie</p>
+        <h2 class="welcome-title" id="welcome-heading">Let’s upload your first policy</h2>
+        <p class="welcome-message">Let Ovie help you make sense of it.</p>
+
+        <button class="upload-button" id="uploadFirstPolicy" type="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+          <span>Upload your first policy</span>
+        </button>
+        <p class="upload-status" id="uploadStatus" aria-live="polite"></p>
+
+        <div class="or-divider" aria-hidden="true"><span>or</span></div>
+
+        <div class="inbox-block">
+          <h2 class="inbox-heading">Use your Ovie inbox</h2>
+          <p class="inbox-copy">Forward or share a policy document to this email address.</p>
+          <div class="inbox-address-row">
+            <span class="inbox-address" id="ovieInboxAddress">ov20261112@inbox.ovie.ai</span>
+            <button class="copy-button" id="copyInbox" type="button" aria-label="Copy Ovie inbox email address" title="Copy Ovie inbox email address">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Primary navigation">
+    <a class="nav-link" href="#home" aria-current="page"><span class="nav-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg></span><span>Home</span></a>
+    <button class="nav-button" type="button"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span>My Files</span></button>
+    <button class="nav-upload" type="button" id="navUpload" aria-label="Upload"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg></span></button>
+    <button class="nav-button" type="button"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span><span>Insights</span></button>
+    <button class="nav-button" type="button"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span>More</span></button>
+  </nav>
+
+  <input class="visually-hidden" id="policyFilePicker" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const filePicker = document.getElementById('policyFilePicker');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const toast = document.getElementById('toast');
+    let toastTimer;
+
+    function openFilePicker() {
+      filePicker.click();
+    }
+
+    function showToast(message) {
+      window.clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add('is-visible');
+      toastTimer = window.setTimeout(() => toast.classList.remove('is-visible'), 2200);
+    }
+
+    document.getElementById('uploadFirstPolicy').addEventListener('click', openFilePicker);
+    document.getElementById('navUpload').addEventListener('click', openFilePicker);
+
+    filePicker.addEventListener('change', () => {
+      const count = filePicker.files.length;
+      if (!count) return;
+      uploadStatus.textContent = count === 1
+        ? `${filePicker.files[0].name} selected`
+        : `${count} policy files selected`;
+    });
+
+    document.getElementById('copyInbox').addEventListener('click', async () => {
+      const address = document.getElementById('ovieInboxAddress').textContent.trim();
+      try {
+        await navigator.clipboard.writeText(address);
+        showToast('Ovie inbox copied');
+      } catch (error) {
+        showToast('Could not copy the inbox address');
+      }
+    });
+  </script>
+</body>
+</html>
