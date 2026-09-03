@@ -171,11 +171,18 @@
     .welcome {
       width: 100%;
       max-width: 390px;
-      padding: 34px 16px;
+      padding: 20px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
+    }
+
+    .welcome-illustration {
+      width: clamp(112px, 34vw, 148px);
+      height: auto;
+      margin: 0 0 16px;
+      display: block;
     }
 
     .eyebrow {
@@ -205,7 +212,7 @@
 
     .upload-button {
       min-height: 48px;
-      margin-top: 24px;
+      margin-top: 18px;
       padding: 12px 18px;
       display: inline-flex;
       align-items: center;
@@ -452,6 +459,26 @@
       .welcome { padding-top: 28px; }
     }
 
+    @media (max-height: 760px) {
+      main {
+        min-height: calc(100dvh - 102px);
+        padding: 42px 16px calc(var(--nav-height) + 30px + env(safe-area-inset-bottom));
+        align-items: flex-start;
+      }
+
+      .welcome { padding: 0 16px; }
+      .welcome-illustration { width: 92px; margin-bottom: 8px; }
+      .eyebrow { margin-bottom: 4px; }
+      .welcome-title { font-size: 22px; line-height: 28px; }
+      .welcome-message { margin-top: 8px; font-size: 14px; line-height: 20px; }
+      .upload-button { margin-top: 12px; }
+      .upload-status { min-height: 16px; margin-top: 4px; line-height: 16px; }
+      .or-divider { margin: 10px 0; }
+      .inbox-block { padding: 12px; }
+      .inbox-copy { margin: 2px 0 8px; }
+      .inbox-address-row { min-height: 44px; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .upload-button,
       .copy-button,
@@ -503,13 +530,14 @@
 
     <main>
       <section class="welcome" aria-labelledby="welcome-heading">
+        <img class="welcome-illustration" src="assets/ovie-policy-insights-ready-grey.png" width="1273" height="1236" alt="">
         <p class="eyebrow">Welcome to Ovie</p>
         <h2 class="welcome-title" id="welcome-heading">Let’s upload your first policy</h2>
         <p class="welcome-message">Let Ovie help you make sense of it.</p>
 
         <button class="upload-button" id="uploadFirstPolicy" type="button">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
-          <span>Upload your first policy</span>
+          <span>Upload</span>
         </button>
         <p class="upload-status" id="uploadStatus" aria-live="polite"></p>
 
