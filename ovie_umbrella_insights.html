@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,6 +39,9 @@
       --shadow-md: 0 6px 16px rgba(17, 17, 17, 0.12);
       --focus: 0 0 0 3px rgba(107, 64, 98, 0.24);
       --ease: cubic-bezier(.22, 1, .36, 1);
+      --motion-duration-overlay: 260ms;
+      --motion-ease-out: cubic-bezier(.23, 1, .32, 1);
+      --motion-ease-drawer: cubic-bezier(.32, .72, 0, 1);
       --z-sticky: 120;
       --z-dropdown: 300;
       --z-backdrop: 500;
@@ -50,6 +52,7 @@
     * { box-sizing: border-box; }
 
     html, body { height: 100%; }
+    html { scrollbar-gutter: stable; }
 
     body {
       margin: 0;
@@ -60,6 +63,8 @@
       color: var(--text-primary);
       background: var(--bg-canvas);
     }
+
+    body.sheet-open { overflow: hidden; }
 
     button, summary { font: inherit; }
     h1, h2, h3, strong { font-weight: 600; }
@@ -131,6 +136,7 @@
       border: 0;
       border-radius: 12px;
       background: transparent;
+      color: var(--text-tertiary);
       display: grid;
       place-items: center;
       cursor: pointer;
@@ -176,7 +182,7 @@
       gap: 8px;
     }
 
-    .title-actions .icon-button { position: relative; background: var(--bg-secondary); color: var(--text-primary); transition: background-color 180ms var(--ease), transform 180ms var(--ease); }
+    .title-actions .icon-button { position: relative; background: var(--bg-secondary); color: var(--text-tertiary); transition: background-color 180ms var(--ease), transform 180ms var(--ease); }
     .title-actions .icon-button:hover { background: var(--bg-info); }
     .title-actions .icon-button:active { transform: scale(.96); }
     .title-actions .icon-button img, .title-actions .icon-button svg { width: 19px; height: 19px; }
@@ -325,7 +331,7 @@
     .policy-meta { display: block; margin-top: 2px; font-size: 14px; line-height: 20px; color: var(--text-tertiary); }
     .policy-requirement { display: block; margin-top: 5px; font-size: 12px; line-height: 17px; color: var(--text-secondary); }
     .policy-requirement strong { color: var(--text-primary); }
-    .row-chevron { width: 17px; height: 17px; opacity: .55; }
+    .row-chevron { width: 17px; height: 17px; color: var(--text-tertiary); }
 
     .people { display: flex; flex-direction: column; overflow: hidden; }
     .card-section-heading { padding: 16px 14px 8px; align-items: flex-start; }
@@ -416,35 +422,10 @@
       box-shadow: 0 -3px 10px rgba(17,17,17,.06);
     }
 
-    .chat-input {
-      min-width: 0;
-      flex: 1;
-      height: 48px;
-      padding: 0 16px;
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-full);
-      background: rgba(255, 255, 255, 0.78);
-      color: var(--text-primary);
-      font-size: 14px;
-    }
-
-    .chat-input::placeholder { color: var(--text-muted); opacity: 1; }
-    .chat-input:focus { outline: none; border-color: var(--action-primary); box-shadow: var(--focus); }
-
-    .chat-send {
-      width: 48px;
-      height: 48px;
-      flex: 0 0 auto;
-      border: 0;
-      border-radius: 12px;
-      background: var(--action-primary);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-    }
-
-    .chat-send:hover { background: var(--action-primary-dark); }
-    .chat-send img { width: 22px; height: 22px; filter: invert(1); }
+    .chat-dock .ask-sheet-composer-row { width: 100%; }
+    .chat-dock .ask-sheet-input-row { background: var(--bg-primary); cursor: text; }
+    .chat-dock .ask-sheet-input { cursor: text; }
+    .chat-dock .ask-composer-action.attachment { color: var(--text-tertiary); }
 
     dialog {
       width: min(480px, 100vw);
@@ -477,6 +458,88 @@
     .share-disclaimer p { margin: 0; }
     .share-disclaimer p + p { margin-top: 10px; }
 
+    .ask-sheet {
+      position: fixed;
+      inset: auto auto var(--keyboard-inset, 0px) 50%;
+      width: min(480px, 100vw);
+      min-width: 0;
+      max-width: none;
+      max-height: min(calc(var(--visual-viewport-height, 100dvh) - 12px), 560px);
+      margin: 0;
+      overflow: hidden;
+      border-radius: 12px 12px 0 0;
+      opacity: 1;
+      transform: translate(-50%, 100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      will-change: transform;
+    }
+
+    .ask-sheet[open].is-visible { transform: translate(-50%, 0); }
+    .ask-sheet.chat-view { inset: calc(var(--visual-viewport-top, 0px) + 52px) auto auto 50%; height: calc(var(--visual-viewport-height, 100dvh) - 52px); max-height: none; transform: translate(-50%, 0); }
+    .ask-sheet.chat-view:not(.is-visible) { transform: translate(-50%, 100%); }
+    .ask-sheet::backdrop { opacity: 0; transition: opacity var(--motion-duration-overlay) var(--motion-ease-out); }
+    .ask-sheet.is-visible::backdrop { opacity: 1; }
+    .ask-sheet-inner { padding: 8px 16px calc(18px + env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; }
+    .ask-sheet.chat-view .ask-sheet-inner { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+    .ask-sheet.chat-view .sheet-handle { display: none; }
+    .ask-sheet-header { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .ask-sheet.chat-view .ask-sheet-header { flex: 0 0 auto; margin: -8px -16px 0; padding: 8px 16px; border-bottom: 1px solid var(--border-subtle); }
+    .ask-sheet-title { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 18px; line-height: 24px; }
+    .ovie-assistant-mark { width: 22px; height: 22px; display: block; flex: 0 0 auto; color: var(--action-primary); }
+    .ask-sheet-close { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--text-tertiary); display: grid; place-items: center; cursor: pointer; transition: background-color 160ms var(--motion-ease-out), transform 160ms var(--motion-ease-out); }
+    .ask-sheet-close:active { transform: scale(.97); }
+    .ask-sheet-conversation { min-height: 0; padding: 20px 2px 16px; display: none; flex: 1; flex-direction: column; gap: 18px; overflow-y: auto; overscroll-behavior: contain; }
+    .ask-sheet.chat-view .ask-sheet-conversation { display: flex; }
+    .ask-user-message { max-width: 84%; margin-left: auto; padding: 10px 14px; border-radius: 12px 12px 2px 12px; background: var(--action-primary); color: white; font-weight: 600; overflow-wrap: anywhere; }
+    .ask-response-text { margin: 0; color: var(--text-secondary); white-space: pre-line; }
+    .ask-answer-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .ask-answer-action, .ask-composer-action { width: 44px; height: 44px; flex: 0 0 auto; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--text-tertiary); display: grid; place-items: center; cursor: pointer; transition: background-color 160ms var(--motion-ease-out), color 160ms var(--motion-ease-out), transform 160ms var(--motion-ease-out); }
+    .ask-answer-action { border: 1px solid var(--border-subtle); background: var(--bg-primary); }
+    .ask-answer-action:active, .ask-composer-action:active { transform: scale(.97); }
+    .ask-answer-action[aria-pressed="true"][data-ask-answer-action="helpful"] { color: var(--status-success); }
+    .ask-answer-action[aria-pressed="true"][data-ask-answer-action="not-helpful"] { color: var(--status-danger); }
+    .ask-answer-action.is-saved { color: var(--action-primary); background: var(--bg-info); }
+    .ask-sheet-form { width: 100%; margin: 8px auto 0; flex: 0 0 auto; }
+    .ask-sheet.chat-view .ask-sheet-form { margin-top: auto; }
+    .ask-sheet-composer-row { display: flex; align-items: center; gap: 8px; }
+    .ask-sheet-input-row { min-height: 56px; min-width: 0; flex: 1; padding: 5px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-default); border-radius: 12px; background: var(--bg-primary); }
+    .ask-sheet-input-row:focus-within { border-color: var(--action-primary); box-shadow: var(--focus); }
+    .ask-sheet-input { min-width: 0; flex: 1; padding: 8px 0; border: 0; outline: 0; background: transparent; color: var(--text-primary); font: inherit; line-height: 20px; }
+    .ask-sheet-input::placeholder { color: var(--text-tertiary); opacity: 1; }
+    .ask-composer-action { background: var(--bg-canvas); }
+    .ask-composer-action.attachment { color: var(--action-primary); }
+    .ask-composer-action:not(.attachment) { background: var(--action-primary); color: white; }
+    .ask-composer-action .composer-send-icon { display: none; }
+    .ask-composer-action.is-send .composer-mic-icon { display: none; }
+    .ask-composer-action.is-send .composer-send-icon { display: block; }
+    .ask-attachment-status { min-height: 16px; margin: 4px 52px 0; color: var(--text-tertiary); font-size: 12px; line-height: 16px; }
+    .ask-attachment-status:empty { display: none; }
+    .ask-ovie-disclaimer { margin: 8px 8px 0; color: var(--text-tertiary); font-size: 12px; line-height: 16px; text-align: center; }
+    .ask-sheet.keyboard-visible .ask-ovie-disclaimer, .ask-sheet.show-android-keyboard-preview .ask-ovie-disclaimer { display: none; }
+    .android-keyboard-preview { display: none; margin: 14px -16px -18px; padding: 0 5px calc(7px + env(safe-area-inset-bottom)); background: #eef0f3; color: #202124; font-family: Roboto, system-ui, sans-serif; font-size: 13px; line-height: 16px; font-weight: 500; user-select: none; }
+    .android-suggestions { min-height: 38px; margin-inline: -5px; padding-inline: 6px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; border-bottom: 1px solid #d5d8dc; background: #f8f9fa; }
+    .android-suggestion { min-width: 0; padding-inline: 8px; overflow: hidden; color: #3c4043; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+    .android-suggestion + .android-suggestion { border-left: 1px solid #dfe1e5; }
+    .keyboard-row { display: grid; gap: 5px; margin-top: 6px; }
+    .keyboard-row.ten { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    .keyboard-row.nine { grid-template-columns: repeat(9, minmax(0, 1fr)); padding-inline: 14px; }
+    .keyboard-row.shift { grid-template-columns: 1.35fr repeat(7, minmax(0, 1fr)) 1.35fr; }
+    .keyboard-row.android-bottom { grid-template-columns: 1.25fr .7fr .7fr 3.4fr .7fr 1.25fr; }
+    .keyboard-key { min-width: 0; height: 38px; display: grid; place-items: center; border-radius: 7px; background: white; box-shadow: 0 1px 1px rgba(60, 64, 67, .28); white-space: nowrap; }
+    .keyboard-key.utility { background: #d8dce2; color: #3c4043; box-shadow: none; }
+    .keyboard-key.space { color: #5f6368; font-size: 11px; font-weight: 400; }
+    .keyboard-key.send { background: #d9c8d4; color: var(--action-primary-dark); }
+    .android-gesture-bar { height: 30px; position: relative; display: grid; place-items: end center; }
+    .android-gesture-bar::before { width: 108px; height: 4px; border-radius: 999px; background: #4a4d50; content: ""; }
+    .android-hide-keyboard { position: absolute; left: 2px; bottom: -7px; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: #4a4d50; display: grid; place-items: center; cursor: pointer; }
+    .ask-sheet.is-visible.show-android-keyboard-preview .android-keyboard-preview { display: block; }
+    .ask-sheet.chat-view.show-android-keyboard-preview .android-keyboard-preview { flex: 0 0 auto; margin-top: 10px; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ask-sheet-close:hover, .ask-answer-action:hover, .ask-composer-action:hover { background: var(--bg-info); color: var(--action-primary); }
+      .ask-composer-action.is-send:hover { background: var(--action-primary-dark); color: white; }
+    }
+
     .feedback-dialog { max-height: min(86dvh, 720px); }
     .feedback-dialog .sheet-body { max-height: calc(86dvh - 75px); padding-top: 8px; }
     .feedback-form fieldset { margin: 0; padding: 0; border: 0; }
@@ -497,6 +560,149 @@
     .feedback-submit:hover { background: var(--action-primary-dark); }
     .feedback-cancel { border: 1px solid var(--border-default); background: var(--bg-primary); color: var(--text-secondary); }
     .feedback-cancel:hover { background: var(--bg-secondary); }
+
+    .sharing-settings-dialog {
+      max-height: min(92dvh, 780px);
+    }
+
+    .sharing-settings-dialog[open] {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sharing-settings-dialog .sheet-head {
+      flex: 0 0 auto;
+    }
+
+    .sharing-settings-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: 17px 18px 8px;
+      overflow-y: auto;
+    }
+
+    .sharing-settings-note {
+      margin: 0;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .sharing-settings-note { color: var(--text-primary); font-weight: 600; }
+    .sharing-categories { margin-top: 18px; }
+    .sharing-category { border-bottom: 1px solid var(--border-subtle); }
+    .sharing-category:last-child { border-bottom: 0; }
+
+    .sharing-category-row {
+      min-height: 48px;
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr) 44px;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sharing-category-check-wrap {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+    }
+
+    .sharing-category-check {
+      position: absolute;
+      inset: 0;
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .sharing-category-check-visual {
+      width: 20px;
+      height: 20px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid var(--text-tertiary);
+      border-radius: 4px;
+      background: var(--bg-primary);
+      display: grid;
+      place-content: center;
+      pointer-events: none;
+      transition: border-color 140ms ease-out, background-color 140ms ease-out;
+    }
+
+    .sharing-category-check-visual svg {
+      width: 14px;
+      height: 14px;
+      color: white;
+      stroke-width: 4;
+      transform: scale(0);
+      opacity: 0;
+      transition: transform 140ms ease-out;
+    }
+
+    .sharing-category-check:hover + .sharing-category-check-visual { border-color: var(--action-primary); }
+    .sharing-category-check:checked + .sharing-category-check-visual { border-color: var(--action-primary); background: var(--action-primary); }
+    .sharing-category-check:checked + .sharing-category-check-visual svg { transform: scale(1); opacity: 1; }
+    .sharing-category-check:focus-visible + .sharing-category-check-visual { outline: none; box-shadow: var(--focus); }
+
+    .sharing-category-copy { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+
+    .sharing-category-label {
+      min-width: 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .sharing-category-status {
+      flex: 0 0 auto;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: var(--bg-secondary);
+      color: var(--text-tertiary);
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 600;
+    }
+
+    .sharing-category-status.is-unmasked { background: var(--bg-info); color: var(--action-primary); }
+
+    .sharing-category-toggle {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      color: var(--text-tertiary);
+    }
+
+    .sharing-category-toggle svg { width: 20px; height: 20px; }
+
+    .sharing-category-toggle {
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius-md);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .sharing-category-toggle:hover { background: var(--bg-secondary); color: var(--text-secondary); }
+    .sharing-category-toggle svg { transition: transform 180ms ease-out; }
+    .sharing-category-toggle[aria-expanded="false"] svg { transform: rotate(180deg); }
+    .sharing-category-details { margin: 0; padding: 0 0 10px 30px; color: var(--text-tertiary); font-size: 14px; line-height: 22px; list-style: none; }
+    .sharing-category-details[hidden] { display: none; }
+    .sharing-category-details li::before { content: "•"; margin-right: 8px; }
+
+    .sharing-settings-footer {
+      flex: 0 0 auto;
+      padding: 12px 18px calc(16px + env(safe-area-inset-bottom));
+      background: var(--bg-primary);
+    }
+
+    .sharing-settings-footer .sheet-action { min-height: 48px; margin-top: 0; }
 
     .share-page {
       position: fixed;
@@ -559,7 +765,8 @@
     .sheet-action:disabled, .feedback-submit:disabled, .share-primary:disabled { background: var(--action-primary-disabled-bg); color: var(--action-primary-disabled-text); box-shadow: none; opacity: 1; cursor: not-allowed; }
     .share-secondary { border: 1px solid var(--border-default); background: var(--bg-primary); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .share-secondary:hover { background: var(--bg-secondary); }
-    .share-secondary img { width: 18px; height: 18px; }
+    .share-secondary img, .share-secondary svg { width: 18px; height: 18px; }
+    .share-secondary svg { color: var(--text-tertiary); }
     .share-link-note { margin: 8px 0 0; font-size: 12px; line-height: 18px; font-style: normal; text-align: center; color: var(--text-tertiary); }
     .share-legal { margin-top: 16px; text-align: center; }
     .share-legal-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; }
@@ -610,7 +817,7 @@
           <span class="system-status">5G&nbsp;&nbsp;96%</span>
         </div>
         <div class="page-title-row">
-          <button class="icon-button placeholder-action" type="button" aria-label="Go back" data-message="Back navigation is not connected in this mock."><img src="assets/lucide/arrow-left.svg" alt=""></button>
+          <button class="icon-button placeholder-action" type="button" aria-label="Go back" data-message="Back navigation is not connected in this mock."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></button>
           <h1>Insights</h1>
           <div class="title-actions">
             <button class="icon-button placeholder-action" type="button" aria-label="Search" data-message="Search is not connected in this mock."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
@@ -692,17 +899,17 @@
             <button class="policy-row linked-policy" type="button" data-policy="Automobile" data-number="A6BJ988340" data-requirement="$250k / $500k / $100k, or $500k combined single limit" data-source="Pages 2–3 · Underlying policies">
               <span class="policy-icon"><img src="assets/lucide/car.svg" alt=""></span>
               <span class="policy-copy"><span class="policy-name">Personal auto</span><span class="policy-meta">HANOVER/CITIZENS · ••••8340</span><span class="policy-requirement"><strong>Required:</strong> $250k/$500k/$100k or $500k CSL</span></span>
-              <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
+              <svg class="row-chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
             </button>
             <button class="policy-row linked-policy" type="button" data-policy="Homeowners" data-number="H6BJ988341" data-requirement="$300,000 personal or premises liability" data-source="Pages 2–3 · Underlying policies">
               <span class="policy-icon"><img src="assets/lucide/house.svg" alt=""></span>
               <span class="policy-copy"><span class="policy-name">Homeowners</span><span class="policy-meta">HANOVER/CITIZENS · ••••8341</span><span class="policy-requirement"><strong>Required:</strong> $300,000 personal or premises liability</span></span>
-              <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
+              <svg class="row-chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
             </button>
             <button class="policy-row linked-policy" type="button" data-policy="Watercraft" data-number="P6BJ988345" data-requirement="$250k / $500k / $100k, or $300k combined single limit" data-source="Pages 2–3 · Underlying policies">
               <span class="policy-icon"><img src="assets/lucide/sailboat.svg" alt=""></span>
               <span class="policy-copy"><span class="policy-name">Watercraft</span><span class="policy-meta">HANOVER/CITIZENS · ••••8345</span><span class="policy-requirement"><strong>Required:</strong> $250k/$500k/$100k or $300k CSL</span></span>
-              <img class="row-chevron" src="assets/lucide/chevron-right.svg" alt="">
+              <svg class="row-chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
             </button>
           </div>
         </section>
@@ -794,8 +1001,13 @@
 
       <form class="chat-dock" id="chatForm" novalidate>
         <label for="chatInput" class="sr-only">Ask Ovie about this policy</label>
-        <input class="chat-input" id="chatInput" type="text" placeholder="Ask Ovie…" autocomplete="off">
-        <button class="chat-send" type="submit" aria-label="Ask Ovie"><img src="assets/lucide/mic.svg" alt=""></button>
+        <div class="ask-sheet-composer-row">
+          <div class="ask-sheet-input-row">
+            <button class="ask-composer-action attachment" id="chatAttachmentButton" type="button" aria-label="Attach a policy document and ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
+            <input class="ask-sheet-input" id="chatInput" type="text" placeholder="Ask anything about this policy..." autocomplete="off" readonly aria-haspopup="dialog" aria-controls="askOvieSheet">
+          </div>
+          <button class="ask-composer-action" id="chatAskButton" type="submit" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet"><svg class="composer-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
+        </div>
       </form>
 
       <section class="share-page" id="sharePage" aria-labelledby="sharePageTitle" hidden>
@@ -806,7 +1018,7 @@
               <h2 id="sharePageTitle">Share</h2>
               <p class="share-intro">Send a secure, time-limited copy.</p>
             </div>
-            <button class="icon-button" id="closeSharePage" type="button" aria-label="Close sharing page"><img src="assets/lucide/x.svg" alt=""></button>
+            <button class="icon-button" id="closeSharePage" type="button" aria-label="Close sharing page"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
           </div>
         </header>
 
@@ -821,7 +1033,7 @@
           </div>
 
           <div class="share-masking">
-            <p class="share-masking-copy">Personal information will be masked. Sensitive details are hidden before sharing. <button class="share-masking-action placeholder-action" type="button" data-message="Sharing preferences are not connected in this mock.">Manage what’s shared</button></p>
+            <p class="share-masking-copy">Personal information will be masked. Sensitive details are hidden before sharing. <button class="share-masking-action" id="manageSharedButton" type="button">Manage what’s shared</button></p>
           </div>
 
           <form class="share-form" id="shareForm" novalidate>
@@ -838,7 +1050,7 @@
             </div>
             <div class="share-page-actions">
               <button class="share-primary" id="inviteButton" type="submit" disabled>Share by email</button>
-              <button class="share-secondary" id="copyLinkButton" type="button"><img src="assets/lucide/link-2.svg" alt="">Copy secure link</button>
+              <button class="share-secondary" id="copyLinkButton" type="button"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>Copy secure link</button>
             </div>
             <p class="share-link-note">Anyone with the link can view the shared information until it expires.</p>
           </form>
@@ -853,7 +1065,7 @@
 
   <dialog id="bottomSheet" aria-labelledby="sheetTitle">
     <div class="sheet-handle" aria-hidden="true"></div>
-    <div class="sheet-head"><h2 id="sheetTitle">Source from your policy</h2><button class="icon-button" type="button" id="closeSheet" aria-label="Close"><img src="assets/lucide/x.svg" alt=""></button></div>
+    <div class="sheet-head"><h2 id="sheetTitle">Source from your policy</h2><button class="icon-button" type="button" id="closeSheet" aria-label="Close"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
     <div class="sheet-body" id="sheetBody"></div>
   </dialog>
 
@@ -861,7 +1073,7 @@
     <div class="sheet-handle" aria-hidden="true"></div>
     <div class="sheet-head">
       <h2 id="feedbackDialogTitle">Tell us more</h2>
-      <button class="icon-button" type="button" id="closeFeedback" aria-label="Close feedback form"><img src="assets/lucide/x.svg" alt=""></button>
+      <button class="icon-button" type="button" id="closeFeedback" aria-label="Close feedback form"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
     </div>
     <div class="sheet-body">
       <form class="feedback-form" id="feedbackForm" novalidate>
@@ -885,6 +1097,93 @@
     </div>
   </dialog>
 
+  <dialog class="sharing-settings-dialog" id="sharingSettingsDialog" aria-labelledby="sharingSettingsTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="sharingSettingsTitle">Manage what’s shared</h2>
+      <button class="icon-button" type="button" id="closeSharingSettings" aria-label="Close sharing settings"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+    </div>
+    <div class="sharing-settings-body">
+      <p class="sharing-settings-note">Information left unselected will be masked for the recipient.</p>
+
+      <div class="sharing-categories" aria-label="Sensitive information categories">
+        <section class="sharing-category">
+          <div class="sharing-category-row">
+            <span class="sharing-category-check-wrap"><input class="sharing-category-check" id="sharePii" type="checkbox" name="sharedInformation" value="pii"><span class="sharing-category-check-visual" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"></path></svg></span></span>
+            <span class="sharing-category-copy"><label class="sharing-category-label" for="sharePii">Personally identifiable information</label><span class="sharing-category-status">Masked</span></span>
+            <button class="sharing-category-toggle" type="button" aria-expanded="true" aria-controls="sharePiiDetails" aria-label="Collapse personally identifiable information details"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg></button>
+          </div>
+          <ul class="sharing-category-details" id="sharePiiDetails"><li>Listed drivers</li><li>Policy holder</li></ul>
+        </section>
+
+        <section class="sharing-category">
+          <div class="sharing-category-row">
+            <span class="sharing-category-check-wrap"><input class="sharing-category-check" id="shareFinancial" type="checkbox" name="sharedInformation" value="financial"><span class="sharing-category-check-visual" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"></path></svg></span></span>
+            <span class="sharing-category-copy"><label class="sharing-category-label" for="shareFinancial">Financial information</label><span class="sharing-category-status">Masked</span></span>
+            <button class="sharing-category-toggle" type="button" aria-expanded="true" aria-controls="shareFinancialDetails" aria-label="Collapse financial information details"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg></button>
+          </div>
+          <ul class="sharing-category-details" id="shareFinancialDetails"><li>Policy premium</li></ul>
+        </section>
+
+        <section class="sharing-category">
+          <div class="sharing-category-row">
+            <span class="sharing-category-check-wrap"><input class="sharing-category-check" id="shareIdentifiers" type="checkbox" name="sharedInformation" value="identifiers"><span class="sharing-category-check-visual" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"></path></svg></span></span>
+            <span class="sharing-category-copy"><label class="sharing-category-label" for="shareIdentifiers">Policy and asset identifiers</label><span class="sharing-category-status">Masked</span></span>
+            <button class="sharing-category-toggle" type="button" aria-expanded="true" aria-controls="shareIdentifiersDetails" aria-label="Collapse policy and asset identifier details"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg></button>
+          </div>
+          <ul class="sharing-category-details" id="shareIdentifiersDetails"><li>Policy number</li><li>Covered residence, vehicles, and watercraft</li></ul>
+        </section>
+      </div>
+    </div>
+    <div class="sharing-settings-footer">
+      <button class="sheet-action" id="continueSharingSettings" type="button">Save</button>
+    </div>
+  </dialog>
+
+  <dialog class="ask-sheet" id="askOvieSheet" aria-labelledby="askOvieTitle">
+    <div class="ask-sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="ask-sheet-title" id="askOvieTitle"><svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg><span>Ask Ovie</span></h2>
+        <button class="ask-sheet-close" id="closeAskOvie" type="button" aria-label="Close Ask Ovie"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <div class="ask-sheet-conversation" id="askOvieConversation" aria-live="polite" hidden>
+        <div class="ask-user-message" id="askOvieQuestion"></div>
+        <div><p class="ask-response-text" id="askOvieAnswer"></p>
+          <div class="ask-answer-actions" aria-label="Answer actions">
+            <button class="ask-answer-action" type="button" data-ask-answer-action="copy" aria-label="Copy answer" title="Copy answer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
+            <button class="ask-answer-action" type="button" data-ask-answer-action="regenerate" aria-label="Regenerate answer" title="Regenerate answer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/><path d="M16 16h5v5"/></svg></button>
+            <button class="ask-answer-action" type="button" data-ask-answer-action="helpful" aria-label="Helpful answer" title="Helpful answer" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg></button>
+            <button class="ask-answer-action" type="button" data-ask-answer-action="not-helpful" aria-label="Not helpful" title="Not helpful" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg></button>
+            <button class="ask-answer-action" type="button" data-ask-answer-action="source" aria-label="View source information" title="View source information"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
+            <button class="ask-answer-action" type="button" data-ask-answer-action="save" aria-label="Save answer" title="Save answer" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v14Z"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <form class="ask-sheet-form" id="askOvieForm" novalidate>
+        <label class="sr-only" for="askOvieInput">Ask anything about this policy</label>
+        <div class="ask-sheet-composer-row">
+          <div class="ask-sheet-input-row">
+            <button class="ask-composer-action attachment" id="askAttachmentButton" type="button" aria-label="Attach a policy document" title="Attach a policy document"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
+            <input class="ask-sheet-input" id="askOvieInput" name="question" type="text" inputmode="text" enterkeyhint="send" autocomplete="off" placeholder="Ask anything about this policy...">
+          </div>
+          <button class="ask-composer-action" id="askComposerAction" type="button" aria-label="Use voice input" title="Use voice input"><svg class="composer-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg><svg class="composer-send-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+        </div>
+        <p class="ask-attachment-status" id="askAttachmentStatus" aria-live="polite"></p>
+      </form>
+      <p class="ask-ovie-disclaimer">Ovie provides policy summaries only and does not offer policy recommendations or insurance advice.</p>
+      <div class="android-keyboard-preview">
+        <div class="android-suggestions" aria-hidden="true"><span class="android-suggestion">your</span><span class="android-suggestion">coverage</span><span class="android-suggestion">policy</span></div>
+        <div class="keyboard-row ten" aria-hidden="true"><span class="keyboard-key">Q</span><span class="keyboard-key">W</span><span class="keyboard-key">E</span><span class="keyboard-key">R</span><span class="keyboard-key">T</span><span class="keyboard-key">Y</span><span class="keyboard-key">U</span><span class="keyboard-key">I</span><span class="keyboard-key">O</span><span class="keyboard-key">P</span></div>
+        <div class="keyboard-row nine" aria-hidden="true"><span class="keyboard-key">A</span><span class="keyboard-key">S</span><span class="keyboard-key">D</span><span class="keyboard-key">F</span><span class="keyboard-key">G</span><span class="keyboard-key">H</span><span class="keyboard-key">J</span><span class="keyboard-key">K</span><span class="keyboard-key">L</span></div>
+        <div class="keyboard-row shift" aria-hidden="true"><span class="keyboard-key utility">⇧</span><span class="keyboard-key">Z</span><span class="keyboard-key">X</span><span class="keyboard-key">C</span><span class="keyboard-key">V</span><span class="keyboard-key">B</span><span class="keyboard-key">N</span><span class="keyboard-key">M</span><span class="keyboard-key utility">⌫</span></div>
+        <div class="keyboard-row android-bottom" aria-hidden="true"><span class="keyboard-key utility">?123</span><span class="keyboard-key utility">,</span><span class="keyboard-key utility">●</span><span class="keyboard-key space">English (US)</span><span class="keyboard-key utility">.</span><span class="keyboard-key utility send">→</span></div>
+        <div class="android-gesture-bar"><button class="android-hide-keyboard" id="hidePreviewKeyboard" type="button" aria-label="Hide keyboard" title="Hide keyboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div>
+      </div>
+    </div>
+  </dialog>
+  <input id="askAttachmentPicker" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" tabindex="-1" aria-hidden="true" hidden>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
@@ -903,6 +1202,22 @@
     const titleRow = document.querySelector('.page-title-row');
     const appMain = document.querySelector('main');
     const chatDock = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatAttachmentButton = document.getElementById('chatAttachmentButton');
+    const askOvieSheet = document.getElementById('askOvieSheet');
+    const closeAskOvieButton = document.getElementById('closeAskOvie');
+    const askOvieForm = document.getElementById('askOvieForm');
+    const askOvieInput = document.getElementById('askOvieInput');
+    const askComposerAction = document.getElementById('askComposerAction');
+    const askOvieConversation = document.getElementById('askOvieConversation');
+    const askOvieQuestion = document.getElementById('askOvieQuestion');
+    const askOvieAnswer = document.getElementById('askOvieAnswer');
+    const askAttachmentButton = document.getElementById('askAttachmentButton');
+    const askAttachmentPicker = document.getElementById('askAttachmentPicker');
+    const askAttachmentStatus = document.getElementById('askAttachmentStatus');
+    const hidePreviewKeyboard = document.getElementById('hidePreviewKeyboard');
+    const askAnswerActions = Array.from(document.querySelectorAll('[data-ask-answer-action]'));
+    const visualViewport = window.visualViewport;
     const sharePage = document.getElementById('sharePage');
     const closeSharePageButton = document.getElementById('closeSharePage');
     const shareForm = document.getElementById('shareForm');
@@ -914,12 +1229,21 @@
     const shareExpiryOptions = Array.from(shareExpiryMenu.querySelectorAll('[role="option"]'));
     const inviteButton = document.getElementById('inviteButton');
     const copyLinkButton = document.getElementById('copyLinkButton');
+    const manageSharedButton = document.getElementById('manageSharedButton');
+    const sharingSettingsDialog = document.getElementById('sharingSettingsDialog');
+    const closeSharingSettingsButton = document.getElementById('closeSharingSettings');
+    const continueSharingSettingsButton = document.getElementById('continueSharingSettings');
+    const sharingCategoryToggles = Array.from(document.querySelectorAll('.sharing-category-toggle'));
+    const sharingCategoryChecks = Array.from(document.querySelectorAll('.sharing-category-check'));
     let toastTimer;
     let expiryTypeaheadTimer;
     let expiryTypeahead = '';
     let lastScrollTop = phone.scrollTop;
     let scrollFramePending = false;
     let titleTransitionLockedUntil = 0;
+    let askSheetCloseTimer;
+    let askSheetExpandAnimation;
+    let askSheetLayoutHeight = window.innerHeight;
 
     function updateTitleVisibility() {
       const currentScrollTop = Math.max(0, phone.scrollTop);
@@ -959,6 +1283,95 @@
       toast.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function syncAskSheetToViewport() {
+      if (!askOvieSheet.open || document.activeElement !== askOvieInput || !visualViewport) {
+        askOvieSheet.classList.remove('keyboard-visible');
+        askSheetLayoutHeight = window.innerHeight;
+        document.documentElement.style.setProperty('--keyboard-inset', '0px');
+        document.documentElement.style.setProperty('--visual-viewport-height', '100dvh');
+        document.documentElement.style.setProperty('--visual-viewport-top', '0px');
+        return;
+      }
+
+      const viewportBottom = visualViewport.offsetTop + visualViewport.height;
+      const layoutViewportResized = window.innerHeight < askSheetLayoutHeight - 80;
+      const keyboardInset = layoutViewportResized ? 0 : Math.max(0, askSheetLayoutHeight - viewportBottom);
+      const keyboardVisible = layoutViewportResized || keyboardInset > 80 || visualViewport.height < askSheetLayoutHeight - 80;
+      askOvieSheet.classList.toggle('keyboard-visible', keyboardVisible);
+      document.documentElement.style.setProperty('--keyboard-inset', `${keyboardInset}px`);
+      document.documentElement.style.setProperty('--visual-viewport-height', `${visualViewport.height}px`);
+      document.documentElement.style.setProperty('--visual-viewport-top', `${visualViewport.offsetTop}px`);
+    }
+
+    function syncAskComposerAction() {
+      const hasQuestion = askOvieInput.value.trim().length > 0;
+      askComposerAction.classList.toggle('is-send', hasQuestion);
+      askComposerAction.setAttribute('aria-label', hasQuestion ? 'Send question' : 'Use voice input');
+      askComposerAction.title = hasQuestion ? 'Send question' : 'Use voice input';
+    }
+
+    function askSheetTransitionDuration() {
+      const styles = getComputedStyle(askOvieSheet);
+      return Math.max(0, ...styles.transitionDuration.split(',').map(value => {
+        const duration = Number.parseFloat(value);
+        return value.trim().endsWith('ms') ? duration : duration * 1000;
+      }));
+    }
+
+    function openAskSheet() {
+      clearTimeout(askSheetCloseTimer);
+      const showKeyboardPreview = !matchMedia('(pointer: coarse)').matches;
+      askOvieSheet.classList.toggle('show-android-keyboard-preview', showKeyboardPreview);
+      askOvieSheet.classList.remove('chat-view', 'is-visible');
+      askOvieConversation.hidden = true;
+      askAttachmentStatus.textContent = '';
+      askAttachmentPicker.value = '';
+      syncAskComposerAction();
+      askOvieSheet.showModal();
+      document.body.classList.add('sheet-open');
+      askSheetLayoutHeight = window.innerHeight;
+      askOvieInput.focus({ preventScroll: true });
+      syncAskSheetToViewport();
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        syncAskSheetToViewport();
+        askOvieSheet.classList.add('is-visible');
+      }));
+    }
+
+    function closeAskSheet(returnFocus = true) {
+      if (!askOvieSheet.open) return;
+      askSheetExpandAnimation?.cancel();
+      askOvieSheet.classList.remove('is-visible');
+      clearTimeout(askSheetCloseTimer);
+      askSheetCloseTimer = setTimeout(() => {
+        askOvieSheet.close();
+        askOvieSheet.classList.remove('chat-view', 'show-android-keyboard-preview', 'keyboard-visible');
+        askOvieConversation.hidden = true;
+        document.body.classList.remove('sheet-open');
+        syncAskSheetToViewport();
+        if (returnFocus) chatInput.focus({ preventScroll: true });
+      }, askSheetTransitionDuration() + 34);
+    }
+
+    function answerForPolicy(question) {
+      if (/limit|coverage amount|million/i.test(question)) return 'This umbrella policy shows a $5 million limit for each covered occurrence and a $10 million maximum during the policy year.\n\nThe current liability limits for the three scheduled underlying policies were not available in the pages analyzed.';
+      if (/underlying|home|auto|watercraft/i.test(question)) return 'The supplied documents schedule personal auto, homeowners, and watercraft policies. Their required minimum liability limits are shown here, but their current limits and policy periods are not established by the supplied pages.';
+      if (/exclude|not included/i.test(question)) return 'The supplied pages do not contain the complete policy exclusions. Ovie does not infer exclusions that are not present in the analyzed documents.';
+      return `I found information in this Personal Umbrella Liability policy related to “${question}.”\n\nI can help explain documented limits, linked policies, coverage details, and evidence gaps. Open a source detail to review the policy wording.`;
+    }
+
+    function expandAskSheet(fromTop) {
+      askSheetExpandAnimation?.cancel();
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const expandedTop = askOvieSheet.getBoundingClientRect().top;
+      const revealInset = Math.max(0, Math.round(fromTop - expandedTop));
+      askSheetExpandAnimation = askOvieSheet.animate([
+        { clipPath: `inset(${revealInset}px 0 0 0 round 12px)` },
+        { clipPath: 'inset(0 0 0 0 round 12px)' }
+      ], { duration: 260, easing: 'cubic-bezier(.32, .72, 0, 1)', fill: 'both' });
+      askSheetExpandAnimation.finished.then(() => askSheetExpandAnimation?.cancel()).catch(() => {});
     }
 
     function sheetElement(tag, className, text) {
@@ -1086,6 +1499,22 @@
       if (restoreFocus) shareExpiryTrigger.focus();
     }
 
+    function openSharingSettings() {
+      if (shareExpiryMenu.matches(':popover-open')) shareExpiryMenu.hidePopover();
+      sharingSettingsDialog.showModal();
+      requestAnimationFrame(() => closeSharingSettingsButton.focus());
+    }
+
+    function closeSharingSettings() {
+      sharingSettingsDialog.close();
+    }
+
+    function updateSharingCategoryState(checkbox) {
+      const status = checkbox.closest('.sharing-category').querySelector('.sharing-category-status');
+      status.textContent = checkbox.checked ? 'Unmasked' : 'Masked';
+      status.classList.toggle('is-unmasked', checkbox.checked);
+    }
+
     document.querySelectorAll('.source-button').forEach(button => button.addEventListener('click', event => {
       event.stopPropagation();
       openSource(button);
@@ -1145,6 +1574,28 @@
 
     document.getElementById('shareButton').addEventListener('click', openShare);
     closeSharePageButton.addEventListener('click', closeSharePage);
+    manageSharedButton.addEventListener('click', openSharingSettings);
+    closeSharingSettingsButton.addEventListener('click', closeSharingSettings);
+    continueSharingSettingsButton.addEventListener('click', closeSharingSettings);
+    sharingSettingsDialog.addEventListener('click', event => {
+      const bounds = sharingSettingsDialog.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeSharingSettings();
+    });
+    sharingSettingsDialog.addEventListener('close', () => {
+      if (!sharePage.hidden) manageSharedButton.focus();
+    });
+    sharingCategoryChecks.forEach(checkbox => {
+      updateSharingCategoryState(checkbox);
+      checkbox.addEventListener('change', () => updateSharingCategoryState(checkbox));
+    });
+    sharingCategoryToggles.forEach(toggle => toggle.addEventListener('click', () => {
+      const details = document.getElementById(toggle.getAttribute('aria-controls'));
+      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isExpanded));
+      details.hidden = isExpanded;
+      const categoryName = toggle.closest('.sharing-category').querySelector('.sharing-category-label').textContent.trim();
+      toggle.setAttribute('aria-label', `${isExpanded ? 'Expand' : 'Collapse'} ${categoryName.toLowerCase()} details`);
+    }));
     shareEmail.addEventListener('input', () => { inviteButton.disabled = !shareEmail.validity.valid; });
     shareExpiryTrigger.addEventListener('keydown', event => {
       const selectedIndex = Math.max(0, shareExpiryOptions.findIndex(option => option.getAttribute('aria-selected') === 'true'));
@@ -1209,11 +1660,101 @@
       showToast(`Email share prepared for ${shareEmail.value.trim()}.`);
     });
     copyLinkButton.addEventListener('click', () => showToast(`Secure link copied. It expires after ${expiryLabel()}.`));
-    document.getElementById('chatForm').addEventListener('submit', event => {
+    if (visualViewport) {
+      visualViewport.addEventListener('resize', syncAskSheetToViewport);
+      visualViewport.addEventListener('scroll', syncAskSheetToViewport);
+    }
+
+    chatInput.addEventListener('click', openAskSheet);
+    chatAttachmentButton.addEventListener('click', openAskSheet);
+    chatDock.addEventListener('submit', event => {
       event.preventDefault();
-      const input = document.getElementById('chatInput');
-      showToast(input.value.trim() ? 'Opening Ask Ovie with your question.' : 'Ask Ovie voice input would start here.');
+      openAskSheet();
     });
+    closeAskOvieButton.addEventListener('click', () => closeAskSheet());
+    askOvieSheet.addEventListener('cancel', event => {
+      event.preventDefault();
+      closeAskSheet();
+    });
+    askOvieSheet.addEventListener('pointerdown', event => {
+      const bounds = askOvieSheet.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeAskSheet();
+    });
+    askOvieInput.addEventListener('focus', () => {
+      if (!matchMedia('(pointer: coarse)').matches) askOvieSheet.classList.add('show-android-keyboard-preview');
+      syncAskSheetToViewport();
+    });
+    askOvieInput.addEventListener('input', syncAskComposerAction);
+    askOvieInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter' && !event.isComposing) {
+        event.preventDefault();
+        askOvieForm.requestSubmit();
+      }
+    });
+    hidePreviewKeyboard.addEventListener('click', () => {
+      askOvieInput.blur();
+      askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+      syncAskSheetToViewport();
+    });
+    askAttachmentButton.addEventListener('click', () => askAttachmentPicker.click());
+    askAttachmentPicker.addEventListener('change', () => {
+      const file = askAttachmentPicker.files?.[0];
+      askAttachmentStatus.textContent = file ? `Attached: ${file.name}` : '';
+      if (file) askOvieInput.focus({ preventScroll: true });
+    });
+    askComposerAction.addEventListener('click', () => {
+      if (askComposerAction.classList.contains('is-send')) {
+        askOvieForm.requestSubmit();
+      } else {
+        showToast('Voice input is not available in this prototype');
+        askOvieInput.focus({ preventScroll: true });
+      }
+    });
+    askOvieForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const question = askOvieInput.value.trim();
+      if (!question) return;
+      const compactTop = askOvieSheet.getBoundingClientRect().top;
+      askOvieQuestion.textContent = question;
+      askOvieAnswer.textContent = answerForPolicy(question);
+      askOvieConversation.hidden = false;
+      askOvieSheet.classList.add('chat-view');
+      expandAskSheet(compactTop);
+      askAnswerActions.forEach(button => {
+        if (button.hasAttribute('aria-pressed')) button.setAttribute('aria-pressed', 'false');
+        button.classList.remove('is-saved');
+      });
+      askOvieInput.value = '';
+      syncAskComposerAction();
+      syncAskSheetToViewport();
+      requestAnimationFrame(() => {
+        askOvieConversation.scrollTop = askOvieConversation.scrollHeight;
+        askOvieInput.focus({ preventScroll: true });
+      });
+    });
+    askAnswerActions.forEach(button => button.addEventListener('click', async () => {
+      const action = button.dataset.askAnswerAction;
+      if (action === 'copy') {
+        try {
+          await navigator.clipboard.writeText(askOvieAnswer.textContent);
+          showToast('Answer copied');
+        } catch {
+          showToast('Copy is unavailable in this browser');
+        }
+      } else if (action === 'regenerate') {
+        askOvieAnswer.textContent = answerForPolicy(askOvieQuestion.textContent);
+        showToast('Answer refreshed');
+      } else if (action === 'helpful' || action === 'not-helpful') {
+        askAnswerActions.filter(item => ['helpful', 'not-helpful'].includes(item.dataset.askAnswerAction)).forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        showToast(action === 'helpful' ? 'Thanks for the feedback' : 'Feedback recorded');
+      } else if (action === 'source') {
+        showToast('Opening source information');
+      } else if (action === 'save') {
+        button.classList.toggle('is-saved');
+        button.setAttribute('aria-pressed', String(button.classList.contains('is-saved')));
+        showToast(button.classList.contains('is-saved') ? 'Answer saved' : 'Answer removed from saved');
+      }
+    }));
     document.querySelectorAll('.feedback-button').forEach(button => button.addEventListener('click', () => {
       document.querySelectorAll('.feedback-button').forEach(option => option.setAttribute('aria-pressed', String(option === button)));
       if (button.dataset.feedback === 'down') {
