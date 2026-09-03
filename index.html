@@ -584,16 +584,16 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      padding: 4px 8px 8px;
     }
 
     .profile-drawer-title { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
 
     .profile-identity {
+      min-width: 0;
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-top: 12px;
-      padding: 4px 8px 12px;
     }
 
     .profile-avatar {
@@ -616,7 +616,7 @@
 
     .profile-inbox {
       min-height: 64px;
-      padding: 10px 8px 12px;
+      padding: 8px 8px 12px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -1425,21 +1425,20 @@
   <dialog class="profile-drawer" id="profileDrawer" aria-labelledby="profileDrawerTitle">
     <div class="profile-drawer-inner">
       <div class="profile-drawer-header">
-        <h2 class="profile-drawer-title" id="profileDrawerTitle">Your profile</h2>
+        <div class="profile-identity">
+          <span class="profile-avatar" aria-hidden="true">RV</span>
+          <span class="profile-identity-copy">
+            <h2 class="profile-drawer-title profile-name" id="profileDrawerTitle">Rishi Verma</h2>
+          </span>
+        </div>
         <button class="profile-drawer-close" id="closeProfileDrawer" type="button" aria-label="Close profile">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
         </button>
       </div>
-      <div class="profile-identity">
-        <span class="profile-avatar" aria-hidden="true">RV</span>
-        <span class="profile-identity-copy">
-          <span class="profile-name">Rishi Verma</span>
-        </span>
-      </div>
       <div class="profile-inbox">
         <div class="profile-inbox-copy">
           <div class="profile-inbox-heading-row">
-            <h3 class="profile-inbox-heading">Your Ovie inbox</h3>
+            <h3 class="profile-inbox-heading">My Ovie Inbox</h3>
             <button class="profile-inbox-info-button" id="ovieInboxInfo" type="button" aria-label="About your Ovie inbox" aria-haspopup="dialog" aria-controls="ovieInboxInfoSheet">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
             </button>
