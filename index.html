@@ -593,8 +593,7 @@
       align-items: center;
       gap: 12px;
       margin-top: 12px;
-      padding: 4px 8px 14px;
-      border-bottom: 1px solid var(--border-soft);
+      padding: 4px 8px 12px;
     }
 
     .profile-avatar {
@@ -612,9 +611,91 @@
     }
 
     .profile-identity-copy { min-width: 0; }
-    .profile-name, .profile-id { display: block; }
+    .profile-name { display: block; }
     .profile-name { font-size: 18px; line-height: 24px; font-weight: 600; }
-    .profile-id { margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+
+    .profile-inbox {
+      min-height: 64px;
+      padding: 10px 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .profile-inbox-copy { min-width: 0; flex: 1; }
+    .profile-inbox-heading-row { display: flex; align-items: center; }
+    .profile-inbox-heading { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; }
+    .profile-inbox-info-button {
+      width: 44px;
+      height: 44px;
+      margin: -12px 0 -12px -6px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+    .profile-inbox-info-button:active { transform: scale(.97); }
+    .profile-inbox-address {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-inbox-copy-button {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--canvas);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .profile-inbox-copy-button:active { background: var(--primary-soft); color: var(--primary); }
+
+    .inbox-info-sheet {
+      position: fixed;
+      z-index: var(--z-sheet);
+      inset: auto auto 0 50%;
+      width: min(100%, 480px);
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 -4px 8px rgba(17, 17, 17, .12);
+      transform: translate(-50%, 100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      will-change: transform;
+    }
+
+    .inbox-info-sheet[open].is-visible { transform: translate(-50%, 0); }
+    .inbox-info-sheet::backdrop {
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+    .inbox-info-sheet.is-visible::backdrop { opacity: 1; }
+    .inbox-info-sheet-inner { padding: 8px 16px calc(18px + env(safe-area-inset-bottom)); }
+    .inbox-info-sheet-copy { margin: 8px 0 6px; color: var(--copy); font-size: 14px; line-height: 20px; }
 
     .profile-drawer-close {
       width: 44px;
@@ -684,6 +765,8 @@
 
     @media (hover: hover) and (pointer: fine) {
       .profile-drawer-close:hover,
+      .profile-inbox-info-button:hover,
+      .profile-inbox-copy-button:hover,
       .profile-menu-item:hover,
       .profile-legal-links button:hover { background: var(--primary-soft); }
     }
@@ -1139,13 +1222,16 @@
     @media (prefers-reduced-motion: reduce) {
       /* Accessibility override must win over every component transition. */
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
-      .ask-sheet {
+      .ask-sheet,
+      .inbox-info-sheet {
         transform: translate(-50%, 0);
         opacity: 0;
         transition: opacity 120ms var(--motion-ease-out) !important;
       }
-      .ask-sheet[open].is-visible { opacity: 1; }
-      .ask-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
+      .ask-sheet[open].is-visible,
+      .inbox-info-sheet[open].is-visible { opacity: 1; }
+      .ask-sheet::backdrop,
+      .inbox-info-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
       .profile-drawer-inner {
         transform: none;
         opacity: 0;
@@ -1348,8 +1434,21 @@
         <span class="profile-avatar" aria-hidden="true">RV</span>
         <span class="profile-identity-copy">
           <span class="profile-name">Rishi Verma</span>
-          <span class="profile-id">OV20261112</span>
         </span>
+      </div>
+      <div class="profile-inbox">
+        <div class="profile-inbox-copy">
+          <div class="profile-inbox-heading-row">
+            <h3 class="profile-inbox-heading">Your Ovie inbox</h3>
+            <button class="profile-inbox-info-button" id="ovieInboxInfo" type="button" aria-label="About your Ovie inbox" aria-haspopup="dialog" aria-controls="ovieInboxInfoSheet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </button>
+          </div>
+          <span class="profile-inbox-address" id="ovieInboxAddress">ov20261112@inbox.ovie.ai</span>
+        </div>
+        <button class="profile-inbox-copy-button" id="copyOvieInbox" type="button" aria-label="Copy Ovie inbox email address" title="Copy Ovie inbox email address">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </button>
       </div>
       <div class="profile-menu" aria-label="Profile options">
         <button class="profile-menu-item" type="button" data-profile-action="My Profile">
@@ -1388,6 +1487,18 @@
         <button type="button" data-profile-action="Privacy Policy">Privacy Policy</button>
         <button type="button" data-profile-action="Terms &amp; Conditions">Terms &amp; Conditions</button>
       </div>
+    </div>
+  </dialog>
+  <dialog class="inbox-info-sheet" id="ovieInboxInfoSheet" aria-labelledby="ovieInboxInfoTitle">
+    <div class="inbox-info-sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="section-heading" id="ovieInboxInfoTitle">About your Ovie inbox</h2>
+        <button class="sheet-close" id="closeOvieInboxInfo" type="button" aria-label="Close Ovie inbox information">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <p class="inbox-info-sheet-copy">Send policy documents to this email address, and Ovie will upload them automatically. Share the address with others so they can send documents directly to your Ovie inbox.</p>
     </div>
   </dialog>
   <button class="ask-fab" id="askOvieFab" type="button" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet">
@@ -1467,6 +1578,11 @@
       const profileDrawer = document.querySelector('#profileDrawer');
       const profileDrawerPanel = profileDrawer.querySelector('.profile-drawer-inner');
       const closeProfileDrawerButton = document.querySelector('#closeProfileDrawer');
+      const copyOvieInboxButton = document.querySelector('#copyOvieInbox');
+      const ovieInboxAddress = document.querySelector('#ovieInboxAddress');
+      const ovieInboxInfoButton = document.querySelector('#ovieInboxInfo');
+      const ovieInboxInfoSheet = document.querySelector('#ovieInboxInfoSheet');
+      const closeOvieInboxInfoButton = document.querySelector('#closeOvieInboxInfo');
       const askOvieFab = document.querySelector('#askOvieFab');
       const askOvieSheet = document.querySelector('#askOvieSheet');
       const closeAskOvie = document.querySelector('#closeAskOvie');
@@ -1484,6 +1600,7 @@
       const visualViewport = window.visualViewport;
       let toastTimer;
       let profileDrawerCloseTimer;
+      let inboxInfoCloseTimer;
       let sheetCloseTimer;
       let sheetExpandAnimation;
       let askSheetLayoutHeight = window.innerHeight;
@@ -1527,6 +1644,30 @@
         toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2600);
       }
 
+      async function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          try {
+            await navigator.clipboard.writeText(text);
+            return;
+          } catch {
+            // Fall through to the local-preview-safe copy method.
+          }
+        }
+
+        const activeElement = document.activeElement;
+        const copyArea = document.createElement('textarea');
+        copyArea.value = text;
+        copyArea.setAttribute('readonly', '');
+        copyArea.style.position = 'fixed';
+        copyArea.style.opacity = '0';
+        document.body.appendChild(copyArea);
+        copyArea.select();
+        const copied = document.execCommand('copy');
+        copyArea.remove();
+        activeElement?.focus({ preventScroll: true });
+        if (!copied) throw new Error('Copy failed');
+      }
+
       function profileDrawerTransitionDuration() {
         const styles = window.getComputedStyle(profileDrawerPanel);
         const durations = styles.transitionDuration.split(',').map((value) => {
@@ -1567,7 +1708,7 @@
         closeProfileDrawer();
       });
       document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && profileDrawer.open) {
+        if (event.key === 'Escape' && profileDrawer.open && !ovieInboxInfoSheet.open) {
           event.preventDefault();
           closeProfileDrawer();
         }
@@ -1583,6 +1724,56 @@
           closeProfileDrawer();
           window.setTimeout(() => showToast(`${action} is not connected in this prototype`), profileDrawerTransitionDuration() + 50);
         });
+      });
+
+      copyOvieInboxButton.addEventListener('click', async () => {
+        try {
+          await copyText(ovieInboxAddress.textContent.trim());
+          showToast('Ovie inbox copied');
+        } catch {
+          showToast('Copy is unavailable in this browser');
+        }
+      });
+
+      function inboxInfoTransitionDuration() {
+        const styles = window.getComputedStyle(ovieInboxInfoSheet);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function openOvieInboxInfo() {
+        window.clearTimeout(inboxInfoCloseTimer);
+        ovieInboxInfoSheet.classList.remove('is-visible');
+        ovieInboxInfoSheet.showModal();
+        closeOvieInboxInfoButton.focus({ preventScroll: true });
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => ovieInboxInfoSheet.classList.add('is-visible'));
+        });
+      }
+
+      function closeOvieInboxInfo(returnFocus = true) {
+        if (!ovieInboxInfoSheet.open) return;
+        ovieInboxInfoSheet.classList.remove('is-visible');
+        window.clearTimeout(inboxInfoCloseTimer);
+        inboxInfoCloseTimer = window.setTimeout(() => {
+          ovieInboxInfoSheet.close();
+          if (returnFocus) ovieInboxInfoButton.focus({ preventScroll: true });
+        }, inboxInfoTransitionDuration() + 34);
+      }
+
+      ovieInboxInfoButton.addEventListener('click', openOvieInboxInfo);
+      closeOvieInboxInfoButton.addEventListener('click', () => closeOvieInboxInfo());
+      ovieInboxInfoSheet.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeOvieInboxInfo();
+      });
+      ovieInboxInfoSheet.addEventListener('pointerdown', (event) => {
+        const bounds = ovieInboxInfoSheet.getBoundingClientRect();
+        const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideSheet) closeOvieInboxInfo();
       });
 
       function syncAskSheetToViewport() {
@@ -1772,7 +1963,7 @@
           const action = button.dataset.answerAction;
           if (action === 'copy') {
             try {
-              await navigator.clipboard.writeText(askOvieAnswer.textContent);
+              await copyText(askOvieAnswer.textContent);
               showToast('Answer copied');
             } catch {
               showToast('Copy is unavailable in this browser');
