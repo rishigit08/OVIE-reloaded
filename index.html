@@ -695,7 +695,25 @@
     }
     .inbox-info-sheet.is-visible::backdrop { opacity: 1; }
     .inbox-info-sheet-inner { padding: 8px 16px calc(18px + env(safe-area-inset-bottom)); }
-    .inbox-info-sheet-copy { margin: 8px 0 6px; color: var(--copy); font-size: 14px; line-height: 20px; }
+    .inbox-info-sheet-copy { margin: 8px 0 16px; color: var(--copy); font-size: 14px; line-height: 20px; }
+    .inbox-info-address-row {
+      min-width: 0;
+      padding: 8px 8px 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: var(--radius);
+      background: var(--canvas);
+    }
+    .inbox-info-address {
+      min-width: 0;
+      flex: 1;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
 
     .profile-drawer-close {
       width: 44px;
@@ -1445,7 +1463,7 @@
           </div>
           <span class="profile-inbox-address" id="ovieInboxAddress">ov20261112@inbox.ovie.ai</span>
         </div>
-        <button class="profile-inbox-copy-button" id="copyOvieInbox" type="button" aria-label="Copy Ovie inbox email address" title="Copy Ovie inbox email address">
+        <button class="profile-inbox-copy-button" id="copyOvieInbox" data-copy-ovie-inbox type="button" aria-label="Copy Ovie inbox email address" title="Copy Ovie inbox email address">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
         </button>
       </div>
@@ -1498,6 +1516,12 @@
         </button>
       </div>
       <p class="inbox-info-sheet-copy">Send policy documents to this email address, and Ovie will upload them automatically. Share the address with others so they can send documents directly to your Ovie inbox.</p>
+      <div class="inbox-info-address-row" aria-label="Your Ovie inbox email address">
+        <span class="inbox-info-address">ov20261112@inbox.ovie.ai</span>
+        <button class="profile-inbox-copy-button" id="copyOvieInboxFromSheet" data-copy-ovie-inbox type="button" aria-label="Copy Ovie inbox email address" title="Copy Ovie inbox email address">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </button>
+      </div>
     </div>
   </dialog>
   <button class="ask-fab" id="askOvieFab" type="button" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet">
@@ -1577,7 +1601,7 @@
       const profileDrawer = document.querySelector('#profileDrawer');
       const profileDrawerPanel = profileDrawer.querySelector('.profile-drawer-inner');
       const closeProfileDrawerButton = document.querySelector('#closeProfileDrawer');
-      const copyOvieInboxButton = document.querySelector('#copyOvieInbox');
+      const copyOvieInboxButtons = document.querySelectorAll('[data-copy-ovie-inbox]');
       const ovieInboxAddress = document.querySelector('#ovieInboxAddress');
       const ovieInboxInfoButton = document.querySelector('#ovieInboxInfo');
       const ovieInboxInfoSheet = document.querySelector('#ovieInboxInfoSheet');
@@ -1695,7 +1719,7 @@
         window.clearTimeout(profileDrawerCloseTimer);
         profileDrawerCloseTimer = window.setTimeout(() => {
           profileDrawer.close();
-          document.body.classList.remove('sheet-open');
+          if (!ovieInboxInfoSheet.open && !askOvieSheet.open) document.body.classList.remove('sheet-open');
           if (returnFocus) profileButton.focus({ preventScroll: true });
         }, profileDrawerTransitionDuration() + 34);
       }
@@ -1725,13 +1749,15 @@
         });
       });
 
-      copyOvieInboxButton.addEventListener('click', async () => {
-        try {
-          await copyText(ovieInboxAddress.textContent.trim());
-          showToast('Ovie inbox copied');
-        } catch {
-          showToast('Copy is unavailable in this browser');
-        }
+      copyOvieInboxButtons.forEach((button) => {
+        button.addEventListener('click', async () => {
+          try {
+            await copyText(ovieInboxAddress.textContent.trim());
+            showToast('Ovie inbox copied');
+          } catch {
+            showToast('Copy is unavailable in this browser');
+          }
+        });
       });
 
       function inboxInfoTransitionDuration() {
@@ -1745,8 +1771,10 @@
 
       function openOvieInboxInfo() {
         window.clearTimeout(inboxInfoCloseTimer);
+        closeProfileDrawer(false);
         ovieInboxInfoSheet.classList.remove('is-visible');
         ovieInboxInfoSheet.showModal();
+        document.body.classList.add('sheet-open');
         closeOvieInboxInfoButton.focus({ preventScroll: true });
         window.requestAnimationFrame(() => {
           window.requestAnimationFrame(() => ovieInboxInfoSheet.classList.add('is-visible'));
@@ -1759,7 +1787,8 @@
         window.clearTimeout(inboxInfoCloseTimer);
         inboxInfoCloseTimer = window.setTimeout(() => {
           ovieInboxInfoSheet.close();
-          if (returnFocus) ovieInboxInfoButton.focus({ preventScroll: true });
+          if (!profileDrawer.open && !askOvieSheet.open) document.body.classList.remove('sheet-open');
+          if (returnFocus) profileButton.focus({ preventScroll: true });
         }, inboxInfoTransitionDuration() + 34);
       }
 
