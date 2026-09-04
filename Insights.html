@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#6B4062" />
+    <title>Insights · Ovie</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap");
+
+      :root {
+        font-family: Figtree, system-ui, sans-serif;
+        color: #111;
+        background: #f6f6f6;
+        font-synthesis: none;
+        --primary: #6b4062;
+        --primary-dark: #54324d;
+        --primary-soft: #f5edf3;
+        --text-primary: #111111;
+        --text-secondary: #333a3d;
+        --text-tertiary: #5f6368;
+        --surface: #ffffff;
+        --canvas: #f6f6f6;
+        --line: #ecefed;
+        --border: #d8dddb;
+        --radius: 12px;
+        --motion-duration-press: 160ms;
+        --motion-duration-standard: 200ms;
+        --motion-duration-overlay: 260ms;
+        --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+        --motion-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+      }
+
+      * { box-sizing: border-box; }
+      html { min-width: 320px; scrollbar-width: none; }
+      html::-webkit-scrollbar { display: none; }
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background: #e3e3e3;
+        -webkit-font-smoothing: antialiased;
+      }
+      body.sheet-open { overflow: hidden; }
+      button, input { font: inherit; }
+      button { cursor: pointer; }
+      button { -webkit-tap-highlight-color: transparent; }
+      button:focus-visible, input:focus-visible {
+        outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+        outline-offset: 2px;
+      }
+      h1, h2, p { margin: 0; }
+      h1, h2 { font-weight: 600; }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .app-shell {
+        width: min(100%, 390px);
+        min-height: 100vh;
+        margin: 0 auto;
+        background: var(--canvas);
+      }
+      .workspace { width: 100%; min-width: 0; }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 15;
+        background: transparent;
+        pointer-events: none;
+      }
+      .phone-status-bar {
+        height: 34px;
+        padding: 8px 22px 0;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.97);
+        color: var(--text-primary);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 600;
+      }
+      .phone-status-icons {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--text-tertiary);
+      }
+      .topbar-inner {
+        min-height: 58px;
+        padding: 4px 18px 12px;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.97);
+        border-bottom: 1px solid var(--line);
+        pointer-events: auto;
+        transform: translateY(0);
+        transition: transform var(--motion-duration-standard) var(--motion-ease-out);
+        will-change: transform;
+      }
+      .topbar.is-hidden .topbar-inner { transform: translateY(-100%); pointer-events: none; }
+      .topbar h1 { font-size: 18px; line-height: 24px; }
+
+      .main-content { padding: 18px 16px 112px; }
+      .search-row {
+        min-height: 44px;
+        margin: -4px 0 18px;
+        padding: 0 13px;
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--surface);
+        color: var(--text-tertiary);
+      }
+      .search-row:focus-within {
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 16%, transparent);
+      }
+      .search-row input {
+        width: 100%;
+        height: 42px;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--text-primary);
+        font-size: 14px;
+      }
+      .search-row input::placeholder { color: var(--text-tertiary); opacity: 1; }
+      .search-row input::-webkit-search-cancel-button { appearance: none; }
+      .icon-button {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius);
+        display: inline-grid;
+        place-items: center;
+        background: transparent;
+        color: var(--text-tertiary);
+        transition: transform var(--motion-duration-press) var(--motion-ease-out);
+      }
+      .search-clear { margin-right: -12px; flex: 0 0 auto; }
+      .search-clear[hidden] { display: none; }
+
+      .filter-toolbar {
+        min-height: 44px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .filter-trigger {
+        min-width: 0;
+        min-height: 44px;
+        padding: 0 8px;
+        border: 0;
+        border-radius: var(--radius);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface);
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
+        transition: transform var(--motion-duration-press) var(--motion-ease-out);
+      }
+      .filter-trigger > span:not(.filter-count) { min-width: 0; overflow-wrap: anywhere; }
+      .filter-count {
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 999px;
+        display: inline-grid;
+        place-items: center;
+        background: var(--line);
+        color: var(--text-tertiary);
+        font-size: 11px;
+        line-height: 16px;
+      }
+      .shared-filter-toggle {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 0 0 auto;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .shared-filter-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+      .shared-filter-track {
+        width: 44px;
+        height: 24px;
+        padding: 2px;
+        border-radius: 999px;
+        display: block;
+        flex: 0 0 auto;
+        background: var(--border);
+      }
+      .shared-filter-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: block;
+        background: var(--surface);
+        transform: translateX(0);
+      }
+      .shared-filter-toggle input:checked + .shared-filter-track { background: var(--primary); }
+      .shared-filter-toggle input:checked + .shared-filter-track .shared-filter-thumb { transform: translateX(20px); }
+      .shared-filter-toggle input:focus-visible + .shared-filter-track {
+        outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+        outline-offset: 2px;
+      }
+
+      .insight-list { display: grid; gap: 8px; }
+      .insight-row {
+        position: relative;
+        min-height: 124px;
+        padding: 12px 0 12px 12px;
+        border-radius: var(--radius);
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr) 56px;
+        gap: 10px;
+        align-items: center;
+        background: var(--surface);
+      }
+      .insight-open {
+        position: absolute;
+        z-index: 0;
+        inset: 0;
+        width: 100%;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        transition: transform var(--motion-duration-press) var(--motion-ease-out);
+      }
+      .insight-row > :not(.insight-open) { position: relative; z-index: 1; pointer-events: none; }
+      .insight-row .policy-number-toggle, .insight-row .insight-options { pointer-events: auto; }
+      .insight-icon {
+        width: 40px;
+        height: 40px;
+        align-self: start;
+        border-radius: var(--radius);
+        display: grid;
+        place-items: center;
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .insight-copy { min-width: 0; align-self: start; }
+      .insight-title { display: block; font-size: 14px; line-height: 20px; font-weight: 600; overflow-wrap: anywhere; }
+      .policy-line { margin-top: 5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+      .policy-type-tag {
+        min-height: 20px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 600;
+      }
+      .policy-number-line {
+        min-height: 32px;
+        margin-top: 1px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--text-tertiary);
+        font-size: 12px;
+        line-height: 16px;
+      }
+      .policy-number-line strong { color: var(--text-secondary); font-size: 12px; line-height: 16px; font-weight: 600; overflow-wrap: anywhere; }
+      .policy-number-toggle { width: 44px; height: 32px; margin: -6px 0 -6px -5px; padding: 0; border: 0; display: inline-grid; place-items: center; background: transparent; color: var(--text-tertiary); }
+      .generated-date { display: block; margin-top: 4px; color: var(--text-tertiary); font-size: 12px; line-height: 16px; }
+      .insight-options { margin-right: 12px; justify-self: end; align-self: center; }
+
+      .empty-state { padding: 54px 16px; display: grid; justify-items: center; text-align: center; color: var(--text-tertiary); }
+      .empty-state h2 { margin-top: 12px; color: var(--text-primary); font-size: 18px; line-height: 24px; }
+      .empty-state p { margin-top: 5px; font-size: 14px; line-height: 20px; }
+
+      .mobile-nav {
+        position: fixed;
+        z-index: 20;
+        left: 50%;
+        bottom: max(8px, env(safe-area-inset-bottom));
+        width: min(calc(100% - 24px), 366px);
+        min-height: 72px;
+        padding: 6px;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        align-items: center;
+        transform: translateX(-50%);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        box-shadow: 0 4px 8px rgba(17, 17, 17, 0.1);
+      }
+      .mobile-nav button {
+        min-width: 0;
+        min-height: 58px;
+        padding: 5px 2px;
+        border: 0;
+        border-radius: 999px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        background: transparent;
+        color: var(--text-tertiary);
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 600;
+        transition: transform var(--motion-duration-press) var(--motion-ease-out);
+      }
+      .mobile-nav button[aria-current="page"] { background: var(--primary-soft); color: var(--primary); }
+      .nav-icon { width: 32px; height: 28px; display: grid; place-items: center; border-radius: 999px; }
+      .mobile-nav .upload-nav { background: transparent; color: #fff; }
+      .upload-nav .nav-icon { position: relative; }
+      .upload-nav .nav-icon::before {
+        width: 48px;
+        height: 48px;
+        position: absolute;
+        z-index: 0;
+        inset: 50% auto auto 50%;
+        content: "";
+        transform: translate(-50%, -50%);
+        border-radius: 999px;
+        background: var(--primary);
+        box-shadow: 0 2px 4px rgba(84, 50, 77, 0.22);
+      }
+      .upload-nav svg { position: relative; z-index: 1; }
+
+      dialog.sheet-dialog {
+        position: fixed;
+        inset: auto auto 0 50%;
+        width: min(100%, 390px);
+        max-width: none;
+        max-height: min(86dvh, 720px);
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 12px 12px 0 0;
+        background: var(--surface);
+        color: var(--text-primary);
+        overflow: hidden;
+        transform: translate(-50%, 100%);
+        transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      }
+      dialog.sheet-dialog::backdrop {
+        background: rgba(17, 24, 23, 0.58);
+        opacity: 0;
+        transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+      }
+      dialog.sheet-dialog.is-visible { transform: translate(-50%, 0); }
+      dialog.sheet-dialog.is-visible::backdrop { opacity: 1; }
+      .sheet {
+        width: 100%;
+        max-height: inherit;
+        padding: 8px 16px max(24px, env(safe-area-inset-bottom));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+      .sheet-handle { width: 36px; height: 4px; margin: 0 auto 8px; border-radius: 999px; background: var(--border); }
+      .sheet-header { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+      .sheet-header h2 { min-width: 0; font-size: 18px; line-height: 24px; overflow-wrap: anywhere; }
+      .sheet-actions button {
+        width: 100%;
+        min-height: 60px;
+        padding: 8px 4px;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: transparent;
+        color: var(--text-primary);
+        text-align: left;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .sheet-actions button:last-child { border-bottom: 0; }
+      .sheet-action-icon, .filter-option-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius);
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .filter-option-list { display: grid; }
+      .filter-option {
+        width: 100%;
+        min-height: 56px;
+        padding: 8px 4px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--text-primary);
+        cursor: pointer;
+      }
+      .filter-option:last-child { border-bottom: 0; }
+      .filter-option-leading { min-width: 0; display: flex; align-items: center; gap: 12px; }
+      .filter-option-icon { background: #e3e3e3; color: var(--text-tertiary); }
+      .filter-option-name { min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 600; }
+      .filter-option.selected .filter-option-name { color: var(--primary); }
+      .filter-option.selected .filter-option-icon, .filter-option.selected .filter-count { background: var(--primary-soft); color: var(--primary); }
+      .filter-option input { width: 20px; height: 20px; margin: 0; flex: 0 0 auto; accent-color: var(--primary); }
+
+      .toast {
+        position: fixed;
+        z-index: 60;
+        left: 50%;
+        bottom: 94px;
+        max-width: calc(100% - 32px);
+        padding: 11px 15px;
+        border-radius: var(--radius);
+        background: #242125;
+        color: #fff;
+        font-size: 14px;
+        opacity: 0;
+        transform: translate(-50%, 12px);
+        pointer-events: none;
+        transition: opacity var(--motion-duration-standard) var(--motion-ease-out), transform var(--motion-duration-standard) var(--motion-ease-out);
+      }
+      .toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+      .icon-button:active, .filter-trigger:active, .insight-open:active, .mobile-nav button:active { transform: scale(0.97); }
+      @media (hover: hover) and (pointer: fine) {
+        .icon-button:hover { background: var(--primary-soft); color: var(--primary); }
+        .insight-open:hover { background: #faf8fa; }
+        .sheet-actions button:hover { background: var(--canvas); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .topbar-inner, .icon-button, .filter-trigger, .insight-open, .mobile-nav button, .toast { transition-duration: 0.01ms; }
+        .topbar.is-hidden .topbar-inner { transform: none; }
+        .icon-button:active, .filter-trigger:active, .insight-open:active, .mobile-nav button:active, .toast, .toast.visible { transform: none; }
+        dialog.sheet-dialog { transform: translate(-50%, 0); opacity: 0; transition: opacity 120ms var(--motion-ease-out); }
+        dialog.sheet-dialog::backdrop { transition: opacity 120ms var(--motion-ease-out); }
+        dialog.sheet-dialog.is-visible { opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="workspace">
+        <header class="topbar">
+          <div class="phone-status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <span class="phone-status-icons">
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M1 9h2v3H1zm4-3h2v6H5zm4-3h2v9H9zm4-3h2v12h-2z"/></svg>
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5A9.2 9.2 0 0 1 15 4.5M4.7 7.2a5.4 5.4 0 0 1 7.6 0M7.2 9.7a1.8 1.8 0 0 1 2.6 0"/></svg>
+              <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".5" y=".5" width="20" height="11" rx="3" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M22 4v4c1-.3 1.5-1 1.5-2S23 4.3 22 4Z" fill="currentColor" opacity=".45"/></svg>
+            </span>
+          </div>
+          <div class="topbar-inner"><h1>Insights</h1></div>
+        </header>
+
+        <main class="main-content">
+          <div class="search-row">
+            <label class="sr-only" for="insight-search">Search insights</label>
+            <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="insight-search" type="search" placeholder="Search policy insights" autocomplete="off" />
+            <button class="icon-button search-clear" type="button" aria-label="Clear search" hidden>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div class="filter-toolbar">
+            <button class="filter-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+              <span class="filter-label">All insights</span>
+              <span class="filter-count" aria-label="3 insights">3</span>
+            </button>
+            <label class="shared-filter-toggle">
+              <span>Shared with me</span>
+              <input id="shared-filter" type="checkbox" />
+              <span class="shared-filter-track" aria-hidden="true"><span class="shared-filter-thumb"></span></span>
+            </label>
+          </div>
+
+          <section aria-label="Policy insights">
+            <div class="insight-list" role="list"></div>
+          </section>
+        </main>
+
+        <nav class="mobile-nav" aria-label="Primary navigation">
+          <button type="button">
+            <span class="nav-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg></span>
+            <span>Home</span>
+          </button>
+          <button type="button">
+            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></span>
+            <span>My Files</span>
+          </button>
+          <button type="button" class="upload-nav" aria-label="Upload">
+            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5M5 21h14a2 2 0 0 0 2-2v-4M3 15v4a2 2 0 0 0 2 2"/></svg></span>
+          </button>
+          <button type="button" aria-current="page">
+            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span>
+            <span>Insights</span>
+          </button>
+          <button type="button">
+            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></span>
+            <span>More</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <dialog class="sheet-dialog action-sheet" aria-labelledby="action-sheet-title">
+      <div class="sheet">
+        <div class="sheet-handle" aria-hidden="true"></div>
+        <div class="sheet-header">
+          <h2 id="action-sheet-title">Policy insights</h2>
+          <button type="button" class="icon-button sheet-close" aria-label="Close insight options">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="sheet-actions">
+          <button type="button" data-action="regenerate">
+            <span class="sheet-action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/><path d="M21 21v-5h-5"/></svg></span>
+            <span>Regenerate insights</span>
+          </button>
+          <button type="button" data-action="documents">
+            <span class="sheet-action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></span>
+            <span>View policy documents</span>
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="sheet-dialog filter-sheet" aria-labelledby="filter-sheet-title">
+      <div class="sheet">
+        <div class="sheet-handle" aria-hidden="true"></div>
+        <div class="sheet-header">
+          <h2 id="filter-sheet-title">Filter by policy type</h2>
+          <button type="button" class="icon-button sheet-close" aria-label="Close filters">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="filter-option-list" role="radiogroup" aria-labelledby="filter-sheet-title"></div>
+      </div>
+    </dialog>
+
+    <div class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      const insights = [
+        { id: "umbrella", title: "Family umbrella", policyType: "Umbrella", policyNumber: "PU202610438389", sharing: "Shared with others", generated: "Sep 3, 2026" },
+        { id: "auto", title: "2022 Honda CR-V", policyType: "Automobile", policyNumber: "PA202634848340", sharing: "Private", generated: "Aug 29, 2026" },
+        { id: "home", title: "Austin home", policyType: "Homeowners", policyNumber: "HO202625818341", sharing: "Shared with me", generated: "Aug 22, 2026" }
+      ];
+
+      const iconPaths = {
+        Automobile: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>',
+        Homeowners: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+        Umbrella: '<path d="M12 13v7a2 2 0 0 0 4 0"/><path d="M12 2v2"/><path d="M20.992 13a1 1 0 0 0 .97-1.274 10.284 10.284 0 0 0-19.923 0A1 1 0 0 0 3 13z"/>',
+        All: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+        Insights: '<path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/>'
+      };
+
+      const list = document.querySelector(".insight-list");
+      const search = document.querySelector("#insight-search");
+      const clearSearch = document.querySelector(".search-clear");
+      const sharedFilter = document.querySelector("#shared-filter");
+      const filterTrigger = document.querySelector(".filter-trigger");
+      const filterLabel = document.querySelector(".filter-label");
+      const filterCount = document.querySelector(".filter-trigger .filter-count");
+      const actionSheet = document.querySelector(".action-sheet");
+      const filterSheet = document.querySelector(".filter-sheet");
+      const actionTitle = document.querySelector("#action-sheet-title");
+      const filterOptions = document.querySelector(".filter-option-list");
+      const toast = document.querySelector(".toast");
+      let selectedType = "All";
+      let activeInsight = null;
+      let returnFocus = null;
+      let toastTimer;
+
+      function icon(type, size = 22) {
+        return `<svg aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${iconPaths[type] || iconPaths.All}</svg>`;
+      }
+
+      function masked(number) { return `${number.slice(0, 2)}••••${number.slice(-4)}`; }
+
+      function filteredInsights() {
+        const term = search.value.trim().toLowerCase();
+        return insights.filter(item => {
+          const matchesSearch = !term || `${item.title} ${item.policyType} ${item.policyNumber}`.toLowerCase().includes(term);
+          const matchesType = selectedType === "All" || item.policyType === selectedType;
+          const matchesShared = !sharedFilter.checked || item.sharing === "Shared with me";
+          return matchesSearch && matchesType && matchesShared;
+        });
+      }
+
+      function render() {
+        const visible = filteredInsights();
+        filterLabel.textContent = selectedType === "All" ? "All insights" : selectedType;
+        filterCount.textContent = visible.length;
+        filterCount.setAttribute("aria-label", `${visible.length} ${visible.length === 1 ? "insight" : "insights"}`);
+        clearSearch.hidden = !search.value;
+
+        if (!visible.length) {
+          list.innerHTML = `<div class="empty-state">${icon("All", 24)}<h2>No matching insights</h2><p>Try another search or clear a filter.</p></div>`;
+          return;
+        }
+
+        list.innerHTML = visible.map(item => `
+          <article class="insight-row" role="listitem" data-id="${item.id}">
+            <button type="button" class="insight-open" aria-label="Open ${item.title} insights"></button>
+            <span class="insight-icon">${icon("Insights")}</span>
+            <span class="insight-copy">
+              <strong class="insight-title">${item.title}</strong>
+              <span class="policy-line"><span class="policy-type-tag">${item.policyType}</span></span>
+              <span class="policy-number-line">
+                <strong data-policy-number>${masked(item.policyNumber)}</strong>
+                <button type="button" class="policy-number-toggle" aria-label="Show policy number for ${item.title}" aria-pressed="false">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.1 12a10.9 10.9 0 0 1 19.8 0 10.9 10.9 0 0 1-19.8 0Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </span>
+              <span class="generated-date">Generated on ${item.generated}</span>
+            </span>
+            <button type="button" class="icon-button insight-options" aria-label="More options for ${item.title}" aria-haspopup="dialog" aria-expanded="false">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </button>
+          </article>`).join("");
+      }
+
+      function openSheet(dialog, trigger) {
+        returnFocus = trigger;
+        dialog.showModal();
+        document.body.classList.add("sheet-open");
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          dialog.classList.add("is-visible");
+          dialog.querySelector(".sheet-close").focus();
+        }));
+      }
+
+      function closeSheet(dialog, afterClose) {
+        dialog.classList.remove("is-visible");
+        const delay = matchMedia("(prefers-reduced-motion: reduce)").matches ? 120 : 260;
+        window.setTimeout(() => {
+          dialog.close();
+          document.body.classList.remove("sheet-open");
+          if (dialog === filterSheet) filterTrigger.setAttribute("aria-expanded", "false");
+          if (dialog === actionSheet && returnFocus) returnFocus.setAttribute("aria-expanded", "false");
+          if (returnFocus && document.contains(returnFocus)) returnFocus.focus();
+          if (afterClose) afterClose();
+        }, delay);
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("visible");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("visible"), 2200);
+      }
+
+      function buildFilterOptions() {
+        const types = [
+          { value: "All", label: "All insights" },
+          { value: "Automobile", label: "Automobile" },
+          { value: "Homeowners", label: "Homeowners" },
+          { value: "Umbrella", label: "Umbrella" }
+        ];
+        filterOptions.innerHTML = types.map(type => {
+          const count = type.value === "All" ? insights.length : insights.filter(item => item.policyType === type.value).length;
+          const selected = selectedType === type.value;
+          return `<label class="filter-option${selected ? " selected" : ""}">
+            <span class="filter-option-leading">
+              <span class="filter-option-icon">${icon(type.value, 20)}</span>
+              <span class="filter-option-name"><span>${type.label}</span><span class="filter-count" aria-label="${count} ${count === 1 ? "policy" : "policies"}">${count}</span></span>
+            </span>
+            <input type="radio" name="policy-type-filter" value="${type.value}" ${selected ? "checked" : ""} />
+          </label>`;
+        }).join("");
+      }
+
+      search.addEventListener("input", render);
+      clearSearch.addEventListener("click", () => { search.value = ""; render(); search.focus(); });
+      sharedFilter.addEventListener("change", render);
+      filterTrigger.addEventListener("click", event => { buildFilterOptions(); filterTrigger.setAttribute("aria-expanded", "true"); openSheet(filterSheet, event.currentTarget); });
+
+      list.addEventListener("click", event => {
+        const row = event.target.closest(".insight-row");
+        if (!row) return;
+        const item = insights.find(value => value.id === row.dataset.id);
+        const numberToggle = event.target.closest(".policy-number-toggle");
+        const optionsButton = event.target.closest(".insight-options");
+
+        if (numberToggle) {
+          const number = row.querySelector("[data-policy-number]");
+          const showing = numberToggle.getAttribute("aria-pressed") === "true";
+          number.textContent = showing ? masked(item.policyNumber) : item.policyNumber;
+          numberToggle.setAttribute("aria-pressed", String(!showing));
+          numberToggle.setAttribute("aria-label", `${showing ? "Show" : "Hide"} policy number for ${item.title}`);
+          return;
+        }
+
+        if (optionsButton) {
+          activeInsight = item;
+          actionTitle.textContent = item.title;
+          optionsButton.setAttribute("aria-expanded", "true");
+          openSheet(actionSheet, optionsButton);
+        }
+      });
+
+      filterOptions.addEventListener("change", event => {
+        if (!event.target.matches("input[type=radio]")) return;
+        selectedType = event.target.value;
+        closeSheet(filterSheet, () => { filterTrigger.setAttribute("aria-expanded", "false"); render(); });
+      });
+
+      document.querySelectorAll(".sheet-close").forEach(button => button.addEventListener("click", () => {
+        const dialog = button.closest("dialog");
+        closeSheet(dialog, () => {
+          if (dialog === filterSheet) filterTrigger.setAttribute("aria-expanded", "false");
+          if (dialog === actionSheet && returnFocus) returnFocus.setAttribute("aria-expanded", "false");
+        });
+      }));
+
+      [actionSheet, filterSheet].forEach(dialog => {
+        dialog.addEventListener("cancel", event => { event.preventDefault(); closeSheet(dialog); });
+        dialog.addEventListener("click", event => { if (event.target === dialog) closeSheet(dialog); });
+      });
+
+      actionSheet.querySelector(".sheet-actions").addEventListener("click", event => {
+        const button = event.target.closest("button[data-action]");
+        if (!button || !activeInsight) return;
+        const action = button.dataset.action;
+        const message = action === "regenerate" ? `Regenerating ${activeInsight.policyType.toLowerCase()} insights` : `Opening documents for ${activeInsight.title}`;
+        closeSheet(actionSheet, () => {
+          if (returnFocus) returnFocus.setAttribute("aria-expanded", "false");
+          showToast(message);
+        });
+      });
+
+      const topbar = document.querySelector(".topbar");
+      let lastScroll = Math.max(0, window.scrollY);
+      let downwardTravel = 0;
+      let scrollDirection = 0;
+      let scrollFrame;
+      function updateTopbar() {
+        scrollFrame = undefined;
+        const current = Math.max(0, window.scrollY);
+        const delta = current - lastScroll;
+        if (current <= 24 || topbar.contains(document.activeElement)) {
+          downwardTravel = 0;
+          topbar.classList.remove("is-hidden");
+        } else if (delta < -1) {
+          scrollDirection = -1;
+          downwardTravel = 0;
+          topbar.classList.remove("is-hidden");
+        } else if (delta > 1) {
+          if (scrollDirection !== 1) downwardTravel = 0;
+          scrollDirection = 1;
+          downwardTravel += delta;
+          if (downwardTravel >= 24) topbar.classList.add("is-hidden");
+        }
+        lastScroll = current;
+      }
+      window.addEventListener("scroll", () => {
+        if (!scrollFrame) scrollFrame = requestAnimationFrame(updateTopbar);
+      }, { passive: true });
+
+      render();
+    </script>
+  </body>
+</html>
