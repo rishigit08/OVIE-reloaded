@@ -32,7 +32,10 @@
       --copy: #333a3d;
       --muted: #5f6368;
       --surface: #ffffff;
-      --canvas: #f6f6f6;
+      --bg-canvas: #f6f6f6;
+      --bg-subtle: #f6f6f6;
+      --bg-control: #e3e3e3;
+      --prototype-backdrop: #e3e3e3;
       --border: #d8dddb;
       --border-soft: #ecefed;
       --success: #0d7d07;
@@ -82,7 +85,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: #e3e3e3;
+      background: var(--prototype-backdrop);
       color: var(--ink);
       font-family: Figtree, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 14px;
@@ -121,7 +124,7 @@
       margin: 0 auto;
       overflow: hidden;
       overflow: clip;
-      background: var(--canvas);
+      background: var(--bg-canvas);
     }
 
     .top-shell {
@@ -173,7 +176,7 @@
       place-items: center;
       border: 0;
       border-radius: var(--radius);
-      background: var(--canvas);
+      background: var(--bg-subtle);
       color: var(--muted);
       cursor: pointer;
       transition: background-color 180ms var(--ease), transform 180ms var(--ease);
@@ -182,7 +185,7 @@
     .icon-button:hover, .avatar-button:hover { background: var(--primary-soft); }
     .icon-button:active, .avatar-button:active { transform: scale(.96); }
     .avatar-button { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
-    .notification-dot { position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border: 2px solid var(--canvas); border-radius: 50%; background: var(--danger); }
+    .notification-dot { position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border: 2px solid var(--bg-subtle); border-radius: 50%; background: var(--danger); }
 
     main {
       display: flex;
@@ -345,7 +348,7 @@
     .text-button:disabled { color: var(--muted); cursor: default; opacity: 1; }
     .text-button:disabled:hover { background: transparent; }
 
-    .policy-summary-strip { margin: 0 14px 6px; padding: 10px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 6px; border-radius: 10px; background: var(--canvas); }
+    .policy-summary-strip { margin: 0 14px 6px; padding: 10px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 6px; border-radius: 10px; background: var(--bg-subtle); }
     .policy-summary-stat { min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
     .policy-summary-value { color: var(--ink); font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; }
     .policy-summary-label { color: var(--muted); font-size: 12px; line-height: 16px; }
@@ -371,7 +374,7 @@
     }
 
     .policy summary::-webkit-details-marker { display: none; }
-    .policy summary:hover { background: var(--canvas); }
+    .policy summary:hover { background: var(--bg-subtle); }
 
     .policy-icon {
       width: 48px;
@@ -415,7 +418,7 @@
 
     .status-pill { padding: 4px 8px; border-radius: 999px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; }
     .status-pill.warning { background: var(--warning-soft); color: var(--warning-ink); }
-    .status-pill.neutral { background: var(--canvas); color: var(--copy); }
+    .status-pill.neutral { background: var(--bg-subtle); color: var(--copy); }
 
     .insight-list { display: flex; flex-direction: column; }
     .insight {
@@ -433,7 +436,7 @@
     }
 
     .insight:last-child { border-bottom: 0; }
-    .insight:hover { background: var(--canvas); }
+    .insight:hover { background: var(--bg-subtle); }
     .insight-icon { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; }
     .insight.status-warning .insight-icon { background: var(--warning-soft); color: var(--warning); }
     .insight.status-warning .insight-title { color: var(--warning-ink); }
@@ -479,7 +482,7 @@
       cursor: pointer;
     }
 
-    .nav-link:hover, .nav-button:hover { background: var(--canvas); color: var(--primary); }
+    .nav-link:hover, .nav-button:hover { background: var(--bg-subtle); color: var(--primary); }
     .nav-link:active, .nav-button:active { color: var(--primary-dark); }
     .nav-link[aria-current="page"] { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
     .nav-icon { width: 32px; height: 28px; display: grid; place-items: center; border-radius: 999px; }
@@ -661,7 +664,7 @@
       flex: 0 0 auto;
       border: 0;
       border-radius: var(--radius);
-      background: var(--canvas);
+      background: var(--bg-control);
       color: var(--muted);
       cursor: pointer;
     }
@@ -703,7 +706,7 @@
       align-items: center;
       gap: 12px;
       border-radius: var(--radius);
-      background: var(--canvas);
+      background: var(--bg-subtle);
     }
     .inbox-info-address {
       min-width: 0;
@@ -1056,18 +1059,72 @@
 
     .ask-sheet-input::placeholder { color: var(--muted); opacity: 1; }
 
-    .ask-attachment-status {
-      min-height: 16px;
-      margin: 4px 52px 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 16px;
+    .ask-policy-context {
+      min-height: 44px;
+      margin: 0 52px 8px 0;
+      padding: 6px 6px 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--copy);
     }
 
-    .ask-attachment-status:empty { display: none; }
+    .ask-policy-context[hidden] { display: none; }
+
+    .ask-policy-context-icon,
+    .ask-user-policy-icon {
+      color: var(--primary);
+      flex: 0 0 auto;
+    }
+
+    .ask-policy-context-copy {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ask-policy-context-name { font-weight: 600; color: var(--ink); }
+    .ask-policy-context-meta { color: var(--muted); font-size: 12px; line-height: 16px; }
+
+    .ask-policy-context-remove {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) ease, color var(--motion-duration-press) ease, transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .ask-policy-context-remove:active { transform: scale(.97); }
+
+    .ask-user-policy {
+      max-width: 84%;
+      margin-left: auto;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--copy);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+    }
+
+    .ask-user-policy[hidden] { display: none; }
 
     .ask-composer-action {
-      background: var(--canvas);
+      background: var(--bg-control);
       color: var(--muted);
     }
 
@@ -1085,6 +1142,153 @@
 
     @media (hover: hover) and (pointer: fine) {
       .ask-composer-action.is-send:hover { background: var(--primary-dark); color: var(--surface); }
+      .ask-policy-context-remove:hover { background: var(--surface); color: var(--primary); }
+    }
+
+    .policy-picker-sheet {
+      position: fixed;
+      z-index: calc(var(--z-sheet) + 1);
+      inset: 52px auto auto 50%;
+      width: min(100%, 480px);
+      height: calc(100dvh - 52px);
+      max-width: none;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 6px 16px rgba(17, 17, 17, .12);
+      transform: translate(-50%, 100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+    }
+
+    .policy-picker-sheet[open].is-visible { transform: translate(-50%, 0); }
+
+    .policy-picker-sheet::backdrop {
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+
+    .policy-picker-sheet.is-visible::backdrop { opacity: 1; }
+
+    .policy-picker-inner {
+      padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: none;
+    }
+
+    .policy-picker-search {
+      min-height: 44px;
+      margin: 8px 0 12px;
+      padding-left: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--muted);
+    }
+
+    .policy-picker-search:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107, 64, 98, .24);
+    }
+
+    .policy-picker-search input {
+      min-width: 0;
+      flex: 1;
+      padding: 10px 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .policy-picker-search input::placeholder { color: var(--muted); opacity: 1; }
+    .policy-picker-search input::-webkit-search-cancel-button { display: none; -webkit-appearance: none; appearance: none; }
+    .policy-picker-search input::-ms-clear { display: none; width: 0; height: 0; }
+
+    .policy-search-clear {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .policy-search-clear[hidden] { display: none; }
+
+    .policy-picker-list {
+      min-height: 0;
+      margin: 0 -16px;
+      padding: 0;
+      overflow-y: auto;
+      list-style: none;
+      overscroll-behavior: contain;
+    }
+
+    .policy-picker-item { margin: 0; }
+    .policy-picker-item + .policy-picker-item { border-top: 1px solid var(--border-soft); }
+
+    .policy-picker-option {
+      width: 100%;
+      min-height: 64px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      background: var(--surface);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) ease, transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .policy-picker-option:active { transform: scale(.97); }
+    .policy-picker-option[aria-pressed="true"] { background: var(--primary-soft); }
+
+    .policy-picker-icon {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .policy-picker-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .policy-picker-name { color: var(--ink); font-weight: 600; }
+    .policy-picker-meta { color: var(--muted); }
+    .policy-picker-check { color: var(--primary); opacity: 0; }
+    .policy-picker-option[aria-pressed="true"] .policy-picker-check { opacity: 1; }
+
+    .policy-picker-empty {
+      margin: 0;
+      padding: 24px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .policy-picker-empty[hidden] { display: none; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .policy-picker-option:hover { background: var(--bg-subtle); }
+      .policy-search-clear:hover { background: var(--primary-soft); color: var(--primary); }
     }
 
     .android-keyboard-preview {
@@ -1241,15 +1445,18 @@
       /* Accessibility override must win over every component transition. */
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
       .ask-sheet,
-      .inbox-info-sheet {
+      .inbox-info-sheet,
+      .policy-picker-sheet {
         transform: translate(-50%, 0);
         opacity: 0;
         transition: opacity 120ms var(--motion-ease-out) !important;
       }
       .ask-sheet[open].is-visible,
-      .inbox-info-sheet[open].is-visible { opacity: 1; }
+      .inbox-info-sheet[open].is-visible,
+      .policy-picker-sheet[open].is-visible { opacity: 1; }
       .ask-sheet::backdrop,
-      .inbox-info-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
+      .inbox-info-sheet::backdrop,
+      .policy-picker-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
       .profile-drawer-inner {
         transform: none;
         opacity: 0;
@@ -1538,6 +1745,10 @@
         </button>
       </div>
       <div class="ask-sheet-conversation" id="askOvieConversation" aria-live="polite" hidden>
+        <div class="ask-user-policy" id="askOvieQuestionPolicy" hidden>
+          <svg class="ask-user-policy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+          <span id="askOvieQuestionPolicyName"></span>
+        </div>
         <div class="ask-user-message" id="askOvieQuestion"></div>
         <div class="ask-ovie-response">
           <div class="ask-response-body">
@@ -1555,9 +1766,14 @@
       </div>
       <form class="ask-sheet-form" id="askOvieForm" novalidate>
         <label class="visually-hidden" for="askOvieInput">Ask anything about your policies</label>
+        <div class="ask-policy-context" id="askPolicyContext" hidden>
+          <svg class="ask-policy-context-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+          <span class="ask-policy-context-copy"><span class="ask-policy-context-name" id="askPolicyContextName"></span><span class="ask-policy-context-meta" id="askPolicyContextMeta"></span></span>
+          <button class="ask-policy-context-remove" id="removeAskPolicy" type="button" aria-label="Remove policy from chat" title="Remove policy from chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+        </div>
         <div class="ask-sheet-composer-row">
           <div class="ask-sheet-input-row">
-            <button class="ask-composer-action attachment" id="askAttachmentButton" type="button" aria-label="Attach a policy document" title="Attach a policy document"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
+            <button class="ask-composer-action attachment" id="askAttachmentButton" type="button" aria-label="Add a policy to this chat" aria-haspopup="dialog" aria-controls="askPolicyPicker" title="Add a policy to this chat"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
             <input class="ask-sheet-input" id="askOvieInput" name="question" type="text" inputmode="text" enterkeyhint="send" autocomplete="off" placeholder="Ask anything about your policies...">
           </div>
           <button class="ask-composer-action" id="askComposerAction" type="button" aria-label="Use voice input" title="Use voice input">
@@ -1565,7 +1781,6 @@
             <svg class="composer-send-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </button>
         </div>
-        <p class="ask-attachment-status" id="askAttachmentStatus" aria-live="polite"></p>
       </form>
       <p class="ask-ovie-disclaimer">Ovie provides policy summaries only and does not offer policy recommendations or insurance advice.</p>
       <div class="android-keyboard-preview">
@@ -1582,7 +1797,31 @@
       </div>
     </div>
   </dialog>
-  <input class="file-picker-input" id="askAttachmentPicker" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" tabindex="-1" aria-hidden="true">
+  <dialog class="policy-picker-sheet" id="askPolicyPicker" aria-labelledby="askPolicyPickerTitle">
+    <div class="policy-picker-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="section-heading" id="askPolicyPickerTitle">Add a policy</h2>
+        <button class="sheet-close" id="closeAskPolicyPicker" type="button" aria-label="Close policy list">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <label class="visually-hidden" for="askPolicySearch">Search policies</label>
+      <div class="policy-picker-search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="askPolicySearch" type="search" autocomplete="off" placeholder="Search policies">
+        <button class="policy-search-clear" id="clearAskPolicySearch" type="button" aria-label="Clear policy search" title="Clear policy search" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <ul class="policy-picker-list" id="askPolicyList" aria-label="Policy folders">
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="crv" data-policy-name="2022 Honda CR-V" data-policy-meta="State Farm · •• 4721" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">2022 Honda CR-V</span><span class="policy-picker-meta">State Farm · •• 4721</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="austin-home" data-policy-name="Austin home" data-policy-meta="Travelers · •• 1840" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Austin home</span><span class="policy-picker-meta">Travelers · •• 1840</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="umbrella" data-policy-name="Family umbrella" data-policy-meta="Chubb · •• 9062" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Family umbrella</span><span class="policy-picker-meta">Chubb · •• 9062</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="downtown" data-policy-name="Downtown apartment" data-policy-meta="Lemonade · •• 3218" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Downtown apartment</span><span class="policy-picker-meta">Lemonade · •• 3218</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="camry" data-policy-name="2018 Toyota Camry" data-policy-meta="State Farm · •• 7784" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">2018 Toyota Camry</span><span class="policy-picker-meta">State Farm · •• 7784</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+      </ul>
+      <p class="policy-picker-empty" id="askPolicyEmpty" hidden>No policies match your search.</p>
+    </div>
+  </dialog>
   <input class="file-picker-input" id="policyFilePicker" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple tabindex="-1" aria-hidden="true">
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1614,10 +1853,20 @@
       const askComposerAction = document.querySelector('#askComposerAction');
       const askOvieConversation = document.querySelector('#askOvieConversation');
       const askOvieQuestion = document.querySelector('#askOvieQuestion');
+      const askOvieQuestionPolicy = document.querySelector('#askOvieQuestionPolicy');
+      const askOvieQuestionPolicyName = document.querySelector('#askOvieQuestionPolicyName');
       const askOvieAnswer = document.querySelector('#askOvieAnswer');
       const askAttachmentButton = document.querySelector('#askAttachmentButton');
-      const askAttachmentPicker = document.querySelector('#askAttachmentPicker');
-      const askAttachmentStatus = document.querySelector('#askAttachmentStatus');
+      const askPolicyContext = document.querySelector('#askPolicyContext');
+      const askPolicyContextName = document.querySelector('#askPolicyContextName');
+      const askPolicyContextMeta = document.querySelector('#askPolicyContextMeta');
+      const removeAskPolicy = document.querySelector('#removeAskPolicy');
+      const askPolicyPicker = document.querySelector('#askPolicyPicker');
+      const closeAskPolicyPickerButton = document.querySelector('#closeAskPolicyPicker');
+      const askPolicySearch = document.querySelector('#askPolicySearch');
+      const clearAskPolicySearch = document.querySelector('#clearAskPolicySearch');
+      const askPolicyOptions = Array.from(document.querySelectorAll('.policy-picker-option'));
+      const askPolicyEmpty = document.querySelector('#askPolicyEmpty');
       const hidePreviewKeyboard = document.querySelector('#hidePreviewKeyboard');
       const answerActions = Array.from(document.querySelectorAll('[data-answer-action]'));
       const visualViewport = window.visualViewport;
@@ -1625,8 +1874,10 @@
       let profileDrawerCloseTimer;
       let inboxInfoCloseTimer;
       let sheetCloseTimer;
+      let policyPickerCloseTimer;
       let sheetExpandAnimation;
       let askSheetLayoutHeight = window.innerHeight;
+      let selectedAskPolicy = null;
 
       let lastScrollY = Math.max(window.scrollY, 0);
       let downwardTravel = 0;
@@ -1848,8 +2099,10 @@
         askOvieSheet.classList.toggle('show-android-keyboard-preview', showPreviewKeyboard);
         askOvieSheet.classList.remove('chat-view');
         askOvieConversation.hidden = true;
-        askAttachmentStatus.textContent = '';
-        askAttachmentPicker.value = '';
+        clearAskPolicySelection();
+        askOvieQuestionPolicy.hidden = true;
+        askPolicySearch.value = '';
+        filterAskPolicies();
         syncComposerAction();
         askOvieSheet.classList.remove('is-visible');
         askOvieSheet.showModal();
@@ -1909,12 +2162,99 @@
         if (event.key === 'Enter' && !event.isComposing) event.preventDefault();
       });
 
-      askAttachmentButton.addEventListener('click', () => askAttachmentPicker.click());
-      askAttachmentPicker.addEventListener('change', () => {
-        const file = askAttachmentPicker.files?.[0];
-        askAttachmentStatus.textContent = file ? `Attached: ${file.name}` : '';
-        if (file) askOvieInput.focus({ preventScroll: true });
+      function policyPickerTransitionDuration() {
+        const styles = window.getComputedStyle(askPolicyPicker);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function filterAskPolicies() {
+        const query = askPolicySearch.value.trim().toLocaleLowerCase();
+        let visibleCount = 0;
+        askPolicyOptions.forEach((button) => {
+          const searchableText = `${button.dataset.policyName} ${button.dataset.policyMeta}`.toLocaleLowerCase();
+          const matches = !query || searchableText.includes(query);
+          button.closest('.policy-picker-item').hidden = !matches;
+          if (matches) visibleCount += 1;
+        });
+        clearAskPolicySearch.hidden = query.length === 0;
+        askPolicyEmpty.hidden = visibleCount !== 0;
+      }
+
+      function renderAskPolicySelection() {
+        askPolicyContext.hidden = !selectedAskPolicy;
+        askPolicyContextName.textContent = selectedAskPolicy?.name || '';
+        askPolicyContextMeta.textContent = selectedAskPolicy?.meta || '';
+        askPolicyOptions.forEach((button) => {
+          button.setAttribute('aria-pressed', String(button.dataset.policyId === selectedAskPolicy?.id));
+        });
+      }
+
+      function clearAskPolicySelection(returnFocus = false) {
+        selectedAskPolicy = null;
+        renderAskPolicySelection();
+        if (returnFocus) askOvieInput.focus({ preventScroll: true });
+      }
+
+      function openAskPolicyPicker() {
+        window.clearTimeout(policyPickerCloseTimer);
+        askOvieInput.blur();
+        askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+        syncAskSheetToViewport();
+        askPolicySearch.value = '';
+        filterAskPolicies();
+        askPolicyPicker.classList.remove('is-visible');
+        askPolicyPicker.showModal();
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            askPolicyPicker.classList.add('is-visible');
+            askPolicySearch.focus({ preventScroll: true });
+          });
+        });
+      }
+
+      function closeAskPolicyPicker(returnFocus = true) {
+        if (!askPolicyPicker.open) return;
+        askPolicyPicker.classList.remove('is-visible');
+        window.clearTimeout(policyPickerCloseTimer);
+        policyPickerCloseTimer = window.setTimeout(() => {
+          askPolicyPicker.close();
+          if (returnFocus) askOvieInput.focus({ preventScroll: true });
+        }, policyPickerTransitionDuration() + 34);
+      }
+
+      askAttachmentButton.addEventListener('click', openAskPolicyPicker);
+      closeAskPolicyPickerButton.addEventListener('click', () => closeAskPolicyPicker());
+      askPolicyPicker.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeAskPolicyPicker();
       });
+      askPolicyPicker.addEventListener('pointerdown', (event) => {
+        const bounds = askPolicyPicker.getBoundingClientRect();
+        const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideSheet) closeAskPolicyPicker();
+      });
+      askPolicySearch.addEventListener('input', filterAskPolicies);
+      clearAskPolicySearch.addEventListener('click', () => {
+        askPolicySearch.value = '';
+        filterAskPolicies();
+        askPolicySearch.focus({ preventScroll: true });
+      });
+      askPolicyOptions.forEach((button) => {
+        button.addEventListener('click', () => {
+          selectedAskPolicy = {
+            id: button.dataset.policyId,
+            name: button.dataset.policyName,
+            meta: button.dataset.policyMeta
+          };
+          renderAskPolicySelection();
+          closeAskPolicyPicker();
+        });
+      });
+      removeAskPolicy.addEventListener('click', () => clearAskPolicySelection(true));
 
       function syncComposerAction(hasQuestion = askOvieInput.value.trim().length > 0) {
         askComposerAction.classList.toggle('is-send', hasQuestion);
@@ -1969,6 +2309,8 @@
         if (!question) return;
         const compactTop = askOvieSheet.getBoundingClientRect().top;
         askOvieQuestion.textContent = question;
+        askOvieQuestionPolicy.hidden = !selectedAskPolicy;
+        askOvieQuestionPolicyName.textContent = selectedAskPolicy ? `${selectedAskPolicy.name} · ${selectedAskPolicy.meta}` : '';
         askOvieAnswer.textContent = answerFor(question);
         askOvieConversation.hidden = false;
         askOvieSheet.classList.add('chat-view');
@@ -1978,6 +2320,7 @@
           button.classList.remove('is-saved');
         });
         askOvieInput.value = '';
+        clearAskPolicySelection();
         syncComposerAction(false);
         syncAskSheetToViewport();
         window.requestAnimationFrame(() => {
