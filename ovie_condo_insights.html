@@ -10,7 +10,7 @@
   <style>
     :root {
       --primary:#6b4062; --primary-dark:#54324d; --ink:#111; --text:#333a3d;
-      --muted:#5f6368; --icon-default:#5f6368; --surface:#fff; --page:#f6f6f6; --bg-subtle:#f6f6f6; --canvas:#e3e3e3;
+      --muted:#5f6368; --icon-default:#5f6368; --icon-strong:#111111; --surface:#fff; --page:#f6f6f6; --bg-subtle:#f6f6f6; --canvas:#e3e3e3;
       --success:#0d7d07; --warning:#8a5a06; --danger:#a63a33;
       --plum-soft:#f5edf3; --warning-soft:#fff5df; --danger-soft:#ffeded;
       --border:#d8dddb; --line:#ecefed; --overlay:rgba(17,24,23,.58);
@@ -40,11 +40,12 @@
     .titlebar h1{font-size:18px;line-height:24px}
     .icon-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center}
     .icon-button img,.icon-button svg{width:22px;height:22px}
+    .back-button{background:transparent;color:var(--icon-strong)}
     #searchButton{margin-left:auto}
     #searchButton,#shareButton{position:relative;background:var(--bg-subtle);color:var(--icon-default);transition:background-color var(--motion-duration-press) ease,transform var(--motion-duration-press) var(--motion-ease-out)}
     #searchButton svg,#shareButton svg{width:19px;height:19px}
     #searchButton:active,#shareButton:active{transform:scale(.96)}
-    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}}
+    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}.back-button:hover,.source-button:hover{background:transparent}}
     main{padding:18px 16px 112px;display:flex;flex-direction:column;gap:18px}
     .card{background:var(--surface);border-radius:var(--radius);overflow:hidden}
     .card-pad{padding:16px}
@@ -53,7 +54,7 @@
     .heading-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
     .heading-row .section-title{margin:0}
     .status-pill,.severity{display:inline-flex;align-items:center;gap:6px;border-radius:var(--pill);font-size:12px;line-height:16px;font-weight:600}
-    .status-pill{padding:6px 10px;background:var(--page);color:var(--muted)}
+    .status-pill{padding:6px 10px;background:var(--danger-soft);color:var(--danger)}
     .status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
     .field{padding:12px 0;border-bottom:1px solid var(--line)}
     .field:first-child{padding-top:0}.field:last-child{padding-bottom:0;border-bottom:0}
@@ -62,8 +63,7 @@
     .person{min-height:58px;display:flex;align-items:center;gap:12px}
     .person-icon{width:40px;height:40px;border-radius:var(--radius);background:var(--plum-soft);display:grid;place-items:center}
     .person-icon img{width:20px;height:20px}
-    .source-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center;flex:0 0 auto}
-    .source-button:hover{background:var(--plum-soft)}
+    .source-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;color:var(--icon-default);display:grid;place-items:center;flex:0 0 auto}
     .source-button img{width:19px;height:19px}
     .coverage-list{display:flex;flex-direction:column}
     .coverage-row{min-height:84px;padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
@@ -132,7 +132,7 @@
     <header class="topbar">
       <div class="statusbar"><span>9:41</span><span>5G&nbsp;&nbsp;96%</span></div>
       <div class="titlebar">
-        <button class="icon-button" type="button" aria-label="Go back"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></button>
+        <button class="icon-button back-button" type="button" aria-label="Go back"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></button>
         <h1>Insights</h1>
         <button class="icon-button" id="searchButton" type="button" aria-label="Search insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
         <button class="icon-button" id="shareButton" type="button" aria-label="Share insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg></button>
