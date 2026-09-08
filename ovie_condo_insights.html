@@ -41,11 +41,12 @@
     .icon-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center}
     .icon-button img,.icon-button svg{width:22px;height:22px}
     .back-button{background:transparent;color:var(--icon-strong)}
+    .sheet-close{background:transparent}
     #searchButton{margin-left:auto}
     #searchButton,#shareButton{position:relative;background:var(--bg-subtle);color:var(--icon-default);transition:background-color var(--motion-duration-press) ease,transform var(--motion-duration-press) var(--motion-ease-out)}
     #searchButton svg,#shareButton svg{width:19px;height:19px}
     #searchButton:active,#shareButton:active{transform:scale(.96)}
-    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}.back-button:hover,.source-button:hover{background:transparent}}
+    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}.back-button:hover,.sheet-close:hover,.source-button:hover{background:transparent}}
     main{padding:18px 16px 112px;display:flex;flex-direction:column;gap:18px}
     .card{background:var(--surface);border-radius:var(--radius);overflow:hidden}
     .card-pad{padding:16px}
@@ -240,13 +241,13 @@
 
   <dialog id="sourceSheet" aria-labelledby="sourceTitle">
     <div class="sheet-handle" aria-hidden="true"></div>
-    <div class="sheet-head"><h2 id="sourceTitle">Source from your policy</h2><button class="icon-button" id="closeSource" type="button" aria-label="Close source"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    <div class="sheet-head"><h2 id="sourceTitle">Source from your policy</h2><button class="icon-button sheet-close" id="closeSource" type="button" aria-label="Close source"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
     <div class="sheet-body" id="sourceBody"></div>
   </dialog>
 
   <dialog id="feedbackSheet" aria-labelledby="feedbackTitle">
     <div class="sheet-handle" aria-hidden="true"></div>
-    <div class="sheet-head"><h2 id="feedbackTitle">Tell us more</h2><button class="icon-button" id="closeFeedback" type="button" aria-label="Close feedback form"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    <div class="sheet-head"><h2 id="feedbackTitle">Tell us more</h2><button class="icon-button sheet-close" id="closeFeedback" type="button" aria-label="Close feedback form"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
     <div class="sheet-body">
       <form class="feedback-form" id="feedbackForm" novalidate>
         <fieldset><legend class="sr-only">What could be improved?</legend>
