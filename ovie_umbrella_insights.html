@@ -22,13 +22,17 @@
       --bg-danger: #ffeded;
       --bg-info: #f5edf3;
       --bg-primary: #ffffff;
-      --bg-secondary: #f6f6f6;
-      --bg-canvas: #e3e3e3;
+      --bg-canvas: #f6f6f6;
+      --bg-subtle: #f6f6f6;
+      --bg-control: #e3e3e3;
+      --prototype-backdrop: #e3e3e3;
       --neutral-900: #111111;
       --text-primary: #111111;
       --text-secondary: #333a3d;
       --text-tertiary: #5f6368;
       --text-muted: #5f6368;
+      --icon-default: #5f6368;
+      --icon-strong: #111111;
       --border-default: #d8dddb;
       --border-subtle: #ecefed;
       --radius-sm: 12px;
@@ -61,7 +65,7 @@
       line-height: 20px;
       font-weight: 400;
       color: var(--text-primary);
-      background: var(--bg-canvas);
+      background: var(--prototype-backdrop);
     }
 
     body.sheet-open { overflow: hidden; }
@@ -103,7 +107,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       scrollbar-width: none;
-      background: var(--bg-secondary);
+      background: var(--bg-canvas);
       box-shadow: var(--shadow-md);
       scroll-padding-bottom: 92px;
     }
@@ -135,8 +139,8 @@
       height: 44px;
       border: 0;
       border-radius: 12px;
-      background: transparent;
-      color: var(--text-tertiary);
+      background: var(--bg-subtle);
+      color: var(--icon-default);
       display: grid;
       place-items: center;
       cursor: pointer;
@@ -144,6 +148,13 @@
 
     .icon-button:hover { background: var(--bg-info); }
     .icon-button img, .icon-button svg { width: 22px; height: 22px; }
+
+    .page-title-row > .icon-button:first-child {
+      background: transparent;
+      color: var(--icon-strong);
+    }
+
+    .page-title-row > .icon-button:first-child:hover { background: transparent; }
 
     .page-title-row {
       min-height: 58px;
@@ -182,7 +193,7 @@
       gap: 8px;
     }
 
-    .title-actions .icon-button { position: relative; background: var(--bg-secondary); color: var(--text-tertiary); transition: background-color 180ms var(--ease), transform 180ms var(--ease); }
+    .title-actions .icon-button { position: relative; background: var(--bg-subtle); color: var(--icon-default); transition: background-color 180ms var(--ease), transform 180ms var(--ease); }
     .title-actions .icon-button:hover { background: var(--bg-info); }
     .title-actions .icon-button:active { transform: scale(.96); }
     .title-actions .icon-button img, .title-actions .icon-button svg { width: 19px; height: 19px; }
@@ -257,10 +268,11 @@
       border: 0;
       border-radius: 12px;
       background: transparent;
+      color: var(--icon-default);
       cursor: pointer;
     }
 
-    .source-button:hover { background: var(--bg-info); }
+    .source-button:hover { background: transparent; }
     .source-button img { width: 19px; height: 19px; }
     .insights-note {
       width: 100%;
@@ -365,7 +377,7 @@
     .detail-body ul { margin: 0; padding-left: 20px; }
     .detail-body li { margin: 6px 0; font-size: 14px; line-height: 20px; }
     .document-impact { color: var(--text-tertiary); }
-    .evidence-gap { margin: 12px 0 0; padding: 12px; border-radius: var(--radius-md); background: var(--bg-secondary); color: var(--text-secondary); }
+    .evidence-gap { margin: 12px 0 0; padding: 12px; border-radius: var(--radius-md); background: var(--bg-subtle); color: var(--text-secondary); }
     .evidence-gap strong { display: block; margin-bottom: 3px; color: var(--text-secondary); }
     .watchpoint-list { display: flex; flex-direction: column; }
     .watchpoint { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 9px; row-gap: 6px; align-items: start; padding: 12px 0; border-top: 1px solid var(--border-subtle); }
@@ -398,8 +410,8 @@
     .footer-disclosures .source-line { margin-top: 0; }
     .feedback-row { min-height: 52px; padding: 4px 16px; display: flex; align-items: center; gap: 4px; }
     .feedback-question { flex: 1; font-size: 14px; line-height: 20px; color: var(--text-tertiary); }
-    .feedback-button { width: 44px; height: 44px; flex: 0 0 auto; border: 0; border-radius: 12px; background: transparent; color: var(--text-tertiary); display: grid; place-items: center; cursor: pointer; transition: color 180ms ease-out; }
-    .feedback-button:hover { color: var(--text-secondary); background: transparent; }
+    .feedback-button { width: 44px; height: 44px; flex: 0 0 auto; border: 0; border-radius: 12px; background: var(--bg-subtle); color: var(--icon-default); display: grid; place-items: center; cursor: pointer; transition: color 180ms ease-out, background-color 180ms ease-out; }
+    .feedback-button:hover { color: var(--action-primary); background: var(--bg-info); }
     .feedback-button[data-feedback="up"][aria-pressed="true"] { color: var(--status-success); }
     .feedback-button[data-feedback="down"][aria-pressed="true"] { color: var(--status-danger); }
     .feedback-button svg { width: 20px; height: 20px; }
@@ -424,8 +436,7 @@
 
     .chat-dock .ask-sheet-composer-row { width: 100%; }
     .chat-dock .ask-sheet-input-row { background: var(--bg-primary); cursor: text; }
-    .chat-dock .ask-sheet-input { cursor: text; }
-    .chat-dock .ask-composer-action.attachment { color: var(--text-tertiary); }
+    .chat-dock .ask-sheet-input { padding-inline: 12px; cursor: text; }
 
     dialog {
       width: min(480px, 100vw);
@@ -448,7 +459,7 @@
     .sheet-head h2 { flex: 1; margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
     .sheet-body { padding: 17px 18px 26px; overflow-y: auto; max-height: calc(76dvh - 75px); }
     .source-kicker { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--action-primary); }
-    .source-excerpt { margin: 10px 0 16px; padding: 13px; border-radius: var(--radius-md); background: var(--bg-secondary); font-size: 14px; line-height: 21px; }
+    .source-excerpt { margin: 10px 0 16px; padding: 13px; border-radius: var(--radius-md); background: var(--bg-subtle); font-size: 14px; line-height: 21px; }
     .sheet-label { margin-top: 14px; font-size: 14px; line-height: 20px; color: var(--text-muted); }
     .sheet-value { margin-top: 3px; font-size: 14px; line-height: 20px; font-weight: 600; }
     .sheet-note { margin-top: 14px; padding: 12px; border-radius: var(--radius-md); background: var(--bg-warning); color: #634106; font-size: 14px; line-height: 20px; }
@@ -486,15 +497,15 @@
     .ask-sheet.chat-view .ask-sheet-header { flex: 0 0 auto; margin: -8px -16px 0; padding: 8px 16px; border-bottom: 1px solid var(--border-subtle); }
     .ask-sheet-title { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 18px; line-height: 24px; }
     .ovie-assistant-mark { width: 22px; height: 22px; display: block; flex: 0 0 auto; color: var(--action-primary); }
-    .ask-sheet-close { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--text-tertiary); display: grid; place-items: center; cursor: pointer; transition: background-color 160ms var(--motion-ease-out), transform 160ms var(--motion-ease-out); }
+    .ask-sheet-close { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: var(--bg-subtle); color: var(--icon-default); display: grid; place-items: center; cursor: pointer; transition: background-color 160ms var(--motion-ease-out), transform 160ms var(--motion-ease-out); }
     .ask-sheet-close:active { transform: scale(.97); }
     .ask-sheet-conversation { min-height: 0; padding: 20px 2px 16px; display: none; flex: 1; flex-direction: column; gap: 18px; overflow-y: auto; overscroll-behavior: contain; }
     .ask-sheet.chat-view .ask-sheet-conversation { display: flex; }
     .ask-user-message { max-width: 84%; margin-left: auto; padding: 10px 14px; border-radius: 12px 12px 2px 12px; background: var(--action-primary); color: white; font-weight: 600; overflow-wrap: anywhere; }
     .ask-response-text { margin: 0; color: var(--text-secondary); white-space: pre-line; }
     .ask-answer-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
-    .ask-answer-action, .ask-composer-action { width: 44px; height: 44px; flex: 0 0 auto; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--text-tertiary); display: grid; place-items: center; cursor: pointer; transition: background-color 160ms var(--motion-ease-out), color 160ms var(--motion-ease-out), transform 160ms var(--motion-ease-out); }
-    .ask-answer-action { border: 1px solid var(--border-subtle); background: var(--bg-primary); }
+    .ask-answer-action, .ask-composer-action { width: 44px; height: 44px; flex: 0 0 auto; padding: 0; border: 0; border-radius: 12px; background: var(--bg-subtle); color: var(--icon-default); display: grid; place-items: center; cursor: pointer; transition: background-color 160ms var(--motion-ease-out), color 160ms var(--motion-ease-out), transform 160ms var(--motion-ease-out); }
+    .ask-answer-action { background: var(--bg-subtle); }
     .ask-answer-action:active, .ask-composer-action:active { transform: scale(.97); }
     .ask-answer-action[aria-pressed="true"][data-ask-answer-action="helpful"] { color: var(--status-success); }
     .ask-answer-action[aria-pressed="true"][data-ask-answer-action="not-helpful"] { color: var(--status-danger); }
@@ -506,14 +517,10 @@
     .ask-sheet-input-row:focus-within { border-color: var(--action-primary); box-shadow: var(--focus); }
     .ask-sheet-input { min-width: 0; flex: 1; padding: 8px 0; border: 0; outline: 0; background: transparent; color: var(--text-primary); font: inherit; line-height: 20px; }
     .ask-sheet-input::placeholder { color: var(--text-tertiary); opacity: 1; }
-    .ask-composer-action { background: var(--bg-canvas); }
-    .ask-composer-action.attachment { color: var(--action-primary); }
-    .ask-composer-action:not(.attachment) { background: var(--action-primary); color: white; }
+    .ask-composer-action { background: var(--action-primary); color: white; }
     .ask-composer-action .composer-send-icon { display: none; }
     .ask-composer-action.is-send .composer-mic-icon { display: none; }
     .ask-composer-action.is-send .composer-send-icon { display: block; }
-    .ask-attachment-status { min-height: 16px; margin: 4px 52px 0; color: var(--text-tertiary); font-size: 12px; line-height: 16px; }
-    .ask-attachment-status:empty { display: none; }
     .ask-ovie-disclaimer { margin: 8px 8px 0; color: var(--text-tertiary); font-size: 12px; line-height: 16px; text-align: center; }
     .ask-sheet.keyboard-visible .ask-ovie-disclaimer, .ask-sheet.show-android-keyboard-preview .ask-ovie-disclaimer { display: none; }
     .android-keyboard-preview { display: none; margin: 14px -16px -18px; padding: 0 5px calc(7px + env(safe-area-inset-bottom)); background: #eef0f3; color: #202124; font-family: Roboto, system-ui, sans-serif; font-size: 13px; line-height: 16px; font-weight: 500; user-select: none; }
@@ -559,7 +566,7 @@
     .feedback-submit { border: 0; background: var(--action-primary); color: white; }
     .feedback-submit:hover { background: var(--action-primary-dark); }
     .feedback-cancel { border: 1px solid var(--border-default); background: var(--bg-primary); color: var(--text-secondary); }
-    .feedback-cancel:hover { background: var(--bg-secondary); }
+    .feedback-cancel:hover { background: var(--bg-subtle); }
 
     .sharing-settings-dialog {
       max-height: min(92dvh, 780px);
@@ -662,7 +669,7 @@
       flex: 0 0 auto;
       padding: 2px 8px;
       border-radius: var(--radius-full);
-      background: var(--bg-secondary);
+      background: var(--bg-subtle);
       color: var(--text-tertiary);
       font-size: 11px;
       line-height: 16px;
@@ -676,7 +683,7 @@
       height: 44px;
       display: grid;
       place-items: center;
-      color: var(--text-tertiary);
+      color: var(--icon-default);
     }
 
     .sharing-category-toggle svg { width: 20px; height: 20px; }
@@ -685,11 +692,11 @@
       padding: 0;
       border: 0;
       border-radius: var(--radius-md);
-      background: transparent;
+      background: var(--bg-subtle);
       cursor: pointer;
     }
 
-    .sharing-category-toggle:hover { background: var(--bg-secondary); color: var(--text-secondary); }
+    .sharing-category-toggle:hover { background: var(--bg-info); color: var(--action-primary); }
     .sharing-category-toggle svg { transition: transform 180ms ease-out; }
     .sharing-category-toggle[aria-expanded="false"] svg { transform: rotate(180deg); }
     .sharing-category-details { margin: 0; padding: 0 0 10px 30px; color: var(--text-tertiary); font-size: 14px; line-height: 22px; list-style: none; }
@@ -764,9 +771,9 @@
     .share-primary:hover:not(:disabled) { background: var(--action-primary-dark); }
     .sheet-action:disabled, .feedback-submit:disabled, .share-primary:disabled { background: var(--action-primary-disabled-bg); color: var(--action-primary-disabled-text); box-shadow: none; opacity: 1; cursor: not-allowed; }
     .share-secondary { border: 1px solid var(--border-default); background: var(--bg-primary); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-    .share-secondary:hover { background: var(--bg-secondary); }
+    .share-secondary:hover { background: var(--bg-subtle); }
     .share-secondary img, .share-secondary svg { width: 18px; height: 18px; }
-    .share-secondary svg { color: var(--text-tertiary); }
+    .share-secondary svg { color: var(--icon-default); }
     .share-link-note { margin: 8px 0 0; font-size: 12px; line-height: 18px; font-style: normal; text-align: center; color: var(--text-tertiary); }
     .share-legal { margin-top: 16px; text-align: center; }
     .share-legal-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; }
@@ -1003,7 +1010,6 @@
         <label for="chatInput" class="sr-only">Ask Ovie about this policy</label>
         <div class="ask-sheet-composer-row">
           <div class="ask-sheet-input-row">
-            <button class="ask-composer-action attachment" id="chatAttachmentButton" type="button" aria-label="Attach a policy document and ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
             <input class="ask-sheet-input" id="chatInput" type="text" placeholder="Ask anything about this policy..." autocomplete="off" readonly aria-haspopup="dialog" aria-controls="askOvieSheet">
           </div>
           <button class="ask-composer-action" id="chatAskButton" type="submit" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet"><svg class="composer-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
@@ -1164,12 +1170,10 @@
         <label class="sr-only" for="askOvieInput">Ask anything about this policy</label>
         <div class="ask-sheet-composer-row">
           <div class="ask-sheet-input-row">
-            <button class="ask-composer-action attachment" id="askAttachmentButton" type="button" aria-label="Attach a policy document" title="Attach a policy document"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
             <input class="ask-sheet-input" id="askOvieInput" name="question" type="text" inputmode="text" enterkeyhint="send" autocomplete="off" placeholder="Ask anything about this policy...">
           </div>
           <button class="ask-composer-action" id="askComposerAction" type="button" aria-label="Use voice input" title="Use voice input"><svg class="composer-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg><svg class="composer-send-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
         </div>
-        <p class="ask-attachment-status" id="askAttachmentStatus" aria-live="polite"></p>
       </form>
       <p class="ask-ovie-disclaimer">Ovie provides policy summaries only and does not offer policy recommendations or insurance advice.</p>
       <div class="android-keyboard-preview">
@@ -1182,8 +1186,6 @@
       </div>
     </div>
   </dialog>
-  <input id="askAttachmentPicker" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" tabindex="-1" aria-hidden="true" hidden>
-
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
@@ -1203,7 +1205,6 @@
     const appMain = document.querySelector('main');
     const chatDock = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
-    const chatAttachmentButton = document.getElementById('chatAttachmentButton');
     const askOvieSheet = document.getElementById('askOvieSheet');
     const closeAskOvieButton = document.getElementById('closeAskOvie');
     const askOvieForm = document.getElementById('askOvieForm');
@@ -1212,9 +1213,6 @@
     const askOvieConversation = document.getElementById('askOvieConversation');
     const askOvieQuestion = document.getElementById('askOvieQuestion');
     const askOvieAnswer = document.getElementById('askOvieAnswer');
-    const askAttachmentButton = document.getElementById('askAttachmentButton');
-    const askAttachmentPicker = document.getElementById('askAttachmentPicker');
-    const askAttachmentStatus = document.getElementById('askAttachmentStatus');
     const hidePreviewKeyboard = document.getElementById('hidePreviewKeyboard');
     const askAnswerActions = Array.from(document.querySelectorAll('[data-ask-answer-action]'));
     const visualViewport = window.visualViewport;
@@ -1326,8 +1324,6 @@
       askOvieSheet.classList.toggle('show-android-keyboard-preview', showKeyboardPreview);
       askOvieSheet.classList.remove('chat-view', 'is-visible');
       askOvieConversation.hidden = true;
-      askAttachmentStatus.textContent = '';
-      askAttachmentPicker.value = '';
       syncAskComposerAction();
       askOvieSheet.showModal();
       document.body.classList.add('sheet-open');
@@ -1666,7 +1662,6 @@
     }
 
     chatInput.addEventListener('click', openAskSheet);
-    chatAttachmentButton.addEventListener('click', openAskSheet);
     chatDock.addEventListener('submit', event => {
       event.preventDefault();
       openAskSheet();
@@ -1695,12 +1690,6 @@
       askOvieInput.blur();
       askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
       syncAskSheetToViewport();
-    });
-    askAttachmentButton.addEventListener('click', () => askAttachmentPicker.click());
-    askAttachmentPicker.addEventListener('change', () => {
-      const file = askAttachmentPicker.files?.[0];
-      askAttachmentStatus.textContent = file ? `Attached: ${file.name}` : '';
-      if (file) askOvieInput.focus({ preventScroll: true });
     });
     askComposerAction.addEventListener('click', () => {
       if (askComposerAction.classList.contains('is-send')) {
