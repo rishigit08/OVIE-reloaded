@@ -119,12 +119,7 @@ $('searchButton').onclick = event => {
 };
 
 // Sample answers are limited to the uploaded policy; unsupported questions stay unresolved.
-$('chatForm').onsubmit = event => {
-  event.preventDefault();
-  const question = $('chatInput').value.trim();
-  $('utilityTitle').textContent = 'Ask Ovie';
-  const notice = node('p','source-context','Sample answers based on your policy.');
-  const questionNode = node('strong','',question || 'Explore this policy');
+function answerForPolicy(question) {
   const lower = question.toLowerCase();
   let answer, source;
   if (/flood/.test(lower)) { answer = 'The policy states that flood damage is not covered.'; source='flood'; }
@@ -137,14 +132,88 @@ $('chatForm').onsubmit = event => {
   else if (/limit|layer|million|cover/.test(lower)) { answer='Westchester has a $1,500,000 share of a $10,000,000 layer above $10,000,000. This does not establish TIV. The policy remains subject to underlying terms and sublimits.';source='layer'; }
   else if (/location|building|address/.test(lower)) {answer='The schedule refers to the Princeton lead primary policy for covered property and locations. Individual locations, buildings and values are not listed here. The insured’s mailing address is not a covered-location schedule.';source='locations';}
   else answer=question?'This prototype has no answer for that question. Review the policy or ask your insurance professional.':'Try “Is flood covered?”, “How does the excess layer work?” or “What is the business income waiting period?”';
-  const content = [notice,questionNode,node('p','',answer)];
-  if (source) content.push(action('Read supporting excerpt', () => {
-    utilitySheet.close();
-    // Use the persistent composer as the focus-restoration destination.
-    showSource(source,$('chatInput'));
-  }, true));
-  $('utilityBody').replaceChildren(...content);
-  openDialog(utilitySheet,$('chatInput'));
+  return {answer,source};
+}
+
+const askSheet = $('askOvieSheet');
+const askInput = $('askOvieInput');
+const askAction = $('askComposerAction');
+let askViewportHeight = window.innerHeight;
+function syncAskViewport() {
+  const viewport = window.visualViewport;
+  if (!askSheet.open || !viewport) return;
+  const inset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+  askSheet.style.setProperty('--keyboard-inset', `${inset}px`);
+  askSheet.style.setProperty('--visual-viewport-height', `${viewport.height}px`);
+  askSheet.classList.toggle('keyboard-visible', inset > 80 || viewport.height < askViewportHeight - 80);
+}
+function syncAskAction() {
+  const hasQuestion = Boolean(askInput.value.trim());
+  askAction.classList.toggle('is-send', hasQuestion);
+  askAction.setAttribute('aria-label', hasQuestion ? 'Send question' : 'Use voice input');
+  askAction.title = hasQuestion ? 'Send question' : 'Use voice input';
+}
+function openAsk(trigger) {
+  askViewportHeight = window.innerHeight;
+  askSheet.classList.add('is-visible');
+  askSheet.classList.toggle('show-android-keyboard-preview', !matchMedia('(pointer: coarse)').matches);
+  syncAskAction();
+  openDialog(askSheet, trigger);
+  askInput.focus({preventScroll:true});
+  syncAskViewport();
+}
+$('chatInput').onclick = () => openAsk($('chatInput'));
+$('chatInput').onkeydown = event => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    openAsk($('chatInput'));
+  }
+};
+$('chatForm').onsubmit = event => {
+  event.preventDefault();
+  openAsk($('chatAskButton'));
+};
+$('closeAskOvie').onclick = () => askSheet.close();
+askSheet.addEventListener('close', () => {
+  askSheet.classList.remove('is-visible','keyboard-visible','show-android-keyboard-preview');
+  askSheet.style.removeProperty('--keyboard-inset');
+  askSheet.style.removeProperty('--visual-viewport-height');
+});
+askInput.oninput = syncAskAction;
+askInput.onfocus = () => {
+  askSheet.classList.toggle('show-android-keyboard-preview', !matchMedia('(pointer: coarse)').matches);
+  syncAskViewport();
+};
+$('hidePreviewKeyboard').onclick = () => {
+  askInput.blur();
+  askSheet.classList.remove('show-android-keyboard-preview');
+};
+window.visualViewport?.addEventListener('resize', syncAskViewport);
+window.visualViewport?.addEventListener('scroll', syncAskViewport);
+askAction.onclick = () => {
+  if (askInput.value.trim()) $('askOvieForm').requestSubmit();
+  else {
+    showToast('Voice input is not available in this prototype.');
+    askInput.focus({preventScroll:true});
+  }
+};
+$('askOvieForm').onsubmit = event => {
+  event.preventDefault();
+  const question=askInput.value.trim();
+  if(!question)return;
+  const {answer,source}=answerForPolicy(question);
+  $('askOvieQuestion').textContent=question;
+  $('askOvieAnswer').textContent=`Sample answer based on your policy.\n\n${answer}`;
+  $('askOvieConversation').hidden=false;
+  askSheet.classList.add('chat-view');
+  $('askSourceActions').replaceChildren();
+  if(source){
+    const sourceAction=action('Read supporting excerpt',()=>showSource(source,sourceAction),true);
+    $('askSourceActions').append(sourceAction);
+  }
+  askInput.value='';
+  syncAskAction();
+  syncAskViewport();
 };
 
 const feedbackForm = $('feedbackForm');
