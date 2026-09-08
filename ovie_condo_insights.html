@@ -46,7 +46,7 @@
     #searchButton,#shareButton{position:relative;background:var(--bg-subtle);color:var(--icon-default);transition:background-color var(--motion-duration-press) ease,transform var(--motion-duration-press) var(--motion-ease-out)}
     #searchButton svg,#shareButton svg{width:19px;height:19px}
     #searchButton:active,#shareButton:active{transform:scale(.96)}
-    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}.back-button:hover,.sheet-close:hover,.source-button:hover{background:transparent}}
+    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}.back-button:hover,.sheet-close:hover,.source-button:hover{background:transparent}.ask-composer-action:hover{background:var(--primary-dark)}}
     main{padding:18px 16px 112px;display:flex;flex-direction:column;gap:18px}
     .card{background:var(--surface);border-radius:var(--radius);overflow:hidden}
     .card-pad{padding:16px}
@@ -109,10 +109,16 @@
     .feedback-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center;transition:background-color 180ms ease-out,color 180ms ease-out,transform 180ms ease-out}
     .feedback-button:hover{background:var(--plum-soft);color:var(--primary)}.feedback-button:active{transform:scale(.96)}
     .feedback-button svg{width:25px;height:25px}.feedback-button[data-feedback="up"][aria-pressed="true"]{color:var(--success)}.feedback-button[data-feedback="down"][aria-pressed="true"]{color:var(--danger)}
-    .chat-dock{position:sticky;bottom:0;z-index:var(--z-sticky);min-height:74px;margin-top:-74px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;background:rgba(255,255,255,.3);backdrop-filter:blur(14px) saturate(1.1)}
-    .chat-input{min-width:0;flex:1;height:48px;padding:0 12px;border:1px solid var(--border);border-radius:var(--pill);background:rgba(255,255,255,.84);color:var(--ink)}
-    .chat-input::placeholder{color:var(--muted);opacity:1}.chat-input:focus{outline:0;border-color:var(--primary);box-shadow:var(--focus)}
-    .chat-send{width:48px;height:48px;border:0;border-radius:var(--radius);background:var(--primary);display:grid;place-items:center}.chat-send:hover{background:var(--primary-dark)}.chat-send img{width:22px;height:22px;filter:invert(1)}
+    .chat-dock{position:sticky;bottom:0;z-index:var(--z-sticky);width:100%;min-height:74px;margin-top:-74px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:0;background:rgba(255,255,255,.3);-webkit-backdrop-filter:blur(14px) saturate(1.1);backdrop-filter:blur(14px) saturate(1.1);display:flex;align-items:center;gap:10px}
+    .chat-dock .ask-sheet-composer-row{width:100%}
+    .ask-sheet-composer-row{display:flex;align-items:center;gap:8px}
+    .ask-sheet-input-row{min-width:0;min-height:56px;flex:1;padding:5px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
+    .ask-sheet-input-row:focus-within{border-color:var(--primary);box-shadow:var(--focus)}
+    .ask-sheet-input{min-width:0;flex:1;padding:8px 12px;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;line-height:20px;box-shadow:none}
+    .ask-sheet-input::placeholder{color:var(--muted);opacity:1}
+    .ask-composer-action{width:44px;height:44px;flex:0 0 auto;padding:0;border:0;border-radius:var(--radius);background:var(--primary);color:#fff;display:grid;place-items:center;transition:transform var(--motion-duration-press) var(--motion-ease-out)}
+    .ask-composer-action:active{transform:scale(.97)}
+    .ask-composer-action svg{width:22px;height:22px}
     dialog{width:min(390px,100vw);max-width:100vw;max-height:min(76dvh,680px);margin:auto auto 0;padding:0;border:0;border-radius:12px 12px 0 0;background:var(--surface);color:var(--ink);box-shadow:0 -6px 16px rgba(17,17,17,.14)}
     dialog::backdrop{background:var(--overlay)}
     .sheet-handle{width:40px;height:4px;margin:10px auto 3px;border-radius:2px;background:var(--border)}
@@ -125,7 +131,7 @@
     .error{min-height:20px;margin-top:8px;color:var(--danger)}
     .toast{position:fixed;left:50%;bottom:94px;z-index:var(--z-toast);transform:translate(-50%,18px);min-width:250px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:var(--radius);background:var(--ink);color:#fff;text-align:center;opacity:0;pointer-events:none;transition:opacity 180ms ease-out,transform 180ms ease-out}.toast.show{opacity:1;transform:translate(-50%,0)}
     @media(max-width:420px){.canvas{display:block}.phone{width:100vw}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}#searchButton:active,#shareButton:active{transform:none}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}#searchButton:active,#shareButton:active,.ask-composer-action:active{transform:none}}
   </style>
 </head>
 <body>
@@ -234,8 +240,12 @@
 
     <form class="chat-dock" id="chatForm" novalidate>
       <label class="sr-only" for="chatInput">Ask Ovie about this policy</label>
-      <input class="chat-input" id="chatInput" placeholder="Ask Ovie…" autocomplete="off">
-      <button class="chat-send" type="submit" aria-label="Ask Ovie"><img src="assets/lucide/mic.svg" alt=""></button>
+      <div class="ask-sheet-composer-row">
+        <div class="ask-sheet-input-row">
+          <input class="ask-sheet-input" id="chatInput" type="text" placeholder="Ask anything about this policy..." autocomplete="off">
+        </div>
+        <button class="ask-composer-action" id="chatAskButton" type="submit" aria-label="Ask Ovie"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><path d="M12 19v3"></path></svg></button>
+      </div>
     </form>
   </div></div>
 
