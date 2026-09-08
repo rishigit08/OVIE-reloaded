@@ -10,11 +10,12 @@
   <style>
     :root {
       --primary:#6b4062; --primary-dark:#54324d; --ink:#111; --text:#333a3d;
-      --muted:#5f6368; --surface:#fff; --page:#f6f6f6; --canvas:#e3e3e3;
+      --muted:#5f6368; --icon-default:#5f6368; --surface:#fff; --page:#f6f6f6; --bg-subtle:#f6f6f6; --canvas:#e3e3e3;
       --success:#0d7d07; --warning:#8a5a06; --danger:#a63a33;
       --plum-soft:#f5edf3; --warning-soft:#fff5df; --danger-soft:#ffeded;
       --border:#d8dddb; --line:#ecefed; --overlay:rgba(17,24,23,.58);
       --radius:12px; --pill:999px; --focus:0 0 0 3px rgba(107,64,98,.24);
+      --motion-duration-press:160ms; --motion-ease-out:cubic-bezier(.23,1,.32,1);
       --z-sticky:20; --z-modal:40; --z-toast:60;
     }
     *{box-sizing:border-box}
@@ -37,10 +38,13 @@
     .statusbar span:last-child{color:var(--muted)}
     .titlebar{height:58px;padding:4px 18px 10px;display:flex;align-items:center;gap:8px}
     .titlebar h1{font-size:18px;line-height:24px}
-    .icon-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;display:grid;place-items:center}
-    .icon-button:hover{background:var(--plum-soft)}
-    .icon-button img{width:22px;height:22px}
-    #shareButton{margin-left:auto}
+    .icon-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center}
+    .icon-button img,.icon-button svg{width:22px;height:22px}
+    #searchButton{margin-left:auto}
+    #searchButton,#shareButton{position:relative;background:var(--bg-subtle);color:var(--icon-default);transition:background-color var(--motion-duration-press) ease,transform var(--motion-duration-press) var(--motion-ease-out)}
+    #searchButton svg,#shareButton svg{width:19px;height:19px}
+    #searchButton:active,#shareButton:active{transform:scale(.96)}
+    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}}
     main{padding:18px 16px 112px;display:flex;flex-direction:column;gap:18px}
     .card{background:var(--surface);border-radius:var(--radius);overflow:hidden}
     .card-pad{padding:16px}
@@ -58,7 +62,7 @@
     .person{min-height:58px;display:flex;align-items:center;gap:12px}
     .person-icon{width:40px;height:40px;border-radius:var(--radius);background:var(--plum-soft);display:grid;place-items:center}
     .person-icon img{width:20px;height:20px}
-    .source-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;display:grid;place-items:center;flex:0 0 auto}
+    .source-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center;flex:0 0 auto}
     .source-button:hover{background:var(--plum-soft)}
     .source-button img{width:19px;height:19px}
     .coverage-list{display:flex;flex-direction:column}
@@ -101,11 +105,11 @@
     .details-body ul{margin:0;padding-left:18px}.details-body li+li{margin-top:8px}
     .feedback{padding:0 16px;min-height:76px;display:flex;align-items:center;gap:8px}
     .feedback-question{flex:1;font-weight:600}
-    .feedback-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;display:grid;place-items:center;transition:transform 180ms ease-out}
-    .feedback-button:hover{background:var(--surface)}.feedback-button:active{transform:scale(.96)}
-    .feedback-button img{width:25px;height:25px;filter:grayscale(1);opacity:.62}.feedback-button[aria-pressed="true"] img{filter:none;opacity:1}
+    .feedback-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center;transition:background-color 180ms ease-out,color 180ms ease-out,transform 180ms ease-out}
+    .feedback-button:hover{background:var(--plum-soft);color:var(--primary)}.feedback-button:active{transform:scale(.96)}
+    .feedback-button svg{width:25px;height:25px}.feedback-button[data-feedback="up"][aria-pressed="true"]{color:var(--success)}.feedback-button[data-feedback="down"][aria-pressed="true"]{color:var(--danger)}
     .chat-dock{position:sticky;bottom:0;z-index:var(--z-sticky);min-height:74px;margin-top:-74px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;background:rgba(255,255,255,.3);backdrop-filter:blur(14px) saturate(1.1)}
-    .chat-input{min-width:0;flex:1;height:48px;padding:0 16px;border:1px solid var(--border);border-radius:var(--pill);background:rgba(255,255,255,.84);color:var(--ink)}
+    .chat-input{min-width:0;flex:1;height:48px;padding:0 12px;border:1px solid var(--border);border-radius:var(--pill);background:rgba(255,255,255,.84);color:var(--ink)}
     .chat-input::placeholder{color:var(--muted);opacity:1}.chat-input:focus{outline:0;border-color:var(--primary);box-shadow:var(--focus)}
     .chat-send{width:48px;height:48px;border:0;border-radius:var(--radius);background:var(--primary);display:grid;place-items:center}.chat-send:hover{background:var(--primary-dark)}.chat-send img{width:22px;height:22px;filter:invert(1)}
     dialog{width:min(390px,100vw);max-width:100vw;max-height:min(76dvh,680px);margin:auto auto 0;padding:0;border:0;border-radius:12px 12px 0 0;background:var(--surface);color:var(--ink);box-shadow:0 -6px 16px rgba(17,17,17,.14)}
@@ -120,7 +124,7 @@
     .error{min-height:20px;margin-top:8px;color:var(--danger)}
     .toast{position:fixed;left:50%;bottom:94px;z-index:var(--z-toast);transform:translate(-50%,18px);min-width:250px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:var(--radius);background:var(--ink);color:#fff;text-align:center;opacity:0;pointer-events:none;transition:opacity 180ms ease-out,transform 180ms ease-out}.toast.show{opacity:1;transform:translate(-50%,0)}
     @media(max-width:420px){.canvas{display:block}.phone{width:100vw}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}#searchButton:active,#shareButton:active{transform:none}}
   </style>
 </head>
 <body>
@@ -128,9 +132,10 @@
     <header class="topbar">
       <div class="statusbar"><span>9:41</span><span>5G&nbsp;&nbsp;96%</span></div>
       <div class="titlebar">
-        <button class="icon-button" type="button" aria-label="Go back"><img src="assets/lucide/arrow-left.svg" alt=""></button>
+        <button class="icon-button" type="button" aria-label="Go back"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></button>
         <h1>Insights</h1>
-        <button class="icon-button" id="shareButton" type="button" aria-label="Share insights"><img src="assets/lucide/share-2.svg" alt=""></button>
+        <button class="icon-button" id="searchButton" type="button" aria-label="Search insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+        <button class="icon-button" id="shareButton" type="button" aria-label="Share insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg></button>
       </div>
     </header>
 
@@ -221,8 +226,8 @@
 
       <div class="feedback" role="group" aria-labelledby="feedback-question">
         <span class="feedback-question" id="feedback-question">Were these insights helpful?</span>
-        <button class="feedback-button" type="button" data-feedback="up" aria-label="Yes, these insights were helpful" aria-pressed="false"><img src="assets/lucide/thumbs-up.svg" alt=""></button>
-        <button class="feedback-button" type="button" data-feedback="down" aria-label="No, these insights were not helpful" aria-pressed="false"><img src="assets/lucide/thumbs-down.svg" alt=""></button>
+        <button class="feedback-button" type="button" data-feedback="up" aria-label="Yes, these insights were helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg></button>
+        <button class="feedback-button" type="button" data-feedback="down" aria-label="No, these insights were not helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"></path><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path></svg></button>
       </div>
     </main>
 
@@ -235,13 +240,13 @@
 
   <dialog id="sourceSheet" aria-labelledby="sourceTitle">
     <div class="sheet-handle" aria-hidden="true"></div>
-    <div class="sheet-head"><h2 id="sourceTitle">Source from your policy</h2><button class="icon-button" id="closeSource" type="button" aria-label="Close source"><img src="assets/lucide/x.svg" alt=""></button></div>
+    <div class="sheet-head"><h2 id="sourceTitle">Source from your policy</h2><button class="icon-button" id="closeSource" type="button" aria-label="Close source"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
     <div class="sheet-body" id="sourceBody"></div>
   </dialog>
 
   <dialog id="feedbackSheet" aria-labelledby="feedbackTitle">
     <div class="sheet-handle" aria-hidden="true"></div>
-    <div class="sheet-head"><h2 id="feedbackTitle">Tell us more</h2><button class="icon-button" id="closeFeedback" type="button" aria-label="Close feedback form"><img src="assets/lucide/x.svg" alt=""></button></div>
+    <div class="sheet-head"><h2 id="feedbackTitle">Tell us more</h2><button class="icon-button" id="closeFeedback" type="button" aria-label="Close feedback form"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
     <div class="sheet-body">
       <form class="feedback-form" id="feedbackForm" novalidate>
         <fieldset><legend class="sr-only">What could be improved?</legend>
@@ -287,6 +292,7 @@
     feedbackSheet.addEventListener('close',()=>{if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});lastTrigger=null});
     document.getElementById('closeFeedback').addEventListener('click',()=>feedbackSheet.close());
     document.getElementById('cancelFeedback').addEventListener('click',()=>feedbackSheet.close());
+    document.getElementById('searchButton').addEventListener('click',()=>showToast('Search is not available in this prototype.'));
     document.getElementById('shareButton').addEventListener('click',()=>showToast('Share options opened.'));
     document.getElementById('chatForm').addEventListener('submit',event=>{event.preventDefault();const input=document.getElementById('chatInput');showToast(input.value.trim()?'Opening Ask Ovie with your question.':'Ask Ovie voice input would start here.')});
   </script>
