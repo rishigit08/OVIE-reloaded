@@ -1,0 +1,24 @@
+/* The arc counts stages; it is not a time or byte percentage. */
+.ovie-upload-nav-anchor { position: relative; }
+.ovie-upload-nav-progress { position: absolute; inset: 0; pointer-events: none; z-index: 3; --upload-ring-color: var(--icon-brand, #6B4062); }
+.ovie-upload-nav-progress.is-complete { --upload-ring-color: var(--icon-success, #0D7D07); }
+.ovie-upload-nav-progress.is-failed { --upload-ring-color: var(--icon-danger, #A63A33); }
+.ovie-upload-nav-progress .ovie-upload-stage-ring { position: absolute !important; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: 60px !important; height: 60px !important; overflow: visible; }
+.ovie-upload-stage-ring .track { stroke: var(--primary-disabled-background, #E8DEE5); }
+.ovie-upload-stage-ring .value { stroke: var(--upload-ring-color); }
+.ovie-upload-step-badge { position: absolute; left: calc(50% + 8px); top: calc(50% + 10px); display: grid; place-items: center; min-width: 28px; height: 20px; padding: 0 3px; border-radius: 999px; background: var(--surface, #FFFFFF); color: var(--primary, #6B4062); border: 1px solid var(--primary-disabled-background, #E8DEE5); font: 600 11px/16px Figtree, system-ui, sans-serif; }
+.is-complete .ovie-upload-step-badge, .is-failed .ovie-upload-step-badge { color: var(--upload-ring-color); min-width: 20px; }
+.ovie-upload-nav-progress .ovie-upload-step-badge svg { width: 14px !important; height: 14px !important; color: var(--upload-ring-color); }
+@media (forced-colors: active) { .ovie-upload-stage-ring .track { stroke: GrayText; } .ovie-upload-stage-ring .value { stroke: Highlight; } .ovie-upload-step-badge { color: ButtonText; background: ButtonFace; border-color: ButtonText; } }
+
+.ovie-upload-nav-progress.is-review{--upload-ring-color:var(--icon-warning,#8A5A06)}
+
+:root{--motion-duration-standard:200ms;--motion-ease-out:cubic-bezier(0.23,1,0.32,1)}
+.ovie-upload-completion-toast{position:fixed;z-index:1000;left:50%;bottom:24px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;width:min(calc(100% - 32px),358px);padding:10px 12px 10px 16px;border-radius:12px;background:#111;color:#fff;font:400 14px/20px Figtree,system-ui,sans-serif;box-shadow:0 6px 16px rgba(17,17,17,.12);opacity:0;pointer-events:none;transition:opacity var(--motion-duration-standard) var(--motion-ease-out)}
+.ovie-upload-completion-toast.is-visible{opacity:1;pointer-events:auto}
+.ovie-upload-completion-toast.above-navigation{bottom:108px}
+.ovie-upload-completion-toast span{flex:1}
+.ovie-upload-completion-toast button{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;border-radius:12px;background:transparent;color:#fff}
+.ovie-upload-completion-toast button svg{width:20px;height:20px;color:inherit}
+.ovie-upload-completion-toast button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.ovie-upload-completion-toast{transition-duration:125ms}}

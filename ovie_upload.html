@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#6B4062">
+  <title>Upload details · Ovie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/ovie-upload.css?v=20260909ae">
+</head>
+<body>
+  <aside class="preview" aria-label="Prototype controls">
+    <p class="preview-brand">Ovie <span>Design preview</span></p>
+    <h2>Upload, then carry on.</h2>
+    <p>Tap Upload to check progress. Leave the detail page and tap Upload again to return.</p>
+    <details id="preview-options" open><summary>Preview states and playback</summary>
+    <fieldset><legend>Preview an outcome</legend><div id="scenarios"></div></fieldset>
+    <fieldset><legend>Move through the process</legend><div class="preview-actions"><button id="advance">Next stage</button><button id="play">Play process</button></div></fieldset>
+    <button id="reset" class="preview-reset">Reset preview</button>
+    </details>
+    <p class="preview-note">Demo only. Files stay on this device. Processing and outcomes are simulated. Activity is kept in this browser for review.</p>
+  </aside>
+  <div class="app-shell">
+    <header id="header"></header>
+    <main id="main"></main>
+    <nav id="nav" aria-label="Primary navigation"></nav>
+  </div>
+  <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+  <script src="assets/ovie-upload.js?v=20260909ae"></script>
+  <script src="assets/ovie-upload-indicator.js?v=20260909ae"></script>
+</body>
+</html>
