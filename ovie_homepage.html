@@ -1,0 +1,2439 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Home | Ovie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6b4062;
+      --primary-dark: #54324d;
+      --primary-soft: #f5edf3;
+      --ai-gradient-start: #bd4ba5;
+      --ai-gradient-end: #5c2e8b;
+      --premium-auto: #6b4062;
+      --premium-home: #896681;
+      --premium-umbrella: #a68ca1;
+      --premium-renters: #c4b3c0;
+      --donut-shade-1: #40243a;
+      --donut-shade-2: #54324d;
+      --donut-shade-3: #6b4062;
+      --donut-shade-4: #7d5274;
+      --donut-shade-5: #916781;
+      --donut-shade-6: #a67d9b;
+      --donut-shade-7: #ba94b0;
+      --donut-shade-8: #cdafc5;
+      --donut-shade-9: #dfc9d9;
+      --donut-shade-10: #f0e5ed;
+      --ink: #111111;
+      --copy: #333a3d;
+      --muted: #5f6368;
+      --surface: #ffffff;
+      --bg-canvas: #f6f6f6;
+      --bg-subtle: #f6f6f6;
+      --bg-control: #e3e3e3;
+      --prototype-backdrop: #e3e3e3;
+      --border: #d8dddb;
+      --border-soft: #ecefed;
+      --success: #0d7d07;
+      --success-soft: #e7fff4;
+      --warning: #8a5a06;
+      --warning-ink: #634106;
+      --warning-soft: #fff5df;
+      --warning-border: #e7c982;
+      --danger: #a63a33;
+      --focus: #6b4062;
+      --radius: 12px;
+      --motion-duration-press: 160ms;
+      --motion-duration-standard: 200ms;
+      --motion-duration-overlay: 260ms;
+      --motion-ease-out: cubic-bezier(.23, 1, .32, 1);
+      --motion-ease-in-out: cubic-bezier(.77, 0, .175, 1);
+      --motion-ease-drawer: cubic-bezier(.32, .72, 0, 1);
+      --ease: var(--motion-ease-out);
+      --ease-drawer: var(--motion-ease-drawer);
+      --nav-height: 72px;
+      --z-sticky: 100;
+      --z-navigation: 400;
+      --z-fab: 450;
+      --z-backdrop: 500;
+      --z-dialog: 600;
+      --z-sheet: 700;
+      --z-toast: 900;
+      --scrollbar-thumb: #a9afac;
+      --scrollbar-thumb-hover: #7c827f;
+      --scrollbar-track: #ecefed;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      color-scheme: light;
+      scrollbar-gutter: stable;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+      scrollbar-width: thin;
+    }
+
+    *::-webkit-scrollbar { width: 8px; height: 8px; }
+    *::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    *::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border: 2px solid var(--scrollbar-track); border-radius: 999px; }
+    *::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--prototype-backdrop);
+      color: var(--ink);
+      font-family: Figtree, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.sheet-open { overflow: hidden; }
+
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    svg { display: block; }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    :focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--focus) 58%, white);
+      outline-offset: 3px;
+    }
+
+    .app-shell {
+      position: relative;
+      width: min(100%, 480px);
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow: hidden;
+      overflow: clip;
+      background: var(--bg-canvas);
+    }
+
+    .top-shell {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      background: color-mix(in srgb, var(--surface) 96%, transparent);
+      border-bottom: 1px solid var(--border-soft);
+      transform: translateY(0);
+      transition: transform 240ms var(--ease);
+      will-change: transform;
+    }
+
+    .top-shell.is-hidden { transform: translateY(calc(-100% - 1px)); }
+
+    .status-bar {
+      min-height: 36px;
+      padding: 8px 18px 2px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+    }
+
+    .status-icons { display: flex; align-items: center; gap: 5px; color: var(--muted); }
+
+    .app-header {
+      padding: 8px 16px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-identity { min-width: 0; display: flex; align-items: center; gap: 10px; }
+    .header-greeting { min-width: 0; }
+    .greeting { margin: 0 0 2px; color: var(--muted); font-size: 12px; line-height: 16px; font-weight: 600; }
+    .app-title { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; letter-spacing: -.012em; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+
+    .icon-button, .avatar-button {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--bg-subtle);
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color 180ms var(--ease), transform 180ms var(--ease);
+    }
+
+    .icon-button:hover, .avatar-button:hover { background: var(--primary-soft); }
+    .icon-button:active, .avatar-button:active { transform: scale(.96); }
+    .avatar-button { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+    .notification-dot { position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border: 2px solid var(--bg-subtle); border-radius: 50%; background: var(--danger); }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding: 18px 16px calc(var(--nav-height) + 90px + env(safe-area-inset-bottom));
+    }
+
+    section { scroll-margin-top: 112px; }
+
+    .card {
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .section-heading {
+      margin: 0;
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 600;
+      letter-spacing: -.012em;
+      text-wrap: balance;
+    }
+
+    .premium-card {
+      padding: 0 0 6px;
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .premium-value { margin: 0; color: var(--ink); font-size: 32px; line-height: 36px; font-weight: 600; letter-spacing: -.035em; }
+    .premium-period { display: block; margin-top: 2px; color: var(--copy); font-size: 12px; line-height: 16px; font-weight: 400; }
+
+    .premium-visual {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .donut { position: relative; width: 184px; aspect-ratio: 1; margin: 2px auto 8px; }
+    .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+    .donut-segment {
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+    }
+    .donut-segment[data-category="auto"] { fill: var(--donut-shade-3); }
+    .donut-segment[data-category="home"] { fill: var(--donut-shade-5); }
+    .donut-segment[data-category="umbrella"] { fill: var(--donut-shade-7); }
+    .donut-segment[data-category="renters"] { fill: var(--donut-shade-9); }
+    .donut-segment.dim { opacity: .22; }
+    .donut-segment.active { transform: scale(1.035); }
+
+    .donut-center {
+      position: absolute;
+      inset: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .donut-context { margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 16px; font-weight: 600; }
+    .premium-options { width: 100%; display: flex; flex-direction: column; }
+    .premium-category { border-bottom: 1px solid var(--border-soft); }
+    .premium-category:last-child { border-bottom: 0; }
+
+    .premium-option {
+      min-height: 64px;
+      width: 100%;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .premium-option:hover, .premium-option[aria-pressed="true"] { background: var(--primary-soft); }
+    .category-icon {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--category-color) 16%, white);
+      color: var(--primary);
+    }
+    .category-icon.segment-auto { --category-color: var(--premium-auto); }
+    .category-icon.segment-home { --category-color: var(--premium-home); }
+    .category-icon.segment-umbrella { --category-color: var(--premium-umbrella); }
+    .category-icon.segment-renters { --category-color: var(--premium-renters); }
+    .premium-option-copy { min-width: 0; display: flex; flex: 1; align-items: center; justify-content: space-between; gap: 12px; }
+    .premium-option-info { min-width: 0; display: flex; flex-direction: column; }
+    .premium-option-name { color: var(--ink); font-size: 14px; line-height: 20px; font-weight: 600; }
+    .premium-option-meta { margin-top: 1px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .premium-option-value { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; }
+    .premium-option-amount { color: var(--ink); font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; }
+    .premium-option-share { margin-top: 1px; display: flex; align-items: center; gap: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .premium-option-share svg { transition: transform 200ms var(--ease); }
+    .premium-option[aria-expanded="true"] .premium-option-share svg { transform: rotate(90deg); }
+
+    .premium-accordion {
+      width: 100%;
+      padding: 0;
+      background: var(--surface);
+    }
+
+    .premium-policy-row {
+      min-height: 48px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .premium-policy-row:first-child { border-top: 0; }
+    .premium-policy-copy { min-width: 0; }
+    .premium-policy-name { display: block; color: var(--copy); font-weight: 600; }
+    .premium-policy-carrier { display: block; margin-top: 1px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .premium-policy-price { flex: 0 0 auto; color: var(--copy); font-weight: 600; white-space: nowrap; }
+
+    .card-section-head {
+      min-height: 56px;
+      padding: 10px 14px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .premium-card .card-section-head { min-height: 52px; padding: 10px 14px 0; }
+    .premium-card .section-heading { color: var(--ink); }
+
+    .text-button {
+      min-height: 44px;
+      margin: 0 -8px 0 0;
+      padding: 0 8px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .text-button:hover { background: var(--primary-soft); }
+    .text-button:disabled { color: var(--muted); cursor: default; opacity: 1; }
+    .text-button:disabled:hover { background: transparent; }
+
+    .policy-summary-strip { margin: 0 14px 6px; padding: 10px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 6px; border-radius: 10px; background: var(--bg-subtle); }
+    .policy-summary-stat { min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .policy-summary-value { color: var(--ink); font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; }
+    .policy-summary-label { color: var(--muted); font-size: 12px; line-height: 16px; }
+
+    .policy-list { display: flex; flex-direction: column; }
+
+    .policy {
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .policy:last-child { border-bottom: 0; }
+    .policy[hidden] { display: none; }
+
+    .policy summary {
+      min-height: 76px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      list-style: none;
+      cursor: pointer;
+      transition: background-color 180ms var(--ease);
+    }
+
+    .policy summary::-webkit-details-marker { display: none; }
+    .policy summary:hover { background: var(--bg-subtle); }
+
+    .policy-icon {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .policy-copy { min-width: 0; flex: 1; }
+    .policy-name { display: block; font-weight: 600; }
+    .policy-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .policy-date { max-width: 100px; display: flex; flex-direction: column; align-items: flex-end; color: var(--copy); font-size: 12px; line-height: 16px; font-weight: 600; text-align: right; }
+    .policy-date span { display: block; white-space: nowrap; }
+    .policy-chevron { flex: 0 0 auto; color: var(--muted); transition: transform 220ms var(--ease); }
+    details[open] .policy-chevron { transform: rotate(180deg); }
+
+    .policy-detail {
+      padding: 0 14px 14px;
+      color: var(--copy);
+    }
+
+    .policy-detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) max-content; justify-content: space-between; gap: 10px 32px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+    .detail-monthly { grid-column: 2; grid-row: 2; }
+    .detail-source { grid-column: 1; grid-row: 2; }
+    .detail-label { display: block; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .detail-value { display: block; margin-top: 2px; font-weight: 600; }
+
+    .expiry-list { display: flex; flex-direction: column; }
+    .expiry-row { min-height: 68px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-soft); }
+    .expiry-row:last-child { border-bottom: 0; }
+    .expiry-date { width: 42px; flex: 0 0 auto; text-align: center; }
+    .expiry-month { display: block; color: var(--muted); font-size: 11px; line-height: 16px; font-weight: 600; }
+    .expiry-day { display: block; margin-top: -1px; font-size: 14px; line-height: 20px; font-weight: 600; }
+    .expiry-copy { min-width: 0; flex: 1; }
+    .expiry-name { display: block; font-weight: 600; }
+    .expiry-carrier { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+
+    .status-pill { padding: 4px 8px; border-radius: 999px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; }
+    .status-pill.warning { background: var(--warning-soft); color: var(--warning-ink); }
+    .status-pill.neutral { background: var(--bg-subtle); color: var(--copy); }
+
+    .insight-list { display: flex; flex-direction: column; }
+    .insight {
+      width: 100%;
+      min-height: 74px;
+      padding: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border: 0;
+      border-bottom: 1px solid var(--border-soft);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .insight:last-child { border-bottom: 0; }
+    .insight:hover { background: var(--bg-subtle); }
+    .insight-icon { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; }
+    .insight.status-warning .insight-icon { background: var(--warning-soft); color: var(--warning); }
+    .insight.status-warning .insight-title { color: var(--warning-ink); }
+    .insight-copy { flex: 1; min-width: 0; }
+    .insight-title { display: block; font-weight: 600; }
+    .insight-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; font-weight: 600; }
+    .insight .chevron { margin-top: 8px; color: var(--muted); }
+    .bottom-nav {
+      position: fixed;
+      z-index: var(--z-navigation);
+      left: 50%;
+      bottom: max(8px, env(safe-area-inset-bottom));
+      width: min(calc(100% - 24px), 456px);
+      min-height: var(--nav-height);
+      padding: 6px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: center;
+      transform: translateX(-50%);
+      border: 1px solid var(--border-soft);
+      border-radius: 999px;
+      background: var(--surface);
+      box-shadow: 0 4px 8px rgba(17, 17, 17, .10);
+    }
+
+    .nav-link, .nav-button {
+      min-width: 0;
+      min-height: 58px;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-button:hover { background: var(--bg-subtle); color: var(--primary); }
+    .nav-link:active, .nav-button:active { color: var(--primary-dark); }
+    .nav-link[aria-current="page"] { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+    .nav-icon { width: 32px; height: 28px; display: grid; place-items: center; border-radius: 999px; }
+
+    .nav-upload {
+      width: 100%;
+      min-width: 0;
+      min-height: 58px;
+      margin: 0;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      align-self: center;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color 180ms var(--ease), color 180ms var(--ease);
+    }
+
+    .nav-upload .nav-icon {
+      position: relative;
+      color: var(--surface);
+    }
+    .nav-upload .nav-icon::before {
+      position: absolute;
+      z-index: 0;
+      inset: 50% auto auto 50%;
+      width: 48px;
+      height: 48px;
+      content: "";
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: var(--primary);
+      box-shadow: 0 2px 4px rgba(84, 50, 77, .22);
+      transition: background-color 180ms var(--ease);
+    }
+    .nav-upload .nav-icon svg { position: relative; z-index: 1; width: 22px; height: 22px; }
+    .nav-upload:hover { background: transparent; color: var(--surface); }
+    .nav-upload:hover .nav-icon::before { background: var(--primary-dark); }
+
+    .file-picker-input {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .profile-drawer {
+      position: fixed;
+      z-index: var(--z-sheet);
+      inset: 0 auto 0 50%;
+      width: min(100%, 480px);
+      max-width: none;
+      height: 100dvh;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      overflow: clip;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--ink);
+      opacity: 1;
+      transform: translateX(-50%);
+    }
+
+    .profile-drawer::backdrop {
+      z-index: var(--z-backdrop);
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+
+    .profile-drawer.is-visible::backdrop { opacity: 1; }
+
+    .profile-drawer-inner {
+      width: min(calc(100% - 36px), 400px);
+      height: 100%;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: var(--surface);
+      box-shadow: 4px 0 8px rgba(17, 17, 17, .12);
+      transform: translateX(-100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      will-change: transform;
+    }
+
+    .profile-drawer.is-visible .profile-drawer-inner { transform: translateX(0); }
+
+    .profile-drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 4px 8px 8px;
+    }
+
+    .profile-drawer-title { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
+
+    .profile-identity {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-avatar {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      flex: 0 0 auto;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 600;
+    }
+
+    .profile-identity-copy { min-width: 0; }
+    .profile-name { display: block; }
+    .profile-name { font-size: 18px; line-height: 24px; font-weight: 600; }
+
+    .profile-inbox {
+      min-height: 64px;
+      padding: 8px 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .profile-inbox-copy { min-width: 0; flex: 1; }
+    .profile-inbox-heading-row { display: flex; align-items: center; }
+    .profile-inbox-heading { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; }
+    .profile-inbox-info-button {
+      width: 44px;
+      height: 44px;
+      margin: -12px 0 -12px -6px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+    .profile-inbox-info-button:active { transform: scale(.97); }
+    .profile-inbox-address {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-inbox-copy-button {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--bg-control);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .profile-inbox-copy-button:active { background: var(--primary-soft); color: var(--primary); }
+
+    .inbox-info-sheet {
+      position: fixed;
+      z-index: var(--z-sheet);
+      inset: auto auto 0 50%;
+      width: min(100%, 480px);
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 -4px 8px rgba(17, 17, 17, .12);
+      transform: translate(-50%, 100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      will-change: transform;
+    }
+
+    .inbox-info-sheet[open].is-visible { transform: translate(-50%, 0); }
+    .inbox-info-sheet::backdrop {
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+    .inbox-info-sheet.is-visible::backdrop { opacity: 1; }
+    .inbox-info-sheet-inner { padding: 8px 16px calc(18px + env(safe-area-inset-bottom)); }
+    .inbox-info-sheet-copy { margin: 8px 0 16px; color: var(--copy); font-size: 14px; line-height: 20px; }
+    .inbox-info-address-row {
+      min-width: 0;
+      padding: 8px 8px 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: var(--radius);
+      background: var(--bg-subtle);
+    }
+    .inbox-info-address {
+      min-width: 0;
+      flex: 1;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-drawer-close {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .profile-drawer-close:active { transform: scale(.97); }
+
+    .profile-menu { display: grid; margin-top: 0; padding: 16px 0 24px; }
+
+    .profile-menu-item {
+      width: 100%;
+      min-height: 64px;
+      padding: 10px 8px;
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) 20px;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .profile-menu-item:active { transform: scale(.97); }
+    .profile-menu-icon { color: var(--muted); }
+    .profile-menu-copy { min-width: 0; }
+    .profile-menu-label, .profile-menu-description { display: block; }
+    .profile-menu-label { font-weight: 600; }
+    .profile-menu-description { margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .profile-menu-chevron { color: var(--muted); }
+
+    .profile-legal-links {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-soft);
+      display: grid;
+    }
+
+    .profile-legal-links button {
+      min-height: 48px;
+      padding: 0 8px;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--ink);
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .profile-legal-links button:active { transform: scale(.97); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .profile-drawer-close:hover,
+      .profile-inbox-info-button:hover,
+      .profile-inbox-copy-button:hover,
+      .profile-menu-item:hover,
+      .profile-legal-links button:hover { background: var(--primary-soft); }
+    }
+
+    .ask-fab {
+      position: fixed;
+      z-index: var(--z-fab);
+      right: max(18px, calc((100vw - 480px) / 2 + 18px));
+      bottom: calc(var(--nav-height) + 22px + env(safe-area-inset-bottom));
+      width: 56px;
+      height: 56px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--ai-gradient-start) 0%, var(--ai-gradient-end) 100%);
+      color: var(--surface);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 4px 8px rgba(84, 50, 77, .28);
+      cursor: pointer;
+      isolation: isolate;
+      transition: transform 160ms var(--ease);
+    }
+
+    .ask-fab::before {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      background: rgba(255, 255, 255, .10);
+      content: "";
+      opacity: 0;
+      transition: opacity 160ms var(--ease);
+    }
+
+    .ask-fab:active { transform: scale(.96); }
+
+    .ovie-assistant-mark {
+      width: 24px;
+      height: 24px;
+      display: block;
+      flex: 0 0 auto;
+      overflow: visible;
+    }
+
+    .ask-fab .ovie-assistant-mark { width: 28px; height: 28px; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ask-fab:hover::before { opacity: 1; }
+    }
+
+    .ask-sheet {
+      position: fixed;
+      z-index: var(--z-sheet);
+      inset: auto auto var(--keyboard-inset, 0px) 50%;
+      width: min(100%, 480px);
+      max-width: none;
+      max-height: min(calc(var(--visual-viewport-height, 100dvh) - 12px), 560px);
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 -4px 8px rgba(17, 17, 17, .12);
+      opacity: 1;
+      transform: translate(-50%, 100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      will-change: transform;
+    }
+
+    .ask-sheet[open].is-visible { transform: translate(-50%, 0); }
+
+    .ask-sheet.chat-view {
+      inset: calc(var(--visual-viewport-top, 0px) + 52px) auto auto 50%;
+      width: min(100%, 480px);
+      height: calc(var(--visual-viewport-height, 100dvh) - 52px);
+      max-height: none;
+      border-radius: var(--radius) var(--radius) 0 0;
+      transform: translate(-50%, 0);
+    }
+
+    .ask-sheet[open].is-visible.chat-view { transform: translate(-50%, 0); }
+    .ask-sheet.chat-view:not(.is-visible) { transform: translate(-50%, 100%); }
+
+    .ask-sheet::backdrop {
+      z-index: var(--z-backdrop);
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+
+    .ask-sheet.is-visible::backdrop { opacity: 1; }
+
+    .ask-sheet-inner {
+      padding: 8px 16px calc(18px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .ask-sheet.chat-view .ask-sheet-inner {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ask-sheet.chat-view .sheet-handle { display: none; }
+
+    .ask-sheet.chat-view .ask-sheet-header {
+      flex: 0 0 auto;
+      margin: -8px -16px 0;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      margin: 0 auto 8px;
+      border-radius: 999px;
+      background: var(--border);
+    }
+
+    .ask-sheet-header {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .ask-sheet-title { display: flex; align-items: center; gap: 8px; }
+    .ask-sheet-title .ovie-assistant-mark { width: 22px; height: 22px; color: var(--primary); }
+
+    .sheet-close {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color 160ms var(--ease), transform 160ms var(--ease);
+    }
+
+    .sheet-close:active { transform: scale(.96); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .sheet-close:hover { background: var(--primary-soft); color: var(--primary); }
+    }
+
+    .ask-sheet-conversation {
+      min-height: 0;
+      padding: 20px 2px 16px;
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .ask-sheet.chat-view .ask-sheet-conversation { display: flex; }
+
+    .ask-user-message {
+      max-width: 84%;
+      margin-left: auto;
+      padding: 10px 14px;
+      border-radius: 12px 12px 2px 12px;
+      background: var(--primary);
+      color: var(--surface);
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+
+    .ask-ovie-response { display: block; }
+    .ask-response-body { min-width: 0; flex: 1; }
+    .ask-response-text { margin: 0; color: var(--copy); white-space: pre-line; }
+
+    .ask-answer-actions {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .ask-answer-action,
+    .ask-composer-action {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 160ms var(--ease);
+    }
+
+    .ask-answer-action { border: 1px solid var(--border-soft); background: var(--surface); }
+    .ask-answer-action:active,
+    .ask-composer-action:active { transform: scale(.96); }
+    .ask-answer-action[aria-pressed="true"][data-answer-action="helpful"] { color: var(--success); }
+    .ask-answer-action[aria-pressed="true"][data-answer-action="not-helpful"] { color: var(--danger); }
+    .ask-answer-action.is-saved { color: var(--primary); background: var(--primary-soft); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ask-answer-action:hover,
+      .ask-composer-action:hover { background: var(--primary-soft); color: var(--primary); }
+    }
+
+    .ask-sheet-form { width: 100%; margin: 8px auto 0; flex: 0 0 auto; }
+    .ask-sheet.chat-view .ask-sheet-form { margin-top: auto; }
+
+    .ask-ovie-disclaimer {
+      margin: 8px 8px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+    }
+
+    .ask-sheet.keyboard-visible .ask-ovie-disclaimer,
+    .ask-sheet.show-android-keyboard-preview .ask-ovie-disclaimer { display: none; }
+
+    .ask-sheet-composer-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ask-sheet-input-row {
+      min-height: 56px;
+      min-width: 0;
+      flex: 1;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .ask-sheet-input-row:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 18%, transparent);
+    }
+
+    .ask-sheet-input {
+      min-width: 0;
+      flex: 1;
+      padding: 8px 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      line-height: 20px;
+    }
+
+    .ask-sheet-input::placeholder { color: var(--muted); opacity: 1; }
+
+    .ask-policy-context {
+      min-height: 44px;
+      margin: 0 52px 8px 0;
+      padding: 6px 6px 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--copy);
+    }
+
+    .ask-policy-context[hidden] { display: none; }
+
+    .ask-policy-context-icon,
+    .ask-user-policy-icon {
+      color: var(--primary);
+      flex: 0 0 auto;
+    }
+
+    .ask-policy-context-copy {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ask-policy-context-name { font-weight: 600; color: var(--ink); }
+    .ask-policy-context-meta { color: var(--muted); font-size: 12px; line-height: 16px; }
+
+    .ask-policy-context-remove {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) ease, color var(--motion-duration-press) ease, transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .ask-policy-context-remove:active { transform: scale(.97); }
+
+    .ask-user-policy {
+      max-width: 84%;
+      margin-left: auto;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--copy);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+    }
+
+    .ask-user-policy[hidden] { display: none; }
+
+    .ask-composer-action {
+      background: var(--bg-subtle);
+      color: var(--muted);
+    }
+
+    .ask-composer-action.attachment { color: var(--muted); }
+
+    .ask-composer-action:not(.attachment) {
+      background: var(--primary);
+      color: var(--surface);
+    }
+
+    .ask-composer-action.is-send { background: var(--primary); color: var(--surface); }
+    .ask-composer-action .composer-send-icon { display: none; }
+    .ask-composer-action.is-send .composer-mic-icon { display: none; }
+    .ask-composer-action.is-send .composer-send-icon { display: block; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ask-composer-action.is-send:hover { background: var(--primary-dark); color: var(--surface); }
+      .ask-policy-context-remove:hover { background: var(--surface); color: var(--primary); }
+    }
+
+    .policy-picker-sheet {
+      position: fixed;
+      z-index: calc(var(--z-sheet) + 1);
+      inset: 52px auto auto 50%;
+      width: min(100%, 480px);
+      height: calc(100dvh - 52px);
+      max-width: none;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 6px 16px rgba(17, 17, 17, .12);
+      transform: translate(-50%, 100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+    }
+
+    .policy-picker-sheet[open].is-visible { transform: translate(-50%, 0); }
+
+    .policy-picker-sheet::backdrop {
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+
+    .policy-picker-sheet.is-visible::backdrop { opacity: 1; }
+
+    .policy-picker-inner {
+      padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: none;
+    }
+
+    .policy-picker-search {
+      min-height: 44px;
+      margin: 8px 0 12px;
+      padding-left: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--muted);
+    }
+
+    .policy-picker-search:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107, 64, 98, .24);
+    }
+
+    .policy-picker-search input {
+      min-width: 0;
+      flex: 1;
+      padding: 10px 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .policy-picker-search input::placeholder { color: var(--muted); opacity: 1; }
+    .policy-picker-search input::-webkit-search-cancel-button { display: none; -webkit-appearance: none; appearance: none; }
+    .policy-picker-search input::-ms-clear { display: none; width: 0; height: 0; }
+
+    .policy-search-clear {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .policy-search-clear[hidden] { display: none; }
+
+    .policy-picker-list {
+      min-height: 0;
+      margin: 0 -16px;
+      padding: 0;
+      overflow-y: auto;
+      list-style: none;
+      overscroll-behavior: contain;
+    }
+
+    .policy-picker-item { margin: 0; }
+    .policy-picker-item + .policy-picker-item { border-top: 1px solid var(--border-soft); }
+
+    .policy-picker-option {
+      width: 100%;
+      min-height: 64px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      background: var(--surface);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) ease, transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .policy-picker-option:active { transform: scale(.97); }
+    .policy-picker-option[aria-pressed="true"] { background: var(--primary-soft); }
+
+    .policy-picker-icon {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .policy-picker-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .policy-picker-name { color: var(--ink); font-weight: 600; }
+    .policy-picker-meta { color: var(--muted); }
+    .policy-picker-check { color: var(--primary); opacity: 0; }
+    .policy-picker-option[aria-pressed="true"] .policy-picker-check { opacity: 1; }
+
+    .policy-picker-empty {
+      margin: 0;
+      padding: 24px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .policy-picker-empty[hidden] { display: none; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .policy-picker-option:hover { background: var(--bg-subtle); }
+      .policy-search-clear:hover { background: var(--primary-soft); color: var(--primary); }
+    }
+
+    .android-keyboard-preview {
+      display: none;
+      margin: 14px -16px -18px;
+      padding: 0 5px calc(7px + env(safe-area-inset-bottom));
+      background: #eef0f3;
+      color: #202124;
+      font-family: Roboto, system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 16px;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    .android-suggestions {
+      min-height: 38px;
+      margin-inline: -5px;
+      padding-inline: 6px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: center;
+      border-bottom: 1px solid #d5d8dc;
+      background: #f8f9fa;
+    }
+
+    .android-suggestion {
+      min-width: 0;
+      padding-inline: 8px;
+      overflow: hidden;
+      color: #3c4043;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .android-suggestion + .android-suggestion { border-left: 1px solid #dfe1e5; }
+
+    .keyboard-row {
+      display: grid;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .keyboard-row.ten { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    .keyboard-row.nine { grid-template-columns: repeat(9, minmax(0, 1fr)); padding-inline: 14px; }
+    .keyboard-row.shift { grid-template-columns: 1.35fr repeat(7, minmax(0, 1fr)) 1.35fr; }
+    .keyboard-row.android-bottom { grid-template-columns: 1.25fr .7fr .7fr 3.4fr .7fr 1.25fr; }
+
+    .keyboard-key {
+      min-width: 0;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: var(--surface);
+      box-shadow: 0 1px 1px rgba(60, 64, 67, .28);
+      white-space: nowrap;
+    }
+
+    .keyboard-key.utility {
+      background: #d8dce2;
+      color: #3c4043;
+      box-shadow: none;
+    }
+
+    .keyboard-key.space {
+      color: #5f6368;
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .keyboard-key.send {
+      background: #d9c8d4;
+      color: var(--primary-dark);
+    }
+
+    .android-gesture-bar {
+      height: 30px;
+      position: relative;
+      display: grid;
+      place-items: end center;
+    }
+
+    .android-gesture-bar::before {
+      width: 108px;
+      height: 4px;
+      border-radius: 999px;
+      background: #4a4d50;
+      content: "";
+    }
+
+    .android-hide-keyboard {
+      position: absolute;
+      left: 2px;
+      bottom: -7px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #4a4d50;
+      cursor: pointer;
+    }
+
+    .android-hide-keyboard:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 1px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .android-hide-keyboard:hover { background: rgba(74, 77, 80, .08); }
+    }
+
+    .ask-sheet.is-visible.show-android-keyboard-preview .android-keyboard-preview { display: block; }
+
+    .ask-sheet.chat-view.show-android-keyboard-preview .android-keyboard-preview {
+      flex: 0 0 auto;
+      margin-top: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: var(--z-toast);
+      left: 50%;
+      bottom: calc(var(--nav-height) + 18px + env(safe-area-inset-bottom));
+      width: min(calc(100% - 32px), 448px);
+      padding: 12px 14px;
+      transform: translate(-50%, 16px);
+      border-radius: 10px;
+      background: var(--ink);
+      color: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms var(--ease), transform 180ms var(--ease);
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (min-width: 481px) {
+      .app-shell { border-inline: 1px solid #d2d2d2; }
+    }
+
+    @media (max-width: 350px) {
+      .donut { width: 168px; }
+      .policy-detail { padding-left: 14px; }
+      .status-pill { white-space: normal; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      /* Accessibility override must win over every component transition. */
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+      .ask-sheet,
+      .inbox-info-sheet,
+      .policy-picker-sheet {
+        transform: translate(-50%, 0);
+        opacity: 0;
+        transition: opacity 120ms var(--motion-ease-out) !important;
+      }
+      .ask-sheet[open].is-visible,
+      .inbox-info-sheet[open].is-visible,
+      .policy-picker-sheet[open].is-visible { opacity: 1; }
+      .ask-sheet::backdrop,
+      .inbox-info-sheet::backdrop,
+      .policy-picker-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
+      .profile-drawer-inner {
+        transform: none;
+        opacity: 0;
+        transition: opacity 120ms var(--motion-ease-out) !important;
+      }
+      .profile-drawer.is-visible .profile-drawer-inner { opacity: 1; }
+    }
+
+    @media (forced-colors: active) {
+      * { scrollbar-color: auto; }
+      .premium-card, .status-pill, .policy-icon, .insight-icon, .nav-icon { forced-color-adjust: none; }
+      .nav-upload { background: ButtonFace; color: ButtonText; }
+      .nav-upload .nav-icon { color: ButtonText; }
+      .nav-upload .nav-icon::before { border: 2px solid ButtonText; background: ButtonFace; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="home">
+    <header class="top-shell">
+      <div class="status-bar" aria-hidden="true">
+        <span>9:41</span>
+        <span class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M1 9h2v3H1zm4-3h2v6H5zm4-3h2v9H9zm4-3h2v12h-2z"/></svg>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5A9.2 9.2 0 0 1 15 4.5M4.7 7.2a5.4 5.4 0 0 1 7.6 0M7.2 9.7a1.8 1.8 0 0 1 2.6 0"/></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".5" y=".5" width="20" height="11" rx="3" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M22 4v4c1-.3 1.5-1 1.5-2S23 4.3 22 4Z" fill="currentColor" opacity=".45"/></svg>
+        </span>
+      </div>
+      <div class="app-header">
+        <div class="header-identity">
+          <button class="avatar-button" id="profileButton" type="button" aria-label="Open profile" aria-haspopup="dialog" aria-controls="profileDrawer" aria-expanded="false">RV</button>
+          <div class="header-greeting">
+            <p class="greeting">Hi,</p>
+            <h1 class="app-title">Rishi</h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-button" id="searchOvie" type="button" aria-label="Search policies and documents"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button>
+          <button class="icon-button" id="notificationsButton" type="button" aria-label="Go to upcoming dates">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+            <span class="notification-dot" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="insights" aria-labelledby="insights-heading">
+        <div class="card insight-list">
+          <div class="card-section-head"><h2 class="section-heading" id="insights-heading" tabindex="-1">Needs your attention</h2></div>
+          <button class="insight status-warning" type="button" data-insight="Austin home (Travelers): no newer policy document has been uploaded and the current policy ends in 12 days.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">Home policy ends in 12 days</span><span class="insight-meta">Austin home · Travelers</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="insight status-warning" type="button" data-insight="Austin home and Downtown apartment: uploaded documents indicate coverage that may overlap. Review both policies to confirm whether the duplication is intentional.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">Possible duplicate coverage</span><span class="insight-meta">Austin home · Downtown apartment</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="insight status-warning" type="button" data-insight="2018 Toyota Camry (State Farm): the uploaded documents do not establish the state-required minimum liability coverage. Review the policy to address potential legal exposure.">
+            <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span>
+            <span class="insight-copy"><span class="insight-title">State minimum coverage not established</span><span class="insight-meta">2018 Toyota Camry · State Farm</span></span>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <section id="policies" aria-labelledby="policies-heading">
+        <div class="card policy-list">
+          <div class="card-section-head">
+            <h2 class="section-heading" id="policies-heading">Your policies</h2>
+            <button class="text-button" id="togglePolicies" type="button" aria-expanded="false">See all 5</button>
+          </div>
+          <div class="policy-summary-strip" aria-label="5 policies, 4 insurers, 4,860 dollars per year">
+            <span class="policy-summary-stat"><span class="policy-summary-value">5</span><span class="policy-summary-label">Policies</span></span>
+            <span class="policy-summary-stat"><span class="policy-summary-value">4</span><span class="policy-summary-label">Insurers</span></span>
+            <span class="policy-summary-stat"><span class="policy-summary-value">$4,860</span><span class="policy-summary-label">Per year</span></span>
+          </div>
+          <details class="policy" id="policy-auto">
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">2022 Honda CR-V</span><span class="policy-meta">State Farm · •• 4721</span></span>
+              <span class="policy-date"><span>Ends</span><span>Jan 20, 2027</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Jan 20, 2026–Jan 20, 2027</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$1,320</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">$110</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded State Farm policy</span></span></div></div>
+          </details>
+          <details class="policy" id="policy-home">
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">Austin home</span><span class="policy-meta">Travelers · •• 1840</span></span>
+              <span class="policy-date"><span>Ends</span><span>Sep 12</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Sep 12, 2025–Sep 12, 2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$1,510</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">Approx. $126</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">Policy uploaded Aug 24</span></span></div></div>
+          </details>
+          <details class="policy" id="policy-umbrella">
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v7a2 2 0 0 0 4 0"/><path d="M12 2v2"/><path d="M20.992 13a1 1 0 0 0 .97-1.274 10.284 10.284 0 0 0-19.923 0A1 1 0 0 0 3 13z"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">Family umbrella</span><span class="policy-meta">Chubb · •• 9062</span></span>
+              <span class="policy-date"><span>Ends</span><span>Dec 5, 2026</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Dec 5, 2025–Dec 5, 2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$830</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">Approx. $69</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded Chubb policy</span></span></div></div>
+          </details>
+          <details class="policy extra-policy" hidden>
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">Downtown apartment</span><span class="policy-meta">Lemonade · •• 3218</span></span>
+              <span class="policy-date"><span>Ends</span><span>Nov 2, 2026</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Nov 2, 2025–Nov 2, 2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$480</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">$40</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded Lemonade policy</span></span></div></div>
+          </details>
+          <details class="policy extra-policy" hidden>
+            <summary>
+              <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>
+              <span class="policy-copy"><span class="policy-name">2018 Toyota Camry</span><span class="policy-meta">State Farm · •• 7784</span></span>
+              <span class="policy-date"><span>Ends</span><span>Jul 8, 2027</span></span>
+              <svg class="policy-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Jul 8, 2026–Jul 8, 2027</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$720</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">$60</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded State Farm policy</span></span></div></div>
+          </details>
+        </div>
+      </section>
+
+      <section id="expiries" aria-labelledby="expiries-heading">
+        <div class="card expiry-list">
+          <div class="card-section-head"><h2 class="section-heading" id="expiries-heading" tabindex="-1">Upcoming expiry dates</h2></div>
+          <div class="expiry-row"><div class="expiry-date"><span class="expiry-month">Sep</span><span class="expiry-day">12</span></div><div class="expiry-copy"><span class="expiry-name">Austin home</span><span class="expiry-carrier">Travelers</span></div><span class="status-pill warning">12 days</span></div>
+          <div class="expiry-row"><div class="expiry-date"><span class="expiry-month">Nov</span><span class="expiry-day">02</span></div><div class="expiry-copy"><span class="expiry-name">Downtown apartment</span><span class="expiry-carrier">Lemonade</span></div><span class="status-pill neutral">63 days</span></div>
+          <div class="expiry-row"><div class="expiry-date"><span class="expiry-month">Dec</span><span class="expiry-day">05</span></div><div class="expiry-copy"><span class="expiry-name">Family umbrella</span><span class="expiry-carrier">Chubb</span></div><span class="status-pill neutral">96 days</span></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="premium-heading">
+        <div class="card premium-card">
+          <div class="card-section-head">
+            <h2 class="section-heading" id="premium-heading">Your premium breakdown</h2>
+          </div>
+          <div class="premium-visual">
+            <div class="donut">
+              <svg viewBox="0 0 164 164" role="img" aria-label="Annual premium breakdown: Auto 42 percent, Home 31 percent, Umbrella 17 percent, Renters 10 percent">
+                <path class="donut-segment" data-category="auto" d="M 151.886 85.998 A 70 70 0 0 1 27.811 126.312 Q 25.369 123.145 28.605 120.794 L 35.077 116.092 Q 38.313 113.74 40.782 116.886 A 54 54 0 0 0 135.852 85.996 Q 136 82 140 82 L 148 82 Q 152 82 151.886 85.998 Z"></path>
+                <path class="donut-segment" data-category="home" d="M 18.833 112.164 A 70 70 0 0 1 60.748 15.304 Q 64.592 14.199 65.586 18.074 L 67.576 25.822 Q 68.571 29.697 64.737 30.834 A 54 54 0 0 0 32.884 104.441 Q 34.679 108.015 31.174 109.942 L 24.164 113.796 Q 20.659 115.723 18.833 112.164 Z"></path>
+                <path class="donut-segment" data-category="umbrella" d="M 77.207 12.164 A 70 70 0 0 1 130.208 31.246 Q 133.028 34.082 130.112 36.82 L 124.28 42.296 Q 121.364 45.034 118.521 42.223 A 54 54 0 0 0 79.215 28.072 Q 75.232 28.426 74.731 24.457 L 73.728 16.52 Q 73.227 12.552 77.207 12.164 Z"></path>
+                <path class="donut-segment" data-category="renters" d="M 140.889 44.156 A 70 70 0 0 1 150.834 69.275 Q 151.448 73.227 147.48 73.728 L 139.543 74.731 Q 135.574 75.232 134.926 71.286 A 54 54 0 0 0 127.916 53.58 Q 125.687 50.26 128.923 47.908 L 135.395 43.206 Q 138.631 40.855 140.889 44.156 Z"></path>
+              </svg>
+              <div class="donut-center" aria-hidden="true">
+                <p class="premium-value" id="premiumValue">$4,860</p>
+                <span class="premium-period" id="premium-context">Total / year</span>
+                <span class="donut-context" id="premium-month">$405 / month</span>
+              </div>
+            </div>
+            <div class="premium-options" aria-label="Premium by policy type">
+              <div class="premium-category">
+                <button class="premium-option" type="button" data-category="auto" data-value="$2,040" data-context="Auto / year" data-month="$170 / month" aria-pressed="false" aria-expanded="false" aria-controls="premium-policies-auto"><span class="category-icon segment-auto" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span><span class="premium-option-copy"><span class="premium-option-info"><span class="premium-option-name">Auto</span><span class="premium-option-meta">2 policies</span></span><span class="premium-option-value"><span class="premium-option-amount">$2,040</span><span class="premium-option-share">42% <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></span></span></button>
+                <div class="premium-accordion" id="premium-policies-auto" role="region" aria-label="Auto policies" hidden>
+                  <div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">2022 Honda CR-V</span><span class="premium-policy-carrier">State Farm</span></span><span class="premium-policy-price">$1,320 / yr</span></div>
+                  <div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">2018 Toyota Camry</span><span class="premium-policy-carrier">State Farm</span></span><span class="premium-policy-price">$720 / yr</span></div>
+                </div>
+              </div>
+              <div class="premium-category">
+                <button class="premium-option" type="button" data-category="home" data-value="$1,510" data-context="Home / year" data-month="Approx. $126 / month" aria-pressed="false" aria-expanded="false" aria-controls="premium-policies-home"><span class="category-icon segment-home" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span class="premium-option-copy"><span class="premium-option-info"><span class="premium-option-name">Home</span><span class="premium-option-meta">Travelers</span></span><span class="premium-option-value"><span class="premium-option-amount">$1,510</span><span class="premium-option-share">31% <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></span></span></button>
+                <div class="premium-accordion" id="premium-policies-home" role="region" aria-label="Home policies" hidden><div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">Austin home</span><span class="premium-policy-carrier">Travelers</span></span><span class="premium-policy-price">$1,510 / yr</span></div></div>
+              </div>
+              <div class="premium-category">
+                <button class="premium-option" type="button" data-category="umbrella" data-value="$830" data-context="Umbrella / year" data-month="Approx. $69 / month" aria-pressed="false" aria-expanded="false" aria-controls="premium-policies-umbrella"><span class="category-icon segment-umbrella" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v7a2 2 0 0 0 4 0"/><path d="M12 2v2"/><path d="M20.992 13a1 1 0 0 0 .97-1.274 10.284 10.284 0 0 0-19.923 0A1 1 0 0 0 3 13z"/></svg></span><span class="premium-option-copy"><span class="premium-option-info"><span class="premium-option-name">Umbrella</span><span class="premium-option-meta">Chubb</span></span><span class="premium-option-value"><span class="premium-option-amount">$830</span><span class="premium-option-share">17% <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></span></span></button>
+                <div class="premium-accordion" id="premium-policies-umbrella" role="region" aria-label="Umbrella policies" hidden><div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">Family umbrella</span><span class="premium-policy-carrier">Chubb</span></span><span class="premium-policy-price">$830 / yr</span></div></div>
+              </div>
+              <div class="premium-category">
+                <button class="premium-option" type="button" data-category="renters" data-value="$480" data-context="Renters / year" data-month="$40 / month" aria-pressed="false" aria-expanded="false" aria-controls="premium-policies-renters"><span class="category-icon segment-renters" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v18"/><path d="M6 12H4c-.6 0-1 .4-1 1v9"/><path d="M18 9h2c.6 0 1 .4 1 1v12"/><path d="M3 22h18"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span><span class="premium-option-copy"><span class="premium-option-info"><span class="premium-option-name">Renters</span><span class="premium-option-meta">Lemonade</span></span><span class="premium-option-value"><span class="premium-option-amount">$480</span><span class="premium-option-share">10% <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></span></span></button>
+                <div class="premium-accordion" id="premium-policies-renters" role="region" aria-label="Renters policies" hidden><div class="premium-policy-row"><span class="premium-policy-copy"><span class="premium-policy-name">Downtown apartment</span><span class="premium-policy-carrier">Lemonade</span></span><span class="premium-policy-price">$480 / yr</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Primary navigation">
+    <a class="nav-link" href="#home" aria-current="page"><span class="nav-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg></span><span>Home</span></a>
+    <button class="nav-button" type="button" id="myFiles"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span>My Files</span></button>
+    <button class="nav-upload" type="button" id="uploadPolicy" aria-label="Upload"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg></span></button>
+    <a class="nav-link" id="insightsNav" href="#insights-heading"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span><span>Insights</span></a>
+    <button class="nav-button" type="button" id="moreMenu"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span>More</span></button>
+  </nav>
+  <dialog class="profile-drawer" id="profileDrawer" aria-labelledby="profileDrawerTitle">
+    <div class="profile-drawer-inner">
+      <div class="profile-drawer-header">
+        <div class="profile-identity">
+          <span class="profile-avatar" aria-hidden="true">RV</span>
+          <span class="profile-identity-copy">
+            <h2 class="profile-drawer-title profile-name" id="profileDrawerTitle">Rishi Verma</h2>
+          </span>
+        </div>
+        <button class="profile-drawer-close" id="closeProfileDrawer" type="button" aria-label="Close profile">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="profile-inbox">
+        <div class="profile-inbox-copy">
+          <div class="profile-inbox-heading-row">
+            <h3 class="profile-inbox-heading">My Ovie Inbox</h3>
+            <button class="profile-inbox-info-button" id="ovieInboxInfo" type="button" aria-label="About your Ovie inbox" aria-haspopup="dialog" aria-controls="ovieInboxInfoSheet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </button>
+          </div>
+          <span class="profile-inbox-address" id="ovieInboxAddress">ov20261112@inbox.ovie.ai</span>
+        </div>
+        <button class="profile-inbox-copy-button" id="copyOvieInbox" data-copy-ovie-inbox type="button" aria-label="Copy Ovie inbox email address" title="Copy Ovie inbox email address">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </button>
+      </div>
+      <div class="profile-menu" aria-label="Profile options">
+        <button class="profile-menu-item" type="button" data-profile-action="My Profile">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">My Profile</span><span class="profile-menu-description">Make changes to your account</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item" type="button" data-profile-action="Account Password">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">Account Password</span><span class="profile-menu-description">Password management</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item" type="button" data-profile-action="Manage Device Activity">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M9 18h6"/><path d="M9 6h6"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">Manage Device Activity</span><span class="profile-menu-description">Login activity</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item" type="button" data-profile-action="App Unlock">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">App Unlock</span><span class="profile-menu-description">Set biometric permission</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item" type="button" data-profile-action="Support">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">Support</span><span class="profile-menu-description">Help &amp; support</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button class="profile-menu-item logout" type="button" data-profile-action="Log out">
+          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
+          <span class="profile-menu-copy"><span class="profile-menu-label">Log out</span><span class="profile-menu-description">Sign out of your Ovie account</span></span>
+          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="profile-legal-links" aria-label="Ovie information">
+        <button type="button" data-profile-action="About Us">About Us</button>
+        <button type="button" data-profile-action="Privacy Policy">Privacy Policy</button>
+        <button type="button" data-profile-action="Terms &amp; Conditions">Terms &amp; Conditions</button>
+      </div>
+    </div>
+  </dialog>
+  <dialog class="inbox-info-sheet" id="ovieInboxInfoSheet" aria-labelledby="ovieInboxInfoTitle">
+    <div class="inbox-info-sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="section-heading" id="ovieInboxInfoTitle">About your Ovie inbox</h2>
+        <button class="sheet-close" id="closeOvieInboxInfo" type="button" aria-label="Close Ovie inbox information">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <p class="inbox-info-sheet-copy">Send policy documents to this email address, and Ovie will upload them automatically. Share the address with others so they can send documents directly to your Ovie inbox.</p>
+      <div class="inbox-info-address-row" aria-label="Your Ovie inbox email address">
+        <span class="inbox-info-address">ov20261112@inbox.ovie.ai</span>
+        <button class="profile-inbox-copy-button" id="copyOvieInboxFromSheet" data-copy-ovie-inbox type="button" aria-label="Copy Ovie inbox email address" title="Copy Ovie inbox email address">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </dialog>
+  <button class="ask-fab" id="askOvieFab" type="button" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet">
+    <svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg>
+  </button>
+
+  <dialog class="ask-sheet" id="askOvieSheet" aria-labelledby="askOvieTitle">
+    <div class="ask-sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="section-heading ask-sheet-title" id="askOvieTitle"><svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg><span>Ask Ovie</span></h2>
+        <button class="sheet-close" id="closeAskOvie" type="button" aria-label="Close Ask Ovie">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="ask-sheet-conversation" id="askOvieConversation" aria-live="polite" hidden>
+        <div class="ask-user-policy" id="askOvieQuestionPolicy" hidden>
+          <svg class="ask-user-policy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+          <span id="askOvieQuestionPolicyName"></span>
+        </div>
+        <div class="ask-user-message" id="askOvieQuestion"></div>
+        <div class="ask-ovie-response">
+          <div class="ask-response-body">
+            <p class="ask-response-text" id="askOvieAnswer"></p>
+            <div class="ask-answer-actions" aria-label="Answer actions">
+              <button class="ask-answer-action" type="button" data-answer-action="copy" aria-label="Copy answer" title="Copy answer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
+              <button class="ask-answer-action" type="button" data-answer-action="regenerate" aria-label="Regenerate answer" title="Regenerate answer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/><path d="M16 16h5v5"/></svg></button>
+              <button class="ask-answer-action" type="button" data-answer-action="helpful" aria-label="Helpful answer" title="Helpful answer" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg></button>
+              <button class="ask-answer-action" type="button" data-answer-action="not-helpful" aria-label="Not helpful" title="Not helpful" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg></button>
+              <button class="ask-answer-action" type="button" data-answer-action="source" aria-label="View source information" title="View source information"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
+              <button class="ask-answer-action" type="button" data-answer-action="save" aria-label="Save answer" title="Save answer" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form class="ask-sheet-form" id="askOvieForm" novalidate>
+        <label class="visually-hidden" for="askOvieInput">Ask anything about your policies</label>
+        <div class="ask-policy-context" id="askPolicyContext" hidden>
+          <svg class="ask-policy-context-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+          <span class="ask-policy-context-copy"><span class="ask-policy-context-name" id="askPolicyContextName"></span><span class="ask-policy-context-meta" id="askPolicyContextMeta"></span></span>
+          <button class="ask-policy-context-remove" id="removeAskPolicy" type="button" aria-label="Remove policy from chat" title="Remove policy from chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+        </div>
+        <div class="ask-sheet-composer-row">
+          <div class="ask-sheet-input-row">
+            <button class="ask-composer-action attachment" id="askAttachmentButton" type="button" aria-label="Add a policy to this chat" aria-haspopup="dialog" aria-controls="askPolicyPicker" title="Add a policy to this chat"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
+            <input class="ask-sheet-input" id="askOvieInput" name="question" type="text" inputmode="text" enterkeyhint="send" autocomplete="off" placeholder="Ask anything about your policies...">
+          </div>
+          <button class="ask-composer-action" id="askComposerAction" type="button" aria-label="Use voice input" title="Use voice input">
+            <svg class="composer-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>
+            <svg class="composer-send-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </div>
+      </form>
+      <p class="ask-ovie-disclaimer">Ovie provides policy summaries only and does not offer policy recommendations or insurance advice.</p>
+      <div class="android-keyboard-preview">
+        <div class="android-suggestions" aria-hidden="true"><span class="android-suggestion">your</span><span class="android-suggestion">coverage</span><span class="android-suggestion">policy</span></div>
+        <div class="keyboard-row ten" aria-hidden="true"><span class="keyboard-key">Q</span><span class="keyboard-key">W</span><span class="keyboard-key">E</span><span class="keyboard-key">R</span><span class="keyboard-key">T</span><span class="keyboard-key">Y</span><span class="keyboard-key">U</span><span class="keyboard-key">I</span><span class="keyboard-key">O</span><span class="keyboard-key">P</span></div>
+        <div class="keyboard-row nine" aria-hidden="true"><span class="keyboard-key">A</span><span class="keyboard-key">S</span><span class="keyboard-key">D</span><span class="keyboard-key">F</span><span class="keyboard-key">G</span><span class="keyboard-key">H</span><span class="keyboard-key">J</span><span class="keyboard-key">K</span><span class="keyboard-key">L</span></div>
+        <div class="keyboard-row shift" aria-hidden="true"><span class="keyboard-key utility"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/><path d="M12 9v12"/></svg></span><span class="keyboard-key">Z</span><span class="keyboard-key">X</span><span class="keyboard-key">C</span><span class="keyboard-key">V</span><span class="keyboard-key">B</span><span class="keyboard-key">N</span><span class="keyboard-key">M</span><span class="keyboard-key utility"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6"/><path d="m12 9 6 6"/></svg></span></div>
+        <div class="keyboard-row android-bottom" aria-hidden="true"><span class="keyboard-key utility">?123</span><span class="keyboard-key utility">,</span><span class="keyboard-key utility"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></span><span class="keyboard-key space">English (US)</span><span class="keyboard-key utility">.</span><span class="keyboard-key utility send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></div>
+        <div class="android-gesture-bar">
+          <button class="android-hide-keyboard" id="hidePreviewKeyboard" type="button" aria-label="Hide keyboard" title="Hide keyboard">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+  <dialog class="policy-picker-sheet" id="askPolicyPicker" aria-labelledby="askPolicyPickerTitle">
+    <div class="policy-picker-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="section-heading" id="askPolicyPickerTitle">Add a policy</h2>
+        <button class="sheet-close" id="closeAskPolicyPicker" type="button" aria-label="Close policy list">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <label class="visually-hidden" for="askPolicySearch">Search policies</label>
+      <div class="policy-picker-search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="askPolicySearch" type="search" autocomplete="off" placeholder="Search policies">
+        <button class="policy-search-clear" id="clearAskPolicySearch" type="button" aria-label="Clear policy search" title="Clear policy search" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <ul class="policy-picker-list" id="askPolicyList" aria-label="Policy folders">
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="crv" data-policy-name="2022 Honda CR-V" data-policy-meta="State Farm · •• 4721" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">2022 Honda CR-V</span><span class="policy-picker-meta">State Farm · •• 4721</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="austin-home" data-policy-name="Austin home" data-policy-meta="Travelers · •• 1840" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Austin home</span><span class="policy-picker-meta">Travelers · •• 1840</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="umbrella" data-policy-name="Family umbrella" data-policy-meta="Chubb · •• 9062" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Family umbrella</span><span class="policy-picker-meta">Chubb · •• 9062</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="downtown" data-policy-name="Downtown apartment" data-policy-meta="Lemonade · •• 3218" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Downtown apartment</span><span class="policy-picker-meta">Lemonade · •• 3218</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="camry" data-policy-name="2018 Toyota Camry" data-policy-meta="State Farm · •• 7784" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">2018 Toyota Camry</span><span class="policy-picker-meta">State Farm · •• 7784</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+      </ul>
+      <p class="policy-picker-empty" id="askPolicyEmpty" hidden>No policies match your search.</p>
+    </div>
+  </dialog>
+  <input class="file-picker-input" id="policyFilePicker" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple tabindex="-1" aria-hidden="true">
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const premiumValue = document.querySelector('#premiumValue');
+      const premiumContext = document.querySelector('#premium-context');
+      const premiumMonth = document.querySelector('#premium-month');
+      const premiumOptions = Array.from(document.querySelectorAll('.premium-option'));
+      const premiumAccordions = Array.from(document.querySelectorAll('.premium-accordion'));
+      const donutSegments = Array.from(document.querySelectorAll('.donut-segment'));
+      const toast = document.querySelector('#toast');
+      const topShell = document.querySelector('.top-shell');
+      const profileButton = document.querySelector('#profileButton');
+      const profileDrawer = document.querySelector('#profileDrawer');
+      const profileDrawerPanel = profileDrawer.querySelector('.profile-drawer-inner');
+      const closeProfileDrawerButton = document.querySelector('#closeProfileDrawer');
+      const copyOvieInboxButtons = document.querySelectorAll('[data-copy-ovie-inbox]');
+      const ovieInboxAddress = document.querySelector('#ovieInboxAddress');
+      const ovieInboxInfoButton = document.querySelector('#ovieInboxInfo');
+      const ovieInboxInfoSheet = document.querySelector('#ovieInboxInfoSheet');
+      const closeOvieInboxInfoButton = document.querySelector('#closeOvieInboxInfo');
+      const askOvieFab = document.querySelector('#askOvieFab');
+      const askOvieSheet = document.querySelector('#askOvieSheet');
+      const closeAskOvie = document.querySelector('#closeAskOvie');
+      const askOvieForm = document.querySelector('#askOvieForm');
+      const askOvieInput = document.querySelector('#askOvieInput');
+      const askComposerAction = document.querySelector('#askComposerAction');
+      const askOvieConversation = document.querySelector('#askOvieConversation');
+      const askOvieQuestion = document.querySelector('#askOvieQuestion');
+      const askOvieQuestionPolicy = document.querySelector('#askOvieQuestionPolicy');
+      const askOvieQuestionPolicyName = document.querySelector('#askOvieQuestionPolicyName');
+      const askOvieAnswer = document.querySelector('#askOvieAnswer');
+      const askAttachmentButton = document.querySelector('#askAttachmentButton');
+      const askPolicyContext = document.querySelector('#askPolicyContext');
+      const askPolicyContextName = document.querySelector('#askPolicyContextName');
+      const askPolicyContextMeta = document.querySelector('#askPolicyContextMeta');
+      const removeAskPolicy = document.querySelector('#removeAskPolicy');
+      const askPolicyPicker = document.querySelector('#askPolicyPicker');
+      const closeAskPolicyPickerButton = document.querySelector('#closeAskPolicyPicker');
+      const askPolicySearch = document.querySelector('#askPolicySearch');
+      const clearAskPolicySearch = document.querySelector('#clearAskPolicySearch');
+      const askPolicyOptions = Array.from(document.querySelectorAll('.policy-picker-option'));
+      const askPolicyEmpty = document.querySelector('#askPolicyEmpty');
+      const hidePreviewKeyboard = document.querySelector('#hidePreviewKeyboard');
+      const answerActions = Array.from(document.querySelectorAll('[data-answer-action]'));
+      const visualViewport = window.visualViewport;
+      let toastTimer;
+      let profileDrawerCloseTimer;
+      let inboxInfoCloseTimer;
+      let sheetCloseTimer;
+      let policyPickerCloseTimer;
+      let sheetExpandAnimation;
+      let askSheetLayoutHeight = window.innerHeight;
+      let selectedAskPolicy = null;
+
+      let lastScrollY = Math.max(window.scrollY, 0);
+      let downwardTravel = 0;
+      let scrollFramePending = false;
+
+      function showTopShell() {
+        topShell.classList.remove('is-hidden');
+        downwardTravel = 0;
+      }
+
+      function updateTopShell() {
+        const currentScrollY = Math.max(window.scrollY, 0);
+        const scrollDelta = currentScrollY - lastScrollY;
+
+        if (currentScrollY <= 12 || scrollDelta < 0) {
+          showTopShell();
+        } else if (scrollDelta > 0 && currentScrollY > topShell.offsetHeight && !topShell.contains(document.activeElement)) {
+          downwardTravel += scrollDelta;
+          if (downwardTravel >= 14) topShell.classList.add('is-hidden');
+        }
+
+        lastScrollY = currentScrollY;
+        scrollFramePending = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (scrollFramePending) return;
+        scrollFramePending = true;
+        window.requestAnimationFrame(updateTopShell);
+      }, { passive: true });
+
+      topShell.addEventListener('focusin', showTopShell);
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2600);
+      }
+
+      async function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          try {
+            await navigator.clipboard.writeText(text);
+            return;
+          } catch {
+            // Fall through to the local-preview-safe copy method.
+          }
+        }
+
+        const activeElement = document.activeElement;
+        const copyArea = document.createElement('textarea');
+        copyArea.value = text;
+        copyArea.setAttribute('readonly', '');
+        copyArea.style.position = 'fixed';
+        copyArea.style.opacity = '0';
+        document.body.appendChild(copyArea);
+        copyArea.select();
+        const copied = document.execCommand('copy');
+        copyArea.remove();
+        activeElement?.focus({ preventScroll: true });
+        if (!copied) throw new Error('Copy failed');
+      }
+
+      function profileDrawerTransitionDuration() {
+        const styles = window.getComputedStyle(profileDrawerPanel);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function openProfileDrawer() {
+        window.clearTimeout(profileDrawerCloseTimer);
+        profileDrawer.classList.remove('is-visible');
+        profileDrawer.showModal();
+        profileButton.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('sheet-open');
+        closeProfileDrawerButton.focus({ preventScroll: true });
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => profileDrawer.classList.add('is-visible'));
+        });
+      }
+
+      function closeProfileDrawer(returnFocus = true) {
+        if (!profileDrawer.open) return;
+        profileDrawer.classList.remove('is-visible');
+        profileButton.setAttribute('aria-expanded', 'false');
+        window.clearTimeout(profileDrawerCloseTimer);
+        profileDrawerCloseTimer = window.setTimeout(() => {
+          profileDrawer.close();
+          if (!ovieInboxInfoSheet.open && !askOvieSheet.open) document.body.classList.remove('sheet-open');
+          if (returnFocus) profileButton.focus({ preventScroll: true });
+        }, profileDrawerTransitionDuration() + 34);
+      }
+
+      profileButton.addEventListener('click', openProfileDrawer);
+      closeProfileDrawerButton.addEventListener('click', () => closeProfileDrawer());
+      profileDrawer.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeProfileDrawer();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && profileDrawer.open && !ovieInboxInfoSheet.open) {
+          event.preventDefault();
+          closeProfileDrawer();
+        }
+      });
+      profileDrawer.addEventListener('pointerdown', (event) => {
+        const bounds = profileDrawerPanel.getBoundingClientRect();
+        const outsideDrawer = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideDrawer) closeProfileDrawer();
+      });
+      document.querySelectorAll('[data-profile-action]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const action = button.dataset.profileAction;
+          closeProfileDrawer();
+          window.setTimeout(() => showToast(`${action} is not connected in this prototype`), profileDrawerTransitionDuration() + 50);
+        });
+      });
+
+      copyOvieInboxButtons.forEach((button) => {
+        button.addEventListener('click', async () => {
+          try {
+            await copyText(ovieInboxAddress.textContent.trim());
+            showToast('Ovie inbox copied');
+          } catch {
+            showToast('Copy is unavailable in this browser');
+          }
+        });
+      });
+
+      function inboxInfoTransitionDuration() {
+        const styles = window.getComputedStyle(ovieInboxInfoSheet);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function openOvieInboxInfo() {
+        window.clearTimeout(inboxInfoCloseTimer);
+        closeProfileDrawer(false);
+        ovieInboxInfoSheet.classList.remove('is-visible');
+        ovieInboxInfoSheet.showModal();
+        document.body.classList.add('sheet-open');
+        closeOvieInboxInfoButton.focus({ preventScroll: true });
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => ovieInboxInfoSheet.classList.add('is-visible'));
+        });
+      }
+
+      function closeOvieInboxInfo(returnFocus = true) {
+        if (!ovieInboxInfoSheet.open) return;
+        ovieInboxInfoSheet.classList.remove('is-visible');
+        window.clearTimeout(inboxInfoCloseTimer);
+        inboxInfoCloseTimer = window.setTimeout(() => {
+          ovieInboxInfoSheet.close();
+          if (!profileDrawer.open && !askOvieSheet.open) document.body.classList.remove('sheet-open');
+          if (returnFocus) profileButton.focus({ preventScroll: true });
+        }, inboxInfoTransitionDuration() + 34);
+      }
+
+      ovieInboxInfoButton.addEventListener('click', openOvieInboxInfo);
+      closeOvieInboxInfoButton.addEventListener('click', () => closeOvieInboxInfo());
+      ovieInboxInfoSheet.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeOvieInboxInfo();
+      });
+      ovieInboxInfoSheet.addEventListener('pointerdown', (event) => {
+        const bounds = ovieInboxInfoSheet.getBoundingClientRect();
+        const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideSheet) closeOvieInboxInfo();
+      });
+
+      function syncAskSheetToViewport() {
+        if (!askOvieSheet.open || document.activeElement !== askOvieInput || !visualViewport) {
+          askOvieSheet.classList.remove('keyboard-visible');
+          askSheetLayoutHeight = window.innerHeight;
+          document.documentElement.style.setProperty('--keyboard-inset', '0px');
+          document.documentElement.style.setProperty('--visual-viewport-height', '100dvh');
+          document.documentElement.style.setProperty('--visual-viewport-top', '0px');
+          return;
+        }
+
+        const visualViewportBottom = visualViewport.offsetTop + visualViewport.height;
+        const layoutViewportResized = window.innerHeight < askSheetLayoutHeight - 80;
+        const keyboardInset = layoutViewportResized ? 0 : Math.max(0, askSheetLayoutHeight - visualViewportBottom);
+        const keyboardVisible = layoutViewportResized || keyboardInset > 80 || visualViewport.height < askSheetLayoutHeight - 80;
+        askOvieSheet.classList.toggle('keyboard-visible', keyboardVisible);
+        document.documentElement.style.setProperty('--keyboard-inset', `${keyboardInset}px`);
+        document.documentElement.style.setProperty('--visual-viewport-height', `${visualViewport.height}px`);
+        document.documentElement.style.setProperty('--visual-viewport-top', `${visualViewport.offsetTop}px`);
+      }
+
+      if (visualViewport) {
+        visualViewport.addEventListener('resize', syncAskSheetToViewport);
+        visualViewport.addEventListener('scroll', syncAskSheetToViewport);
+      }
+
+      hidePreviewKeyboard.addEventListener('click', () => {
+        askOvieInput.blur();
+        askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+        syncAskSheetToViewport();
+      });
+
+      askOvieInput.addEventListener('focus', () => {
+        if (!window.matchMedia('(pointer: coarse)').matches) {
+          askOvieSheet.classList.add('show-android-keyboard-preview');
+        }
+        syncAskSheetToViewport();
+      });
+
+      function openAskSheet() {
+        window.clearTimeout(sheetCloseTimer);
+        const showPreviewKeyboard = !window.matchMedia('(pointer: coarse)').matches;
+        askOvieSheet.classList.toggle('show-android-keyboard-preview', showPreviewKeyboard);
+        askOvieSheet.classList.remove('chat-view');
+        askOvieConversation.hidden = true;
+        clearAskPolicySelection();
+        askOvieQuestionPolicy.hidden = true;
+        askPolicySearch.value = '';
+        filterAskPolicies();
+        syncComposerAction();
+        askOvieSheet.classList.remove('is-visible');
+        askOvieSheet.showModal();
+        document.body.classList.add('sheet-open');
+        askSheetLayoutHeight = window.innerHeight;
+        askOvieInput.focus({ preventScroll: true });
+        syncAskSheetToViewport();
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            syncAskSheetToViewport();
+            askOvieSheet.classList.add('is-visible');
+          });
+        });
+      }
+
+      function sheetTransitionDuration() {
+        const styles = window.getComputedStyle(askOvieSheet);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function closeAskSheet(returnFocus = true) {
+        if (!askOvieSheet.open) return;
+        sheetExpandAnimation?.cancel();
+        askOvieSheet.classList.remove('is-visible');
+        window.clearTimeout(sheetCloseTimer);
+        sheetCloseTimer = window.setTimeout(() => {
+          askOvieSheet.close();
+          askOvieSheet.classList.remove('chat-view');
+          askOvieConversation.hidden = true;
+          document.body.classList.remove('sheet-open');
+          syncAskSheetToViewport();
+          if (returnFocus) askOvieFab.focus({ preventScroll: true });
+        }, sheetTransitionDuration() + 34);
+      }
+
+      askOvieFab.addEventListener('click', openAskSheet);
+      closeAskOvie.addEventListener('click', () => closeAskSheet());
+      askOvieSheet.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeAskSheet();
+      });
+      askOvieSheet.addEventListener('pointerdown', (event) => {
+        const bounds = askOvieSheet.getBoundingClientRect();
+        const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideSheet) closeAskSheet();
+      });
+      askOvieInput.addEventListener('input', () => {
+        const hasQuestion = askOvieInput.value.trim().length > 0;
+        syncComposerAction(hasQuestion);
+      });
+
+      askOvieInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !event.isComposing) event.preventDefault();
+      });
+
+      function policyPickerTransitionDuration() {
+        const styles = window.getComputedStyle(askPolicyPicker);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function filterAskPolicies() {
+        const query = askPolicySearch.value.trim().toLocaleLowerCase();
+        let visibleCount = 0;
+        askPolicyOptions.forEach((button) => {
+          const searchableText = `${button.dataset.policyName} ${button.dataset.policyMeta}`.toLocaleLowerCase();
+          const matches = !query || searchableText.includes(query);
+          button.closest('.policy-picker-item').hidden = !matches;
+          if (matches) visibleCount += 1;
+        });
+        clearAskPolicySearch.hidden = query.length === 0;
+        askPolicyEmpty.hidden = visibleCount !== 0;
+      }
+
+      function renderAskPolicySelection() {
+        askPolicyContext.hidden = !selectedAskPolicy;
+        askPolicyContextName.textContent = selectedAskPolicy?.name || '';
+        askPolicyContextMeta.textContent = selectedAskPolicy?.meta || '';
+        askPolicyOptions.forEach((button) => {
+          button.setAttribute('aria-pressed', String(button.dataset.policyId === selectedAskPolicy?.id));
+        });
+      }
+
+      function clearAskPolicySelection(returnFocus = false) {
+        selectedAskPolicy = null;
+        renderAskPolicySelection();
+        if (returnFocus) askOvieInput.focus({ preventScroll: true });
+      }
+
+      function openAskPolicyPicker() {
+        window.clearTimeout(policyPickerCloseTimer);
+        askOvieInput.blur();
+        askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+        syncAskSheetToViewport();
+        askPolicySearch.value = '';
+        filterAskPolicies();
+        askPolicyPicker.classList.remove('is-visible');
+        askPolicyPicker.showModal();
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            askPolicyPicker.classList.add('is-visible');
+            askPolicySearch.focus({ preventScroll: true });
+          });
+        });
+      }
+
+      function closeAskPolicyPicker(returnFocus = true) {
+        if (!askPolicyPicker.open) return;
+        askPolicyPicker.classList.remove('is-visible');
+        window.clearTimeout(policyPickerCloseTimer);
+        policyPickerCloseTimer = window.setTimeout(() => {
+          askPolicyPicker.close();
+          if (returnFocus) askOvieInput.focus({ preventScroll: true });
+        }, policyPickerTransitionDuration() + 34);
+      }
+
+      askAttachmentButton.addEventListener('click', openAskPolicyPicker);
+      closeAskPolicyPickerButton.addEventListener('click', () => closeAskPolicyPicker());
+      askPolicyPicker.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeAskPolicyPicker();
+      });
+      askPolicyPicker.addEventListener('pointerdown', (event) => {
+        const bounds = askPolicyPicker.getBoundingClientRect();
+        const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideSheet) closeAskPolicyPicker();
+      });
+      askPolicySearch.addEventListener('input', filterAskPolicies);
+      clearAskPolicySearch.addEventListener('click', () => {
+        askPolicySearch.value = '';
+        filterAskPolicies();
+        askPolicySearch.focus({ preventScroll: true });
+      });
+      askPolicyOptions.forEach((button) => {
+        button.addEventListener('click', () => {
+          selectedAskPolicy = {
+            id: button.dataset.policyId,
+            name: button.dataset.policyName,
+            meta: button.dataset.policyMeta
+          };
+          renderAskPolicySelection();
+          closeAskPolicyPicker();
+        });
+      });
+      removeAskPolicy.addEventListener('click', () => clearAskPolicySelection(true));
+
+      function syncComposerAction(hasQuestion = askOvieInput.value.trim().length > 0) {
+        askComposerAction.classList.toggle('is-send', hasQuestion);
+        askComposerAction.setAttribute('aria-label', hasQuestion ? 'Send question' : 'Use voice input');
+        askComposerAction.title = hasQuestion ? 'Send question' : 'Use voice input';
+      }
+
+      askComposerAction.addEventListener('click', () => {
+        if (askComposerAction.classList.contains('is-send')) {
+          askOvieForm.requestSubmit();
+          return;
+        }
+        showToast('Voice input is not available in this prototype');
+        askOvieInput.focus({ preventScroll: true });
+      });
+
+      function answerFor(question) {
+        if (/expir|end|renew|date/i.test(question)) {
+          return 'Your Austin home policy ends Sep 12, 2026. No newer policy document is currently uploaded.\n\nReview the policy document before the term ends to confirm renewal details.';
+        }
+        if (/duplicate|overlap|same coverage/i.test(question)) {
+          return 'Your uploaded documents suggest possible overlapping protection between Austin home and Downtown apartment.\n\nOpen the related policy details to compare the covered property and limits.';
+        }
+        if (/deductible/i.test(question)) {
+          return 'I can compare the deductibles established in your uploaded policy documents. Open a source detail before relying on a value for a coverage decision.';
+        }
+        return `I found information in your uploaded policy documents related to “${question}.”\n\nI can help compare coverage, policy dates, deductibles, and possible overlaps. Open a source detail to review the policy wording.`;
+      }
+
+      function expandAskSheet(fromTop) {
+        sheetExpandAnimation?.cancel();
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const expandedTop = askOvieSheet.getBoundingClientRect().top;
+        const revealInset = Math.max(0, Math.round(fromTop - expandedTop));
+        const motionStyles = window.getComputedStyle(document.documentElement);
+        const duration = Number.parseFloat(motionStyles.getPropertyValue('--motion-duration-overlay')) || 260;
+        const easing = motionStyles.getPropertyValue('--motion-ease-drawer').trim() || 'cubic-bezier(.32, .72, 0, 1)';
+        sheetExpandAnimation = askOvieSheet.animate([
+          { clipPath: `inset(${revealInset}px 0 0 0 round 12px)` },
+          { clipPath: 'inset(0 0 0 0 round 12px)' }
+        ], {
+          duration,
+          easing,
+          fill: 'both'
+        });
+        sheetExpandAnimation.finished.then(() => sheetExpandAnimation?.cancel()).catch(() => {});
+      }
+
+      askOvieForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const question = askOvieInput.value.trim();
+        if (!question) return;
+        const compactTop = askOvieSheet.getBoundingClientRect().top;
+        askOvieQuestion.textContent = question;
+        askOvieQuestionPolicy.hidden = !selectedAskPolicy;
+        askOvieQuestionPolicyName.textContent = selectedAskPolicy ? `${selectedAskPolicy.name} · ${selectedAskPolicy.meta}` : '';
+        askOvieAnswer.textContent = answerFor(question);
+        askOvieConversation.hidden = false;
+        askOvieSheet.classList.add('chat-view');
+        expandAskSheet(compactTop);
+        answerActions.forEach((button) => {
+          if (button.hasAttribute('aria-pressed')) button.setAttribute('aria-pressed', 'false');
+          button.classList.remove('is-saved');
+        });
+        askOvieInput.value = '';
+        clearAskPolicySelection();
+        syncComposerAction(false);
+        syncAskSheetToViewport();
+        window.requestAnimationFrame(() => {
+          askOvieConversation.scrollTop = askOvieConversation.scrollHeight;
+          askOvieInput.focus({ preventScroll: true });
+        });
+      });
+
+      answerActions.forEach((button) => {
+        button.addEventListener('click', async () => {
+          const action = button.dataset.answerAction;
+          if (action === 'copy') {
+            try {
+              await copyText(askOvieAnswer.textContent);
+              showToast('Answer copied');
+            } catch {
+              showToast('Copy is unavailable in this browser');
+            }
+          } else if (action === 'regenerate') {
+            askOvieAnswer.textContent = answerFor(askOvieQuestion.textContent);
+            showToast('Answer refreshed');
+          } else if (action === 'helpful' || action === 'not-helpful') {
+            answerActions.filter((item) => item.dataset.answerAction === 'helpful' || item.dataset.answerAction === 'not-helpful').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+            showToast(action === 'helpful' ? 'Thanks for the feedback' : 'Feedback recorded');
+          } else if (action === 'source') {
+            showToast('Opening source information');
+          } else if (action === 'save') {
+            button.classList.toggle('is-saved');
+            button.setAttribute('aria-pressed', String(button.classList.contains('is-saved')));
+            showToast(button.classList.contains('is-saved') ? 'Answer saved' : 'Answer removed from saved');
+          }
+        });
+      });
+
+      function resetPremium() {
+        premiumValue.textContent = '$4,860';
+        premiumContext.textContent = 'Total / year';
+        premiumMonth.textContent = '$405 / month';
+        premiumOptions.forEach((option) => {
+          option.setAttribute('aria-pressed', 'false');
+          option.setAttribute('aria-expanded', 'false');
+        });
+        premiumAccordions.forEach((panel) => { panel.hidden = true; });
+        donutSegments.forEach((segment) => segment.classList.remove('active', 'dim'));
+      }
+
+      premiumOptions.forEach((option) => {
+        option.addEventListener('click', () => {
+          const opening = option.getAttribute('aria-expanded') === 'false';
+          premiumOptions.forEach((item) => {
+            item.setAttribute('aria-pressed', String(opening && item === option));
+            item.setAttribute('aria-expanded', String(opening && item === option));
+          });
+          premiumAccordions.forEach((panel) => {
+            panel.hidden = !(opening && panel.id === option.getAttribute('aria-controls'));
+          });
+          if (!opening) {
+            resetPremium();
+            return;
+          }
+          premiumValue.textContent = option.dataset.value;
+          premiumContext.textContent = option.dataset.context;
+          premiumMonth.textContent = option.dataset.month;
+          donutSegments.forEach((segment) => {
+            const selected = segment.dataset.category === option.dataset.category;
+            segment.classList.toggle('active', selected);
+            segment.classList.toggle('dim', !selected);
+          });
+        });
+      });
+
+      const extraPolicies = Array.from(document.querySelectorAll('.extra-policy'));
+      const togglePolicies = document.querySelector('#togglePolicies');
+      togglePolicies.addEventListener('click', () => {
+        const opening = togglePolicies.getAttribute('aria-expanded') === 'false';
+        extraPolicies.forEach((policy) => { policy.hidden = !opening; });
+        togglePolicies.setAttribute('aria-expanded', String(opening));
+        togglePolicies.textContent = opening ? 'Show less' : 'See all 5';
+      });
+
+      document.querySelector('#notificationsButton').addEventListener('click', () => {
+        document.querySelector('#expiries').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelector('#expiries-heading').focus({ preventScroll: true });
+      });
+
+      document.querySelectorAll('.insight').forEach((button) => {
+        button.addEventListener('click', () => showToast(button.dataset.insight));
+      });
+      document.querySelector('#searchOvie').addEventListener('click', () => showToast('Search policies and documents'));
+      document.querySelector('#myFiles').addEventListener('click', () => showToast('My Files'));
+      document.querySelector('#moreMenu').addEventListener('click', () => showToast('More'));
+
+      const uploadPolicy = document.querySelector('#uploadPolicy');
+      const policyFilePicker = document.querySelector('#policyFilePicker');
+      uploadPolicy.addEventListener('click', () => {
+        policyFilePicker.value = '';
+        policyFilePicker.click();
+      });
+      policyFilePicker.addEventListener('change', () => {
+        const files = Array.from(policyFilePicker.files || []);
+        if (!files.length) return;
+        showToast(files.length === 1 ? `${files[0].name} selected for upload` : `${files.length} documents selected for upload`);
+      });
+
+      document.querySelectorAll('.bottom-nav .nav-link').forEach((link) => {
+        link.addEventListener('click', () => {
+          document.querySelectorAll('.bottom-nav .nav-link').forEach((item) => item.removeAttribute('aria-current'));
+          link.setAttribute('aria-current', 'page');
+        });
+      });
+
+    })();
+  </script>
+<script src="assets/ovie-upload-indicator.js?v=20260909ad"></script>
+</body>
+</html>
