@@ -4,10 +4,9 @@
   const scriptUrl = document.currentScript.src;
   const isUploadPage = location.pathname.endsWith('/ovie_upload.html');
   const selector = '#uploadPolicy,.upload-nav,[data-upload-entry]';
-  const stages = ['Uploading files', 'Generating insights', 'Generating insights', 'Generating insights'];
   const css = document.createElement('link');
   css.rel = 'stylesheet';
-  css.href = new URL('ovie-upload-nav.css?v=20260909n', scriptUrl).href;
+  css.href = new URL('ovie-upload-nav.css?v=20260909aj', scriptUrl).href;
   document.head.append(css);
   function read() { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
   let toastTimer,toastBatch;
@@ -27,43 +26,27 @@
   }
   function update() {
     const state = read();
-    if(state?.stage===1){state.stage=state.custom||['unmatched','duplicate'].includes(state.scenario)?4:3;state.scenario=state.scenario==='duplicateReview'?'generating':state.scenario;state.insightPolicies=state.stage===4?[]:(state.insightPolicies||['condo','umbrella','standalone']);state.tick=Date.now();try{localStorage.setItem(key,JSON.stringify(state))}catch{}}
+    if(state){window.OvieUploadFlow.migrate(state);window.OvieUploadFlow.sync(state)}
     if(toastBatch&&toastBatch!==state?.batchId){const toast=document.querySelector('#ovie-upload-completion-toast');toast?.classList.remove('is-visible');toast?.setAttribute('aria-hidden','true');const close=toast?.querySelector('button');if(close)close.tabIndex=-1;clearTimeout(toastTimer);toastBatch=null}
-    if (!isUploadPage && state?.playing && state.stage < 4) {
-      const elapsed = Date.now() - state.tick;
-      if (elapsed >= (state.stage === 0 ? 12000 : 6000)) {
-        if (state.stage === 0) {
-          state.uploadProgress = 100;
-          state.stage = state.custom || ['unmatched','duplicate'].includes(state.scenario) ? 4 : 3;
-          state.insightPolicies=state.stage===4?[]:state.scenario==='existingOnly'?['umbrella']:state.scenario==='standalone'?['standalone']:state.scenario==='inbox'?['condo']:['condo','umbrella','standalone'];
-        } else if (state.stage === 2) {
-          state.stage = 3;
-        } else {
-          state.readyPolicies ||= [];
-          const policies=state.insightPolicies||[];
-          const failed=id=>(state.scenario==='failed'&&id==='condo')||(state.scenario==='regenerationFailed'&&id==='umbrella');
-          const next=policies.find(id=>!state.readyPolicies.includes(id)&&!failed(id));
-          if(next)state.readyPolicies.push(next);
-          if(policies.every(id=>state.readyPolicies.includes(id)||failed(id)))state.stage=4;
-        }
-        state.tick = Date.now();
-        if (state.stage === 4) state.playing = false;
-        try { localStorage.setItem(key, JSON.stringify(state)); } catch {}
-      }
-    }
+    if(!isUploadPage&&state){try{const value=JSON.stringify(state);if(localStorage.getItem(key)!==value)localStorage.setItem(key,value)}catch{}}
     showCompletionToast(state);
     document.querySelectorAll('.ovie-upload-preview-indicator').forEach(row => row.remove());
     document.querySelectorAll(selector).forEach(button => {
-      if (!state) {
+      try {
+        if (sessionStorage.getItem('ovie.upload.return-focus') && button.getClientRects().length) {
+          button.focus({ preventScroll: true });
+          sessionStorage.removeItem('ovie.upload.return-focus');
+        }
+      } catch {}
+      if (!state || state.stage === 4) {
         button.querySelector('.ovie-upload-nav-progress')?.remove();
         button.setAttribute('aria-label', 'Upload files');
+        button.title = 'Upload files';
         return;
       }
-      const done = state.stage === 4;
-      const failed = done && ['failed', 'regenerationFailed', 'uploadFailed'].includes(state.scenario);
-      const step = state.stage < 2 ? 1 : 2;
-      const outcome = failed ? 'Finished with an issue' : state.scenario === 'duplicate' ? 'Duplicates discarded' : 'Complete';
-      const label = done ? `Upload: ${outcome}. View outcome` : `Upload: ${stages[state.stage]}, step ${step} of 2. View progress`;
+      const ids=state.insightPolicies?.length?state.insightPolicies:['local'];
+      const value=Math.round(ids.reduce((sum,id)=>sum+window.OvieUploadFlow.item(state,id).progress,0)/ids.length);
+      const label = `Upload: ${window.OvieUploadFlow.elapsed(state)<6000?'Extracting and Reading Data':'Generating Insights'}. View progress`;
       button.setAttribute('aria-label', label);
       button.title = label;
       const anchor = button.querySelector('.nav-icon') || button;
@@ -75,19 +58,11 @@
         marker.setAttribute('aria-hidden', 'true');
         anchor.append(marker);
       }
-      const signature = `${state.stage}-${failed}`;
+      const signature = String(value);
       if (marker.dataset.state !== signature) {
         marker.dataset.state = signature;
-        marker.classList.toggle('is-complete', done && !failed);
-        marker.classList.toggle('is-failed', failed);
-        marker.innerHTML = `<svg class="ovie-upload-stage-ring" viewBox="0 0 60 60" fill="none"><circle class="track" cx="30" cy="30" r="28" stroke-width="3"/><circle class="value" cx="30" cy="30" r="28" stroke-width="3" pathLength="100" stroke-dasharray="${done ? 100 : step * 100 / 2} 100" transform="rotate(-90 30 30)"/></svg>${done ? `<span class="ovie-upload-step-badge">${failed ? '!' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>'}</span>` : ''}`;
+        marker.innerHTML = `<svg class="ovie-upload-stage-ring" viewBox="0 0 60 60" fill="none"><circle class="track" cx="30" cy="30" r="28" stroke-width="3"/><circle class="value" cx="30" cy="30" r="28" stroke-width="3" pathLength="100" stroke-dasharray="${value} 100" transform="rotate(-90 30 30)"/></svg>`;
       }
-      try {
-        if (sessionStorage.getItem('ovie.upload.return-focus') && button.getClientRects().length) {
-          button.focus({ preventScroll: true });
-          sessionStorage.removeItem('ovie.upload.return-focus');
-        }
-      } catch {}
     });
   }
   document.addEventListener('click', event => {
@@ -95,7 +70,12 @@
     if (!trigger) return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    const route = read() ? 'detail' : 'upload';
+    const state = read();
+    if ((!state || state.stage === 4) && window.OvieUploadOptions) {
+      window.OvieUploadOptions.open(trigger, event.detail === 0);
+      return;
+    }
+    const route = state ? 'detail' : 'upload';
     if (isUploadPage) {
       location.hash = route;
     } else {

@@ -1,15 +1,10 @@
 /* The arc counts stages; it is not a time or byte percentage. */
 .ovie-upload-nav-anchor { position: relative; }
 .ovie-upload-nav-progress { position: absolute; inset: 0; pointer-events: none; z-index: 3; --upload-ring-color: var(--icon-brand, #6B4062); }
-.ovie-upload-nav-progress.is-complete { --upload-ring-color: var(--icon-success, #0D7D07); }
-.ovie-upload-nav-progress.is-failed { --upload-ring-color: var(--icon-danger, #A63A33); }
 .ovie-upload-nav-progress .ovie-upload-stage-ring { position: absolute !important; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: 60px !important; height: 60px !important; overflow: visible; }
 .ovie-upload-stage-ring .track { stroke: var(--primary-disabled-background, #E8DEE5); }
 .ovie-upload-stage-ring .value { stroke: var(--upload-ring-color); }
-.ovie-upload-step-badge { position: absolute; left: calc(50% + 8px); top: calc(50% + 10px); display: grid; place-items: center; min-width: 28px; height: 20px; padding: 0 3px; border-radius: 999px; background: var(--surface, #FFFFFF); color: var(--primary, #6B4062); border: 1px solid var(--primary-disabled-background, #E8DEE5); font: 600 11px/16px Figtree, system-ui, sans-serif; }
-.is-complete .ovie-upload-step-badge, .is-failed .ovie-upload-step-badge { color: var(--upload-ring-color); min-width: 20px; }
-.ovie-upload-nav-progress .ovie-upload-step-badge svg { width: 14px !important; height: 14px !important; color: var(--upload-ring-color); }
-@media (forced-colors: active) { .ovie-upload-stage-ring .track { stroke: GrayText; } .ovie-upload-stage-ring .value { stroke: Highlight; } .ovie-upload-step-badge { color: ButtonText; background: ButtonFace; border-color: ButtonText; } }
+@media (forced-colors: active) { .ovie-upload-stage-ring .track { stroke: GrayText; } .ovie-upload-stage-ring .value { stroke: Highlight; } }
 
 .ovie-upload-nav-progress.is-review{--upload-ring-color:var(--icon-warning,#8A5A06)}
 
@@ -22,3 +17,44 @@
 .ovie-upload-completion-toast button svg{width:20px;height:20px;color:inherit}
 .ovie-upload-completion-toast button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.ovie-upload-completion-toast{transition-duration:125ms}}
+
+/* Occasional action sheet: spatial continuity, with instant keyboard changes. */
+:root{--motion-duration-overlay:260ms;--motion-ease-drawer:cubic-bezier(0.32,0.72,0,1)}
+html{scrollbar-gutter:stable}
+html.upload-options-open{overflow:hidden}
+.upload-options-sheet{position:fixed;inset:auto 0 0;margin:0 auto;width:min(100%,480px);max-width:100%;max-height:calc(100dvh - 24px);padding:8px 16px calc(18px + env(safe-area-inset-bottom));border:0;border-radius:12px 12px 0 0;background:var(--surface,#fff);color:var(--text-primary,#111);box-shadow:0 6px 16px rgba(17,17,17,.12);font:400 14px/20px Figtree,system-ui,sans-serif;overflow-y:auto;overscroll-behavior:contain;transform:translateY(100%);opacity:0;transition:transform var(--motion-duration-overlay) var(--motion-ease-drawer),opacity var(--motion-duration-overlay) var(--motion-ease-drawer)}
+.upload-options-sheet.is-visible{transform:translateY(0);opacity:1}
+.upload-options-sheet::backdrop{background:rgba(17,24,23,.58);opacity:0;transition:opacity var(--motion-duration-overlay) var(--motion-ease-drawer)}
+.upload-options-sheet.is-visible::backdrop{opacity:1}
+.upload-options-sheet.instant,.upload-options-sheet.instant::backdrop{transition:none}
+.upload-options-sheet *{box-sizing:border-box}
+.upload-options-sheet [hidden]{display:none!important}
+.upload-options-handle{height:4px;width:40px;border-radius:999px;background:var(--border,#D8DDDB);margin:0 auto 12px}
+.upload-options-heading{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:start;column-gap:8px;padding-bottom:16px;border-bottom:1px solid var(--line,#ECEFED)}
+.upload-options-heading h2{font:600 18px/24px Figtree,system-ui,sans-serif;margin:0;padding-top:10px}
+.upload-options-heading p{grid-column:1/-1;min-width:0;font-size:12px;line-height:16px;color:var(--text-tertiary,#5F6368);margin:4px 0 0}
+.upload-options-sheet button{font:inherit;cursor:pointer}
+.upload-options-close{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;border-radius:12px;background:transparent}
+.upload-option-icon{display:block;flex:none;width:20px;height:20px;background:var(--icon-brand,#6B4062);mask:var(--option-icon) center/contain no-repeat;-webkit-mask:var(--option-icon) center/contain no-repeat}
+.upload-options-close .upload-option-icon{background:var(--icon-default,#5F6368)}
+.upload-option{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:12px 0;border:0;border-bottom:1px solid var(--line,#ECEFED);background:transparent;color:var(--text-primary,#111);text-align:left;font-weight:600!important}
+.upload-option>.upload-option-icon,.upload-option-brand{width:40px;height:40px;border-radius:12px;flex:none;background-color:var(--canvas,#F6F6F6)}
+.upload-option>.upload-option-icon{mask:none;-webkit-mask:none;position:relative}
+.upload-option>.upload-option-icon::after{content:"";position:absolute;inset:10px;background:var(--icon-default,#5F6368);mask:var(--option-icon) center/contain no-repeat;-webkit-mask:var(--option-icon) center/contain no-repeat}
+.upload-option-brand{display:grid;place-items:center;background:var(--canvas,#F6F6F6)}
+.upload-option-brand img{width:20px;height:20px;object-fit:contain}
+.upload-options-more summary{display:flex;align-items:center;justify-content:space-between;gap:12px;list-style:none;min-height:44px;cursor:pointer;color:var(--text-tertiary,#5F6368);font-size:12px}
+.upload-options-more summary::-webkit-details-marker{display:none}
+.upload-options-more summary .upload-option-icon{background:var(--icon-default,#5F6368)}
+.upload-options-more[open] summary .upload-option-icon{transform:rotate(180deg)}
+.upload-options-status,.upload-options-error{font-size:12px;line-height:16px;margin:12px 0;color:var(--text-tertiary,#5F6368)}
+.upload-options-status:empty,.upload-options-error:empty{display:none}
+.upload-options-error{color:var(--danger,#A63A33)}
+.upload-options-selected{padding-left:20px;margin:12px 0;overflow-wrap:anywhere}
+.upload-options-submit{min-height:44px;width:100%;border:0;border-radius:12px;margin:12px 0 0;padding:12px 16px;font-weight:600!important}
+.upload-options-submit{color:#fff;background:var(--primary,#6B4062)}
+.upload-options-submit:disabled{color:#795972;background:#E8DEE5;cursor:default}
+.upload-options-notice{margin:16px 0 0;padding-top:16px;border-top:1px solid var(--line,#ECEFED);font-size:12px;line-height:18px;color:var(--text-tertiary,#5F6368)}
+.upload-options-sheet button:focus-visible,.upload-options-sheet summary:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(107,64,98,.24);border-radius:12px}
+@media(hover:hover) and (pointer:fine){.upload-option:hover{background:var(--canvas,#F6F6F6)}.upload-options-submit:not(:disabled):hover{background:var(--primary-dark,#54324D)}}
+@media(prefers-reduced-motion:reduce){.upload-options-sheet{transform:none;transition:opacity 125ms var(--motion-ease-out)}.upload-options-sheet::backdrop{transition-duration:125ms}.upload-options-sheet.instant,.upload-options-sheet.instant::backdrop{transition:none}}
