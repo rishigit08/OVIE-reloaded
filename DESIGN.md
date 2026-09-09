@@ -525,6 +525,7 @@ Use this approved disclaimer unless legal or product provides a newer version:
 
 ### Upload processing and outcomes
 
+- Start the upload preview from the homepage and its Upload action. Opening the upload prototype without a detail route, its legacy My Files route, or resetting the preview returns to the homepage by default. Preserve explicit originating destinations when entered from My Files or Insights.
 - Uploads from the navigation action and Ovie Inbox begin processing each file independently after transfer. Policy grouping is automatic. Discard duplicate copies automatically while retaining the existing documents. Do not ask for a discard-or-replace decision or pause processing for duplicate review.
 - The bottom-navigation Upload button carries a progress ring without a visible numeric step count. Keep the current step available in its accessible label. Tapping it again opens the current batch detail directly, without an intermediate activity screen or a separate page-level status card. Preserve access after leaving; leaving after acceptance does not cancel processing.
 - Use two main stages: Uploading files, then Generating insights. Grouping happens after extraction without a separate timed organizing step. Duplicate handling happens automatically within processing, without a separate review step. Use plain caption text “Uploading & Extracting data” for active individual file statuses during either phase. Show actual stage changes, not an invented completion percentage or estimated duration.
