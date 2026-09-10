@@ -2,21 +2,21 @@
 (() => {
   'use strict';
   const scriptUrl = document.currentScript.src;
-  const key = 'ovie.upload.design-preview.v1';
   const asset = path => new URL(path, scriptUrl).href;
   const icon = name => `<span class="upload-option-icon" aria-hidden="true" style="--option-icon:url('${asset(name)}')"></span>`;
-  let sheet, opener, selected = [], closeTimer;
+  let sheet, opener, selected = [], closeTimer, selectionRequest = 0;
   function destination(route, batchId) {
     const target = new URL('../ovie_upload.html', scriptUrl);
     const returnPage = location.pathname.endsWith('/ovie_upload.html')
       ? new URLSearchParams(location.search).get('return') : location.pathname.split('/').pop();
     target.searchParams.set('return', ['ovie_homepage.html','MyFiles.html','Insights.html'].includes(returnPage) ? returnPage : 'ovie_homepage.html');
     target.hash = route;
-    if (batchId) target.searchParams.set('batch', batchId);
+    if (batchId) target.searchParams.set(route==='review'?'draft':'batch', batchId);
     location.href = target.href;
   }
   function close(instant = false) {
     if (!sheet?.open) return;
+    selectionRequest++;
     sheet.classList.toggle('instant', instant);
     sheet.classList.remove('is-visible');
     const finish = () => { sheet.close(); document.documentElement.classList.remove('upload-options-open'); opener?.focus({preventScroll:true}); };
@@ -48,8 +48,6 @@
         <input id="upload-options-files" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple hidden>
         <input id="upload-options-camera" type="file" accept="image/jpeg,image/png" capture="environment" hidden>
         <p class="upload-options-error" role="alert"></p>
-        <ul class="upload-options-selected" aria-label="Selected documents" hidden></ul>
-        <button class="upload-options-submit" type="button" hidden>Upload files</button>
         <p class="upload-options-notice">I understand that I am uploading sensitive insurance documents and confirm Ovie may process them securely per our Privacy Policy and Terms of Service.</p>
       </div>`;
     document.body.append(sheet);
@@ -69,33 +67,24 @@
       input.value = '';
       input.click();
     });
-    sheet.querySelectorAll('input[type="file"]').forEach(input => input.addEventListener('change', () => {
+    sheet.querySelectorAll('input[type="file"]').forEach(input => input.addEventListener('change', async () => {
       if (!input.files.length) return;
+      const request=++selectionRequest;
       selected = Array.from(input.files);
-      const error = selected.length > 10 ? 'Choose up to 10 files.'
-        : selected.some(file => !/^.+\.(pdf|png|jpe?g)$/i.test(file.name)) ? 'Choose PDF, PNG or JPG files.'
-        : selected.some(file => !file.size) ? 'Remove empty files.'
-        : selected.some(file => file.size > 26214400) ? 'Each file must be 25 MiB or smaller.'
-        : selected.reduce((sum,file) => sum + file.size, 0) > 104857600 ? 'The batch must be 100 MiB or smaller.' : '';
-      sheet.querySelector('[role="alert"]').textContent = error;
-      const list = sheet.querySelector('.upload-options-selected');
-      list.replaceChildren(...selected.map(file => { const item = document.createElement('li'); item.textContent = file.name; return item; }));
-      list.hidden = false;
-      const submit = sheet.querySelector('.upload-options-submit');
-      submit.hidden = false; submit.disabled = Boolean(error);
-      message(error ? '' : `${selected.length} ${selected.length === 1 ? 'file selected' : 'files selected'}.`);
-      if (!error) submit.focus();
+      const error=window.OvieUploadFlow.validateFiles(selected);
+      sheet.querySelector('[role="alert"]').textContent=error;
+      if(error)return;
+      sheet.querySelectorAll('[data-source]').forEach(button=>button.disabled=true);
+      message('Preparing your files for review…');
+      try{
+        const draftId=location.hash==='#review'?new URLSearchParams(location.search).get('draft'):null;
+        const draft=await window.OvieUploadFlow.createDraft(selected,draftId);
+        if(sheet.open&&request===selectionRequest)destination('review',draft.id);
+      }catch(error){sheet.querySelector('[role="alert"]').textContent=error.message||'These files could not be prepared. Please try again.';message('')}
+      finally{sheet.querySelectorAll('[data-source]').forEach(button=>button.disabled=false)}
     }));
-    sheet.querySelector('.upload-options-submit').onclick = async () => {
-      if (!selected.length || sheet.querySelector('.upload-options-submit').disabled) return;
-      const state = {flowVersion:5,batchId:Date.now().toString(36)+Math.random().toString(36).slice(2),readyPolicies:[],insightPolicies:[],scenario:'reading',stage:3,elapsed:0,playing:true,tick:Date.now(),seen:false,custom:selected.map(file=>file.name)};
-      const submit=sheet.querySelector('.upload-options-submit'); submit.disabled=true;
-      try { await window.OvieUploadFlow.storeFiles(state.batchId,selected); localStorage.setItem(key, JSON.stringify(state)); }
-      catch { submit.disabled=false; message('This browser could not save the upload preview. Please allow site storage and try again.'); return; }
-      // A new batch URL reloads detail state even when this sheet opens over detail.
-      destination('detail', state.batchId);
-    };
   }
+
   function open(trigger = document.activeElement, keyboard = false) {
     if (!sheet) build();
     if (sheet.open) return;
@@ -103,8 +92,6 @@
     const shell = document.querySelector('.app-shell');
     sheet.style.width = shell ? `${shell.getBoundingClientRect().width}px` : '';
     sheet.querySelectorAll('[role="status"],[role="alert"]').forEach(element => element.textContent = '');
-    sheet.querySelector('.upload-options-selected').hidden = true;
-    sheet.querySelector('.upload-options-submit').hidden = true;
     sheet.querySelector('details').open = false;
     sheet.classList.toggle('instant', keyboard);
     document.documentElement.classList.add('upload-options-open');
