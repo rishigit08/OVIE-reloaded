@@ -1,0 +1,851 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Ovie — Businessowners policy insights</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet"><style>
+    :root {
+      --primary:#6b4062; --primary-dark:#54324d; --ink:#111; --text:#333a3d;
+      --muted:#5f6368; --icon-default:#5f6368; --icon-strong:#111111; --surface:#fff; --page:#f6f6f6; --bg-subtle:#f6f6f6; --canvas:#e3e3e3;
+      --success:#0d7d07; --warning:#8a5a06; --danger:#a63a33;
+      --plum-soft:#f5edf3; --warning-soft:#fff5df; --danger-soft:#ffeded;
+      --border:#d8dddb; --line:#ecefed; --overlay:rgba(17,24,23,.58);
+      --radius:12px; --pill:999px; --focus:0 0 0 3px rgba(107,64,98,.24);
+      --motion-duration-press:160ms; --motion-ease-out:cubic-bezier(.23,1,.32,1);
+      --z-sticky:20; --z-modal:40; --z-toast:60;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--canvas);color:var(--ink);font:400 14px/20px "Figtree",system-ui,sans-serif}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    h1,h2,h3,p{margin:0}
+    h1,h2,h3,strong{font-weight:600}
+    img{display:block}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+    :where(button,input,textarea,summary):focus-visible{outline:0;box-shadow:var(--focus)}
+    .canvas{position:fixed;inset:0;display:flex;justify-content:center;overflow:auto}
+    .phone{position:relative;width:min(390px,100vw);height:100dvh;min-height:620px;overflow:auto;background:var(--page);scrollbar-width:thin;scrollbar-color:var(--border) var(--page);scroll-padding-bottom:96px}
+    .phone::-webkit-scrollbar,.sheet-body::-webkit-scrollbar{width:8px}
+    .phone::-webkit-scrollbar-track,.sheet-body::-webkit-scrollbar-track{background:var(--page)}
+    .phone::-webkit-scrollbar-thumb,.sheet-body::-webkit-scrollbar-thumb{background:var(--border);border:2px solid var(--page);border-radius:var(--pill)}
+    .topbar{position:sticky;top:0;z-index:var(--z-sticky);background:rgba(255,255,255,.97);border-bottom:1px solid var(--line)}
+    .statusbar{height:34px;padding:8px 22px 0;display:flex;justify-content:space-between;font-size:12px;font-weight:600}
+    .statusbar span:last-child{color:var(--muted)}
+    .titlebar{height:58px;padding:4px 18px 10px;display:flex;align-items:center;gap:8px}
+    .titlebar h1{font-size:18px;line-height:24px}
+    .icon-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center}
+    .icon-button img,.icon-button svg{width:22px;height:22px}
+    .back-button{background:transparent;color:var(--icon-strong)}
+    .sheet-close{background:transparent}
+    #searchButton{margin-left:auto}
+    #searchButton,#shareButton{position:relative;background:var(--bg-subtle);color:var(--icon-default);transition:background-color var(--motion-duration-press) ease,transform var(--motion-duration-press) var(--motion-ease-out)}
+    #searchButton svg,#shareButton svg{width:19px;height:19px}
+    #searchButton:active,#shareButton:active{transform:scale(.96)}
+    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}.back-button:hover,.sheet-close:hover,.ask-composer-action:hover{background:var(--primary-dark)}}
+    main{padding:18px 16px 112px;display:flex;flex-direction:column;gap:18px}
+    .card{background:var(--surface);border-radius:var(--radius);overflow:hidden}
+    .card-pad{padding:16px}
+    .section-title{font-size:18px;line-height:24px;margin-bottom:14px}
+    .card-pad>.section-title:last-child{margin-bottom:0}
+    .heading-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .heading-row .section-title{margin:0}
+    .status-pill,.severity{display:inline-flex;align-items:center;gap:6px;border-radius:var(--pill);font-size:12px;line-height:16px;font-weight:600}
+    .status-pill{padding:6px 10px;background:var(--danger-soft);color:var(--danger)}
+    .status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+    .field{padding:12px 0;border-bottom:1px solid var(--line)}
+    .field:first-child{padding-top:0}.field:last-child{padding-bottom:0;border-bottom:0}
+    .label{color:var(--muted)}
+    .value{margin-top:3px;font-weight:600;overflow-wrap:anywhere}
+    .person{min-height:58px;display:flex;align-items:center;gap:12px}
+    .person-icon{width:40px;height:40px;border-radius:var(--radius);background:var(--plum-soft);display:grid;place-items:center}
+    .person-icon img{width:20px;height:20px}
+    .source-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;color:var(--icon-default);display:grid;place-items:center;flex:0 0 auto}
+    .source-button img{width:19px;height:19px}
+    .coverage-list{display:flex;flex-direction:column}
+    .coverage-row{min-height:84px;padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+    .coverage-row:last-child{border-bottom:0}
+    .coverage-copy{flex:1;min-width:0}
+    .coverage-copy .value{font-size:18px;line-height:24px}
+    .coverage-description{margin-top:2px;color:var(--muted)}
+    .policy-details-header{padding:16px 16px 8px}
+    .policy-details-header .section-title{margin:0}
+    .policy-details-header+details{border-top:0}
+    .policy-detail-body{padding:0 16px 12px}
+    .summary-title{flex:1}
+    .count-pill{flex:0 0 auto;padding:3px 8px;border-radius:var(--pill);background:var(--plum-soft);color:var(--primary);font-size:12px;line-height:16px;font-weight:600}
+    .insight-item{position:relative;min-height:52px;padding:12px 44px 12px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;color:var(--text)}
+    .insight-item:last-child{border-bottom:0}
+    .insight-item::before{content:"";width:4px;height:4px;margin-right:10px;border-radius:50%;background:var(--text);flex:0 0 auto}
+    .insight-item .source-button{position:absolute;right:-10px;top:50%;transform:translateY(-50%)}
+    .spec-row,.deductible-row{padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--line)}
+    .spec-row:first-of-type,.deductible-row:first-of-type{border-top:0}
+    .card-pad+.spec-row,.card-pad+.deductible-row{border-top:0}
+    .spec-copy,.deductible-copy{flex:1;min-width:0}
+    .spec-copy p,.deductible-copy p{margin-top:3px;color:var(--muted)}
+    .spec-copy>.value{font-size:18px;line-height:24px;color:var(--ink)}
+    .tip{padding:14px 6px 14px 16px;background:var(--warning-soft);color:var(--warning);display:flex;align-items:flex-start;gap:10px}
+    .tip>img{width:22px;height:22px;margin-top:1px}.tip-copy{flex:1}.tip-copy p{margin-top:3px;color:var(--warning)}
+    .watchpoint{padding:12px 0;border-bottom:1px solid var(--line)}
+    .watchpoint:first-child{padding-top:0}
+    .watchpoint:last-child{padding-bottom:0;border-bottom:0}
+    .watchpoint-head{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .severity{flex:0 0 auto;padding:4px 8px}.severity.moderate{background:var(--warning-soft);color:var(--warning)}.severity.low{background:var(--plum-soft);color:var(--primary)}
+    .watchpoint p{color:var(--muted)}
+    .footer-card .card-pad>p{color:var(--muted);line-height:21px}
+    details{border-top:1px solid var(--line)}
+    summary{min-height:54px;padding:10px 10px 10px 16px;list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+    summary::-webkit-details-marker{display:none}
+
+    summary span{flex:1}.chevron{width:18px;height:18px;transition:transform var(--motion-duration-standard) var(--motion-ease-out)}details[open]>summary>.chevron{transform:rotate(180deg)}
+    .details-body{padding:0 16px 14px;color:var(--text)}
+    .details-body ul{margin:0;padding-left:18px}.details-body li+li{margin-top:8px}
+    .feedback{padding:0 16px;min-height:76px;display:flex;align-items:center;gap:8px}
+    .feedback-question{flex:1;font-weight:600}
+    .feedback-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center;transition:background-color var(--motion-duration-standard) var(--motion-ease-out),color var(--motion-duration-standard) var(--motion-ease-out),transform var(--motion-duration-standard) var(--motion-ease-out)}
+    .feedback-button:active{transform:scale(.96)}
+    .feedback-button svg{width:25px;height:25px}.feedback-button[data-feedback="up"][aria-pressed="true"]{color:var(--success)}.feedback-button[data-feedback="down"][aria-pressed="true"]{color:var(--danger)}
+    .chat-dock{position:sticky;bottom:0;z-index:var(--z-sticky);width:100%;min-height:74px;margin-top:-74px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:0;background:rgba(255,255,255,.3);-webkit-backdrop-filter:blur(14px) saturate(1.1);backdrop-filter:blur(14px) saturate(1.1);display:flex;align-items:center;gap:10px}
+    .chat-dock .ask-sheet-composer-row{width:100%}
+    .ask-sheet-composer-row{display:flex;align-items:center;gap:8px}
+    .ask-sheet-input-row{min-width:0;min-height:56px;flex:1;padding:5px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
+    .ask-sheet-input-row:focus-within{border-color:var(--primary);box-shadow:var(--focus)}
+    .ask-sheet-input{min-width:0;flex:1;padding:8px 12px;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;line-height:20px;box-shadow:none}
+    .ask-sheet-input::placeholder{color:var(--muted);opacity:1}
+    .ask-composer-action{width:44px;height:44px;flex:0 0 auto;padding:0;border:0;border-radius:var(--radius);background:var(--primary);color:#fff;display:grid;place-items:center;transition:transform var(--motion-duration-press) var(--motion-ease-out)}
+    .ask-composer-action:active{transform:scale(.97)}
+    .ask-composer-action svg{width:22px;height:22px}
+    dialog{width:min(390px,100vw);max-width:100vw;max-height:min(76dvh,680px);margin:auto auto 0;padding:0;border:0;border-radius:12px 12px 0 0;background:var(--surface);color:var(--ink);box-shadow:0 6px 16px rgba(17,17,17,.12)}
+    dialog::backdrop{background:var(--overlay)}
+    .sheet-handle{width:40px;height:4px;margin:10px auto 3px;border-radius:2px;background:var(--border)}
+    .sheet-head{min-height:58px;padding:8px 10px 8px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.sheet-head h2{flex:1;font-size:18px;line-height:24px}
+    .sheet-body{padding:17px 18px calc(26px + env(safe-area-inset-bottom));overflow:auto;max-height:calc(76dvh - 75px);scrollbar-width:thin;scrollbar-color:var(--border) var(--page)}
+    .source-meta{color:var(--primary);font-weight:600}.source-excerpt{margin:10px 0 18px;padding:13px;border-radius:var(--radius);background:var(--page);line-height:21px}
+    .primary-action,.secondary-action{width:100%;min-height:44px;border-radius:var(--radius);font-weight:600}.primary-action{border:0;background:var(--primary);color:#fff}.secondary-action{margin-top:8px;border:1px solid var(--border);background:#fff;color:var(--text)}
+    .feedback-form fieldset{margin:0;padding:0;border:0}.feedback-option{min-height:52px;padding:8px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}.feedback-option span{flex:1}.feedback-option input{width:20px;height:20px;accent-color:var(--primary)}
+    .feedback-followup{margin-top:14px}.feedback-followup label{display:block;margin-bottom:6px;font-weight:600}.feedback-followup textarea{width:100%;min-height:100px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);resize:none;color:var(--ink)}
+    .error{min-height:20px;margin-top:8px;color:var(--danger)}
+    .toast{position:fixed;left:50%;bottom:94px;z-index:var(--z-toast);transform:translate(-50%,18px);min-width:250px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:var(--radius);background:var(--ink);color:#fff;text-align:center;opacity:0;pointer-events:none;transition:opacity var(--motion-duration-standard) var(--motion-ease-out),transform var(--motion-duration-standard) var(--motion-ease-out)}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:420px){.canvas{display:block}.phone{width:100vw}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}#searchButton:active,#shareButton:active,.ask-composer-action:active{transform:none}}
+
+    :root{--motion-duration-standard:200ms;--motion-duration-overlay:260ms;--motion-ease-in-out:cubic-bezier(.77,0,.175,1);--motion-ease-drawer:cubic-bezier(.32,.72,0,1);--icon-brand:#6b4062;--icon-warning:#8a5a06;--icon-inverse:#fff}
+    html{scrollbar-gutter:auto}svg{width:22px;height:22px;flex-shrink:0}a{color:var(--primary)}
+    .canvas{overflow:hidden}.phone{min-height:0;width:min(390px,100%);scrollbar-width:none;scrollbar-gutter:stable}.phone::-webkit-scrollbar,.sheet-body::-webkit-scrollbar{display:none}.sheet-body{scrollbar-width:none}
+    .topbar{transition:transform var(--motion-duration-standard) var(--motion-ease-out)}.topbar.hidden-header{transform:translateY(-100%)}.topbar:focus-within{transform:none}
+    .titlebar{padding-left:16px;padding-right:16px;height:64px}.statusbar{display:none}
+    :root{--icon-strong:#111111;--warning-text:#634106;--warning-border:#e7c982}
+    .source-button,#backButton{background:transparent}
+    #backButton{color:var(--icon-strong)}
+    .status-pill{min-height:28px;padding:4px 10px;flex-shrink:0;background:var(--danger-soft);color:var(--danger)}
+    .source-button svg{width:19px;height:19px}.heading-row .source-button{margin:-8px -8px -8px 0}
+    .coverage-row{padding-right:8px}.coverage-copy .value{overflow-wrap:normal}.coverage-row.unavailable .value{font-size:14px;line-height:20px}
+    .evidence-note{color:var(--text);background:var(--page);padding:12px;border-radius:var(--radius);margin-top:12px}.evidence-note p{margin-top:4px}
+    .attention{display:flex;gap:12px;background:var(--warning-soft);border:1px solid var(--warning-border);color:var(--warning-text)}.attention>svg{color:var(--icon-warning);width:22px;height:22px;flex:0 0 22px}.attention p{margin-top:4px;color:var(--warning-text)}
+    summary .count-pill{flex:0 0 auto}summary .chevron{color:var(--icon-default);transition:transform var(--motion-duration-standard) var(--motion-ease-in-out)}
+    .insight-item{align-items:flex-start;padding-top:14px;padding-bottom:14px}.insight-item>span{min-width:0;overflow-wrap:anywhere}.insight-item::before{margin-top:8px}.insight-item .source-button{right:-8px;top:2px;transform:none}
+    .detail-intro{color:var(--muted);padding:4px 0 12px}.coverage-detail{padding:12px 0;border-bottom:1px solid var(--line)}.coverage-detail:last-child{border-bottom:0}.coverage-detail p{margin-top:4px;color:var(--muted)}
+    .coverage-detail-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.coverage-detail-head .source-button{margin-right:-8px}
+    .sublimits{list-style:none;margin:0;padding:0}.sublimit-row{padding:14px 0;border-bottom:1px solid var(--line)}.sublimit-row:last-child{border-bottom:0}.sublimit-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.sublimit-heading h3{font-size:14px;line-height:20px}.sublimit-heading .source-button{margin-right:-8px}.sublimit-value{font-size:18px;line-height:24px;font-weight:600;margin-top:4px}.sublimit-row p{color:var(--muted);margin-top:4px}.sublimit-row .sublimit-description{margin-top:10px}
+    .severity.critical{background:var(--warning-soft);color:#7a3000}.watchpoint>strong{display:block;margin:4px 0}.watchpoint p{color:var(--muted)}
+    .feedback-question{font-weight:400;color:var(--muted)}.feedback-button{flex-shrink:0}
+    .chat-input{border-radius:var(--radius);background:#fff}.chat-send{color:var(--icon-inverse)}.chat-dock{padding-left:16px;padding-right:16px}.chat-brand{color:var(--icon-brand);align-self:center;width:24px;height:24px}
+    dialog{width:min(390px,100vw);max-height:calc(100dvh - 32px);transition:transform var(--motion-duration-overlay) var(--motion-ease-drawer),opacity var(--motion-duration-overlay) var(--motion-ease-out),display var(--motion-duration-overlay) allow-discrete,overlay var(--motion-duration-overlay) allow-discrete;transform:translateY(100%);opacity:0}
+    dialog[open]{transform:translateY(0);opacity:1}dialog::backdrop{transition:opacity var(--motion-duration-overlay) var(--motion-ease-out),display var(--motion-duration-overlay) allow-discrete,overlay var(--motion-duration-overlay) allow-discrete;opacity:0}dialog[open]::backdrop{opacity:1}
+    @starting-style{dialog[open]{transform:translateY(100%);opacity:0}dialog[open]::backdrop{opacity:0}}
+    .source-meta{color:var(--primary);font-weight:600}.source-excerpt{white-space:pre-wrap}.source-context{color:var(--muted);margin-bottom:16px}.document-link{display:flex;align-items:center;justify-content:center;text-decoration:none;padding:10px 14px}.source-list{overflow-wrap:anywhere}.document-text{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;color:var(--text)}
+    .search-field{width:100%;min-height:44px;border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin:8px 0 12px}.search-result{width:100%;display:block;text-align:left;background:var(--page);border:0;border-radius:var(--radius);padding:12px;margin-top:8px;color:var(--ink)}.search-result small{display:block;color:var(--muted);margin-top:4px}
+    .document-link:focus-visible{outline:0;box-shadow:var(--focus)}input::placeholder,textarea::placeholder{color:var(--muted)}textarea:focus-visible,input:focus-visible{border-color:var(--primary)}.sheet-body>p+p{margin-top:12px}
+    @media(hover:hover) and (pointer:fine){.source-button:hover,#backButton:hover{background:transparent}.feedback-button:hover{background:var(--plum-soft)}summary:hover{background:var(--page)}.primary-action:hover,.chat-send:hover{background:var(--primary-dark)}}
+    html.keyboard *,html.keyboard *::before,html.keyboard *::after,html.keyboard dialog::backdrop{transition:none!important}html.keyboard button:active{transform:none!important}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after,dialog::backdrop{transition:none!important}dialog,dialog[open],#sourceSheet,#sourceSheet[open],.topbar.hidden-header,button:active{transform:none!important}.toast,.toast.show{transform:translateX(-50%)}}
+    .ask-sheet-inner { padding: 8px 16px calc(18px + env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; }
+    .ask-sheet.chat-view .ask-sheet-inner { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+    .ask-sheet.chat-view .sheet-handle { display: none; }
+    .ask-sheet-header { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .ask-sheet.chat-view .ask-sheet-header { flex: 0 0 auto; margin: -8px -16px 0; padding: 8px 16px; border-bottom: 1px solid var(--line); }
+    .ask-sheet-title { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 18px; line-height: 24px; }
+    .ovie-assistant-mark { width: 22px; height: 22px; display: block; flex: 0 0 auto; color: var(--primary); }
+    .ask-sheet-close { width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: var(--page); color: var(--icon-default); display: grid; place-items: center; cursor: pointer; transition: background-color 160ms var(--motion-ease-out), transform 160ms var(--motion-ease-out); }
+    .ask-sheet-close:active { transform: scale(.97); }
+    .ask-sheet-conversation { min-height: 0; padding: 20px 2px 16px; display: none; flex: 1; flex-direction: column; gap: 18px; overflow-y: auto; overscroll-behavior: contain; }
+    .ask-sheet.chat-view .ask-sheet-conversation { display: flex; }
+    .ask-user-message { max-width: 84%; margin-left: auto; padding: 10px 14px; border-radius: 12px 12px 2px 12px; background: var(--primary); color: white; font-weight: 600; overflow-wrap: anywhere; }
+    .ask-response-text { margin: 0; color: var(--text); white-space: pre-line; }
+    .ask-answer-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .ask-answer-action, .ask-composer-action { width: 44px; height: 44px; flex: 0 0 auto; padding: 0; border: 0; border-radius: 12px; background: var(--page); color: var(--icon-default); display: grid; place-items: center; cursor: pointer; transition: background-color 160ms var(--motion-ease-out), color 160ms var(--motion-ease-out), transform 160ms var(--motion-ease-out); }
+    .ask-answer-action { background: var(--page); }
+    .ask-answer-action:active, .ask-composer-action:active { transform: scale(.97); }
+    .ask-answer-action[aria-pressed="true"][data-ask-answer-action="helpful"] { color: var(--success); }
+    .ask-answer-action[aria-pressed="true"][data-ask-answer-action="not-helpful"] { color: var(--danger); }
+    .ask-answer-action.is-saved { color: var(--primary); background: var(--plum-soft); }
+    .ask-sheet-form { width: 100%; margin: 8px auto 0; flex: 0 0 auto; }
+    .ask-sheet.chat-view .ask-sheet-form { margin-top: auto; }
+    .ask-sheet-composer-row { display: flex; align-items: center; gap: 8px; }
+    .ask-sheet-input-row { min-height: 56px; min-width: 0; flex: 1; padding: 5px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+    .ask-sheet-input-row:focus-within { border-color: var(--primary); box-shadow: var(--focus); }
+    .ask-sheet-input { min-width: 0; flex: 1; padding: 8px 0; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; line-height: 20px; }
+    .ask-sheet-input::placeholder { color: var(--muted); opacity: 1; }
+    .ask-composer-action { background: var(--primary); color: white; }
+    .ask-composer-action .composer-send-icon { display: none; }
+    .ask-composer-action.is-send .composer-mic-icon { display: none; }
+    .ask-composer-action.is-send .composer-send-icon { display: block; }
+    .ask-ovie-disclaimer { margin: 8px 8px 0; color: var(--muted); font-size: 12px; line-height: 16px; text-align: center; }
+    .ask-sheet.keyboard-visible .ask-ovie-disclaimer, .ask-sheet.show-android-keyboard-preview .ask-ovie-disclaimer { display: none; }
+    .android-keyboard-preview { display: none; margin: 14px -16px -18px; padding: 0 5px calc(7px + env(safe-area-inset-bottom)); background: #eef0f3; color: #202124; font-family: Roboto, system-ui, sans-serif; font-size: 13px; line-height: 16px; font-weight: 500; user-select: none; }
+    .android-suggestions { min-height: 38px; margin-inline: -5px; padding-inline: 6px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; border-bottom: 1px solid #d5d8dc; background: #f8f9fa; }
+    .android-suggestion { min-width: 0; padding-inline: 8px; overflow: hidden; color: #3c4043; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+    .android-suggestion + .android-suggestion { border-left: 1px solid #dfe1e5; }
+    .keyboard-row { display: grid; gap: 5px; margin-top: 6px; }
+    .keyboard-row.ten { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    .keyboard-row.nine { grid-template-columns: repeat(9, minmax(0, 1fr)); padding-inline: 14px; }
+    .keyboard-row.shift { grid-template-columns: 1.35fr repeat(7, minmax(0, 1fr)) 1.35fr; }
+    .keyboard-row.android-bottom { grid-template-columns: 1.25fr .7fr .7fr 3.4fr .7fr 1.25fr; }
+    .keyboard-key { min-width: 0; height: 38px; display: grid; place-items: center; border-radius: 7px; background: white; box-shadow: 0 1px 1px rgba(60, 64, 67, .28); white-space: nowrap; }
+    .keyboard-key.utility { background: #d8dce2; color: #3c4043; box-shadow: none; }
+    .keyboard-key.space { color: #5f6368; font-size: 11px; font-weight: 400; }
+    .keyboard-key.send { background: #d9c8d4; color: var(--primary-dark); }
+    .android-gesture-bar { height: 30px; position: relative; display: grid; place-items: end center; }
+    .android-gesture-bar::before { width: 108px; height: 4px; border-radius: 999px; background: #4a4d50; content: ""; }
+    .android-hide-keyboard { position: absolute; left: 2px; bottom: -7px; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: #4a4d50; display: grid; place-items: center; cursor: pointer; }
+    .ask-sheet.is-visible.show-android-keyboard-preview .android-keyboard-preview { display: block; }
+    .ask-sheet.chat-view.show-android-keyboard-preview .android-keyboard-preview { flex: 0 0 auto; margin-top: 10px; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ask-sheet-close:hover, .ask-answer-action:hover, .ask-composer-action:hover { background: var(--plum-soft); color: var(--primary); }
+      .ask-composer-action.is-send:hover { background: var(--primary-dark); color: white; }
+    }
+
+
+    #closeSource,#closeUtility,#closeFeedback,#closeAskOvie{background:transparent;color:var(--icon-default)}
+    #closeSource:hover,#closeUtility:hover,#closeFeedback:hover,#closeAskOvie:hover{background:transparent;color:var(--icon-default)}
+    .chat-dock .ask-sheet-composer-row{width:100%}.chat-dock .ask-sheet-input{padding-inline:12px;cursor:text}
+    .ask-sheet-input{width:100%;padding-inline:12px}.ask-sheet-input-row input:focus-visible{box-shadow:none;outline:0}
+    #askOvieSheet{bottom:var(--keyboard-inset,0px);max-height:calc(var(--visual-viewport-height,100dvh) - 12px);overflow:hidden}
+    #askOvieSheet .ask-sheet-inner{max-height:calc(var(--visual-viewport-height,100dvh) - 12px);overflow-y:auto}
+    #askOvieSheet.chat-view{height:calc(var(--visual-viewport-height,100dvh) - 52px);max-height:none}
+    #askOvieSheet .ask-sheet-conversation[hidden]{display:none}
+    .ask-composer-action{color:var(--icon-inverse)}.ask-sheet-title .ovie-assistant-mark{color:var(--icon-brand)}
+    .ask-answer-actions .secondary-action{padding:10px 12px}
+    @media(pointer:coarse){.android-keyboard-preview{display:none!important}}
+
+/* BOP content uses the shared Insights primitives and root DESIGN.md tokens. */
+:root{--bg-control:#e3e3e3}
+.topbar,.titlebar{background:var(--surface)}
+.card[aria-labelledby="details-title"]>.card-pad+details{border-top:0}
+.included-coverages .coverage-copy>.label{font-size:14px;line-height:20px;font-weight:600;color:var(--ink)}
+.specifications-content{margin:0 -16px}.specifications-content>.spec-highlight{padding-top:8px}.included-coverages{margin:0 -16px}.coverage-part-title{padding:16px;font-size:14px;line-height:20px;border-bottom:1px solid var(--line)}.included-coverages>details{margin:0}.included-coverages>.coverage-part-title:not(:first-child){border-top:1px solid var(--line)}
+.sourced-field{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.sourced-field>div{min-width:0;flex:1}.sourced-field>.source-button{margin-top:-6px;margin-right:-8px}
+.card-pad>details{margin:12px -16px -16px}.location-intro{padding-top:0;padding-bottom:0}.location-intro p{color:var(--muted);margin-top:4px}.location-intro .detail-intro{padding-bottom:8px}
+.building-row{padding:14px 8px 14px 16px;display:flex;align-items:flex-start;gap:10px;border-top:1px solid var(--line)}.building-row>.building-copy{flex:1;min-width:0}.building-row p{color:var(--muted);margin-top:3px}.building-icon{display:grid;place-items:center;flex:0 0 40px;height:40px;background:var(--plum-soft);border-radius:var(--radius);color:var(--icon-brand)}.building-row>.source-button{margin-top:-8px}
+.card-pad:has(>.section-title){padding-bottom:4px}.spec-highlight h3{font-size:14px;line-height:20px;margin:8px 0 6px}.spec-highlight>p,.endorsement-note>p,.footer-copy{color:var(--muted)}.impact{font-size:12px;line-height:16px;font-weight:600;color:var(--primary);background:var(--plum-soft);border-radius:var(--pill);padding:4px 8px}.spec-highlight{padding-top:0;padding-bottom:0}.spec-highlight .coverage-detail{padding-bottom:0}.endorsement-note{border-top:1px solid var(--line);margin-top:16px}
+.text-action{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:8px 0;border:0;background:transparent;color:var(--primary);font-weight:600;text-decoration:none;text-align:left;cursor:pointer}.text-action svg{color:var(--icon-brand);width:18px;height:18px}.policy-detail-body>details{margin:0 -16px}.policy-detail-body>details .policy-detail-body{padding-top:0}.policy-detail-body>.detail-intro{padding-top:10px}.policy-detail-body>details>summary{font-weight:600}.coverage-detail-head{align-items:flex-start}.coverage-detail-head .source-button{margin-top:-10px;margin-bottom:-10px}.coverage-detail-head strong{color:var(--ink)}.coverage-detail{padding-top:16px;padding-bottom:16px}.coverage-detail p{margin-top:6px}.footer-copy{padding-top:12px}.feedback{padding-block:8px}
+.phone{scroll-padding-top:80px}.source-excerpt{font-style:normal}#searchButton,#shareButton{background:var(--bg-subtle)}.icon-button{flex-shrink:0}.ask-sheet-close{background:transparent}.ask-sheet .ask-sheet-inner{scrollbar-width:none}
+/* BOP review: source controls are centered against the complete fact row. */
+.coverage-detail,.sourced-overview,.insights-note{display:flex;align-items:center;gap:8px}
+.coverage-detail-copy,.sourced-overview>p,.insights-note>div{flex:1;min-width:0}
+.coverage-detail>.source-button,.sourced-overview>.source-button{margin:0 -8px 0 0}
+.building-row{align-items:center}.building-row>.source-button{margin-top:0}
+.location-intro,.watchpoint{display:flex;align-items:center;gap:8px}.location-copy,.watchpoint-copy{flex:1;min-width:0}.location-intro>.source-button,.watchpoint>.source-button{position:static;margin:0 -8px 0 0}
+.sourced-overview{padding:10px 0 16px;color:var(--muted)}
+.spec-highlight .coverage-detail{padding:12px 0}.spec-highlight .coverage-detail:first-child{border-top:0}
+.endorsement-note{margin-top:4px;border-top:0;padding-top:8px}
+.insights-note{padding:10px 0;border-radius:var(--radius);background:var(--surface);color:var(--text-secondary)}
+.insights-note strong{display:block;font-size:14px;line-height:20px;font-weight:600}.insights-note p{margin-top:2px;color:var(--muted)}.insights-note>.source-button{margin-right:-8px}
+.source-reference{margin:4px 0 16px;color:var(--primary);font-size:14px;line-height:20px;font-weight:600;overflow-wrap:anywhere;white-space:pre-line}.source-meta{white-space:normal;overflow-wrap:anywhere}
+.source-schedule{padding:12px;background:var(--bg-subtle);border-radius:var(--radius)}.source-schedule-note{margin-bottom:16px;color:var(--ink)}.source-schedule h3{font-size:14px;line-height:20px;font-weight:600;margin:16px 0 8px}.source-limit{padding:12px 0;border-top:1px solid var(--line)}.source-limit h4{font-size:14px;line-height:20px;margin:0 0 8px;font-weight:600}.source-limit dl{margin:0}.source-limit dt{color:var(--muted);margin-top:8px}.source-limit dd{margin:2px 0 0;white-space:pre-line;color:var(--ink)}.source-limit dd:last-child{font-weight:600}
+@media(hover:hover) and (pointer:fine){#searchButton:hover,#shareButton:hover{background:var(--plum-soft)}.ask-sheet-close:hover,.sheet-close:hover{background:transparent}.text-action:hover{text-decoration:underline}}
+@media(min-width:860px){#sourceSheet{width:400px;height:100dvh;max-height:100dvh;margin:0 0 0 auto;border-radius:12px 0 0 12px;transform:translateX(100%)}#sourceSheet[open]{transform:translateX(0)}#sourceSheet .sheet-handle{display:none}#sourceSheet .sheet-body{max-height:calc(100dvh - 64px)}@starting-style{#sourceSheet[open]{transform:translateX(100%)}}}
+
+</style></head><body>
+<div class="canvas"><div class="phone" id="phone"><header class="topbar"><div class="titlebar"><button class="icon-button" id="backButton" aria-label="Back to insights"><svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7M19 12H5"/></svg></button><h1>Insights</h1><button class="icon-button" id="searchButton" aria-label="Search these insights"><svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><button class="icon-button" id="shareButton" type="button" aria-label="Share insights"><svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg></button></div></header><main>
+<section class="card card-pad" aria-labelledby="simplified-title"><div class="heading-row"><h2 class="section-title" id="simplified-title">Your policy simplified</h2><span class="status-pill" title="The documented term ended December 20, 2019. This is not live carrier status.">Expired</span></div>
+<div class="field sourced-field"><div><div class="label">Policyholder</div><div class="value">West Coast Hotel Management LLC</div></div></div>
+<div class="field sourced-field"><div><div class="label">Policy type</div><div class="value">Businessowners policy (BOP)<br>Property + general liability</div></div></div>
+<div class="field sourced-field"><div><div class="label">Policy number</div><div class="value"><span id="policyNumber">WEBP915865</span></div></div></div>
+<div class="field sourced-field"><div><div class="label">Carrier</div><div class="value">AmGUARD Insurance Company</div></div></div>
+<div class="field sourced-field"><div><div class="label">Business classification</div><div class="value">Hotels (except Casino Hotels) and Motels</div></div></div>
+<div class="field sourced-field"><div><div class="label">Policy term</div><div class="value">December 20, 2018 – December 20, 2019</div></div></div>
+<div class="field sourced-field"><div><div class="label">Annual premium</div><div class="value">$22,887.00</div></div></div>
+</section>
+<section class="card" aria-labelledby="locations-title"><div class="card-pad"><h2 class="section-title" id="locations-title">Covered locations & buildings</h2></div><div class="card-pad location-intro"><div class="location-copy"><strong>Location 001</strong><p>4961 N Cedar Ave<br>Fresno, CA 93726-1062</p><p class="detail-intro">Fresno County · 4 scheduled buildings</p></div><button class="source-button" type="button" data-source="b001" aria-label="View source: Building 001 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="building-row"><div class="building-copy"><strong>Building 001</strong><p>Hotel · 69171 · Full-service restaurant</p></div><button class="source-button" type="button" data-source="b001" aria-label="View source: Building 001 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="building-row"><div class="building-copy"><strong>Building 002</strong><p>Hotel · 69161 · Limited cooking restaurant; no deep fat frying</p></div><button class="source-button" type="button" data-source="b002" aria-label="View source: Building 002 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="building-row"><div class="building-copy"><strong>Building 003</strong><p>Hotel · 69161 · Limited cooking restaurant; no deep fat frying</p></div><button class="source-button" type="button" data-source="b003" aria-label="View source: Building 003 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="building-row"><div class="building-copy"><strong>Building 004</strong><p>Hotel · 69161 · Limited cooking restaurant; no deep fat frying</p></div><button class="source-button" type="button" data-source="b004" aria-label="View source: Building 004 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></section>
+<section class="card" aria-labelledby="details-title"><div class="card-pad"><h2 class="section-title" id="details-title">Policy details</h2></div><details ><summary><span class="summary-title">What’s included</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="included-coverages"><h3 class="coverage-part-title" id="property-title">Property</h3><div class="coverage-row"><div class="coverage-copy"><div class="label">Building limit</div><div class="value">$3,197,958</div><p class="coverage-description">Each building · Location 001, buildings 001–004. Replacement cost; 4% inflation guard.</p></div><button class="source-button" type="button" data-source="b001" aria-label="View source: Building 001 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-row"><div class="coverage-copy"><div class="label">Business personal property limit</div><div class="value">$100,000</div><p class="coverage-description">Each building · Location 001, buildings 001–004. Replacement cost.</p></div><button class="source-button" type="button" data-source="b001" aria-label="View source: Building 001 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-row"><div class="coverage-copy"><div class="label">Business income</div><div class="value">Actual loss sustained</div><p class="coverage-description">Up to 12 months for a covered suspension of operations.</p></div><button class="source-button" type="button" data-source="income" aria-label="View source: Business income &amp; extra expense"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-row"><div class="coverage-copy"><div class="label">Business income waiting period</div><div class="value">72 hours</div><p class="coverage-description">After covered direct physical loss or damage.</p></div><button class="source-button" type="button" data-source="waiting" aria-label="View source: When income &amp; extra expense begin"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-row"><div class="coverage-copy"><div class="label">Extra expense</div><div class="value">Actual loss sustained</div><p class="coverage-description">Up to 12 months. Begins immediately after covered direct physical loss or damage.</p></div><button class="source-button" type="button" data-source="extra" aria-label="View source: Extra expense coverage"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><h3 class="coverage-part-title" id="income-conditions-title">Income coverage conditions</h3><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>A covered physical loss is required</strong><p>Income coverage applies to a necessary suspension caused by covered direct physical loss or damage at the described premises. The period of restoration and other form conditions apply.</p></div><button class="source-button" type="button" data-source="incomeTerms" aria-label="View source: Covered suspension of operations"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Ordinary payroll & extended income</strong><p>Ordinary payroll is limited to 60 days. Extended business income may continue for up to 30 days after operations resume, subject to the form’s conditions.</p></div><button class="source-button" type="button" data-source="extended" aria-label="View source: Payroll &amp; extended business income"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div><h3 class="coverage-part-title" id="liability-title">Liability</h3><div class="coverage-row"><div class="coverage-copy"><div class="label">Liability basis</div><div class="value">Occurrence</div><p class="coverage-description">Bodily injury or property damage must occur during the policy period, within the coverage territory.</p></div><button class="source-button" type="button" data-source="trigger" aria-label="View source: Occurrence-based liability"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-row"><div class="coverage-copy"><div class="label">Each occurrence</div><div class="value">$1,000,000</div><p class="coverage-description">Liability and medical expenses.</p></div><button class="source-button" type="button" data-source="liability" aria-label="View source: Liability limits and deductibles"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-row"><div class="coverage-copy"><div class="label">General aggregate</div><div class="value">$2,000,000</div><p class="coverage-description">Per annual period, other than products/completed operations.</p></div><button class="source-button" type="button" data-source="liability" aria-label="View source: Liability limits and deductibles"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-row"><div class="coverage-copy"><div class="label">Products/completed operations aggregate</div><div class="value">$2,000,000</div><p class="coverage-description">Separate annual aggregate.</p></div><button class="source-button" type="button" data-source="liability" aria-label="View source: Liability limits and deductibles"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-row"><div class="coverage-copy"><div class="label">Medical payments</div><div class="value">$5,000</div><p class="coverage-description">Each person.</p></div><button class="source-button" type="button" data-source="liability" aria-label="View source: Liability limits and deductibles"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><details ><summary><span class="summary-title">Other liability features</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Personal & advertising injury</strong><p>Included, subject to the liability limits and exclusions.</p></div><button class="source-button" type="button" data-source="liability" aria-label="View source: Liability limits and deductibles"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Defense costs</strong><p>The duty to defend ends when the applicable limit is used up. Specified supplementary payments do not reduce the liability limits.</p></div><button class="source-button" type="button" data-source="defense" aria-label="View source: Defense and supplementary payments"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div></details></div></div></details><details ><summary><span class="summary-title">Policy specifications</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="specifications-content"><div class="card-pad spec-highlight"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Hired & non-owned auto liability</strong><p>Adds liability coverage for business use of hired vehicles and vehicles the business does not own, subject to the endorsement.</p></div><button class="source-button" type="button" data-source="hnoa" aria-label="View source: Hired &amp; non-owned auto liability"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>How it applies</strong><p>Excess over primary insurance covering the hired or non-owned auto; included in the liability limit.</p></div><button class="source-button" type="button" data-source="hnoaExcess" aria-label="View source: Auto liability is excess"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div><div class="card-pad endorsement-note"><div class="insights-note"><div><strong>Endorsement summary</strong><p>9 key changes highlighted from 15 coverage, premium and state endorsements. The schedule lists 23 forms and notices in total.</p></div><button class="source-button" type="button" data-source="schedule" aria-label="View source: Schedule of forms &amp; endorsements"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div><details ><summary><span class="summary-title">Other key endorsements</span><span class="count-pill">8</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Adds · Hotel/motel extensions</strong><p>Adds lock replacement, website business income, credit card slips and guest-property liability, with separate limits.</p></div><button class="source-button" type="button" data-source="hotel" aria-label="View source: Hotel/motel extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Adds · Water backup & sump overflow</strong><p>Separate $5,000 annual property and $5,000 income/extra-expense aggregates for each scheduled building.</p></div><button class="source-button" type="button" data-source="water" aria-label="View source: Water backup annual limits"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Requires · Working sprinklers</strong><p>P-1 automatic sprinklers are required at buildings 001–004. Maintenance and impairment-notification duties affect fire coverage.</p></div><button class="source-button" type="button" data-source="safeguards" aria-label="View source: Required fire safeguards"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Changes · Property deductible</strong><p>For one occurrence affecting multiple buildings at the same location, only the largest applicable deductible applies; earthquake, windstorm and hail are exceptions.</p></div><button class="source-button" type="button" data-source="deductible" aria-label="View source: Single largest property deductible"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Limits · Designated premises</strong><p>Liability is restricted by the designated-premises, project or operations endorsement.</p></div><button class="source-button" type="button" data-source="premises" aria-label="View source: Designated premises limitation"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Excludes · Bed bugs & kissing bugs</strong><p>Excludes liability arising from exposure to or bites by these insects.</p></div><button class="source-button" type="button" data-source="bedbug" aria-label="View source: Bed bug &amp; kissing bug exclusion"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Excludes · Employment practices</strong><p>Excludes specified employment-related acts, including termination, discrimination and harassment.</p></div><button class="source-button" type="button" data-source="employment" aria-label="View source: Employment-related practices excluded"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Excludes · Terrorism</strong><p>Certified-acts exclusions apply, with the policy’s fire exception; related punitive damages are excluded.</p></div><button class="source-button" type="button" data-source="terrorism" aria-label="View source: Certified terrorism exclusion"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div></details></div></div></details><details ><summary><span class="summary-title">Sub-limits</span><span class="count-pill">4</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="sourced-overview"><p>Sublimits apply to records, money, outdoor property, hotel extensions and other losses. Open a group for amounts and conditions.</p><button class="source-button" type="button" data-source="sublimitOverview" aria-label="View source: Sublimit schedules"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><details ><summary><span class="summary-title">Records, money & securities</span><span class="count-pill">5</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Accounts receivable · $25,000</strong><p>On premises and off premises.</p></div><button class="source-button" type="button" data-source="receivable" aria-label="View source: Accounts receivable"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Valuable papers & records · $25,000</strong><p>On premises and off premises.</p></div><button class="source-button" type="button" data-source="sublimits" aria-label="View source: Scheduled extension limits"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Money & securities · $5,000</strong><p>On premises and off premises.</p></div><button class="source-button" type="button" data-source="money" aria-label="View source: Money &amp; securities"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Employee dishonesty · $10,000</strong><p>Scheduled policy-wide limit.</p></div><button class="source-button" type="button" data-source="declExtensions" aria-label="View source: Policy-wide extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Forgery or alteration · $10,000</strong><p>Includes covered legal expenses within the applicable limit.</p></div><button class="source-button" type="button" data-source="declExtensions" aria-label="View source: Policy-wide extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div></details><details ><summary><span class="summary-title">Outdoor & off-premises property</span><span class="count-pill">6</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Outdoor signs · $5,000</strong><p>Scheduled optional coverage.</p></div><button class="source-button" type="button" data-source="sublimits" aria-label="View source: Scheduled extension limits"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Outdoor property · $10,000</strong><p>No more than $1,000 for any one tree, shrub or plant.</p></div><button class="source-button" type="button" data-source="sublimits" aria-label="View source: Scheduled extension limits"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Awnings · $2,500</strong><p>Scheduled for each building.</p></div><button class="source-button" type="button" data-source="b001" aria-label="View source: Building 001 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Personal effects · $5,000</strong><p>Subject to extension conditions.</p></div><button class="source-button" type="button" data-source="sublimits" aria-label="View source: Scheduled extension limits"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Personal property off premises · $10,000</strong><p>Scheduled policy-wide limit.</p></div><button class="source-button" type="button" data-source="declExtensions" aria-label="View source: Policy-wide extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Appurtenant structures · $50,000</strong><p>Combined building and business personal property.</p></div><button class="source-button" type="button" data-source="declExtensions" aria-label="View source: Policy-wide extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div></details><details ><summary><span class="summary-title">Hotel-specific extensions</span><span class="count-pill">5</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Guest property · $1,000 per guest</strong><p>$25,000 per occurrence, regardless of the number of guests. Safe deposit box property is excluded.</p></div><button class="source-button" type="button" data-source="guest" aria-label="View source: Guest-property liability"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Lock replacement · $2,500</strong><p>Per policy period; no deductible.</p></div><button class="source-button" type="button" data-source="hotel" aria-label="View source: Hotel/motel extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Website business income</strong><p>Lesser of the covered loss during 7 days after the first 12 hours, or $50,000 per occurrence; $100,000 per policy period.</p></div><button class="source-button" type="button" data-source="hotel" aria-label="View source: Hotel/motel extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Credit card slips · $10,000</strong><p>Per policy period.</p></div><button class="source-button" type="button" data-source="slips" aria-label="View source: Credit card slips"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Reward payment · Up to $5,000</strong><p>Eligibility and loss-value conditions apply.</p></div><button class="source-button" type="button" data-source="hotel" aria-label="View source: Hotel/motel extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div></details><details ><summary><span class="summary-title">Water, cleanup & restoration</span><span class="count-pill">6</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Water backup · $5,000 + $5,000</strong><p>Per building, per policy year: separate property and business income/extra-expense aggregates. Not flood insurance.</p></div><button class="source-button" type="button" data-source="water" aria-label="View source: Water backup annual limits"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Debris removal · 25% / $10,000</strong><p>Generally 25% of the deductible plus covered loss payment; an additional $10,000 is available in the form’s specified circumstances.</p></div><button class="source-button" type="button" data-source="debris" aria-label="View source: Debris removal"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Increased cost of construction · $10,000</strong><p>Per building, subject to ordinance-or-law extension conditions.</p></div><button class="source-button" type="button" data-source="b002" aria-label="View source: Building 002 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Fire department service charge · $25,000</strong><p>Scheduled policy-wide limit.</p></div><button class="source-button" type="button" data-source="sublimits" aria-label="View source: Scheduled extension limits"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Fungi, rot & bacteria · $15,000</strong><p>Property limit; related business income/extra expense is limited to 30 days.</p></div><button class="source-button" type="button" data-source="declExtensions" aria-label="View source: Policy-wide extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Electronic data & computer operations</strong><p>Separate $10,000 scheduled limits for electronic data and interruption of computer operations.</p></div><button class="source-button" type="button" data-source="declExtensions" aria-label="View source: Policy-wide extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div></details><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Other scheduled sublimits</strong><p>Limits also apply to newly acquired property, theft of specified valuables, pollutant cleanup and fire-system recharge expenses.</p></div><button class="source-button" type="button" data-source="declExtensions" aria-label="View source: Policy-wide extensions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div></details><details ><summary><span class="summary-title">What’s not included</span><span class="count-pill">7</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Owned-auto liability</strong><p>Excluded by the base form. The hired/non-owned auto endorsement provides the limited business-use extension described above.</p></div><button class="source-button" type="button" data-source="autoEx" aria-label="View source: Auto liability exclusion"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Workers’ compensation & employers’ liability</strong><p>Excluded by this BOP.</p></div><button class="source-button" type="button" data-source="workers" aria-label="View source: Workers’ compensation &amp; employers’ liability"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Professional liability</strong><p>Professional services are excluded.</p></div><button class="source-button" type="button" data-source="professional" aria-label="View source: Professional services exclusion"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Flood & earth movement</strong><p>Excluded, subject to the form’s stated exceptions. Water backup does not provide flood insurance.</p></div><button class="source-button" type="button" data-source="propertyEx" aria-label="View source: Property exclusions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Employment practices & bed bugs</strong><p>Excluded by specific endorsements.</p></div><button class="source-button" type="button" data-source="bedbug" aria-label="View source: Bed bug &amp; kissing bug exclusion"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Guests’ property in safe deposit boxes</strong><p>Not provided under the hotel/motel extension.</p></div><button class="source-button" type="button" data-source="guestEx" aria-label="View source: Guest-property exclusions"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Certified acts of terrorism</strong><p>Excluded, subject to the fire exception and the attached terrorism forms.</p></div><button class="source-button" type="button" data-source="terrorism" aria-label="View source: Certified terrorism exclusion"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div id="companionNotice" class="evidence-note" hidden><strong>Other business policies</strong><p>Only one commercial policy is in this wallet. If you have separate auto, workers’ compensation or professional liability policies, upload them to see their insights.</p><a class="text-action" href="ovie_upload.html">Upload another policy</a></div></div></details><details ><summary><span class="summary-title">Coverage limitations</span><span class="count-pill">8</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Property deductible · $10,000</strong><p>Per occurrence. For multiple buildings at this location, the single largest applicable deductible rule applies, except for earthquake, windstorm or hail.</p></div><button class="source-button" type="button" data-source="deductible" aria-label="View source: Single largest property deductible"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Optional coverages / glass · $500</strong><p>As scheduled. The optional coverage deductible applies to the coverages identified in the form.</p></div><button class="source-button" type="button" data-source="b001" aria-label="View source: Building 001 at location 001"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Liability deductibles · None</strong><p>The declarations state no bodily injury or property damage liability deductible.</p></div><button class="source-button" type="button" data-source="liability" aria-label="View source: Liability limits and deductibles"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Business income & extra expense · No monetary deductible</strong><p>Business income still has a 72-hour waiting period; extra expense begins immediately.</p></div><button class="source-button" type="button" data-source="noDeductible" aria-label="View source: Coverage-specific deductible rules"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Protective safeguards · All four buildings</strong><p>Maintain working P-1 sprinkler systems and notify the insurer of known impairment. Certain temporary shutdowns have a 48-hour restoration exception. Failure to meet the conditions can exclude fire loss.</p></div><button class="source-button" type="button" data-source="safeguards" aria-label="View source: Required fire safeguards"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Sump and drain maintenance</strong><p>Water-backup coverage does not apply to losses resulting from failure to maintain pumps or keep drains clear.</p></div><button class="source-button" type="button" data-source="waterTerms" aria-label="View source: Water backup conditions &amp; flood exclusion"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Vacancy · More than 60 consecutive days</strong><p>Specified losses become excluded and other covered loss payments are reduced by 15%. The form’s vacancy definition applies.</p></div><button class="source-button" type="button" data-source="vacancy" aria-label="View source: Vacancy definition and consequences"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Replacement-cost condition · 80%</strong><p>The limit must be at least 80% of full replacement cost for the form’s full replacement-cost settlement basis. Below that, the form applies a cash-value or proportional calculation, subject to limits.</p></div><button class="source-button" type="button" data-source="replacement" aria-label="View source: Replacement-cost condition"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div></details><details ><summary><span class="summary-title">Coverage watch points</span><span class="count-pill">4</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="watchpoint"><div class="watchpoint-copy"><div class="watchpoint-head"><span class="severity moderate">Moderate</span></div><strong>Income starts after 72 hours</strong><p>A covered interruption can leave the first three days of lost business income outside this coverage. Extra expense begins immediately.</p></div><button class="source-button" type="button" data-source="waiting" aria-label="View source: When income &amp; extra expense begin"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="watchpoint"><div class="watchpoint-copy"><div class="watchpoint-head"><span class="severity moderate">Moderate</span></div><strong>Business changes at renewal</strong><p>Growth or a change in operations may affect BOP eligibility. Ask your agent whether the size and classification of your business still qualify. Current renewal eligibility is not established by this policy.</p><button type="button" class="text-action" data-ask="Help me ask my agent about business growth and BOP eligibility.">Prepare a question for my agent<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></button></div></div><div class="watchpoint"><div class="watchpoint-copy"><div class="watchpoint-head"><span class="severity moderate">Moderate</span></div><strong>Claims reduce the liability aggregate</strong><p>Paid claims reduce the amount left in the applicable annual aggregate. These documents do not show the remaining balance.</p></div><button class="source-button" type="button" data-source="liability" aria-label="View source: Liability limits and deductibles"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="watchpoint"><div class="watchpoint-copy"><div class="watchpoint-head"><span class="severity low">Low</span></div><strong>Seasonal BPP increase is conditional</strong><p>The 25% seasonal increase requires the BPP limit to be at least 100% of average monthly values for the preceding 12 months, or the shorter time in business.</p></div><button class="source-button" type="button" data-source="seasonal" aria-label="View source: Seasonal BPP increase condition"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div></div></details></section>
+<section class="card" aria-labelledby="about-title"><div class="card-pad"><h2 class="section-title" id="about-title">About these insights</h2></div><div class="card-pad footer-copy"><p>Insights are based on the documents provided; incomplete or missing documents may result in incomplete or inaccurate insights. OVIE is not intended to serve as evidence of insurance for third parties, nor does OVIE provide advice or guidance on the adequacy of coverage. Users should consult their agent or insurance carrier for coverage-related questions or determinations.</p></div><details ><summary><span class="summary-title">Document sources</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><div class="coverage-detail"><div class="coverage-detail-copy"><strong>AmGUARD · Businessowners policy</strong><p>Policy WEBP915865 · 101-page supplied policy.</p></div><button class="source-button" type="button" data-source="identity" aria-label="View source: Policy declarations"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Declarations & forms schedule</strong><p>IIT DS 01 05, PDF pp. 5–13; forms schedule, PDF p. 14.</p></div><button class="source-button" type="button" data-source="schedule" aria-label="View source: Schedule of forms &amp; endorsements"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Endorsements & amendments</strong><p>Policy customizations and state changes, pp. 18–29; coverage, exclusion and premium endorsements, pp. 30–49. Administrative notices remain in the original document.</p></div><button class="source-button" type="button" data-source="schedule" aria-label="View source: Schedule of forms &amp; endorsements"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><div class="coverage-detail"><div class="coverage-detail-copy"><strong>Businessowners coverage form</strong><p>BP 00 03 01 10, form pp. 1–48 / PDF pp. 54–101.</p></div><button class="source-button" type="button" data-source="incomeTerms" aria-label="View source: Covered suspension of operations"><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 16v-4" />
+  <path d="M12 8h.01" />
+</svg>
+</button></div><a class="primary-action document-link" href="assets/policies/bop-amguard-webp915865.pdf" target="_blank" rel="noopener">View full policy document</a></div></details><details ><summary><span class="summary-title">Not available in the pages analyzed</span><!-- @license lucide-static v0.468.0 - ISC -->
+<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="m6 9 6 6 6-6" />
+</svg>
+</summary><div class="policy-detail-body"><ul class="source-list"><li>Current renewal or live carrier status after December 20, 2019.</li><li>Claims paid and the remaining liability aggregates.</li><li>Current business size and renewal eligibility.</li><li>Evidence of sprinkler maintenance and current safeguard compliance.</li><li>Separate property and liability premium breakdown.</li><li>Construction type, year built and square footage for each building.</li><li>Separate companion policies are not assessed in these insights.</li></ul></div></details></section>
+<div class="feedback" role="group" aria-labelledby="feedback-question">
+        <span class="feedback-question" id="feedback-question">Were these insights helpful?</span>
+        <button class="feedback-button" type="button" data-feedback="up" aria-label="Yes, these insights were helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg></button>
+        <button class="feedback-button" type="button" data-feedback="down" aria-label="No, these insights were not helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"></path><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path></svg></button>
+      </div>
+
+
+</main><form class="chat-dock" id="chatForm" novalidate>
+        <label for="chatInput" class="sr-only">Ask Ovie about this policy</label>
+        <div class="ask-sheet-composer-row">
+          <div class="ask-sheet-input-row">
+            <input class="ask-sheet-input" id="chatInput" type="text" placeholder="Ask anything about this policy..." autocomplete="off" readonly aria-haspopup="dialog" aria-controls="askOvieSheet">
+          </div>
+          <button class="ask-composer-action" id="chatAskButton" type="submit" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet"><svg class="composer-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
+        </div>
+      </form></div></div>
+<dialog class="ask-sheet" id="askOvieSheet" aria-labelledby="askOvieTitle">
+    <div class="ask-sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="ask-sheet-title" id="askOvieTitle"><svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg><span>Ask Ovie</span></h2>
+        <button class="ask-sheet-close" id="closeAskOvie" type="button" aria-label="Close Ask Ovie"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <div class="ask-sheet-conversation" id="askOvieConversation" aria-live="polite" hidden>
+        <div class="ask-user-message" id="askOvieQuestion"></div>
+        <div><p class="ask-response-text" id="askOvieAnswer"></p>
+          <div class="ask-answer-actions" id="askSourceActions"></div>
+        </div>
+      </div>
+      <form class="ask-sheet-form" id="askOvieForm" novalidate>
+        <label class="sr-only" for="askOvieInput">Ask anything about this policy</label>
+        <div class="ask-sheet-composer-row">
+          <div class="ask-sheet-input-row">
+            <input class="ask-sheet-input" id="askOvieInput" name="question" type="text" inputmode="text" enterkeyhint="send" autocomplete="off" placeholder="Ask anything about this policy...">
+          </div>
+          <button class="ask-composer-action" id="askComposerAction" type="button" aria-label="Use voice input" title="Use voice input"><svg class="composer-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg><svg class="composer-send-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+        </div>
+      </form>
+      <p class="ask-ovie-disclaimer">Ovie provides policy summaries only and does not offer policy recommendations or insurance advice.</p>
+      <div class="android-keyboard-preview">
+        <div class="android-suggestions" aria-hidden="true"><span class="android-suggestion">your</span><span class="android-suggestion">coverage</span><span class="android-suggestion">policy</span></div>
+        <div class="keyboard-row ten" aria-hidden="true"><span class="keyboard-key">Q</span><span class="keyboard-key">W</span><span class="keyboard-key">E</span><span class="keyboard-key">R</span><span class="keyboard-key">T</span><span class="keyboard-key">Y</span><span class="keyboard-key">U</span><span class="keyboard-key">I</span><span class="keyboard-key">O</span><span class="keyboard-key">P</span></div>
+        <div class="keyboard-row nine" aria-hidden="true"><span class="keyboard-key">A</span><span class="keyboard-key">S</span><span class="keyboard-key">D</span><span class="keyboard-key">F</span><span class="keyboard-key">G</span><span class="keyboard-key">H</span><span class="keyboard-key">J</span><span class="keyboard-key">K</span><span class="keyboard-key">L</span></div>
+        <div class="keyboard-row shift" aria-hidden="true"><span class="keyboard-key utility">⇧</span><span class="keyboard-key">Z</span><span class="keyboard-key">X</span><span class="keyboard-key">C</span><span class="keyboard-key">V</span><span class="keyboard-key">B</span><span class="keyboard-key">N</span><span class="keyboard-key">M</span><span class="keyboard-key utility">⌫</span></div>
+        <div class="keyboard-row android-bottom" aria-hidden="true"><span class="keyboard-key utility">?123</span><span class="keyboard-key utility">,</span><span class="keyboard-key utility">●</span><span class="keyboard-key space">English (US)</span><span class="keyboard-key utility">.</span><span class="keyboard-key utility send">→</span></div>
+        <div class="android-gesture-bar"><button class="android-hide-keyboard" id="hidePreviewKeyboard" type="button" aria-label="Hide keyboard" title="Hide keyboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div>
+      </div>
+    </div>
+  </dialog>
+<dialog id="sourceSheet" aria-labelledby="sourceTitle"><div class="sheet-handle" aria-hidden="true"></div><div class="sheet-head"><h2 id="sourceTitle">Source</h2><button class="icon-button" id="closeSource" aria-label="Close source"><svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 6-12 12M6 6l12 12"/></svg></button></div><div class="sheet-body" id="sourceBody"></div></dialog>
+<dialog id="feedbackSheet" aria-labelledby="feedbackTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head"><h2 id="feedbackTitle">Tell us more</h2><button class="icon-button sheet-close" id="closeFeedback" type="button" aria-label="Close feedback form"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    <div class="sheet-body">
+      <form class="feedback-form" id="feedbackForm" novalidate>
+        <fieldset><legend class="sr-only">What could be improved?</legend>
+          <label class="feedback-option"><span>Insights are unclear or confusing</span><input type="radio" name="reason" value="unclear"></label>
+          <label class="feedback-option"><span>Information is incorrect</span><input type="radio" name="reason" value="incorrect"></label>
+          <label class="feedback-option"><span>Missing or incomplete details</span><input type="radio" name="reason" value="missing"></label>
+          <label class="feedback-option"><span>Other (tell us more)</span><input type="radio" name="reason" value="other"></label>
+        </fieldset>
+        <div class="feedback-followup" id="feedbackFollowup" hidden><label for="feedbackConcern">Enter your concern here</label><textarea id="feedbackConcern" name="concern" placeholder="Type here"></textarea></div>
+        <p class="error" id="feedbackError" role="alert" aria-live="polite"></p>
+        <button class="primary-action" type="submit">Submit</button><button class="secondary-action" id="cancelFeedback" type="button">Cancel</button>
+      </form>
+    </div>
+  </dialog>
+<dialog id="utilitySheet" aria-labelledby="utilityTitle"><div class="sheet-handle" aria-hidden="true"></div><div class="sheet-head"><h2 id="utilityTitle">Search insights</h2><button class="icon-button" id="closeUtility" aria-label="Close panel"><svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 6-12 12M6 6l12 12"/></svg></button></div><div class="sheet-body" id="utilityBody"></div></dialog><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>const EVIDENCE={"identity": {"title": "Policy declarations", "page": 5, "ref": "IIT DS 01 05 · p. 1 of 9 · PDF page 5", "excerpt": "[1] Named Insured and Mailing Address West Coast Hotel Management LLC 4961 N Cedar Ave Fresno, CA 93726 [2] Agency FORTUNA GENERAL INSURANCE AGENCY, INC. 3325 Cochran Street Suite 106 Simi Valley, CA 93063 [3] Policy Period From December 20, 2018 to December 20, 2019, 12:01 AM, standard time at the insured’s mailing address. [4] Description of Business Hotels (except Casino Hotels) and Motels [5] Coverage This policy consists of the Coverage Forms listed on the Schedule of Forms and Endorsements (IIT SF 01 05). [6] Premium The premium shown below may be subject to adjustment. Terrorism - Certified Acts Excluded TOTAL POLICY PREMIUM $22,887.00 TOTAL PAYABLE $22,887.00 [7] Payment of Premium In return for your payment of premium, and subject to all terms of this policy, we agree with you to provide insurance as stated in this policy."}, "b001": {"title": "Building 001 at location 001", "page": 6, "ref": "IIT DS 01 05 · p. 2 of 9 · PDF page 6", "excerpt": "LOCATION: 001 BUILDING: 001 4961 N Cedar Ave Fresno, CA 93726-1062 Fresno County Property Deductible: $10,000 Wind/Hail Deductible: N/A Optional Coverages/Glass Deductible: $500 Classification: 69171 - Hotels - Standard - With Full Service Restaurant COVERAGES: Awnings Coverage Limit $2,500 Building Coverage Limit $3,197,958 Valuation Replacement Cost Inflation Guard % 4 Business Personal Property Coverage Limit $100,000 Seasonal Increase Percent 25 Valuation Replacement Cost Liability IMPORTANT NOTE THIS COVERAGE IS RATED BASED ON AN ESTIMATE AND IS SUBJECT TO AUDIT Gross Sales at this Location $450,000 Limit Included Accounts Receivable On-Premises Limit $25,000 Off-Premises Limit 25,000 …"}, "b002": {"title": "Building 002 at location 001", "page": 7, "ref": "IIT DS 01 05 · p. 3 of 9 · PDF page 7", "excerpt": "LOCATION: 001 BUILDING: 002 4961 N Cedar Ave Fresno, CA 93726-1062 Fresno County Property Deductible: $10,000 Wind/Hail Deductible: N/A Optional Coverages/Glass Deductible: $500 Classification: 69161 - Hotels - Standard - With Ltd. Cooking Restaurant (No Deep Fat Frying) COVERAGES: Awnings Coverage Limit $2,500 Building Coverage Limit $3,197,958 Valuation Replacement Cost Inflation Guard % 4 Business Personal Property Coverage Limit $100,000 Seasonal Increase Percent 25 Valuation Replacement Cost Liability IMPORTANT NOTE THIS COVERAGE IS RATED BASED ON AN ESTIMATE AND IS SUBJECT TO AUDIT Gross Sales at this Location $450,000 Limit Included Accounts Receivable On-Premises Limit $25,000 …"}, "b003": {"title": "Building 003 at location 001", "page": 8, "ref": "IIT DS 01 05 · p. 4 of 9 · PDF page 8", "excerpt": "LOCATION: 001 BUILDING: 003 4961 N Cedar Ave Fresno, CA 93726-1062 Fresno County Property Deductible: $10,000 Wind/Hail Deductible: N/A Optional Coverages/Glass Deductible: $500 Classification: 69161 - Hotels - Standard - With Ltd. Cooking Restaurant (No Deep Fat Frying) COVERAGES: Awnings Coverage Limit $2,500 Building Coverage Limit $3,197,958 Valuation Replacement Cost Inflation Guard % 4 Business Personal Property Coverage Limit $100,000 Seasonal Increase Percent 25 Valuation Replacement Cost Liability IMPORTANT NOTE THIS COVERAGE IS RATED BASED ON AN ESTIMATE AND IS SUBJECT TO AUDIT Gross Sales at this Location $450,000 Limit Included Accounts Receivable On-Premises Limit $25,000 …"}, "b004": {"title": "Building 004 at location 001", "page": 9, "ref": "IIT DS 01 05 · p. 5 of 9 · PDF page 9", "excerpt": "LOCATION: 001 BUILDING: 004 4961 N Cedar Ave Fresno, CA 93726-1062 Fresno County Property Deductible: $10,000 Wind/Hail Deductible: N/A Optional Coverages/Glass Deductible: $500 Classification: 69161 - Hotels - Standard - With Ltd. Cooking Restaurant (No Deep Fat Frying) COVERAGES: Awnings Coverage Limit $2,500 Building Coverage Limit $3,197,958 Valuation Replacement Cost Inflation Guard % 4 Business Personal Property Coverage Limit $100,000 Seasonal Increase Percent 25 Valuation Replacement Cost Liability IMPORTANT NOTE THIS COVERAGE IS RATED BASED ON AN ESTIMATE AND IS SUBJECT TO AUDIT Gross Sales at this Location $450,000 Limit Included Accounts Receivable On-Premises Limit $25,000 …"}, "liability": {"title": "Liability limits and deductibles", "page": 11, "ref": "IIT DS 01 05 · p. 7 of 9 · PDF page 11", "excerpt": "Each paid claim for the following coverages reduces the amount of insurance we provide during the applicable annual period. Please refer to Section II – Liability in the Businessowners Coverage form and any at tached endorsements. Coverage Limits of Insurance Liability and Medical Expenses - Each Occurrence $1,000,000 General Aggregate (Other than Products and Completed Operations) $2,000,000 Personal & Advertising Injury Included Products & Completed Operations Aggregate $2,000,000 Medical Expenses (Each Person) $5,000 Liability Property Damage Deductible None Liability Deductible - Bodily Injury None"}, "income": {"title": "Business income & extra expense", "page": 12, "ref": "IIT DS 01 05 · p. 8 of 9 · PDF page 12", "excerpt": "Business Income & Extra Expense Limit Actual Loss Sustained up to 12 Months Damage To Premises …"}, "waiting": {"title": "When income & extra expense begin", "page": 82, "ref": "BP 00 03 01 10 · p. 29 of 48 · PDF page 82", "excerpt": "9. \"Period of restoration\": a. Means the period of time that: (1) Begins: (a) 72 hours after the time of direct physical loss or damage for Business Income Coverage; or (b) Immediately after the time of direct physical loss or damage for Extra Expense Coverage; caused by or resulting from any Covered Cause of Loss at the described premises; and …"}, "incomeTerms": {"title": "Covered suspension of operations", "page": 58, "ref": "BP 00 03 01 10 · p. 5 of 48 · PDF page 58", "excerpt": "f. Business Income (1) Business Income (a) We will pay for the actual loss of Business Income you sustain due to the necessary sus pension of your \"operations\" during the \"period of restoration\". The suspension must be caused by direct physical loss of or damage to property at the described premises. The loss or damage must be caused by or result from a Covered Cause of Loss. With respect to loss of or damage to personal property in the open or personal property in a vehicle, the described premises include the area within 100 feet of the site at which the described premises are located."}, "extended": {"title": "Payroll & extended business income", "page": 59, "ref": "BP 00 03 01 10 · p. 6 of 48 · PDF page 59", "excerpt": "(b) We will only pay for loss of Business Income that you sustain during the \"period of restoration\" and that occurs within 12 consecutive months after the date of direct physical loss or damage. We will only pay for ordinary payroll expenses for 60 days following the date of direct physical loss or damage, unless a greater number of days is shown in the Declarations.\n[…]\n(2) Extended Business Income (a) If the necessary suspension of your \"operations\" produces a Business Income loss payable under this policy, we will pay for the actual loss of Business Income you incur during the period that: (i) Begins on the date property except finished stock is actually repaired, rebuilt or replaced and \"operations\" are resumed; and (ii) Ends on the earlier of: i. The date you could restore your \"operations\", with reasonable speed, to the level which would generate the Business Income amount that would have existed if no direct physical loss or damage had occurred; or ii. 30 consecutive days after the date determined in Paragraph (a)(i) above, unless a greater number of consecutive days is shown in the Declarations."}, "extra": {"title": "Extra expense coverage", "page": 82, "ref": "IIT DS 01 05 · p. 8 of 9; BP 00 03 01 10 · p. 29 of 48 · PDF pp. 12, 82", "excerpt": "Business Income & Extra Expense Limit Actual Loss Sustained up to 12 Months\n[…]\n9. \"Period of restoration\": a. Means the period of time that: (1) Begins: (a) 72 hours after the time of direct physical loss or damage for Business Income Coverage; or (b) Immediately after the time of direct physical loss or damage for Extra Expense Coverage; caused by or resulting from any Covered Cause of Loss at the described premises; and"}, "trigger": {"title": "Occurrence-based liability", "page": 83, "ref": "BP 00 03 01 10 · p. 30 of 48 · PDF page 83", "excerpt": "b. This insurance applies: (1) To \"bodily injury\" and \"property damage\" only if: (a) The \"bodily injury\" or \"property damage\" is caused by an \"occurrence\" that takes place in the \"coverage territory\"; (b) The \"bodily injury\" or \"property damage\" occurs during the policy period; and\n[…]\n(c) Prior to the policy period, no insured listed under Paragraph C.1. Who Is An Insured and no \"employee\" authorized by you to give or receive notice of an \"occurrence\" or claim, knew that the \"bodily injury\" or \"property damage\" had occurred, in whole or in part. If such a listed insured or authorized \"employee\" knew, prior to the policy period, that the \"bodily injury\" or \"property damage\" occurred, then any continuation, change or resumption of such \"bodily injury\" or \"property damage\" during or after the policy period will be deemed to have been known before the policy period."}, "defense": {"title": "Defense and supplementary payments", "page": 84, "ref": "BP 00 03 01 10 · pp. 30–31 of 48 · PDF pp. 83–84; BP 99 CA 09 16 modifies supplementary payment amounts", "excerpt": "(2) Our right and duty to defend end when we have used up the applicable Limit of Insurance in the payment of judgments or settlements or medical expenses.\n[…]\nf. Coverage Extension – Supplementary Payments (1) We will pay, with respect to any claim we investigate or settle, or any \"suit\" against an insured we defend: (a) All expenses we incur. (b) Up to $250 for cost of bail bonds required because of accidents or traffic law violations arising out of the use of any vehicle to which Business Liability Coverage for \"bodily injury\" applies. We do not have to furnish these bonds. (c) The cost of bonds to release attachments, but only for bond amounts within our Limit of Insurance. We do not have to furnish these bonds. (d) All reasonable expenses incurred by the insured at our request to assist us in the investigation or defense of the claim or \"suit\", including actual loss of earnings up to $250 a day because of time off from work. (e) All court costs taxed against the insured in the \"suit\". However, these payments do not include attorneys' fees or attorneys' expenses taxed against the insured. (f) Prejudgment interest awarded against the insured on that part of the judgment we pay. If we make an offer to pay the Limit of Insurance, we will not pay any prejudgment interest based on that period of time after the offer. (g) All interest on the full amount of any judgment that accrues after entry of the judgment and before we have paid, offered to pay, or deposited in court the part of the judgment that is within our Limit of Insurance. These payments will not reduce the limit of liability."}, "hnoa": {"title": "Hired & non-owned auto liability", "page": 39, "ref": "BP 06 86 05 17 · p. 1 of 2 · PDF page 39", "excerpt": "Hired Auto Liability: $58.00\nNon-owned Auto Liability: $102.00\n[…]\nA. Insurance is provided only for those coverages for which a specific premium charge is shown in the Declarations or in the Schedule. 1. Hired Auto Liability The insurance provided under Paragraph A.1. Business Liability in Section II – Liability applies to \"bodily injury\" or \"property damage\" arising out of the maintenance or use of a \"hired auto\" by you or your \"employees\" in the course of your business. 2. Non-owned Auto Liability The insurance provided under Paragraph A.1. Business Liability in Section II – Liability applies to \"bodily injury\" or \"property damage\" arising out of the use of any \"non -owned auto\" in your business by any person. B. For insurance provided by this endorsement only: 1. The exclusions under Paragraph B.1. Applicable To Business Liability Coverage in Section II – Liability, other than Exclusions a., b., d., f. and i. and the Nuclear Energy Liability Exclusion, are deleted and replaced by the following: a. \"Bodily injury\" to: (1) An \"employee\" of the …"}, "hnoaExcess": {"title": "Auto liability is excess", "page": 40, "ref": "BP 06 86 05 17 · p. 2 of 2; IIT DS 01 05 · p. 8 of 9 · PDF pp. 40, 12", "excerpt": "C. For the purposes of this endorsement only, Paragraph H. Other Insurance in Section III – Common Policy Conditions is replac ed by the following: This insurance is excess over any primary insurance covering the \"hired auto\" or \"non -owned auto\". D. The following additional definitions apply: 1. \"Auto business\" means the business or occupation of selling, repairing, servicing, storing or parking \"autos\". …\n[…]\nHired Automobile Limit Included in Liability Limit"}, "hotel": {"title": "Hotel/motel extensions", "page": 43, "ref": "BP 99 20 01 10 · p. 1 of 3 · PDF page 43", "excerpt": "s. Lock Replacement We will pay the necessary expenses you incur to replace locks for hotel/motel rooms resulting from theft or copying of keys or any other legit imate security concern. The most we will pay under this Additional Coverage during each po licy period is $2,500. This insurance does not apply to loss caused by: (1) Vandalism; or (2) Wear and Tear. Lock replacement coverage is not subject to a deductible. t. Web Sites We will pay for the actual loss of Business I ncome you sustain due to the necessary suspe nsion of your “operations” caused by direct phy sical loss or damage by a Covered Cause of Loss to: (a) The operation of your business web site at a described location; or (b) The operation of yo ur business web site at the premises of a vendor acting as your service provider. The most we will pay for loss under this Add itional Coverage in any one occurrence is the lesser of: (a) The loss you sustain during the 7 -day period immediately following the first 12 hours after the suspension of your website operations; or (b) $50,000. The most we will pay for loss under this Add itional Coverage during each policy period is $100,000. u. Reward Payment (1) We will reimburse you for rewards paid as fo llows: (a) Up to $5,000 to an eligible person for info rmation leading to the arrest and conviction of any person or persons committing a crime resulting in loss of or damage to Covered Property from a Covered Cause of Loss. However, we will pay no more than the les ser of the following amounts: (i) Actual cash value of the Covered Prope rty at the time of loss or …"}, "guest": {"title": "Guest-property liability", "page": 45, "ref": "BP 99 20 01 10 · p. 3 of 3 · PDF page 45", "excerpt": "5. Liability For Guests' Property Limits Of Insurance a. The most we will pay for al l damages because of loss or destruction of or damage to property belonging to your guests in any one \"occu rrence\", regardless of the number of guests, is $25,000 unless a higher amount is shown in the Declarations. b. Subject to the applicable limit stat ed above in 5.a., the most we will pay for all damages b ecause of loss or destruction of or damage to property belonging to any one guest is $1,000, unless a higher amount is shown in the Declarations. All loss, destruction or damage involving a si ngle act or series of related acts whether caused by one or more persons is considered one \"o ccurrence\". I. For coverage provided under this endorsement the following definition is added to Section II – Liability: 23. \"Safe Deposit Box\" means a box or safe used f or safe storage of valuables. The box or safe must be in an area inaccessible to …"}, "guestEx": {"title": "Guest-property exclusions", "page": 45, "ref": "BP 99 20 01 10 · p. 3 of 3 · PDF page 45", "excerpt": "(1) Samples or articles held for sale; (2) Vehicles, including equipment, accessories or any property contained in or on a vehicle; and (3) Property belonging to your guests while the property is in a \"safe de posit box\" on your premises. G. The following is added to Paragraph B.Exclusions of SectionII – Liability: 4. Applicable To Liability For …"}, "slips": {"title": "Credit card slips", "page": 44, "ref": "BP 99 20 01 10 · p. 2 of 3 · PDF page 44", "excerpt": "The most we will pay as a result of loss or da mage to credit card slips under this Additional Coverage during each policy period is $10,000. E. Our obligation under this coverage applies only to the amount of damages in excess of any deductible amount stated in the Declarations as applicable to …"}, "safeguards": {"title": "Required fire safeguards", "page": 46, "ref": "BP 99 238 06 17 · p. 1 of 2 · PDF page 46", "excerpt": "SCHEDULE Prem. No. Bldg. No. Protective Safeguards Symbols Applicable Description Of \"P-9\" If Applicable: 001 001 P-1 001 002 P-1 001 003 P-1 001 004 P-1 Information required to complete this Schedule, if not shown above, will be shown in the Declarations. A. The following is added to the Property General Conditions in SECTION I – PROPERTY: Protective Safeguards As a condition of this insurance, you are required to: 1. Maintain the protective safeguards listed in the Schedule, and over which you have control, in complete working order; 2. Actively engage and maintain in the \"on\" pos ition and for “P -2” Automatic Fire Alarms also maintain the conn ection to a central station or public or private fire alarm station at all times any automatic fire alarm or other automatic system listed in the Schedule; and 3. Notify us if you know of any suspension of or impairment in any protective safeguard listed in the Schedule. However, if part of an Automatic Sprinkler System or Automatic Commercial Cooking E xhaust And Extinguishing System is shut off due to breakage, leakage, freezing conditions or opening of sprinkler heads, notification to us will not be necessary if you can restore full protection within 48 hours. B. The following is added to Paragraph B. Excl usions in SECTION I – PROPERTY: We will not pay for loss or damage caused by or resulting from fire if, prior to the fire, you failed to comply with any condition set forth in Paragraph A. C. The protective safeguards to which this endors ement applies are identified by the symbols set forth below: The term “Automatic” as used herein means that the device in the “on position” is act ivated by fire or smoke without the need for any further action by you. \"P-1\" Automatic Sprinkler System, i ncluding related supervisory services. Automatic Sprinkler System means: a. Any automatic fire protective or extinguishing system, including connected: (1) Sprinklers and discharge nozzles; (2) Ducts, pipes, valves and fittings; (3) Tanks, their component parts and supports; and (4) Pumps and private fire protection mains."}, "water": {"title": "Water backup annual limits", "page": 48, "ref": "BP 99 60 03 12 · p. 1 of 2 · PDF page 48", "excerpt": "SCHEDULE Premises Number Covered Property Annual Aggregate Limit Of Insurance Business Income And Extra Expense Annual Aggregate Limit Of Insurance Location 001, Building 001 $5,000 $5,000 Location 001, Building 002 $5,000 $5,000 Location 001, Building 003 $5,000 $5,000 Location 001, Building 004 $5,000 $5,000 Information required to complete this Schedule, if not shown above, will be shown in the Declarations. A. We will pay for direct physical loss or damage to Covered Property, covered under Section I – Property, caused by or resulting from: 1. Water or waterborne material which backs up through or …"}, "waterTerms": {"title": "Water backup conditions & flood exclusion", "page": 48, "ref": "BP 99 60 03 12 · p. 1 of 2 · PDF page 48", "excerpt": "THIS IS NOT FLOOD INSURANCE. We will not pay for loss or damage from water or other materials that back up or overf low from any sewer, drain or sump that itself is caused, directly or indirectly, in whole or in part, by any flood. Flood means the overflow of surface water, waves, tides, tidal waves, streams, or other bodies of water, or their spray, all whether driven by wind or not. B. The coverage described in Paragraph A. of this endorsement does not apply to loss or damage resulting from an insured's failure to: 1. Keep a sump pump or its related equipment in proper working condition; or 2. Perform the routine maintenance or repair necessary to keep a sewer or drain free from obstructions. C. The most we will pay for the coverage provided under this endorsement for all direct physical loss or damage to Covered Property is the Covered Property Annual Aggregate Li mit of Insurance. That limit is $5,000 per location, unless a different Covered Property Annual Aggregate Limit of Insurance is indicated in the Schedule of this endorsement."}, "waterIncome": {"title": "Water backup income & expense aggregate", "page": 49, "ref": "BP 99 60 03 12 · p. 2 of 2 · PDF page 49", "excerpt": "D. The following provisions apply to Section I – Property and supersede any provision s to the contrary: The most we will pay under: 1. Paragraph A.5.f. Business Income Additional Coverage for all loss of Business Income you sustain due to the necessary suspension of your \"operations\" caused by direct physical loss or damage to Covered Pro perty as described in Paragraph A. of this endorsement; and 2. Paragraph A.5.g. Extra Expense Additional Coverage for all necessary Extra Expense you incur and that you would not have incurred if there had been no direct physical loss or damage to Covered Property as described in Paragraph A. of this endorsement; is the Business Income And Extra Expense Annual Aggregate Limit of Insurance. That limit is $5,000 per location, unless a different Business Income And Extra Expense Annual Aggregate Limit of Insurance is shown in the Schedule. The applicable Business Income And Extra Expense Annual Aggregate Limit of Insurance is the most we will pay under this endorsement for the total of all loss of Business Income you sustain and Extra Expense you incur in any one policy year, regardless of the number of occurrences that cause or result in loss or damageto Covered Property as described in Paragraph A. of this endorsement. If loss payment during an earlier \"period of restoration\" in the policy year does not exhaust the applicable Limit of Insurance, then the balance of that Limit is available for loss of Business Income you sustain or Extra Expense you incur during a subsequent \"period of restoration\" beginning in, but not after, that policy year. With respect to a \"period of restoration\" which begins in one policy year and continues in a subsequent policy year(s), all loss of Business …"}, "deductible": {"title": "Single largest property deductible", "page": 42, "ref": "BP 99 188 06 16 · p. 1 of 1 · PDF page 42", "excerpt": "In the event of loss or damage to Covered Property caused by or resulting from a Co vered Cause of Loss at one or more buildings at the same location, as a result of one occurrence, only the single largest deductible scheduled for loss at such building(s) will apply to all such loss or da mage regardless of the number of buildings involved in the loss. However, this Paragraph D.1 does not apply to loss or damage from Earthquake or Windstorm or Hail causes of loss. EXAMPLES Example 1 - Loss at multiple buildings, same location. A fire damages Buildings 1 and 2 which results in a spoilage loss at Buildings 3 and 4 due to a power outage from the fire. Property Deductible – Building 1: $250 …"}, "noDeductible": {"title": "Coverage-specific deductible rules", "page": 74, "ref": "BP 00 03 01 10 · p. 21 of 48 · PDF page 74", "excerpt": "2. Regardless of the amount of the Deductible, the most we will deduct from any loss or damage under all of the following Optional Coverages in any one occurrence is the Optional Coverage Deductible shown in the Declarations: a. Money and Securities; b. Employee Dishonesty; c. Outdoor Signs; and d. Forgery or Alteration. But this Optional Coverage Deductible will not increase the Deductible shown in the Declarations. This Deductible will be used to satisfy the requirements of the Deductible in the Declarations. 3. No deductible applies to the following Additional Coverages: a. Fire Department Service Charge; b. Business Income; c. Extra Expense; d. Civil Authority; and e. Fire Extinguisher Systems Recharge Expense. E. Property Loss Conditions 1. Abandonment There can be no abandonment of any property to us. 2. Appraisal If we and you disagree on the amount of loss, either may make written demand for an appraisal of the loss. In this event, each party will select a competent and impartial appraiser. The two appraisers will select an …"}, "premises": {"title": "Designated premises limitation", "page": 30, "ref": "BP 04 12 04 17 · p. 1 of 2 · PDF page 30", "excerpt": "POLICY NUMBER: BUSINESSOWNERS BP 04 12 04 17 THIS ENDORSEMENT CHANGES THE POLICY. PLEASE READ IT CAREFULLY. BP 04 12 04 17 © Insurance Services Office, Inc., 2016 Page 1 of 2 LIMITATION OF COVERAGE TO DESIGNATED PREMISES, PROJECT OR OPERATION This endorsement modifies insurance provided under the following: BUSINESSOWNERS COVERAGE FORM SCHEDULE A. Premises: B. Project Or Operation: Information required to complete this Schedule, if not shown above, will be shown in the Declarations. Section II – Liability is amended as follows: A. Paragraph A.1.b.(1) is replaced by the following: (1) To \"bodily injury\" and \"property damage\" caused by an \"occurrence\" that takes place in the \"coverage territory\" only if: (a) The \"bodily injury\" or \"property damage\": (i) Occurs on the premises shown in the Schedule or the grounds and structures appurtenant to those premises; or (ii) Arises out of t he project or operation shown in the Schedule; (b) The \"bodily injury\" or \"property damage\" occurs during the policy period; and (c) Prior to the po licy period, no insured listed under Paragraph C.1. Who Is An Insured and no \"employee\" authorized by you to give or receive notice of an \"occurrence\" or claim, knew that the \"bodily injury\" or \"property damage\" had occurred, in whole or in part. If such a listed insured or authorized \"employee\" knew, prior to the policy period, that the \"bodily injury\" or \"property damage\" occurred, then any continuation, change or resumption of such \"bodily injury\" or …"}, "employment": {"title": "Employment-related practices excluded", "page": 32, "ref": "BP 04 17 01 10 · p. 1 of 1 · PDF page 32", "excerpt": "BUSINESSOWNERS BP 04 17 01 10 THIS ENDORSEMENT CHANGES THE POLICY. PLEASE READ IT CAREFULLY. BP 04 17 01 10  Insurance Services Office, Inc., 2009 Page 1 of 1  EMPLOYMENT-RELATED PRACTICES EXCLUSION This endorsement modifies insurance provided under the following: BUSINESSOWNERS COVERAGE FORM The fol lowing exclusion is added to Paragraph B.1. Exclusions – Applicable To Business Liability Coverage in Section II – Liability: This insurance does not apply to \"bodily injury\" or \"personal and advertising injury\" to: (1) A person arising out of any: (a) Refusal to employ that person; (b) Termination of that person's em - ployment; or (c) Employment-related practices, poli - cies, acts or omissions, such as co - ercion, demotion, evaluation, reas - signment, discipline, defamation, harassment, humiliation , discrimination or malicious prosecution directed at that person; or (2) The spouse, child, parent, brother or sister of that person as a conse quence of \"bodily injury\" or \"personal and adver - tising injury\" to that person at whom any of the employment -related practices de - scribed in Paragraph (a), (b) or (c) above is directed. This exclusion applies: (1) Whether the injury -causing event de - scribed in Paragraph (a), (b) or (c) above occurs before employment, dur - ing employment or after employment of that person; (2) Whether the insured may be liable as an employer or …"}, "bedbug": {"title": "Bed bug & kissing bug exclusion", "page": 41, "ref": "BP 99 11 09 08 · p. 1 of 1 · PDF page 41", "excerpt": "This insurance does not apply to: \"Bodily Injury\", \"Property damage\", \"personal and advertising injury\" or medical expenses due to any or all claims or damages arising from any person being exposed to or bitten by an insect(s) belonging to the entomological families of Cimicidae or Reduviidae commonly referred to as a bed bug or kissing bug."}, "terrorism": {"title": "Certified terrorism exclusion", "page": 35, "ref": "BP 05 24 01 15 · p. 2 of 2; BP 05 42 01 15 · p. 1 of 1 · PDF pp. 35, 38", "excerpt": "2. Exception Covering Certain Fire Losses The following exception to the exclusion in Paragraph B.1. applies only if indicated and as indicated in the Schedule of this endorsement. If a \"certified act of terrorism\" results in fire, we will pay for the loss or damage caused by that fire. Such coverage for fire applies only to direct loss or damage by fire to Covered Property. Therefore, for example, the coverage does not apply to insurance provided under Business Income and/or Extra Expense Additional Coverages.\n[…]\nTERRORISM PUNITIVE DAMAGES Damages arising, directly or indirectly, out of a \"certified act of terrorism\" that are awarded as punitive damages."}, "schedule": {"title": "Schedule of forms & endorsements", "page": 14, "ref": "IIT SF 01 05 · PDF page 14", "excerpt": "Form Number Title PN MU 01 06 17 Protective Safeguards Policyholder Notice IIT DS 01 05 Businessowners Policy Declarations BP 00 03 01 10 Businessowners Coverage Form BP IN 01 01 10 Businessowners Coverage Form Index END SCHD Schedule Of Forms And Endorsements IL 99 00 08 13 Authorization and Attestation IL P 001 01 04 U.S. Treasury Department's Office Of Foreign Assets Control (\"OFAC\") Advisory Notice To Policyholder PRIV POL Privacy Policy BP 99 CA 09 16 CA Policy Customizations BP 01 55 05 17 California Changes BP 99 75 05 13 California Changes -Cancellation Premium Due BP 04 12 04 17 Limitation of Coverage to Designated Premises, Project or Operation BP 04 17 01 10 Employment - Related Practices Exclusion BP 05 01 07 02 Calculation Of Premium BP 05 24 01 15 Exclusion Of Certified Acts Of Terrorism BP 05 41 01 15 Exclusion of Certified Acts of Terrorism and Exclusion of Other Acts of Terrorism Committed Outside the United States BP 05 42 01 15 Exclusion Of Punitive Damages Related To A Certified Act Of Terrorism BP 06 86 05 17 California Hired and Non-Owned Auto Liability BP 99 11 09 08 Exclusion – Bed Bug - Kissing Bug BP 99 188 06 16 Deductible Endorsement - Property BP 99 20 01 10 Hotels/Motels Coverage BP 99 238 06 17 Protective Safeguards - Fire BP 99 60 03 12 Water Back-up and Sump Overflow"}, "sublimits": {"title": "Scheduled extension limits", "page": 18, "ref": "BP 99 CA 09 16 · p. 1 of 6 · PDF page 18", "excerpt": "SCHEDULE OF LIMIT CHANGES Section I – Property Coverage BP 00 03 Limit Revised Limit Accounts Receivable $10,000 at premises $25,000 at premises $5,000 not at premises $25,000 not at premises Appurtenant Structures n/a $50,000 Awnings Included in Building Limit $2,500 Employee Dishonesty Optional $10,000 Fire Department Service Charge $2,500 $25,000 Forgery Or Alteration $2,500 $10,000 Loss or Damage by Theft Jewelry, Watches, etc. $2,500 $5,000 Newly Acquired Or Constructed Property Buildings $250,000 25% Buildings Limit/ $500,000 each Building Business Personal Property $100,000 $250,000 Outdoor Property / any one tree, shrub or plant $2,500 / $1,000 $10,000 / $1,000 Outdoor Signs $1,000 attached to buildings only $5,000 all outdoor signs Personal Effects $2,500 $5,000 Premises Boundary Increased 100 feet 1,000 feet Valuable Papers And Records $10,000 at premises $25,000 at premises $5,000 not at premises $25,000 not at premises Section II – Liability Coverage BP 00 03 Limit Revised Limit Supplementary Payments - Cost Of Bail Bonds $250 $1,000 Supplementary Payments - Loss Of Earnings $250 $500/day", "documentTitle": "CA policy customizations", "scheduleNote": "The limits of insurance stated in this endorsement apply unless higher limits are shown in the Declarations.", "limitGroups": [{"title": "Section I – Property", "rows": [["Accounts Receivable", "$10,000 at premises\n$5,000 not at premises", "$25,000 at premises\n$25,000 not at premises"], ["Appurtenant Structures", "n/a", "$50,000"], ["Awnings", "Included in Building Limit", "$2,500"], ["Employee Dishonesty", "Optional", "$10,000"], ["Fire Department Service Charge", "$2,500", "$25,000"], ["Forgery Or Alteration", "$2,500", "$10,000"], ["Loss or Damage by Theft – Jewelry, Watches, etc.", "$2,500", "$5,000"], ["Newly Acquired Or Constructed Property – Buildings", "$250,000", "25% Buildings Limit/\n$500,000 each Building"], ["Newly Acquired Or Constructed Property – Business Personal Property", "$100,000", "$250,000"], ["Outdoor Property / any one tree, shrub or plant", "$2,500 / $1,000", "$10,000 / $1,000"], ["Outdoor Signs", "$1,000 attached to buildings only", "$5,000 all outdoor signs"], ["Personal Effects", "$2,500", "$5,000"], ["Premises Boundary Increased", "100 feet", "1,000 feet"], ["Valuable Papers And Records", "$10,000 at premises\n$5,000 not at premises", "$25,000 at premises\n$25,000 not at premises"]]}, {"title": "Section II – Liability", "rows": [["Supplementary Payments – Cost Of Bail Bonds", "$250", "$1,000"], ["Supplementary Payments – Loss Of Earnings", "$250", "$500/day"]]}]}, "declExtensions": {"title": "Policy-wide extensions", "page": 12, "ref": "IIT DS 01 05 · p. 8 of 9 · PDF page 12", "excerpt": "Appurtenant Structures Limit $50,000 combined Building/BPP Bed Bug-Kissing Bug Liability Coverage Limit Excluded Business Income & Extra Expense Limit Actual Loss Sustained up to 12 Months Damage To Premises Rented To You Limit $50,000 Electronic Data Limit $10,000 Employee Dishonesty Limit $10,000 Fire Department Service Charge Limit $25,000 Fire Extinguisher Systems Recharge Expense Limit $5,000 Forgery or Alteration Limit $10,000 Fungi, Wet Rot, Dry Rot & Bacteria (Mold) Property Limit $15,000 Business Income/EE Number of Days 30 Liability Coverage Option Exclude Coverage Glass Expense Limit Actual Loss Sustained Hired Automobile Limit Included in Liability Limit Interruption of Computer Operations Limit $10,000 Loss by Theft of furs, fur garments, garments trimmed with fur Limit $2,500 Loss by Theft of jewelry, watches, watch movements, jewels, pearls, precious and semi -precious stones, bullion, gold, silver, platinum and other precious alloys or metals Limit $5,000 Loss by Theft of patterns, dies, molds and forms Limit $2,500 Money Orders and \"Counterfeit Money\" Limit $1,000 Newly Acquired Or Constructed Property - Buildings Limit 25% of Building Limit/Not more than $500,000/Bldg Newly Acquired Or Constructed Property - Business Personal Property Limit $250,000 Non-owned Automobile Exposure Without Delivery Service Personal Effects Limit $5,000 Personal Property Off Premises Limit $10,000 Pollutant Clean Up and Removal Limit $10,000 Preservation of Property Limit Within 30 Days"}, "receivable": {"title": "Accounts receivable", "page": 6, "ref": "IIT DS 01 05 · p. 2 of 9 · PDF page 6", "excerpt": "Accounts Receivable On-Premises Limit $25,000 Off-Premises Limit 25,000 Debris Removal Limit …"}, "money": {"title": "Money & securities", "page": 6, "ref": "IIT DS 01 05 · p. 2 of 9 · PDF page 6", "excerpt": "Money and Securities On Premises Limit $5,000 Off Premises Limit $5,000 Ordinance or Law - …"}, "debris": {"title": "Debris removal", "page": 56, "ref": "BP 00 03 01 10 · p. 3 of 48 · PDF page 56", "excerpt": "a. Debris Removal (1) Subject to Paragraphs (3) and (4), we will pay your expense to remove debris of Covered Property caused by or resulting from a Covered Cause of Loss that occurs during the policy period. The expenses will be paid only if they are reported to us in writing within 180 days of the date of direct physical loss or damage. (2) Debris Removal does not apply to costs to: (a) Extract \"pollutants\" from land or water; or (b) Remove, restore or replace polluted land or water. (3) Subject to the exceptions in Paragraph (4), the following provisions apply: (a) The most that we will pay for the total of direct physical loss or damage plus debris removal expense is the Limit of Insurance applicable to the Covered Property that has sustained loss or damage. (b) Subject to Paragraph (a) above, the amount we will pay for debris removal expense is limited to 25% of the sum of the deductible plus the amount that we pay for direct physical loss or damage to the Covered Property that has sustained loss or damage. (4) We will pay up to an additional $10,000 for debris removal expense, for each location, in any one o ccurrence of physical loss or damage to Covered Property, if one or both of the following circumstances apply: (a) The total of the actual debris removal expense plus the amount we pay for direct physical loss or damage exceeds the Limit of Insurance on the Covered Property that has sustained loss or damage. (b) The actual debris removal expense exceeds 25% of the sum of the deductible plus the amount that we pay for direct physical loss or damage to the Covered Property that has sustained loss or damage. Therefore, if Paragraphs (4)(a) and/or (4)(b) apply, our total payment for direct physical loss or damage and debris removal expense may reach but will never exceed the Limit of Insurance on the Covered Property that has sustained loss or damage, plus $10,000. (5) Examples Example #1 Limit of Insurance $ 90,000 Amount of Deductible $ 500 Amount of Loss $ 50,000 Amount of Loss Payable $ 49,500 ($50,000 – $500) Debris Removal Expense $ 10,000 Debris …"}, "vacancy": {"title": "Vacancy definition and consequences", "page": 77, "ref": "BP 00 03 01 10 · pp. 24–25 of 48 · PDF pp. 77–78", "excerpt": "b. Vacancy Provisions If the building where loss or damage occurs has been vacant for more than 60 consecutive days before that loss or damage occurs: (1) We will not pay for any loss or damage caused by any of the following even if they are Covered Causes of Loss: (a) Vandalism; (b) Sprinkler leakage, unless you have protected the system against …\n(c) Building glass breakage; (d) Water damage; (e) Theft; or (f) Attempted theft. (2) With respect to Covered Causes of Loss other than those listed in Paragraphs (1)(a) through (1)(f) above, we will reduce the amount we would otherwise pay for the loss or damage by 15%."}, "seasonal": {"title": "Seasonal BPP increase condition", "page": 73, "ref": "BP 00 03 01 10 · pp. 20–21 of 48 · PDF page 73", "excerpt": "5. Business Personal Property Limit – Seasonal Increase a. Subject to Paragraph 5.b., the Limit of Insurance for Business Personal Property is automatically increased by: (1) The Business Personal Property – Seasonal Increase percentage shown in the Declarations; or (2) 25% if no Business Personal Property – Seasonal Increase percentage is shown in the Declarations; to provide for seasonal variances. b. The increase described in Paragraph 5.a will apply only if the Limit of Insurance shown for Business Personal Property in the Declarations is at least 100% of your average monthly values during the lesser of: (1) The 12 months immediately preceding the date the loss or damage occurs; or\n(2) The period of time you have been in business as of the date the loss or damage occurs."}, "replacement": {"title": "Replacement-cost condition", "page": 75, "ref": "BP 00 03 01 10 · p. 22 of 48 · PDF page 75", "excerpt": "(a) If, at the time of loss, the Limit of Insurance on the lost or damaged property is 80% or more of the full replacement cost of the property immediately before the loss, we will pay the cost to repair or replace, after application of the deductible and without deduction for depreciation, but not more than the least of the following amounts: (i) The Limit of Insurance under Section I – Property that applies to the lost or damaged property; (ii) The cost to replace, on the same premises, the lost or damaged property with other property: i. Of comparable material and quality; and ii. Used for the same purpose; or (iii) The amount that you actually spend that is necessary to repair or replace the lost or damaged property. If a building is rebuilt at a new premises, the cost is limited to the cost which would have been incurred had the building been built at the original premises. (b) If, at the time of loss, the Limit of Insurance applicable to the lost or damaged property is less than 80% of the full replacement cost of the property immediately before the loss, we will pay the greater of the following amounts, but not more than the Limit of Insurance that applies to the property: (i) The actual cash value of the lost or damaged property; or (ii) A proportion of the cost to repair or replace the lost or damaged property, after application of the deductible and without deduction for depreciation. This proportion will equal the ratio of the applicable Limit of Insurance to 80% of the cost of repair or replacement. (c) You may make a claim for loss or damage covered by this insurance on an actual cash value basis instead of on a replacement cost basis. In the event you elect to have loss or damage settled on an actual cash value basis, you may still make a claim on a replacement cost basis if you notify us of your intent to do so within 180 days after the loss or damage. (d) We will not pay on a replacement cost basis for any loss or damage: (i) Until the lost or …"}, "propertyEx": {"title": "Property exclusions", "page": 68, "ref": "BP 00 03 01 10 · p. 15 of 48; BP 99 60 03 12 · p. 1 of 2 · PDF pp. 68, 48", "excerpt": "b. Earth Movement (1) Earthquake, including any earth sinking, rising or shifting related to such event; (2) Landslide, including any earth sinking, rising or shifting related to such event; (3) Mine subsidence, meaning subsidence of a man-made mine, whether or not mining activity has ceased; (4) Earth sinking (other than sinkhole collapse), rising or shifting including soil conditions which ca use settling, cracking or other disarrangement of foundations or other parts of realty. Soil conditions include contraction, expansion, freezing, thawing, erosion, improperly compacted soil and the action of water under the ground surface. But if Earth Movement, as described in Paragraphs (1) through (4) above, results in fire or explosion, we will pay for the loss or damage caused by that fire or explosion. (5) Volcanic eruption, explosion or effusion. But if volcanic eruption, explosion or effusion results in fire, building glass breakage or volcanic action, we will pay for the loss or damage caused by that fire, building glass breakage or volcanic action. Volcanic action means direct loss or damage resulting from the eruption of a volcano when the loss or damage is caused by: (a) Airborne volcanic blast or airborne shock waves; (b) Ash, dust or particulate matter; or (c) Lava flow. All …\n[…]\nTHIS IS NOT FLOOD INSURANCE. We will not pay for loss or damage from water or other materials that back up or overf low from any sewer, drain or sump that itself is caused, directly or indirectly, in whole or in part, by any flood. Flood means the overflow of surface water, waves, tides, tidal waves, streams, or other bodies of water, or their spray, all whether driven by wind or not."}, "autoEx": {"title": "Auto liability exclusion", "page": 88, "ref": "BP 00 03 01 10 · p. 35 of 48 · PDF page 88", "excerpt": "g. Aircraft, Auto Or Watercraft \"Bodily injury\" or \"property damage\" arising out of the ownership, maintenance, use or entrustment to others of any aircraft, \"auto\" or watercraft owned or operated by or rented or loaned to any insured. Use includes operation and \"loading or unloading\". This exclusion applies even if the claims allege negligence or other wrongdoing in the supervision, hiring, employment, training or monitoring of others by an insured, if the \"occurrence\" which caused the \"bodily injury\" or \"property damage\" involved the ownership, maintenance, use or entrustment to others of any aircraft, \"auto\" or watercraft that is owned or operated by or rented or loaned to any insured. This exclusion does not apply to: (1) A watercraft while ashore on premises you own or rent; (2) A watercraft you do not own that is: (a) Less than 51 feet long; and (b) Not being used to carry persons or property for a charge; (3) Parking an \"auto\" on, or on the ways next to, premises you own or …"}, "professional": {"title": "Professional services exclusion", "page": 88, "ref": "BP 00 03 01 10 · p. 35 of 48 · PDF page 88", "excerpt": "j. Professional Services \"Bodily injury\", \"property damage\" or \"personal and advertising injury\" caused by the rendering or failure to render any professional service. This includes but is not limited to: (1) Legal, accounting or advertising services; (2) Preparing, approving, or failing to prepare or approve maps, drawings, opinions, reports, surveys, change orders, designs or specifications; (3) Supervisory, inspection or engineering services;"}, "workers": {"title": "Workers’ compensation & employers’ liability", "page": 86, "ref": "BP 00 03 01 10 · p. 33 of 48 · PDF page 86", "excerpt": "d. Workers' Compensation And Similar Laws Any obligation of the insured under a workers' compensation, disability benefits or unemployment compensation law or any similar law. e. Employer's Liability \"Bodily injury\" to: (1) An \"employee\" of the insured arising out of and in the course of: (a) Employment by the insured; or (b) Performing duties related to the conduct of the insured's business; or (2) The spouse, child, parent, brother or sister of that \"employee\" as a consequence of Paragraph (1) above. This exclusion applies: (1) Whether the insured may be liable as an employer or in any other capacity; and (2) To any obligation to share damages with or repay someone else who must pay damages because of the injury. This exclusion does not apply to liability assumed by the insured under an \"insured contract\". f. Pollution (1) \"Bodily injury\" or \"property damage\" arising out of the actual, alleged or threatened discharge, dispersal, seepage, migration, release or escape of \"pollutants\": …"}, "insured": {"title": "Who is insured", "page": 93, "ref": "BP 00 03 01 10 · p. 40 of 48 · PDF page 93", "excerpt": "C. Who Is An Insured 1. If you are designated in the Declarations as: a. An individual, you and your spouse are insureds, but only with respect to the conduct of a business of which you are the sole owner. b. A partnership or joint venture, you are an insured. Your members, your partners and their spouses are also insureds, but only with respect to the conduct of your business. c. A limited liability company, you are an insured. Your members are also insureds, but only with respect to the conduct of your business. Your managers are insureds, but only with respect to their duties as your managers. d. An organization other than a partnership, joint venture or limited liability company, you are an insured. Your \"executive officers\" and directors are insureds, but only with respect to their duties as your officers or directors. Your stockholders are also insureds, but only with respect to their liability as stockholders. e. A trust, you are an insured. Your trustees are also insureds, but only with respect to their duties as trustees. 2. Each of the following is also an insured: a. Your \"volunteer workers\" only while performing duties related to the conduct of your business, or your \"employees\", other than either your \"executive officers\" (if you are an organization other than a partnership, joint venture or limited liability company) or your managers (if you are a limited liability company), but only for acts within the scope of their empl oyment by you or while performing duties related to the conduct of your business. However, none of these \"employees\" or \"volunteer workers\" are insureds for: (1) \"Bodily injury\" or \"personal and advertising injury\": (a) To you, to your partners or members (if you are a partnership or joint venture), to your members (if you are a limited liability company), or to a co- \"employee\" while in the course of his or her employment or …"}, "sublimitOverview": {"title": "Sublimit schedules", "page": 18, "ref": "BP 99 CA 09 16; BP 99 20 01 10; BP 99 60 03 12 · PDF pp. 18, 43, 48", "excerpt": "PDF page 18\nSCHEDULE OF LIMIT CHANGES Section I – Property Coverage BP 00 03 Limit Revised Limit Accounts Receivable $10,000 at premises $25,000 at premises $5,000 not at premises $25,000 not at premises Appurtenant Structures n/a $50,000 Awnings Included in Building Limit $2,500 Employee Dishonesty Optional $10,000 Fire Department Service Charge $2,500 $25,000 Forgery Or Alteration $2,500 $10,000 Loss or Damage by Theft Jewelry, Watches, etc. $2,500 $5,000 Newly Acquired Or Constructed Property Buildings $250,000 25% Buildings Limit/ $500,000 each Building Business Personal Property $100,000 $250,000 Outdoor Property / any one tree, shrub or plant $2,500 / $1,000 $10,000 / $1,000 Outdoor Signs $1,000 attached to buildings only $5,000 all outdoor signs Personal Effects $2,500 $5,000 Premises Boundary Increased 100 feet 1,000 feet Valuable Papers And Records $10,000 at premises $25,000 at premises $5,000 not at premises $25,000 not at premises Section II – Liability Coverage BP 00 03 Limit Revised Limit Supplementary Payments - Cost Of Bail Bonds $250 $1,000 Supplementary Payments - Loss Of Earnings $250 $500/day\n[…]\nPDF page 43\ns. Lock Replacement We will pay the necessary expenses you incur to replace locks for hotel/motel rooms resulting from theft or copying of keys or any other legit imate security concern. The most we will pay under this Additional Coverage during each po licy period is $2,500. This insurance does not apply to loss caused by: (1) Vandalism; or (2) Wear and Tear. Lock replacement coverage is not subject to a deductible. t. Web Sites We will pay for the actual loss of Business I ncome you sustain due to the necessary suspe nsion of your “operations” caused by direct phy sical loss or damage by a Covered Cause of Loss to: (a) The operation of your business web site at a described location; or (b) The operation of yo ur business web site at the premises of a vendor acting as your service provider. The most we will pay for loss under this Add itional Coverage in any one occurrence is the lesser of: (a) The loss you sustain during the 7 -day period immediately following the first 12 hours after the suspension of your website operations; or (b) $50,000. The most we will pay for loss under this Add itional Coverage during each policy period is $100,000. u. Reward Payment (1) We will reimburse you for rewards paid as fo llows: (a) Up to $5,000 to an eligible person for info rmation leading to the arrest and conviction of any person or persons committing a crime resulting in loss of or damage to Covered Property from a Covered Cause of Loss. However, we will pay no more than the les ser of the following amounts: (i) Actual cash value of the Covered Prope rty at the time of loss or …\n[…]\nPDF page 48\nSCHEDULE Premises Number Covered Property Annual Aggregate Limit Of Insurance Business Income And Extra Expense Annual Aggregate Limit Of Insurance Location 001, Building 001 $5,000 $5,000 Location 001, Building 002 $5,000 $5,000 Location 001, Building 003 $5,000 $5,000 Location 001, Building 004 $5,000 $5,000 Information required to complete this Schedule, if not shown above, will be shown in the Declarations. A. We will pay for direct physical loss or damage to Covered Property, covered under Section I – Property, caused by or resulting from: 1. Water or waterborne material which backs up through or …"}}; const POLICY_URL="assets/policies/bop-amguard-webp915865.pdf";</script>
+<script src="assets/bop-insights.js"></script>
+</body></html>
