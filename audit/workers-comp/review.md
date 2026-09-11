@@ -19,7 +19,7 @@ Resolved drift:
 - Source surfaces use mobile bottom sheets and the standard right-side drawer at 860px and above; keyboard and reduced-motion paths remain immediate.
 - Added semantic static subheadings and two explicit coverage-part groups. Principal limit labels retain regular tertiary typography; amounts remain 18px semibold. Removed extra disclosure-row indentation.
 - Disclosure counts now identify 2 coverage parts and 39 state groups. The complete 145-class-entry scope remains explicit in the classification disclosure.
-- Supporting condition text uses the tertiary role, emphasized headings use primary, and header utility containers use the standard control background. Neutral notes and prior simplified-card/cancellation edits are preserved.
+- Supporting condition text uses the tertiary role, emphasized headings use primary, and header search/share containers use `background-subtle` (`#F6F6F6`), following the corrected shared top-bar rule. Neutral notes and prior simplified-card/cancellation edits are preserved.
 
 Checks passed at 320, 390, 456 and 1440 pixels, including all disclosures expanded. Verified source target dimensions, semantic/count structure, original PDF links, composite page references, responsive source geometry, search/filter behavior, keyboard focus restoration, Ask Ovie and feedback validation. Source tables, the desktop drawer and included-coverage hierarchy were visually inspected. No page script errors were observed. These checks cover the revised Insights presentation and do not imply production sharing or AI services are connected.
 

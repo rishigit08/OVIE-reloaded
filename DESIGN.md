@@ -140,8 +140,8 @@ Ovie should feel like a careful insurance guide held in one hand: calm, legible,
 | Inverse icon | `icon-inverse` | `#FFFFFF` | Icons on plum, gradient, or other dark surfaces |
 | Primary surface | `background-primary` | `#FFFFFF` | Cards, sheets, inputs |
 | App canvas | `background-canvas` | `#F6F6F6` | Main application background behind content surfaces |
-| Subtle background | `background-subtle` | `#F6F6F6` | Quiet inset regions, neutral pills, and low-emphasis hover states |
-| Neutral control background | `background-control` | `#E3E3E3` | Persistent neutral-filled icon buttons and compact controls |
+| Subtle background | `background-subtle` | `#F6F6F6` | Quiet inset regions, top-bar search/share containers, neutral pills, and low-emphasis hover states |
+| Neutral control background | `background-control` | `#E3E3E3` | Neutral-filled compact controls where specified; top-bar search/share use `background-subtle` |
 | Prototype backdrop | `prototype-backdrop` | `#E3E3E3` | Preview-only area outside a centered app shell; do not use as the application canvas |
 | Success | `success` | `#0D7D07` | Confirmed positive state |
 | Warning | `warning` | `#8A5A06` | Verification needed or missing evidence |
@@ -213,7 +213,7 @@ Ovie should feel like a careful insurance guide held in one hand: calm, legible,
 
 ### Top bar
 
-- The top bar contains a back or menu action, an 18px semibold page title, and up to two utility actions when both are useful. When search and share are shown together, place search immediately before share and give both the canonical homepage utility treatment: 44×44 targets, 12px radius, `background-control`, `icon-default` through `currentColor` outline icons, primary-soft hover, a 0.96 pressed scale, and the shared plum focus ring.
+- The top bar contains a back or menu action, an 18px semibold page title, and up to two utility actions when both are useful. When search and share are shown together, place search immediately before share and give both the canonical homepage utility treatment: 44×44 targets, 12px radius, `background-subtle` (`#F6F6F6`), `icon-default` through `currentColor` outline icons, primary-soft hover, a 0.96 pressed scale, and the shared plum focus ring.
 - Icon-only actions have an accessible name and at least a 44×44px target.
 - Use icons without redundant labels when the meaning is familiar and an accessible label exists; for example, show only the share icon.
 - On scrolling pages, including Home and long detail pages, the top bar slides out after deliberate downward scrolling and returns as soon as upward scrolling is detected. Keep it visible near the top and while any header control has focus. Use a smooth 180–260ms ease-out transition and preserve keyboard access.
@@ -454,7 +454,7 @@ An SME-required category that does not fit these slots may add a clearly named d
 
 ### 12.1.2 Detail-page hierarchy and typography
 
-- Use “Insights” as the page title. Put each card heading inside its white card. Retain the shared back action and contextual search/share controls; follow the applicable variant for their container color.
+- Use “Insights” as the page title. Put each card heading inside its white card. Retain the shared back action and contextual search/share controls; use `background-subtle` (`#F6F6F6`) for both search/share containers, following section 7.
 - Distinguish a simplified-field label, a primary-coverage label, and a policy-detail heading. They are different text roles even when their wording is similar.
 
 | Element | Treatment |
@@ -696,7 +696,7 @@ Before considering an Insights page ready, verify the relevant items below again
 ### Access, profile, and settings
 
 - Group settings by user-recognizable purpose rather than technical ownership.
-- In the profile drawer, use the avatar and user's name as a horizontally aligned top-left identity group opposite the close action; do not add a separate “Your profile” heading. Follow the identity group closely with the generated upload-address row titled “My Ovie Inbox.” Show the full address directly below the heading in `text-tertiary`, with no explanatory subtext or leading icon in the row. Place a Lucide Info action using `icon-default` beside the heading; it opens a native bottom sheet titled “About your Ovie inbox” explaining that documents sent to the address upload automatically and that the address can be shared with someone else. Place the trailing Lucide Copy action using `icon-default` in the same 44×44 `background-control` container used by header utility icons. Do not repeat the account identifier beneath the user's name when it already forms part of the generated inbox address. Confirm a successful copy with a brief toast.
+- In the profile drawer, use the avatar and user's name as a horizontally aligned top-left identity group opposite the close action; do not add a separate “Your profile” heading. Follow the identity group closely with the generated upload-address row titled “My Ovie Inbox.” Show the full address directly below the heading in `text-tertiary`, with no explanatory subtext or leading icon in the row. Place a Lucide Info action using `icon-default` beside the heading; it opens a native bottom sheet titled “About your Ovie inbox” explaining that documents sent to the address upload automatically and that the address can be shared with someone else. Place the trailing Lucide Copy action using `icon-default` in a 44×44 `background-control` container. Do not repeat the account identifier beneath the user's name when it already forms part of the generated inbox address. Confirm a successful copy with a brief toast.
 - Use explicit labels and current values. Confirm destructive changes and explain their consequence before completion.
 - Authentication, permissions, and privacy states must never rely on color alone.
 
