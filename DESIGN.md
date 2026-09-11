@@ -201,6 +201,14 @@ Ovie should feel like a careful insurance guide held in one hand: calm, legible,
 - Shadows used only to represent an operating-system keyboard or to separate a centered mobile prototype from the surrounding review canvas are preview treatments, not product elevation tokens.
 - Avoid nested cards. Use a divider, grouped rows, or an inset neutral note instead.
 
+### Inset neutral notes
+
+- Use an inset neutral note for a short supporting qualification, interpretation aid, or evidence clarification that needs to be distinct from the surrounding facts. Examples include how to read blank schedule values, exceptions to a displayed rating, and whether a deposit is included in an annual cost.
+- Use `background-subtle` (`#F6F6F6`), 12px corners, 12px internal padding, and no border or shadow. Keep the note inside the parent card's standard 16px content gutters; when it follows content within those gutters, give it 12px top spacing.
+- Use 14px/20px body text. Explanatory notes use `text-tertiary`; evidence-gap labels and supporting sentences use `text-secondary`. Any short heading or highlighted fact uses its normal text role.
+- Keep the note beside or immediately after the facts it qualifies. Group related explanatory sentences in one note; do not create a separate box for every paragraph or put another box inside a note.
+- Keep ordinary introductions, primary facts, limits, exclusions, and severity-marked watch points in their established layouts. Use semantic alerts for actionable warnings; a neutral note must not weaken or replace their warning treatment.
+
 ## 7. App shell and navigation
 
 ### Top bar
@@ -398,26 +406,44 @@ Use shared runtime tokens rather than screen-local timing values:
 
 Insights pages translate supplied insurance documents into a scannable, evidence-grounded summary. They may cover umbrella, auto, home, watercraft, or other policy types, but must follow the same evidence rules.
 
+This section defines one standard Insights template for every policy type. The applicable SME template determines policy-specific content, required sections, qualifications, and watch points; this design contract determines their visual and interaction treatment. Use the [SME mapping workflow](#127-adapting-the-standard-template-from-sme-instructions) for each policy type, and the shared foundations in sections 3–11 for tokens, controls, responsive behavior, and motion. Reference HTML pages demonstrate implementation but do not override this contract. Keep sample policyholders, policy numbers, limits, premiums, and endorsement counts in document-grounded content rather than in these design rules.
+
 - The primary Insights destination uses the same page shell, list geometry, search, policy-type filter, “Shared with me” switch, and responsive navigation pattern as My Files.
 - Include one row per policy with generated insights; do not include non-policy document folders. Use the policy's actual user-facing name as the primary label, not its policy category, form type, or subcategory.
 - Each row uses the Lucide Brain Circuit icon in the standard plum-tinted container, followed by the policy name, a policy-type chip, the masked policy number with its reveal control, and “Generated on Month D, YYYY.” Omit carrier metadata from this list.
 - Selecting the row opens that policy's Insights detail page. The trailing ellipsis opens an action sheet titled with the policy name and containing “Regenerate insights” with Lucide Refresh Cw and “View policy documents” with the standard Lucide document icon.
 - Regeneration is a secondary action and must communicate pending, success, and failure states without replacing the current insights until a new generation succeeds. “View policy documents” opens the related policy document collection.
 
-### 12.1 Information architecture
+### 12.1 Standard policy Insights template
 
-Use this order when the policy supports it:
+Assemble every policy Insights page from the slots below. The SME template determines which conditional slots apply, their policy-specific labels, and any required ordering changes. A missing document is not a reason to silently omit an SME-required section: retain a concise availability state. Omit a conditional slot when it does not apply, without leaving an empty card.
 
-1. **Policy simplified** — canonical policy fields; stack each label above its value so long names and identifiers wrap safely. Show premium and policy term as separate fields; never combine them into one value.
-2. **Primary coverage** — use a standard card with an 18px semibold policy-type heading (for example, “Umbrella protection”). Present the occurrence limit, aggregate limit, retained limit, and other qualifying values as consistent white-background fact rows rather than a filled hero block.
-3. **Action or verification alert** — only when a missing limit, lapse risk, or other evidence gap needs attention.
-4. **Linked or underlying policies/assets** — high-level references only; show type, carrier, masked identifier, and required limit. When every row shares the same unavailable-data state, communicate it once in the alert above the list instead of repeating it in each row.
-5. **Who is covered** — show only people or classes explicitly established by the supplied policy documents.
-6. **Policy details** — accordions for what is included, what is not included, limitations, watchpoints, required minimums, and document-specific categories.
-7. **About these insights footer** — disclaimer, document sources, and facts not available in analyzed pages. Keep this section only at the bottom; do not duplicate it with an entry card above the policy details.
-8. **Feedback** — place the helpfulness control on the page background after the final card.
+| Order | Standard slot | Shared presentation | Determined by the SME template and supplied policy |
+|---|---|---|---|
+| Shell | Insights header | Back action, page title, contextual search/share; shared shell and composer | Applicable utility actions and any explicitly approved variant |
+| 1 | Your policy simplified | Canonical label/value fields in one white card; documented term-status badge | Policyholder, type, identifier, carrier, term, premium, and relevant classification or jurisdiction fields; approved naming/visibility exceptions |
+| 2, conditional | Primary coverage | Standard white coverage card using section 12.1.1 | Whether a prominent coverage summary is needed; principal limits and their bases |
+| 3, conditional | Action or verification alert | Semantic alert only for an established consequence requiring attention | Missing required limits, lapse conditions, or other policy-specific verification needs |
+| 4, conditional | Covered subjects and schedules | Grouped sourced rows for people, locations, buildings, vehicles, or other scheduled subjects | The subjects and schedules applicable to this policy type; exact identifiers and relationships |
+| 5, conditional | Linked or underlying policies | Schedule references and separate policy destinations | Whether underlying insurance exists as a requirement; documented minimums and dependencies |
+| 6 | Policy details | One white card with the standard disclosure slots below | Applicable coverage groups, endorsements, sublimits, exclusions, conditions, and watch points |
+| 7 | About these insights | Approved disclaimer, Document sources, and unavailable-evidence inventory | Analyzed files, forms, pages, and unresolved facts |
+| 8 | Helpfulness feedback | Shared feedback control on the canvas | No policy-specific visual treatment |
 
-Do not add a dedicated deductible section unless the policy structure requires it. Explain a self-insured or retained limit under coverage limitations or the primary coverage summary.
+Keep the persistent Ask Ovie entry point available without adding a promotional card or global navigation inside the focused detail page. Show premium and term separately. Avoid repeating the same coverage value in both the primary card and Policy details unless the second occurrence conveys a necessary qualification. Existing approved pages may retain their named variants; do not derive a universal layout from one sample policy.
+
+#### Standard Policy details slots
+
+Use this default order, adapting applicability and grouping from the SME template:
+
+1. **What’s included** — coverage names, limits or benefits, applicable bases, and necessary qualifications. Use static subheadings for multiple coverage parts.
+2. **Policy specifications** — practical effects of key endorsements, riders, or policy-specific provisions. Include an endorsement summary where relevant.
+3. **Sub-limits** — grouped coverage caps with their amounts, bases, periods, and conditions.
+4. **What’s not included** — explicit exclusions or documented absence of coverage, written concisely.
+5. **Coverage limitations** — deductibles, retained amounts, waiting periods, duties, safeguards, and other conditions affecting coverage.
+6. **Coverage watch points** — practical consequences and supported verification actions, using the applicable severity treatment.
+
+An SME-required category that does not fit these slots may add a clearly named disclosure using the same primitives; for example, documented underlying minimums. Do not force unrelated policy concepts into a BOP property/liability split. For commercial policies, keep deductibles under the affected coverage or Coverage limitations, without a dedicated deductible section. For other policy types, add one only when the applicable SME template or approved policy structure requires it.
 
 ### 12.1.1 Primary coverage card
 
@@ -425,6 +451,26 @@ Do not add a dedicated deductible section unless the policy structure requires i
 - Every limit row uses a 14px tertiary label above an 18px semibold primary value, with a neutral source-info action when evidence is available.
 - Give occurrence and aggregate limits equal row structure. Separate consecutive rows with the standard subtle full-width divider.
 - Keep the card surface white so different policy types can reuse the same coverage-summary pattern without introducing a new focal color treatment.
+
+### 12.1.2 Detail-page hierarchy and typography
+
+- Use “Insights” as the page title. Put each card heading inside its white card. Retain the shared back action and contextual search/share controls; follow the applicable variant for their container color.
+- Distinguish a simplified-field label, a primary-coverage label, and a policy-detail heading. They are different text roles even when their wording is similar.
+
+| Element | Treatment |
+|---|---|
+| Page, card, and source-sheet title | 18px/24px semibold, `text-primary` |
+| Simplified-field label | 14px/20px regular, `text-tertiary` |
+| Simplified-field value | 14px/20px semibold, `text-primary` |
+| Coverage label above a principal value, in a card or disclosure | 14px/20px regular, `text-tertiary`; value below at 18px/24px semibold, `text-primary` |
+| Disclosure title, static subsection heading, and detail-item heading | 14px/20px semibold, `text-primary` |
+| Supporting coverage explanation and conditions | 14px/20px regular, `text-tertiary` |
+| Source page/form reference | 14px/20px semibold, primary plum |
+
+- A static subsection heading has no chevron, button role, or hover affordance. Use a real heading in the document hierarchy. A disclosure is an actual expandable control with an accessible expanded state.
+- Choose the text role from the row's structure, not its location. A coverage label above a separate amount or principal value remains regular and tertiary inside “What’s included.” A detail-item heading introducing an explanation, without a separate principal value, remains semibold and primary. Moving a coverage row into a disclosure does not turn its label into a heading.
+- Let headings, policy numbers, amounts, and qualifications wrap. Maintain the shared content gutters and consistent trailing source-control alignment across short and multiline rows.
+- Use the term-status badge to describe the uploaded policy term only. An expired term does not establish that the business is currently uninsured or that no renewal exists.
 
 ### 12.2 Evidence and content rules
 
@@ -439,8 +485,26 @@ Do not add a dedicated deductible section unless the policy structure requires i
 - “Umbrella is not standalone coverage,” follow-form behavior, maintain-underlying requirements, drop-down/DIC wording, and lapse consequences must only be stated when supported by the supplied form.
 - Keep summaries in plain language without changing the legal meaning.
 
+### 12.2.1 Classifying information before styling it
+
+| Information | Placement and presentation |
+|---|---|
+| Included coverage or an endorsement's effect | Ordinary sourced fact under “What’s included” or “Policy specifications”; state what is added, changed, required, limited, or excluded |
+| Explicit exclusion | Concise sourced statement under “What’s not included” |
+| Deductible, waiting period, safeguard, or other coverage condition | Sourced limitation beside the affected coverage or under “Coverage limitations” |
+| Practical consequence requiring attention | Coverage watch point with a supported severity label and a concise consequence or verification action |
+| Missing or ambiguous policy evidence | Explicit availability statement; use the neutral evidence-gap treatment unless an actionable warning is established |
+| Endorsement counts or summary scope | Neutral “Endorsement summary” disclosure; a count alone is not a caution or severity signal |
+
+- Explain endorsement effects in the title or sentence. Avoid an isolated “Adds coverage” badge whose subject and practical effect must be guessed.
+- Distinguish highlighted changes, endorsement documents, and the complete forms/notices inventory. Derive each count from the supplied documents and label what is counted; grouped highlights need not equal the document count.
+- Prioritize endorsements that materially affect the reader's coverage or duties. Keep routine state amendments and legal notices out of the practical highlight list, while retaining them in document sources and explaining a material effect when one is established.
+- Keep a summary disclosure on a neutral surface with a descriptive heading and a source action when it cites the schedule. If an inset note is needed, reuse section 6; do not invent a warning badge for administrative context.
+- An upload prompt for a companion policy describes the limits of the available documents. It must not imply a purchase recommendation, missing insurance, or inadequate coverage solely because another document has not been uploaded.
+
 ### 12.3 Source information buttons
 
+- Commercial workers compensation Insights (approved September 11, 2026): title the opening card “Your policy simplified” and omit source-info buttons throughout that card. End the card after the covered-state list; omit the “Additional policy information” disclosure and its fields. Retain source controls in the remaining sections. In the cancellation alert, place the source-info control at the top-right alongside the heading, aligned with its first line; keep the explanation below and preserve the 44×44px target.
 - Commercial property Insights variant (approved September 8, 2026): source-info controls have transparent backgrounds, including on hover, while retaining the neutral icon color, 44×44px targets, and shared focus ring. The header back control also has a transparent background and uses `icon-strong`. Begin the content with “Policy simplified”; omit the separate policy-type icon and label row above it.
 - In the commercial property “Policy simplified” heading row, show the policy-term status badge instead of a source-info action, matching the umbrella/condo placement. Use an “Expired” pill with `danger` text and status dot on `danger-background` when the documented end date is past (approved September 8, 2026). This describes the supplied term, not live carrier status or whether a renewal exists.
 - Commercial property missing-information values and statements use their component’s normal text roles: primary for headings and values, tertiary for explanatory copy, and secondary for evidence-gap callouts. Do not apply alert text color solely because information is unavailable or missing. Dedicated warning cards and severity badges retain their semantic alert colors. Warning callouts use the standard Lucide Triangle Alert geometry with rounded strokes and `icon-warning`.
@@ -458,6 +522,16 @@ Do not add a dedicated deductible section unless the policy structure requires i
 - The sheet excerpt is evidence, not a second summary. Keep it focused on the selected fact.
 - Source-sheet page/form references use 14px semibold primary plum, matching umbrella and condo. Select concise policy wording and retain relevant qualifications; mark omissions with an ellipsis and leave the complete clause in the document view.
 
+### 12.3.1 Readable source content
+
+- Lead with a recognizable document or endorsement name and an explicit PDF page reference. Put the technical form identifier on a separate labeled line, such as “Form reference: … · form page … of …”. Distinguish a form's printed page number from the PDF viewer's page number; show the total PDF page count only when known.
+- Preserve identifiers exactly, but do not make an unexplained sequence of form codes the sole description of the source. Allow references to wrap naturally without truncation.
+- Keep paragraph and list boundaries in extracted clauses. Repair extraction spacing only when the original supports the correction; preserve qualifications, exceptions, and omission markers.
+- Never flatten a policy table into a continuous paragraph. Render its headings and row relationships explicitly. On narrow screens, use stacked entries with labeled values; for a limit-change schedule, distinguish the base-form limit from the revised limit. Retain units, per-person/per-location/per-occurrence bases, aggregate periods, and conditions stated beside or above the table.
+- Verify reconstructed tables against the original page. Do not silently interpret an ambiguous slash, blank cell, or missing schedule value as a definitive amount, zero, or absence of coverage.
+- Each info action should open the evidence for its associated fact. A grouped overview also needs a source action when it makes material coverage claims. Cite all supporting pages for a composite statement, and provide a clear route to the relevant original pages.
+- “View in document” must open the correct supplied file at the referenced PDF page. If the original file is unavailable, communicate that state instead of presenting a broken link or substituting another policy.
+
 ### 12.4 Policy-detail accordions
 
 - Commercial property sublimits use full-width list rows within the single “Property sublimits” disclosure. Stack the loss-type heading, limit, basis, and conditions; separate items with subtle dividers instead of narrow table columns. Keep the source-info action beside the item heading.
@@ -469,7 +543,15 @@ Do not add a dedicated deductible section unless the policy structure requires i
 - Expand one or more sections as needed; do not force a single-open accordion unless the content becomes unwieldy.
 - Use one-line insights first. Add a second line only when a condition or consequence is necessary.
 - Attach an info button to each material item that has a document citation.
-- In coverage watchpoints, place the severity chip and source info button on the first line. Wrap the related explanation directly beneath them and let it span the full content width; do not reserve the icon column beside the copy. Separate consecutive watchpoints with the same subtle full-width divider used by other disclosure lists; omit the divider above the first item and below the last.
+- By default, in coverage watchpoints, place the severity chip and source info button on the first line. Wrap the related explanation directly beneath them and let it span the full content width; do not reserve the icon column beside the copy. Separate consecutive watchpoints with the same subtle full-width divider used by other disclosure lists; omit the divider above the first item and below the last. The BOP variant uses its explicitly approved centered source column.
+
+### 12.4.1 Grouping and disclosure depth
+
+- Keep related policy details in one card, using dividers and full-width rows rather than a separate card for every coverage. Nest disclosures only when they reduce the reading burden of a genuinely long group.
+- A count pill describes the entries immediately inside its disclosure. If those entries are groups, the count represents groups; do not imply that it is the number of all underlying coverages.
+- Use a static heading when a subsection and its content should remain visible inside an open parent. Do not add an accordion solely to make its heading resemble another row.
+- Present short sublimit lists directly with the applicable amounts and bases. For long inventories, show a sourced presence-first introduction and meaningful groups, each exposing the limits and qualifications on expansion.
+- Preserve independent disclosure state. Search results must reveal their containing disclosures and lead to the matching fact without changing policy content.
 
 ### 12.5 Disclaimer and document availability
 
@@ -496,6 +578,65 @@ Use this approved disclaimer unless legal or product provides a newer version:
 - Reveal a labeled concern textarea only when “Other” is selected.
 - Validate that a reason is selected and that the concern is entered when required. Preserve the user's input on validation errors.
 - Provide Submit, Cancel, close, Escape, and safe backdrop-dismissal behavior.
+
+### 12.7 Adapting the standard template from SME instructions
+
+Use this workflow whenever building or revising Insights for a policy type. The SME template supplies the domain requirements; it is not a separate visual design system. The uploaded policy supplies the facts. This root contract supplies the shared layout, components, typography, interactions, and evidence presentation.
+
+#### Required mapping before implementation
+
+Create a working mapping from every SME requirement to a standard slot. Keep it with the implementation or task notes, not in a module-specific `DESIGN.md`. For each requirement, record:
+
+| Mapping field | What to establish |
+|---|---|
+| Policy type and SME reference | Applicable SME template, version/date when provided, and any later approved product decisions |
+| Required content | Fields, covered subjects, coverage parts, endorsements, limits, exclusions, conditions, and watch-point topics required by that SME |
+| Destination | Standard page slot, disclosure, subsection, and reader-facing label; note any necessary ordering change |
+| Applicability | Always required, conditional on a documented feature, or not applicable; define the visible state when required evidence is missing |
+| Evidence | Supplied document, form, PDF page, excerpt, and any modifying endorsement supporting the fact |
+| Qualifications | Currency/unit, coverage basis, period, waiting duration, deductible, exception, or other condition needed to avoid changing the meaning |
+| Grouping and prominence | Direct row, static subsection, long grouped disclosure, primary summary, neutral note, or supported caution |
+| Interaction | Source action, initial disclosure state, document destination, and any SME-required contextual CTA |
+| Variation | Content variation handled by existing components, or an explicitly approved design exception scoped to that policy type |
+
+- Account for every SME requirement. A mapped item must be displayed, explicitly identified as unavailable, or omitted for a documented applicability reason; do not drop it because the reference HTML lacks that section.
+- Preserve SME rules about required classification, schedule completeness, conditions, severity, prohibited inference, and informational wording. Never fill a required value from a typical policy or from another policy type's sample.
+- Resolve the actual policy terms before rendering: a modifying endorsement may change the base form. If supplied documents conflict and precedence cannot be established, show the ambiguity rather than selecting a convenient value.
+- Use the SME's watch-point conditions and severity guidance with the actual evidence. A topic's presence in the template does not by itself establish a risk, a missing policy, or a renewal outcome.
+- Keep exclusions, unavailable evidence, and conditional applicability distinct. A missing schedule means its contents cannot be determined; it does not establish that no subjects are insured.
+- If the SME template is unavailable, build the shared shell and document-grounded sections that can be established, record the missing domain requirements, and obtain the applicable SME template before claiming complete SME coverage. Do not invent a policy-type template from a sibling page.
+
+#### What varies and what stays shared
+
+- Policy types may vary in canonical fields, scheduled subjects, coverage groups, limits and their bases, endorsement/rider effects, sublimits, deductibles, duties, exclusions, watch points, and necessary companion-policy references. Express these through the mapping above.
+- Keep colors, type scale, spacing, card geometry, heading hierarchy, source-sheet behavior, accessible targets, focus handling, disclaimer, and feedback components shared. Reuse the existing primitives for new SME categories before introducing a new component.
+- Record a durable visual or interaction exception here with its policy scope and approval. Do not treat a policy-specific content difference as permission to restyle the page or copy all exceptions from its reference implementation.
+- Later explicit user decisions override the original SME presentation when they conflict. Retain the domain meaning and record the resolved placement or behavior. For example, moving endorsements inside Policy details changes placement, not their evidence requirements.
+
+#### Approved BOP adaptation example
+
+Approved September 11, 2026. This is one adaptation of the standard template, not the template for other policy types. The published reference is `Ovie_business_owners_insights.html`; `ovie_bop_insights.html` is the local authoring preview.
+
+- **Slot selection:** Your policy simplified → Covered locations & buildings → Policy details → About these insights → feedback, with the persistent composer. Property and liability coverage belong under What’s included; omit a separate primary coverage card. Use the six standard Policy details disclosures, initially closed and independently expandable, with no divider immediately under the card heading.
+- **Simplified card:** include documented canonical fields and definitive business classification from class codes or business description. Show the full policy number with no eye toggle, omit all source-info controls in this card, and omit More policy information. These visibility rules do not alter masking or source controls on other policy types.
+- **Covered subjects:** list the explicit location/building schedule with text and trailing source controls, without leading building icons. Do not infer missing buildings or transfer limits between scheduled subjects.
+- **Coverage grouping:** Property, Income coverage conditions, and Liability are static subsection headings inside What’s included. Income conditions remain visible with the open parent. Coverage labels above a separate principal value use 14px/20px regular tertiary text; principal values below use 18px/24px semibold primary text. Subsection and explanatory detail-item headings remain 14px semibold primary text. This label/value distinction supersedes the earlier BOP semibold-label treatment. Supporting disclosures such as Other liability features may remain where useful.
+- **SME content:** map building/BPP limits per scheduled subject, business income/extra expense basis and timing, liability trigger and aggregates, practical endorsements, grouped sublimits, factual exclusions, coverage conditions, and supported watch points to the standard slots. Preserve separate start/waiting conditions; do not assume actual-loss-sustained duration. Omit coinsurance unless clearly interpretable. Identify general eligibility/growth context as informational, with an agent CTA rather than an undocumented renewal prediction.
+- **Endorsements:** keep Policy specifications inside Policy details, state effects plainly, and retain a neutral Endorsement summary with schedule linkage. Omit the separate Ask Ovie about endorsements CTA; this later review decision supersedes that CTA in the original BOP SME template.
+- **Header exception:** solid white header; both search/share containers use `background-subtle`, with the shared neutral icons and 44×44px targets. Back remains transparent.
+- **Source-alignment exception:** outside the simplified card, use transparent source controls centered vertically against the complete associated text, including supporting paragraphs, on a consistent trailing alignment. This includes building, coverage, specification, sublimit, limitation, summary, and watch-point rows, superseding the default watchpoint first-line placement for BOP only. Retain the standard mobile sheet/desktop drawer behavior and readable source formatting.
+
+### 12.8 Insights review checklist
+
+Before considering an Insights page ready, verify the relevant items below against its supplied documents and selected variant:
+
+- Section order, field visibility, disclosure defaults, heading roles, and source alignment match the contract. Variant exceptions are scoped explicitly rather than implemented as global overrides.
+- Every requirement in the applicable SME template has a recorded destination and applicability/evidence state. Policy-specific differences are driven by that mapping rather than copied from a different policy's sample page.
+- Every displayed limit retains its basis and period, every material claim has evidence, and endorsement effects are reconciled with the base form. Missing evidence is not converted into a coverage conclusion.
+- Source references are readable, excerpts preserve qualifications, reconstructed tables match the original, and document links resolve to the correct file/page.
+- On narrow and wide layouts, long headings and references wrap without horizontal overflow; source targets remain at least 44×44px and the composer does not cover the final content or focused controls.
+- Disclosures, source sheets, search, and contextual actions work with keyboard and touch. Focus returns to the initiating control after sheet dismissal. Apply section 11's motion gate and reduced-motion rules without introducing page-load animation.
+- Summary notes, exclusions, limitations, evidence gaps, and cautions use their intended text and surface roles. Counts describe their actual scope and are not treated as severity signals.
 
 ## 13. Page-family guidance
 
