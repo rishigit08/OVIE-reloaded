@@ -30,7 +30,7 @@ html.upload-options-open{overflow:hidden}
 .upload-options-sheet *{box-sizing:border-box}
 .upload-options-sheet [hidden]{display:none!important}
 .upload-options-handle{height:4px;width:40px;border-radius:999px;background:var(--border,#D8DDDB);margin:0 auto 12px}
-.upload-options-heading{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:start;column-gap:8px;padding-bottom:16px;border-bottom:1px solid var(--line,#ECEFED)}
+.upload-options-heading{display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:start;column-gap:8px;padding-bottom:16px}
 .upload-options-heading h2{font:600 18px/24px Figtree,system-ui,sans-serif;margin:0;padding-top:10px}
 .upload-options-heading p{grid-column:1/-1;min-width:0;font-size:12px;line-height:16px;color:var(--text-tertiary,#5F6368);margin:4px 0 0}
 .upload-options-sheet button{font:inherit;cursor:pointer}
@@ -38,8 +38,12 @@ html.upload-options-open{overflow:hidden}
 .upload-option-icon{display:block;flex:none;width:20px;height:20px;background:var(--icon-brand,#6B4062);mask:var(--option-icon) center/contain no-repeat;-webkit-mask:var(--option-icon) center/contain no-repeat}
 .upload-options-close .upload-option-icon{background:var(--icon-default,#5F6368)}
 .upload-option{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:12px 0;border:0;border-bottom:1px solid var(--line,#ECEFED);background:transparent;color:var(--text-primary,#111);text-align:left;font-weight:600!important}
+.upload-option[data-current-upload]{background:var(--primary-soft,#F5EDF3);border-bottom:0;border-radius:12px}
+.upload-options-more>.upload-option:last-child{border-bottom:0}
 .upload-option>.upload-option-icon,.upload-option-brand{width:40px;height:40px;border-radius:12px;flex:none;background-color:var(--canvas,#F6F6F6)}
 .upload-option>.upload-option-icon{mask:none;-webkit-mask:none;position:relative}
+.upload-option[data-current-upload]>.upload-option-icon{background-color:transparent}
+.upload-option[data-current-upload]>.upload-option-icon::after{background:var(--icon-brand,#6B4062)}
 .upload-option>.upload-option-icon::after{content:"";position:absolute;inset:10px;background:var(--icon-default,#5F6368);mask:var(--option-icon) center/contain no-repeat;-webkit-mask:var(--option-icon) center/contain no-repeat}
 .upload-option-brand{display:grid;place-items:center;background:var(--canvas,#F6F6F6)}
 .upload-option-brand img{width:20px;height:20px;object-fit:contain}

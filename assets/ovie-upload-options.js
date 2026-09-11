@@ -25,6 +25,20 @@
     else closeTimer = setTimeout(finish, matchMedia('(prefers-reduced-motion:reduce)').matches ? 125 : 260);
   }
   function message(copy) { sheet.querySelector('[role="status"]').textContent = copy; }
+  function currentUpload() {
+    try {
+      const state = JSON.parse(localStorage.getItem('ovie.upload.design-preview.v1'));
+      if (state) window.OvieUploadFlow.sync(state);
+      return state && state.stage !== 4 ? state : null;
+    } catch { return null; }
+  }
+  function refresh(state = currentUpload()) {
+    if (!sheet) return;
+    const button = sheet.querySelector('[data-current-upload]');
+    const active = !!state && state.stage !== 4;
+    if (!active && document.activeElement === button) sheet.querySelector('[data-source="files"]').focus({preventScroll:true});
+    button.hidden = !active;
+  }
   function build() {
     sheet = document.createElement('dialog');
     sheet.className = 'upload-options-sheet';
@@ -37,6 +51,7 @@
         <button class="upload-options-close" type="button" aria-label="Close upload options">${icon('lucide/x.svg')}</button>
         <p id="upload-options-formats">PDF, PNG, JPG · 10 files · 25 MiB/file · 100 MiB total</p></div>
       <div class="upload-options-body">
+        <button class="upload-option" type="button" data-current-upload hidden>${icon('lucide/clock.svg?v=20260911a')}<span>View current upload status</span></button>
         <button class="upload-option" type="button" data-source="files">${icon('lucide/folder.svg')}<span>Choose from files</span></button>
         <button class="upload-option" type="button" data-source="camera">${icon('upload-options/camera.svg')}<span>Camera</span></button>
         <button class="upload-option" type="button" data-source="link">${icon('upload-options/link.svg')}<span>Request a link</span></button>
@@ -51,6 +66,11 @@
         <p class="upload-options-notice">I understand that I am uploading sensitive insurance documents and confirm Ovie may process them securely per our Privacy Policy and Terms of Service.</p>
       </div>`;
     document.body.append(sheet);
+    sheet.querySelector('[data-current-upload]').onclick = () => {
+      const state = currentUpload();
+      if (state) destination('detail', state.batchId);
+      else refresh(null);
+    };
     sheet.querySelector('.upload-options-close').onclick = event => close(event.detail === 0);
     sheet.addEventListener('cancel', event => { event.preventDefault(); close(true); });
     let backdropDown = false;
@@ -93,6 +113,7 @@
     sheet.style.width = shell ? `${shell.getBoundingClientRect().width}px` : '';
     sheet.querySelectorAll('[role="status"],[role="alert"]').forEach(element => element.textContent = '');
     sheet.querySelector('details').open = false;
+    refresh();
     sheet.classList.toggle('instant', keyboard);
     document.documentElement.classList.add('upload-options-open');
     sheet.showModal();
@@ -100,7 +121,7 @@
     sheet.getBoundingClientRect();
     sheet.classList.add('is-visible');
   }
-  window.OvieUploadOptions = {open};
+  window.OvieUploadOptions = {open, refresh};
   window.addEventListener('resize', () => {
     if (!sheet?.open) return;
     const shell = document.querySelector('.app-shell');

@@ -6,7 +6,7 @@
   const selector = '#uploadPolicy,.upload-nav,[data-upload-entry]';
   const css = document.createElement('link');
   css.rel = 'stylesheet';
-  css.href = new URL('ovie-upload-nav.css?v=20260909aj', scriptUrl).href;
+  css.href = new URL('ovie-upload-nav.css?v=20260911e', scriptUrl).href;
   document.head.append(css);
   function read() { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
   let toastTimer,toastBatch;
@@ -27,6 +27,7 @@
   function update() {
     const state = read();
     if(state){window.OvieUploadFlow.migrate(state);window.OvieUploadFlow.sync(state)}
+    window.OvieUploadOptions?.refresh(state);
     if(toastBatch&&toastBatch!==state?.batchId){const toast=document.querySelector('#ovie-upload-completion-toast');toast?.classList.remove('is-visible');toast?.setAttribute('aria-hidden','true');const close=toast?.querySelector('button');if(close)close.tabIndex=-1;clearTimeout(toastTimer);toastBatch=null}
     if(!isUploadPage&&state){try{const value=JSON.stringify(state);if(localStorage.getItem(key)!==value)localStorage.setItem(key,value)}catch{}}
     showCompletionToast(state);
@@ -46,7 +47,7 @@
       }
       const ids=state.insightPolicies?.length?state.insightPolicies:['local'];
       const value=Math.round(ids.reduce((sum,id)=>sum+window.OvieUploadFlow.item(state,id).progress,0)/ids.length);
-      const label = `Upload: ${window.OvieUploadFlow.elapsed(state)<6000?'Extracting and Reading Data':'Generating Insights'}. View progress`;
+      const label = `Upload: ${window.OvieUploadFlow.elapsed(state)<6000?'Extracting and Reading Data':'Generating Insights'}. Open upload options`;
       button.setAttribute('aria-label', label);
       button.title = label;
       const anchor = button.querySelector('.nav-icon') || button;
@@ -71,7 +72,7 @@
     event.preventDefault();
     event.stopImmediatePropagation();
     const state = read();
-    if ((!state || state.stage === 4) && window.OvieUploadOptions) {
+    if (window.OvieUploadOptions) {
       window.OvieUploadOptions.open(trigger, event.detail === 0);
       return;
     }
