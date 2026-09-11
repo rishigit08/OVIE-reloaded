@@ -1,0 +1,1329 @@
+[
+  {
+    "state": "Alabama",
+    "page": 24,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 111000,
+        "rate": "4.50",
+        "page": 24
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": null,
+        "rate": "0.28",
+        "page": 24
+      }
+    ]
+  },
+  {
+    "state": "Arkansas",
+    "page": 25,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 9000,
+        "rate": "2.50",
+        "page": 25
+      }
+    ]
+  },
+  {
+    "state": "Arizona",
+    "page": 26,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Electrical Wiring\u2014within Buildings & Drivers",
+        "code": "5190",
+        "payroll": 100,
+        "rate": "4.29",
+        "page": 26
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 211000,
+        "rate": "3.97",
+        "page": 26
+      }
+    ]
+  },
+  {
+    "state": "California",
+    "page": 27,
+    "mod": 0.94,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Bakeries and Cracker Mfg.",
+        "code": "2003",
+        "payroll": 31046000,
+        "rate": "17.26",
+        "page": 27
+      },
+      {
+        "description": "Bottling",
+        "code": "2163",
+        "payroll": 2662000,
+        "rate": "15.46",
+        "page": 27
+      },
+      {
+        "description": "Clothing Mfg.",
+        "code": "2501",
+        "payroll": 17899000,
+        "rate": "12.80",
+        "page": 27
+      },
+      {
+        "description": "Sawmills or Shingle Mills",
+        "code": "2710",
+        "payroll": 1189000,
+        "rate": "14.96",
+        "page": 27
+      },
+      {
+        "description": "Wood Products Mfg.",
+        "code": "2842",
+        "payroll": 528000,
+        "rate": "20.72",
+        "page": 27
+      },
+      {
+        "description": "Tag, Button or Fastener Mfg.",
+        "code": "3131",
+        "payroll": 5469000,
+        "rate": "12.62",
+        "page": 27
+      },
+      {
+        "description": "Electrical Apparatus Mfg.",
+        "code": "3179",
+        "payroll": 10859000,
+        "rate": "9.00",
+        "page": 27
+      },
+      {
+        "description": "Instrument Mfg. \u2014 electronic",
+        "code": "3681",
+        "payroll": 12400000,
+        "rate": "2.45",
+        "page": 27
+      },
+      {
+        "description": "Automobile, Automobile Truck or Motorcycle Parts Mfg.",
+        "code": "3840",
+        "payroll": 5548000,
+        "rate": "11.93",
+        "page": 27
+      },
+      {
+        "description": "Plastics \u2014 injection molded products mfg.",
+        "code": "4498",
+        "payroll": 14469000,
+        "rate": "11.90",
+        "page": 27
+      },
+      {
+        "description": "Plastics \u2014 thermoformed products mfg.",
+        "code": "4499",
+        "payroll": 10384000,
+        "rate": "13.95",
+        "page": 27
+      },
+      {
+        "description": "Cosmetic, Personal Care or Perfumery Products Mfg.",
+        "code": "4623",
+        "payroll": 20309000,
+        "rate": "16.87",
+        "page": 27
+      },
+      {
+        "description": "Vitamin or Food Supplement Mfg.",
+        "code": "4831",
+        "payroll": 5976000,
+        "rate": "14.90",
+        "page": 27
+      },
+      {
+        "description": "Office Machine Installation or Repair",
+        "code": "5191",
+        "payroll": 1304000,
+        "rate": "4.72",
+        "page": 27
+      },
+      {
+        "description": "Food Products Mfg. or Processing",
+        "code": "6504",
+        "payroll": 32727000,
+        "rate": "16.97",
+        "page": 27
+      },
+      {
+        "description": "Stores \u2014 retail",
+        "code": "8017",
+        "payroll": 2758000,
+        "rate": "7.47",
+        "page": 27
+      },
+      {
+        "description": "Stores \u2014 wholesale",
+        "code": "8018",
+        "payroll": 9258000,
+        "rate": "14.40",
+        "page": 27
+      },
+      {
+        "description": "Stores \u2014 clothing, dry goods \u2014 wholesale",
+        "code": "8032",
+        "payroll": 5044000,
+        "rate": "15.97",
+        "page": 27
+      },
+      {
+        "description": "Warehouses \u2014 general merchandise",
+        "code": "8292",
+        "payroll": 61121000,
+        "rate": "18.94",
+        "page": 27
+      },
+      {
+        "description": "Clerical Office Employees",
+        "code": "8810",
+        "payroll": 17185000,
+        "rate": "0.88",
+        "page": 27
+      },
+      {
+        "description": "Restaurants or Taverns",
+        "code": "9079",
+        "payroll": 12048000,
+        "rate": "9.45",
+        "page": 27
+      }
+    ]
+  },
+  {
+    "state": "Connecticut",
+    "page": 28,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 11000,
+        "rate": "0.26",
+        "page": 28
+      }
+    ]
+  },
+  {
+    "state": "Delaware",
+    "page": 29,
+    "mod": null,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Warehousing NOC",
+        "code": "813",
+        "payroll": 272000,
+        "rate": "9.49",
+        "page": 29
+      },
+      {
+        "description": "Clerical Office Employees",
+        "code": "953",
+        "payroll": 42000,
+        "rate": "0.38",
+        "page": 29
+      }
+    ]
+  },
+  {
+    "state": "Florida",
+    "page": 30,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Landscape Gardening & Drivers",
+        "code": "0042",
+        "payroll": 6475000,
+        "rate": "8.58",
+        "page": 30
+      },
+      {
+        "description": "Cloth, Canvas and Related Products Mfg. NOC",
+        "code": "2501",
+        "payroll": 4564000,
+        "rate": "2.93",
+        "page": 30
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 4988000,
+        "rate": "5.52",
+        "page": 30
+      },
+      {
+        "description": "Salespersons, Collectors or Messengers\u2014Outside",
+        "code": "8742",
+        "payroll": 219000,
+        "rate": "0.45",
+        "page": 30
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 4148000,
+        "rate": "0.23",
+        "page": 30
+      },
+      {
+        "description": "Club\u2014Country, Golf, Fishing or Yacht & Clerical",
+        "code": "9060",
+        "payroll": 30530000,
+        "rate": "2.22",
+        "page": 30
+      },
+      {
+        "description": "Park NOC\u2014All Employees & Drivers",
+        "code": "9102",
+        "payroll": 5670000,
+        "rate": "4.50",
+        "page": 30
+      }
+    ]
+  },
+  {
+    "state": "Georgia",
+    "page": 31,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Store: Wholesale NOC",
+        "code": "8018",
+        "payroll": 6154000,
+        "rate": "5.00",
+        "page": 31
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 5455000,
+        "rate": "7.22",
+        "page": 31
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 201000,
+        "rate": "0.23",
+        "page": 31
+      }
+    ]
+  },
+  {
+    "state": "Iowa",
+    "page": 32,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 4886000,
+        "rate": "4.98",
+        "page": 32
+      }
+    ]
+  },
+  {
+    "state": "Idaho",
+    "page": 33,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 3000,
+        "rate": "5.74",
+        "page": 33
+      }
+    ]
+  },
+  {
+    "state": "Illinois",
+    "page": 34,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Breakfast Food Mfg.",
+        "code": "2016",
+        "payroll": 170000,
+        "rate": "4.05",
+        "page": 34
+      },
+      {
+        "description": "Packing House\u2014All Operations",
+        "code": "2089",
+        "payroll": 769000,
+        "rate": "4.18",
+        "page": 34
+      },
+      {
+        "description": "Screw Mfg.",
+        "code": "3145",
+        "payroll": 727000,
+        "rate": "3.52",
+        "page": 34
+      },
+      {
+        "description": "Electrical Apparatus Mfg. NOC",
+        "code": "3179",
+        "payroll": 3634000,
+        "rate": "3.86",
+        "page": 34
+      },
+      {
+        "description": "Eyelet Mfg.",
+        "code": "3270",
+        "payroll": 715000,
+        "rate": "6.27",
+        "page": 34
+      },
+      {
+        "description": "Metal Stamped Goods Mfg. NOC",
+        "code": "3400",
+        "payroll": 1991000,
+        "rate": "6.38",
+        "page": 34
+      },
+      {
+        "description": "Pump Mfg.",
+        "code": "3612",
+        "payroll": 1046000,
+        "rate": "4.85",
+        "page": 34
+      },
+      {
+        "description": "Precision Machined Parts Mfg. NOC",
+        "code": "3629",
+        "payroll": 551000,
+        "rate": "3.74",
+        "page": 34
+      },
+      {
+        "description": "Television, Radio, Telephone or Telecommunication Device Mfg. NOC",
+        "code": "3681",
+        "payroll": 2257000,
+        "rate": "1.84",
+        "page": 34
+      },
+      {
+        "description": "Corrugated or Fiberboard Container Mfg.",
+        "code": "4244",
+        "payroll": 3167000,
+        "rate": "5.68",
+        "page": 34
+      },
+      {
+        "description": "Bag Mfg.\u2014Plastic or Paper",
+        "code": "4273",
+        "payroll": 1323000,
+        "rate": "5.23",
+        "page": 34
+      },
+      {
+        "description": "Printing",
+        "code": "4299",
+        "payroll": 9767000,
+        "rate": "4.02",
+        "page": 34
+      },
+      {
+        "description": "Bookbinding",
+        "code": "4307",
+        "payroll": 3184000,
+        "rate": "3.84",
+        "page": 34
+      },
+      {
+        "description": "Plastics Mfg.\u2014Molded Products NOC",
+        "code": "4484",
+        "payroll": 6425000,
+        "rate": "4.45",
+        "page": 34
+      },
+      {
+        "description": "Pharmaceutical or Surgical Goods Mfg. NOC",
+        "code": "4693",
+        "payroll": 6826000,
+        "rate": "2.38",
+        "page": 34
+      },
+      {
+        "description": "Drug, Medicine or Pharmaceutical Preparation Mfg. - Includes Mfg. of Ingredients",
+        "code": "4825",
+        "payroll": 5251000,
+        "rate": "2.11",
+        "page": 34
+      },
+      {
+        "description": "Door, Door Frame or Sash Erection\u2014Metal or Metal Covered",
+        "code": "5102",
+        "payroll": 1299000,
+        "rate": "19.10",
+        "page": 34
+      },
+      {
+        "description": "Office Machine Installation, Inspection, Adjustment, or Repair",
+        "code": "5191",
+        "payroll": 173000,
+        "rate": "1.33",
+        "page": 34
+      },
+      {
+        "description": "Food Sundries Mfg. NOC - No Cereal Milling",
+        "code": "6504",
+        "payroll": 2405000,
+        "rate": "5.52",
+        "page": 34
+      },
+      {
+        "description": "Trucking\u2014Mail, Parcel or Package Delivery\u2014All Employees & Drivers",
+        "code": "7231",
+        "payroll": 705000,
+        "rate": "14.38",
+        "page": 34
+      },
+      {
+        "description": "Store: Florist & Drivers",
+        "code": "8001",
+        "payroll": 236000,
+        "rate": "3.23",
+        "page": 34
+      },
+      {
+        "description": "Store: Hardware",
+        "code": "8010",
+        "payroll": 845000,
+        "rate": "2.78",
+        "page": 34
+      },
+      {
+        "description": "Store: Retail\u2014NOC",
+        "code": "8017",
+        "payroll": 3867000,
+        "rate": "2.93",
+        "page": 34
+      },
+      {
+        "description": "Store: Wholesale NOC",
+        "code": "8018",
+        "payroll": 3385000,
+        "rate": "5.33",
+        "page": 34
+      },
+      {
+        "description": "Store: Meat, Fish, or Poultry\u2014Retail",
+        "code": "8031",
+        "payroll": 622000,
+        "rate": "3.76",
+        "page": 34
+      },
+      {
+        "description": "Store: Furniture & Drivers",
+        "code": "8044",
+        "payroll": 1617000,
+        "rate": "5.36",
+        "page": 34
+      },
+      {
+        "description": "Vegetable Packing & Drivers",
+        "code": "8209",
+        "payroll": 2465000,
+        "rate": "5.10",
+        "page": 34
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 2465000,
+        "rate": "6.88",
+        "page": 34
+      },
+      {
+        "description": "Salespersons, Collectors or Messengers\u2014Outside",
+        "code": "8742",
+        "payroll": 400000,
+        "rate": "0.43",
+        "page": 34
+      },
+      {
+        "description": "Mailing or Addressing Company or Letter Service Shop",
+        "code": "8800",
+        "payroll": 21184000,
+        "rate": "3.28",
+        "page": 34
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 17748000,
+        "rate": "0.19",
+        "page": 34
+      },
+      {
+        "description": "Hotel\u2014All Other Employees & Salespersons, Drivers",
+        "code": "9052",
+        "payroll": 1138000,
+        "rate": "4.21",
+        "page": 34
+      },
+      {
+        "description": "Hotel\u2014Restaurant Employees",
+        "code": "9058",
+        "payroll": 687000,
+        "rate": "2.43",
+        "page": 34
+      }
+    ]
+  },
+  {
+    "state": "Indiana",
+    "page": 36,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Landscape Gardening & Drivers",
+        "code": "0042",
+        "payroll": 48000,
+        "rate": "6.13",
+        "page": 36
+      },
+      {
+        "description": "Welding or Cutting NOC",
+        "code": "3365",
+        "payroll": 512000,
+        "rate": "5.47",
+        "page": 36
+      },
+      {
+        "description": "Valve Mfg.",
+        "code": "3634",
+        "payroll": 294000,
+        "rate": "1.56",
+        "page": 36
+      },
+      {
+        "description": "Printing",
+        "code": "4299",
+        "payroll": 227000,
+        "rate": "1.72",
+        "page": 36
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 53000,
+        "rate": "2.98",
+        "page": 36
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 51000,
+        "rate": "0.18",
+        "page": 36
+      }
+    ]
+  },
+  {
+    "state": "Kansas",
+    "page": 37,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 481000,
+        "rate": "4.43",
+        "page": 37
+      }
+    ]
+  },
+  {
+    "state": "Kentucky",
+    "page": 38,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Electrical Wiring\u2014within Buildings & Drivers",
+        "code": "5190",
+        "payroll": 2199000,
+        "rate": "3.27",
+        "page": 38
+      }
+    ]
+  },
+  {
+    "state": "Louisiana",
+    "page": 39,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Electrical Wiring\u2014within Buildings & Drivers",
+        "code": "5190",
+        "payroll": 473000,
+        "rate": "4.43",
+        "page": 39
+      }
+    ]
+  },
+  {
+    "state": "Massachusetts",
+    "page": 40,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 4166000,
+        "rate": "3.46",
+        "page": 40
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 1887000,
+        "rate": "0.08",
+        "page": 40
+      }
+    ]
+  },
+  {
+    "state": "Maryland",
+    "page": 41,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 232000,
+        "rate": "5.68",
+        "page": 41
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 616000,
+        "rate": "0.17",
+        "page": 41
+      }
+    ]
+  },
+  {
+    "state": "Maine",
+    "page": 42,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 1000,
+        "rate": "0.42",
+        "page": 42
+      }
+    ]
+  },
+  {
+    "state": "Michigan",
+    "page": 43,
+    "mod": null,
+    "merit": "Merit Rating Credit 0%                           9889                                   0",
+    "classes": [
+      {
+        "description": "Food Sundries Mfg. NOC",
+        "code": "6504",
+        "payroll": 110000,
+        "rate": "2.89",
+        "page": 43
+      },
+      {
+        "description": "Warehousing NOC",
+        "code": "8292",
+        "payroll": 26000,
+        "rate": "4.52",
+        "page": 43
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": null,
+        "rate": "0.14",
+        "page": 43
+      }
+    ]
+  },
+  {
+    "state": "Minnesota",
+    "page": 44,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "BREAKFAST FOOD MFG.",
+        "code": "2016",
+        "payroll": 689000,
+        "rate": "4.32",
+        "page": 44
+      },
+      {
+        "description": "FOOD SUNDRIES MFG. NOC",
+        "code": "6504",
+        "payroll": 292000,
+        "rate": "3.73",
+        "page": 44
+      },
+      {
+        "description": "STORAGE WAREHOUSE: NOC",
+        "code": "8292",
+        "payroll": 2205000,
+        "rate": "4.99",
+        "page": 44
+      },
+      {
+        "description": "CLERICAL OFFICE EMPLOYEES NOC",
+        "code": "8810",
+        "payroll": 113000,
+        "rate": "0.19",
+        "page": 44
+      }
+    ]
+  },
+  {
+    "state": "Missouri",
+    "page": 45,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Television, Radio, Telephone or Telecommunication Device Mfg. NOC",
+        "code": "3681",
+        "payroll": 267000,
+        "rate": "1.24",
+        "page": 45
+      },
+      {
+        "description": "Cable Installation {In Conduits or Subways) & Drivers",
+        "code": "5190",
+        "payroll": null,
+        "rate": "4.13",
+        "page": 45
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": null,
+        "rate": "5.02",
+        "page": 45
+      }
+    ]
+  },
+  {
+    "state": "Mississippi",
+    "page": 46,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Breakfast Food Mfg.",
+        "code": "2016",
+        "payroll": 192000,
+        "rate": "2.78",
+        "page": 46
+      },
+      {
+        "description": "Precision Machined Parts Mfg. NOC",
+        "code": "3629",
+        "payroll": 1243000,
+        "rate": "2.64",
+        "page": 46
+      },
+      {
+        "description": "Pharmaceutical or Surgical Goods Mfg. NOC",
+        "code": "4693",
+        "payroll": 530000,
+        "rate": "0.81",
+        "page": 46
+      },
+      {
+        "description": "Store: Florist & Drivers",
+        "code": "8001",
+        "payroll": 172000,
+        "rate": "2.66",
+        "page": 46
+      },
+      {
+        "description": "Store: Wholesale NOC",
+        "code": "8018",
+        "payroll": 437000,
+        "rate": "2.69",
+        "page": 46
+      },
+      {
+        "description": "Store: Clothing, Wearing Apparel or Dry Goods\u2014Wholesale",
+        "code": "8032",
+        "payroll": 56000,
+        "rate": "3.33",
+        "page": 46
+      },
+      {
+        "description": "Mailing or Addressing Company or Letter Service Shop",
+        "code": "8800",
+        "payroll": 422000,
+        "rate": "1.66",
+        "page": 46
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 109000,
+        "rate": "0.30",
+        "page": 46
+      }
+    ]
+  },
+  {
+    "state": "Montana",
+    "page": 47,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 2000,
+        "rate": "0.63",
+        "page": 47
+      }
+    ]
+  },
+  {
+    "state": "North Carolina",
+    "page": 48,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Automotive Machine Shop",
+        "code": "3632",
+        "payroll": 608000,
+        "rate": "3.89",
+        "page": 48
+      },
+      {
+        "description": "Door, Door Frame or Sash Erection\u2014Metal or Metal Covered",
+        "code": "5102",
+        "payroll": 573000,
+        "rate": "7.62",
+        "page": 48
+      },
+      {
+        "description": "Building Material Dealer\u2014New Materials Only: Store Employees",
+        "code": "8058",
+        "payroll": 10265000,
+        "rate": "3.90",
+        "page": 48
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 1491000,
+        "rate": "4.80",
+        "page": 48
+      },
+      {
+        "description": "Computer System Designers or Programmers: Exclusively Office",
+        "code": "8810",
+        "payroll": null,
+        "rate": "0.20",
+        "page": 48
+      }
+    ]
+  },
+  {
+    "state": "Nebraska",
+    "page": 49,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 1095000,
+        "rate": "4.90",
+        "page": 49
+      }
+    ]
+  },
+  {
+    "state": "New Hampshire",
+    "page": 50,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": null,
+        "rate": "5.91",
+        "page": 50
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 56000,
+        "rate": "0.27",
+        "page": 50
+      }
+    ]
+  },
+  {
+    "state": "New Jersey",
+    "page": 51,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Electrical Wiring\u2014within Buildings - & Drivers",
+        "code": "5190",
+        "payroll": null,
+        "rate": "6.23",
+        "page": 51
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 2210000,
+        "rate": "12.58",
+        "page": 51
+      },
+      {
+        "description": "Salespersons - Outside",
+        "code": "8742",
+        "payroll": 53000,
+        "rate": "0.51",
+        "page": 51
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 113000,
+        "rate": "0.28",
+        "page": 51
+      }
+    ]
+  },
+  {
+    "state": "New Mexico",
+    "page": 52,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Food Sundries Mfg. NOC - No Cereal Milling",
+        "code": "6504",
+        "payroll": 49000,
+        "rate": "7.47",
+        "page": 52
+      }
+    ]
+  },
+  {
+    "state": "New York",
+    "page": 53,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Electrical Wiring\u2014Within Buildings\u2014& Drivers",
+        "code": "5190",
+        "payroll": null,
+        "rate": "8.61",
+        "page": 53
+      },
+      {
+        "description": "Warehouse NOC",
+        "code": "8292",
+        "payroll": 288000,
+        "rate": "11.44",
+        "page": 53
+      }
+    ]
+  },
+  {
+    "state": "Oklahoma",
+    "page": 54,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 100,
+        "rate": "4.51",
+        "page": 54
+      }
+    ]
+  },
+  {
+    "state": "Oregon",
+    "page": 55,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Store: Wholesale NOC",
+        "code": "8018",
+        "payroll": 56000,
+        "rate": "3.16",
+        "page": 55
+      }
+    ]
+  },
+  {
+    "state": "Pennsylvania",
+    "page": 56,
+    "mod": null,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Electrical Wiring\u2014within Buildings",
+        "code": "661",
+        "payroll": null,
+        "rate": "4.86",
+        "page": 56
+      },
+      {
+        "description": "Employment Contractor - Electrical Wiring",
+        "code": "695",
+        "payroll": 421000,
+        "rate": "6.58",
+        "page": 56
+      }
+    ]
+  },
+  {
+    "state": "South Carolina",
+    "page": 57,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Television, Radio, Telephone or Telecommunication Device Mfg. NOC",
+        "code": "3681",
+        "payroll": 1167000,
+        "rate": "1.85",
+        "page": 57
+      },
+      {
+        "description": "Electrical Wiring\u2014within Buildings & Drivers",
+        "code": "5190",
+        "payroll": null,
+        "rate": "8.15",
+        "page": 57
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": null,
+        "rate": "7.69",
+        "page": 57
+      }
+    ]
+  },
+  {
+    "state": "South Dakota",
+    "page": 58,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 1000,
+        "rate": "0.29",
+        "page": 58
+      }
+    ]
+  },
+  {
+    "state": "Tennessee",
+    "page": 59,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Food Sundries Mfg. NOC - No Cereal Milling",
+        "code": "6504",
+        "payroll": 91000,
+        "rate": "3.10",
+        "page": 59
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 1,
+        "rate": "3.26",
+        "page": 59
+      }
+    ]
+  },
+  {
+    "state": "Virginia",
+    "page": 60,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Machine Shop NOC",
+        "code": "3632",
+        "payroll": 137000,
+        "rate": "3.38",
+        "page": 60
+      },
+      {
+        "description": "Store: Wholesale NOC",
+        "code": "8018",
+        "payroll": 10000,
+        "rate": "3.47",
+        "page": 60
+      },
+      {
+        "description": "Building Material Dealer\u2014New Materials Only: Store Employees",
+        "code": "8058",
+        "payroll": 3617000,
+        "rate": "3.71",
+        "page": 60
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 2752000,
+        "rate": "3.34",
+        "page": 60
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 161000,
+        "rate": "0.14",
+        "page": 60
+      }
+    ]
+  },
+  {
+    "state": "Vermont",
+    "page": 61,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 8000,
+        "rate": "0.34",
+        "page": 61
+      }
+    ]
+  },
+  {
+    "state": "Wisconsin",
+    "page": 62,
+    "mod": null,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Breakfast Food Mfg.",
+        "code": "2016",
+        "payroll": 5473000,
+        "rate": "2.13",
+        "page": 62
+      },
+      {
+        "description": "Printing",
+        "code": "4299",
+        "payroll": 433000,
+        "rate": "2.65",
+        "page": 62
+      },
+      {
+        "description": "Pharmaceutical or Surgical Goods Mfg. NOC",
+        "code": "4693",
+        "payroll": 47000,
+        "rate": "1.35",
+        "page": 62
+      },
+      {
+        "description": "Food Sundries Mfg. NOC - No Cereal Milling",
+        "code": "6504",
+        "payroll": 172000,
+        "rate": "4.08",
+        "page": 62
+      },
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 1198000,
+        "rate": "7.48",
+        "page": 62
+      },
+      {
+        "description": "Clerical Office Employees NOC",
+        "code": "8810",
+        "payroll": 670000,
+        "rate": "0.25",
+        "page": 62
+      }
+    ]
+  },
+  {
+    "state": "West Virginia",
+    "page": 63,
+    "mod": 0.75,
+    "merit": null,
+    "classes": [
+      {
+        "description": "Storage Warehouse NOC",
+        "code": "8292",
+        "payroll": 60000,
+        "rate": "2.41",
+        "page": 63
+      }
+    ]
+  }
+]

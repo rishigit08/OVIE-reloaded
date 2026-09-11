@@ -1,0 +1,24 @@
+{
+  "locations": 51,
+  "classEntries": 145,
+  "states": 39,
+  "viewportWidths": [
+    320,
+    390,
+    456,
+    1440
+  ],
+  "sources": true,
+  "readableSourceTables": true,
+  "compositePageLinks": true,
+  "desktopSourceDrawer": true,
+  "expandedContentFits": true,
+  "sourceTargetSize": true,
+  "headingAndCountRoles": true,
+  "search": true,
+  "filters": true,
+  "sourceFocusRestoration": true,
+  "askOvie": true,
+  "feedbackValidation": true,
+  "pageErrors": []
+}
