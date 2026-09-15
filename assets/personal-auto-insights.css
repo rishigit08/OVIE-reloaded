@@ -1,4 +1,5 @@
 /* Personal-auto composition of the existing Insights primitives and root tokens. */
+.pa-deductibles .auto-detail-head .source-button{margin:-12px 0 -12px}
 .pa-disclaimer{font-size:12px;line-height:16px;color:var(--muted);margin-top:16px}
 .pa-field-note{font-weight:400;margin-top:4px}.pa-vehicle .auto-vehicle-head .section-title{flex:1;margin:0;font-size:18px;line-height:24px}.pa-vehicle .auto-vehicle-facts{margin-bottom:0}
 .pa-deductible-asset>h3,.watchpoint h3{font-size:14px;line-height:20px}.pa-deductible-asset{margin-top:16px}.pa-deductible-asset>h3{margin-bottom:8px}
