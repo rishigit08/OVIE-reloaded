@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ovie: Renters policy insights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary:#6b4062; --primary-dark:#54324d; --ink:#111; --text:#333a3d;
+      --muted:#5f6368; --icon-default:#5f6368; --icon-strong:#111111; --surface:#fff; --page:#f6f6f6; --bg-subtle:#f6f6f6; --canvas:#e3e3e3;
+      --success:#0d7d07; --warning:#8a5a06; --danger:#a63a33;
+      --plum-soft:#f5edf3; --warning-soft:#fff5df; --danger-soft:#ffeded;
+      --border:#d8dddb; --line:#ecefed; --overlay:rgba(17,24,23,.58);
+      --radius:12px; --pill:999px; --focus:0 0 0 3px rgba(107,64,98,.24);
+      --motion-duration-press:160ms; --motion-ease-out:cubic-bezier(.23,1,.32,1);
+      --z-sticky:20; --z-modal:40; --z-toast:60;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--canvas);color:var(--ink);font:400 14px/20px "Figtree",system-ui,sans-serif}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    h1,h2,h3,p{margin:0}
+    h1,h2,h3,strong{font-weight:600}
+    img{display:block}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+    :where(button,input,textarea,summary):focus-visible{outline:0;box-shadow:var(--focus)}
+    .canvas{position:fixed;inset:0;display:flex;justify-content:center;overflow:auto}
+    .phone{position:relative;width:min(390px,100vw);height:100dvh;min-height:620px;overflow:auto;background:var(--page);scrollbar-width:thin;scrollbar-color:var(--border) var(--page);scroll-padding-bottom:96px}
+    .phone::-webkit-scrollbar,.sheet-body::-webkit-scrollbar{width:8px}
+    .phone::-webkit-scrollbar-track,.sheet-body::-webkit-scrollbar-track{background:var(--page)}
+    .phone::-webkit-scrollbar-thumb,.sheet-body::-webkit-scrollbar-thumb{background:var(--border);border:2px solid var(--page);border-radius:var(--pill)}
+    .topbar{position:sticky;top:0;z-index:var(--z-sticky);background:rgba(255,255,255,.97);border-bottom:1px solid var(--line)}
+    .statusbar{height:34px;padding:8px 22px 0;display:flex;justify-content:space-between;font-size:12px;font-weight:600}
+    .statusbar span:last-child{color:var(--muted)}
+    .titlebar{height:58px;padding:4px 18px 10px;display:flex;align-items:center;gap:8px}
+    .titlebar h1{font-size:18px;line-height:24px}
+    .icon-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center}
+    .icon-button img,.icon-button svg{width:22px;height:22px}
+    .back-button{background:transparent;color:var(--icon-strong)}
+    .sheet-close{background:transparent}
+    #searchButton{margin-left:auto}
+    #searchButton,#shareButton{position:relative;background:var(--bg-subtle);color:var(--icon-default);transition:background-color var(--motion-duration-press) ease,transform var(--motion-duration-press) var(--motion-ease-out)}
+    #searchButton svg,#shareButton svg{width:19px;height:19px}
+    #searchButton:active,#shareButton:active{transform:scale(.96)}
+    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}.back-button:hover,.sheet-close:hover,.source-button:hover{background:transparent}.ask-composer-action:hover{background:var(--primary-dark)}}
+    main{padding:18px 16px 112px;display:flex;flex-direction:column;gap:18px}
+    .card{background:var(--surface);border-radius:var(--radius);overflow:hidden}
+    .card-pad{padding:16px}
+    .section-title{font-size:18px;line-height:24px;margin-bottom:14px}
+    .card-pad>.section-title:last-child{margin-bottom:0}
+    .heading-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .heading-row .section-title{margin:0}
+    .status-pill,.severity{display:inline-flex;align-items:center;gap:6px;border-radius:var(--pill);font-size:12px;line-height:16px;font-weight:600}
+    .status-pill{padding:6px 10px;background:var(--danger-soft);color:var(--danger)}
+    .status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+    .field{padding:12px 0;border-bottom:1px solid var(--line)}
+    .field:first-child{padding-top:0}.field:last-child{padding-bottom:0;border-bottom:0}
+    .label{color:var(--muted)}
+    .value{margin-top:3px;font-weight:600;overflow-wrap:anywhere}
+    .person{min-height:58px;display:flex;align-items:center;gap:12px}
+    .person-icon{width:40px;height:40px;border-radius:var(--radius);background:var(--plum-soft);color:var(--primary);display:grid;place-items:center}
+    .person-icon img,.person-icon svg{width:20px;height:20px}
+    .source-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;color:var(--icon-default);display:grid;place-items:center;flex:0 0 auto}
+    .source-button img,.source-button svg{width:19px;height:19px}
+    .coverage-list{display:flex;flex-direction:column}
+    .coverage-row{min-height:84px;padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+    .coverage-row:last-child{border-bottom:0}
+    .coverage-copy{flex:1;min-width:0}
+    .coverage-copy .value{font-size:18px;line-height:24px}
+    .coverage-description{margin-top:2px;color:var(--muted)}
+    .policy-details-header{padding:16px 16px 8px}
+    .policy-details-header .section-title{margin:0}
+    .policy-details-header+details{border-top:0}
+    .policy-detail-body{padding:0 16px 12px}
+    .summary-title{flex:1}
+    .count-pill{flex:0 0 auto;padding:3px 8px;border-radius:var(--pill);background:var(--plum-soft);color:var(--primary);font-size:12px;line-height:16px;font-weight:600}
+    .insight-item{position:relative;min-height:52px;padding:12px 44px 12px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;color:var(--text)}
+    .insight-item:last-child{border-bottom:0}
+    .insight-item::before{content:"";width:4px;height:4px;margin-right:10px;border-radius:50%;background:var(--text);flex:0 0 auto}
+    .insight-item .source-button{position:absolute;right:-10px;top:50%;transform:translateY(-50%)}
+    .spec-row,.deductible-row{padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--line)}
+    .spec-row:first-of-type,.deductible-row:first-of-type{border-top:0}
+    .card-pad+.spec-row,.card-pad+.deductible-row{border-top:0}
+    .spec-copy,.deductible-copy{flex:1;min-width:0}
+    .spec-copy p,.deductible-copy p{margin-top:3px;color:var(--muted)}
+    .spec-copy>.value{font-size:18px;line-height:24px;color:var(--ink)}
+    .tip{padding:14px 6px 14px 16px;background:var(--warning-soft);color:var(--warning);display:flex;align-items:flex-start;gap:10px}
+    .tip>img{width:22px;height:22px;margin-top:1px}.tip-copy{flex:1}.tip-copy p{margin-top:3px;color:var(--warning)}
+    .watchpoint{padding:12px 0;border-bottom:1px solid var(--line)}
+    .watchpoint:first-child{padding-top:0}
+    .watchpoint:last-child{padding-bottom:0;border-bottom:0}
+    .watchpoint-head{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .severity{flex:0 0 auto;padding:4px 8px}.severity.moderate{background:var(--warning-soft);color:var(--warning)}.severity.low{background:var(--plum-soft);color:var(--primary)}
+    .watchpoint p{color:var(--muted)}
+    .footer-card .card-pad>p{color:var(--muted);line-height:21px}
+    details{border-top:1px solid var(--line)}
+    summary{min-height:54px;padding:10px 10px 10px 16px;list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+    summary::-webkit-details-marker{display:none}
+    summary:hover{background:#fafafa}
+    summary span{flex:1}.chevron{width:18px;height:18px;color:var(--icon-default);transition:transform 180ms ease-out}details[open] .chevron{transform:rotate(180deg)}
+    .details-body{padding:0 16px 14px;color:var(--text)}
+    .details-body ul{margin:0;padding-left:18px}.details-body li+li{margin-top:8px}
+    .feedback{padding:0 16px;min-height:76px;display:flex;align-items:center;gap:8px}
+    .feedback-question{flex:1;font-weight:600}
+    .feedback-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center;transition:background-color 180ms ease-out,color 180ms ease-out,transform 180ms ease-out}
+    .feedback-button:hover{background:var(--plum-soft);color:var(--primary)}.feedback-button:active{transform:scale(.96)}
+    .feedback-button svg{width:25px;height:25px}.feedback-button[data-feedback="up"][aria-pressed="true"]{color:var(--success)}.feedback-button[data-feedback="down"][aria-pressed="true"]{color:var(--danger)}
+    .chat-dock{position:sticky;bottom:0;z-index:var(--z-sticky);width:100%;min-height:74px;margin-top:-74px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:0;background:rgba(255,255,255,.3);-webkit-backdrop-filter:blur(14px) saturate(1.1);backdrop-filter:blur(14px) saturate(1.1);display:flex;align-items:center;gap:10px}
+    .chat-dock .ask-sheet-composer-row{width:100%}
+    .ask-sheet-composer-row{display:flex;align-items:center;gap:8px}
+    .ask-sheet-input-row{min-width:0;min-height:56px;flex:1;padding:5px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
+    .ask-sheet-input-row:focus-within{border-color:var(--primary);box-shadow:var(--focus)}
+    .ask-sheet-input{min-width:0;flex:1;padding:8px 12px;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;line-height:20px;box-shadow:none}
+    .ask-sheet-input::placeholder{color:var(--muted);opacity:1}
+    .ask-composer-action{width:44px;height:44px;flex:0 0 auto;padding:0;border:0;border-radius:var(--radius);background:var(--primary);color:#fff;display:grid;place-items:center;transition:transform var(--motion-duration-press) var(--motion-ease-out)}
+    .ask-composer-action:active{transform:scale(.97)}
+    .ask-composer-action svg{width:22px;height:22px}
+    dialog{width:min(390px,100vw);max-width:100vw;max-height:min(76dvh,680px);margin:auto auto 0;padding:0;border:0;border-radius:12px 12px 0 0;background:var(--surface);color:var(--ink);box-shadow:0 -6px 16px rgba(17,17,17,.14)}
+    dialog::backdrop{background:var(--overlay)}
+    .sheet-handle{width:40px;height:4px;margin:10px auto 3px;border-radius:2px;background:var(--border)}
+    .sheet-head{min-height:58px;padding:8px 10px 8px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.sheet-head h2{flex:1;font-size:18px;line-height:24px}
+    .sheet-body{padding:17px 18px calc(26px + env(safe-area-inset-bottom));overflow:auto;max-height:calc(76dvh - 75px);scrollbar-width:thin;scrollbar-color:var(--border) var(--page)}
+    .source-meta{color:var(--primary);font-weight:600}.source-excerpt{margin:10px 0 18px;padding:13px;border-radius:var(--radius);background:var(--page);line-height:21px}
+    .primary-action,.secondary-action{width:100%;min-height:44px;border-radius:var(--radius);font-weight:600}.primary-action{border:0;background:var(--primary);color:#fff}.primary-action:hover{background:var(--primary-dark)}.secondary-action{margin-top:8px;border:1px solid var(--border);background:#fff;color:var(--text)}
+    .feedback-form fieldset{margin:0;padding:0;border:0}.feedback-option{min-height:52px;padding:8px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}.feedback-option span{flex:1}.feedback-option input{width:20px;height:20px;accent-color:var(--primary)}
+    .feedback-followup{margin-top:14px}.feedback-followup label{display:block;margin-bottom:6px;font-weight:600}.feedback-followup textarea{width:100%;min-height:100px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);resize:none;color:var(--ink)}
+    .error{min-height:20px;margin-top:8px;color:var(--danger)}
+    .toast{position:fixed;left:50%;bottom:94px;z-index:var(--z-toast);transform:translate(-50%,18px);min-width:250px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:var(--radius);background:var(--ink);color:#fff;text-align:center;opacity:0;pointer-events:none;transition:opacity 180ms ease-out,transform 180ms ease-out}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:420px){.canvas{display:block}.phone{width:100vw}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}#searchButton:active,#shareButton:active,.ask-composer-action:active{transform:none}}
+  </style>
+</head>
+<body>
+  <div class="canvas"><div class="phone" id="phone">
+    <header class="topbar">
+      <div class="statusbar"><span>9:41</span><span>5G&nbsp;&nbsp;96%</span></div>
+      <div class="titlebar">
+        <button class="icon-button back-button" type="button" aria-label="Go back"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></button>
+        <h1>Insights</h1>
+        <button class="icon-button" id="searchButton" type="button" aria-label="Search insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+        <button class="icon-button" id="shareButton" type="button" aria-label="Share insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card card-pad" aria-labelledby="simplified-title">
+        <h2 class="section-title" id="simplified-title">Policy simplified</h2>
+        <div class="field"><div class="label">Policyholder</div><div class="value">Jordan A. Whitfield</div></div>
+        <div class="field"><div class="label">Policy number</div><div class="value">NV-HO4-AL-509217</div></div>
+        <div class="field"><div class="label">Carrier</div><div class="value">Allstate Fire and Casualty Insurance Company</div></div>
+        <div class="field"><div class="label">Policy type</div><div class="value">Renters (HO-4)</div></div>
+        <div class="field"><div class="label">Rented address</div><div class="value">1775 North Carson Street, Apt 512<br>Carson City, NV 89701</div></div>
+        <div class="field"><div class="label">Coverage period</div><div class="value">Feb 15, 2026–Feb 15, 2027</div></div>
+        <div class="field"><div class="label">Annual premium</div><div class="value">$148</div></div>
+      </section>
+
+      <section class="card card-pad" aria-labelledby="people-title">
+        <h2 class="section-title" id="people-title">Individuals covered</h2>
+        <div class="person"><span class="person-icon"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg></span><strong>Jordan A. Whitfield</strong></div>
+      </section>
+
+      <section class="card" aria-labelledby="coverage-limits-title">
+        <div class="card-pad"><h2 class="section-title" id="coverage-limits-title">Property covered</h2></div>
+        <div class="coverage-list">
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Coverage C</div><div class="value">$35,000</div><div class="coverage-description">Personal property, with sublimits for money, jewelry, electronics and more</div></div><button class="source-button" type="button" aria-label="View source for Coverage C" data-title="Coverage C — Personal property" data-meta="Page 1 · AP786 Declarations" data-excerpt="Personal Property Protection: $35,000."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Coverage D</div><div class="value">$10,500</div><div class="coverage-description">Loss of use if your rental becomes uninhabitable</div></div><button class="source-button" type="button" aria-label="View source for Coverage D" data-title="Coverage D — Loss of use" data-meta="Page 1 · AP786 Declarations; p. 1 · AP1294 Endorsement" data-excerpt="Additional Living Expense: $10,500."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Coverage E</div><div class="value">$300,000</div><div class="coverage-description">Family liability</div></div><button class="source-button" type="button" aria-label="View source for Coverage E" data-title="Coverage E — Family liability" data-meta="Page 1 · AP786 Declarations" data-excerpt="Family Liability Protection: $300,000."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Coverage F</div><div class="value">$5,000</div><div class="coverage-description">Guest medical</div></div><button class="source-button" type="button" aria-label="View source for Coverage F" data-title="Coverage F — Guest medical" data-meta="Page 1 · AP786 Declarations" data-excerpt="Guest Medical Protection: $5,000."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        </div>
+      </section>
+
+      <section class="card disclosure-card" aria-labelledby="policy-details-title">
+        <div class="policy-details-header"><h2 class="section-title" id="policy-details-title">Policy details</h2></div>
+        <details open>
+          <summary><span class="summary-title">What's included</span><span class="count-pill">5</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item">Personal property at your rented address, and worldwide, subject to limits and sublimits<button class="source-button" type="button" aria-label="View source for personal property coverage" data-title="Personal property coverage" data-meta="Pages 5–7 · AP786 Sample Document" data-excerpt="Personal Property Protection covers loss or damage to your personal property at the rented address, and anywhere in the world, up to the policy limit, with sublimits for special categories of items."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Increased living expenses if your rental is uninhabitable, up to 12 months<button class="source-button" type="button" aria-label="View source for additional living expense" data-title="Additional living expense" data-meta="Page 1 · AP1294 Endorsement" data-excerpt="Additional Living Expense pays for reasonable increases in living expenses if the rented residence is uninhabitable from a covered loss, up to the policy limit, for the shortest time necessary, not exceeding 12 months."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Family liability for bodily injury or property damage you cause, including legal defense<button class="source-button" type="button" aria-label="View source for family liability protection" data-title="Family liability protection" data-meta="Pages 13–14 · AP786 Sample Document" data-excerpt="Family Liability Protection pays for damages if you are legally liable for bodily injury or property damage to others as a result of your actions, up to the policy limit."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Guest medical payments for accidental injuries at your rental or from your activities<button class="source-button" type="button" aria-label="View source for guest medical protection" data-title="Guest medical protection" data-meta="Page 15 · AP786 Sample Document" data-excerpt="Guest Medical Protection pays reasonable and necessary medical expenses for guests injured at your rented address, up to the policy limit per person."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Personal property settles at replacement cost, not depreciated value<button class="source-button" type="button" aria-label="View source for replacement cost settlement" data-title="Replacement cost settlement" data-meta="Page 2 · AP786 Declarations" data-excerpt="Personal property is covered at replacement cost, meaning you get reimbursed for new items of like kind and quality rather than actual cash value, subject to policy terms."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">What's not included</span><span class="count-pill">4</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item">Flood, sewer or drain backup, and earthquake damage to your belongings<button class="source-button" type="button" aria-label="View source for flood and earthquake exclusion" data-title="Flood and earthquake exclusion" data-meta="Pages 7–8 · AP786 Sample Document" data-excerpt="Personal Property Protection does not cover flood, surface water, sewer or drain backup, or earthquake and earth movement, unless fire results."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Mold, fungus, wet rot, dry rot, or bacteria damage, beyond the limited remediation benefit<button class="source-button" type="button" aria-label="View source for mold exclusion" data-title="Mold and rot exclusion" data-meta="Pages 1–2 · AP1294 Endorsement" data-excerpt="Losses from mold, fungus, wet rot, dry rot, or bacteria are excluded, except for limited remediation coverage following a covered water loss."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Intentional or criminal acts, business use, and lease-cancellation costs<button class="source-button" type="button" aria-label="View source for intentional acts and business use exclusion" data-title="Intentional acts and business use" data-meta="Page 8 · AP786 Sample Document; p. 1 · AP1294 Endorsement" data-excerpt="Coverage excludes intentional or criminal acts by you or a resident, business activities, and any lost income or expenses from lease cancellation."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Injuries to you or a resident household member, under liability and guest medical<button class="source-button" type="button" aria-label="View source for resident injury exclusion" data-title="Resident injury exclusion" data-meta="Pages 13–16 · AP786 Sample Document" data-excerpt="Family Liability Protection and Guest Medical Protection exclude injury to you or a regular resident of your household."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">Coverage limitations</span><span class="count-pill">4</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item">Sublimits apply: $200 money, $1,000 jewelry, $2,000 firearms, $5,000 electronics, $10,000 rugs<button class="source-button" type="button" aria-label="View source for personal property sublimits" data-title="Personal property sublimits" data-meta="Pages 5–6 · AP786 Sample Document" data-excerpt="Special sublimits apply, including $200 for money, $1,000 for jewelry, $2,000 for firearms, $5,000 for electronics, and $10,000 total for rugs."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Mold, fungus, and rot remediation is capped at $5,000, only from a covered water loss<button class="source-button" type="button" aria-label="View source for mold remediation cap" data-title="Mold remediation cap" data-meta="Page 2 · AP1294 Endorsement" data-excerpt="Mold, fungus, wet rot, and dry rot remediation is limited to $5,000 and applies only when directly resulting from a covered water loss."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Loss-of-use payments run only for the shortest reasonable time, up to 12 months<button class="source-button" type="button" aria-label="View source for loss of use duration limit" data-title="Loss of use duration limit" data-meta="Page 1 · AP1294 Endorsement" data-excerpt="Additional Living Expense is limited to the shortest time required to repair or relocate, not to exceed 12 months."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Guest medical applies only to non-resident guests, not household members<button class="source-button" type="button" aria-label="View source for guest medical scope limitation" data-title="Guest medical scope" data-meta="Page 15 · AP786 Sample Document" data-excerpt="Guest Medical Protection applies only to non-resident guests, not to you or regular residents of your household."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">Coverage watch points</span><span class="count-pill">6</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for landlord coverage note" data-title="Your landlord's policy doesn't cover your belongings" data-meta="Ovie product note" data-excerpt="A landlord's building policy covers the structure, not a tenant's personal belongings. Renters insurance is what protects your own property."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Your landlord's building policy does not cover your personal belongings — that's what this renters policy is for.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for valuables sublimits watch point" data-title="Valuables sublimits" data-meta="Pages 5–6 · AP786 Sample Document" data-excerpt="Special sublimits apply, including $1,000 for jewelry and $5,000 for electronics, well below the overall Coverage C limit."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Jewelry, electronics, and other valuables are subject to category sublimits well below your overall Coverage C limit.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for replacement cost watch point" data-title="Replacement cost vs. actual cash value" data-meta="Page 2 · AP786 Declarations" data-excerpt="Personal property is covered at replacement cost, meaning you get reimbursed for new items of like kind and quality rather than actual cash value, subject to policy terms."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>This policy settles personal property at replacement cost, not actual cash value — confirm that applies to the items that matter most to you.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for landlord proof of insurance" data-title="Proof of insurance for your landlord" data-meta="Page 2 · AP786 Declarations; Ovie product note" data-excerpt="If your lease requires a certificate of insurance or an additional-interest listing, contact your insurance carrier or agent; Ovie cannot issue certificates or add interested parties."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>If your lease requires a certificate of insurance or lists an interested party, contact your carrier or agent directly — Ovie cannot issue certificates.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity low">Low</span><button class="source-button" type="button" aria-label="View source for off-premises property watch point" data-title="Property away from your rental" data-meta="Pages 5–6 · AP786 Sample Document" data-excerpt="Personal Property Protection covers your belongings at the rented address and anywhere in the world, up to the policy limit."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Property away from your rented address is covered up to your policy limit, subject to the terms for off-premises losses.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity low">Low</span><button class="source-button" type="button" aria-label="View source for roommate property watch point" data-title="A roommate's belongings" data-meta="Not available in the pages analyzed" data-excerpt="The supplied pages do not confirm whether a roommate who is not a named insured or a resident relative is a covered person under this policy."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>A roommate's belongings may not be covered unless they're a named insured — confirm household membership with your carrier if you share your rental.</p></div>
+          </div>
+        </details>
+      </section>
+
+      <section class="card" aria-labelledby="specs-title">
+        <div class="card-pad"><h2 class="section-title" id="specs-title">Policy specifications</h2></div>
+        <div class="spec-row"><div class="spec-copy"><strong>AP1294: Renters Amendatory Endorsement</strong><p>Adds state-specific amendments, including the mold remediation cap and the loss-of-use time limit.</p></div><button class="source-button" type="button" aria-label="View source for AP1294 endorsement" data-title="Renters amendatory endorsement" data-meta="AP1294 · Policy endorsement" data-excerpt="AP1294 is identified as the Renters Amendatory Endorsement included with this policy."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Additional interest</strong><p>Sunrise Property Management is listed as an additional interest, not a lienholder.</p></div><button class="source-button" type="button" aria-label="View source for additional interest" data-title="Additional interest" data-meta="Page 2 · AP786 Declarations" data-excerpt="Lienholder Name: Not Applicable. The additional interest listed (Sunrise Property Management) is not named as a lienholder."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+      </section>
+
+      <section class="card" aria-labelledby="deductibles-title">
+        <div class="card-pad"><h2 class="section-title" id="deductibles-title">Deductibles</h2></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>$500 · Personal property (Coverage C)</strong><p>Applies to covered personal-property claims. Claims below your deductible are not paid.</p></div><button class="source-button" type="button" aria-label="View source for personal property deductible" data-title="Personal property deductible" data-meta="Page 2 · AP786 Declarations" data-excerpt="Deductible applies to Coverage C (Personal Property Protection) personal property claims. The dollar deductible is: $500."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>No deductible · Family liability (Coverage E)</strong><p>Liability claims are not subject to a deductible.</p></div><button class="source-button" type="button" aria-label="View source for liability deductible" data-title="Family liability deductible" data-meta="Page 2 · AP786 Declarations" data-excerpt="Coverage E (Family Liability Protection) has no deductible."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+      </section>
+
+      <section class="card footer-card" aria-labelledby="about-title">
+        <div class="card-pad"><h2 class="section-title" id="about-title">About these insights</h2><p>Insights are based on the documents provided; incomplete or missing documents may result in incomplete or inaccurate insights. OVIE is not intended to serve as evidence of insurance for third parties, nor does OVIE provide advice or guidance on the adequacy of coverage. Users should consult their agent or insurance carrier for coverage-related questions or determinations.</p></div>
+        <details><summary><span>Document sources</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary><div class="details-body"><ul><li>AP786 — Renters Insurance Policy Jacket and Declarations Page, pages 1–2</li><li>AP786 — Renters Policy Sample Document, pages 5–19</li><li>AP1294 — Renters Amendatory Endorsement, pages 1–2</li></ul></div></details>
+        <details><summary><span>Not available in the pages analyzed</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary><div class="details-body"><ul><li>Full household occupancy and whether anyone besides the named insured is a resident relative</li><li>Complete form-level exclusions beyond those summarized above</li><li>Any scheduled endorsement raising sublimits for high-value items such as jewelry or electronics</li></ul></div></details>
+      </section>
+
+      <div class="feedback" role="group" aria-labelledby="feedback-question">
+        <span class="feedback-question" id="feedback-question">Were these insights helpful?</span>
+        <button class="feedback-button" type="button" data-feedback="up" aria-label="Yes, these insights were helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg></button>
+        <button class="feedback-button" type="button" data-feedback="down" aria-label="No, these insights were not helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"></path><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path></svg></button>
+      </div>
+    </main>
+
+    <form class="chat-dock" id="chatForm" novalidate>
+      <label class="sr-only" for="chatInput">Ask Ovie about this policy</label>
+      <div class="ask-sheet-composer-row">
+        <div class="ask-sheet-input-row">
+          <input class="ask-sheet-input" id="chatInput" type="text" placeholder="Ask anything about this policy..." autocomplete="off">
+        </div>
+        <button class="ask-composer-action" id="chatAskButton" type="submit" aria-label="Ask Ovie"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><path d="M12 19v3"></path></svg></button>
+      </div>
+    </form>
+  </div></div>
+
+  <dialog id="sourceSheet" aria-labelledby="sourceTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head"><h2 id="sourceTitle">Source from your policy</h2><button class="icon-button sheet-close" id="closeSource" type="button" aria-label="Close source"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    <div class="sheet-body" id="sourceBody"></div>
+  </dialog>
+
+  <dialog id="feedbackSheet" aria-labelledby="feedbackTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head"><h2 id="feedbackTitle">Tell us more</h2><button class="icon-button sheet-close" id="closeFeedback" type="button" aria-label="Close feedback form"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    <div class="sheet-body">
+      <form class="feedback-form" id="feedbackForm" novalidate>
+        <fieldset><legend class="sr-only">What could be improved?</legend>
+          <label class="feedback-option"><span>Insights are unclear or confusing</span><input type="radio" name="reason" value="unclear"></label>
+          <label class="feedback-option"><span>Information is incorrect</span><input type="radio" name="reason" value="incorrect"></label>
+          <label class="feedback-option"><span>Missing or incomplete details</span><input type="radio" name="reason" value="missing"></label>
+          <label class="feedback-option"><span>Other (tell us more)</span><input type="radio" name="reason" value="other"></label>
+        </fieldset>
+        <div class="feedback-followup" id="feedbackFollowup" hidden><label for="feedbackConcern">Enter your concern here</label><textarea id="feedbackConcern" name="concern" placeholder="Type here"></textarea></div>
+        <p class="error" id="feedbackError" role="alert" aria-live="polite"></p>
+        <button class="primary-action" type="submit">Submit</button><button class="secondary-action" id="cancelFeedback" type="button">Cancel</button>
+      </form>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const sourceSheet=document.getElementById('sourceSheet');
+    const sourceTitle=document.getElementById('sourceTitle');
+    const sourceBody=document.getElementById('sourceBody');
+    const feedbackSheet=document.getElementById('feedbackSheet');
+    const feedbackForm=document.getElementById('feedbackForm');
+    const feedbackFollowup=document.getElementById('feedbackFollowup');
+    const feedbackConcern=document.getElementById('feedbackConcern');
+    const feedbackError=document.getElementById('feedbackError');
+    const toast=document.getElementById('toast');
+    let lastTrigger=null,toastTimer;
+
+    function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
+    function closeDialog(dialog){dialog.close()}
+    function bindBackdrop(dialog){dialog.addEventListener('click',event=>{const b=dialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)dialog.close()})}
+    function sheetNode(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text)node.textContent=text;return node}
+    function openSource(button){lastTrigger=button;sourceTitle.textContent=button.dataset.title;const action=sheetNode('button','primary-action','View in document');action.type='button';action.addEventListener('click',()=>showToast('Document view is not connected in this mock.'));sourceBody.replaceChildren(sheetNode('div','source-meta',button.dataset.meta),sheetNode('div','source-excerpt',button.dataset.excerpt),action);sourceSheet.showModal();document.getElementById('closeSource').focus({preventScroll:true})}
+
+    document.querySelectorAll('.source-button').forEach(button=>button.addEventListener('click',()=>openSource(button)));
+    document.getElementById('closeSource').addEventListener('click',()=>closeDialog(sourceSheet));
+    sourceSheet.addEventListener('close',()=>{if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});lastTrigger=null});
+    bindBackdrop(sourceSheet);bindBackdrop(feedbackSheet);
+
+    document.querySelectorAll('.feedback-button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.feedback-button').forEach(option=>option.setAttribute('aria-pressed',String(option===button)));if(button.dataset.feedback==='up'){showToast('Thanks for your feedback.')}else{lastTrigger=button;feedbackForm.reset();feedbackFollowup.hidden=true;feedbackError.textContent='';feedbackSheet.showModal();document.getElementById('closeFeedback').focus({preventScroll:true})}}));
+    feedbackForm.addEventListener('change',event=>{if(event.target.name==='reason'){feedbackFollowup.hidden=event.target.value!=='other';feedbackError.textContent=''}});
+    feedbackForm.addEventListener('submit',event=>{event.preventDefault();const reason=new FormData(feedbackForm).get('reason');if(!reason){feedbackError.textContent='Select one reason to continue.';feedbackForm.querySelector('input[name="reason"]').focus();return}if(reason==='other'&&!feedbackConcern.value.trim()){feedbackError.textContent='Enter your concern to continue.';feedbackConcern.focus();return}feedbackSheet.close();showToast('Thanks for helping us improve these insights.')});
+    feedbackSheet.addEventListener('close',()=>{if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});lastTrigger=null});
+    document.getElementById('closeFeedback').addEventListener('click',()=>feedbackSheet.close());
+    document.getElementById('cancelFeedback').addEventListener('click',()=>feedbackSheet.close());
+    document.getElementById('searchButton').addEventListener('click',()=>showToast('Search is not available in this prototype.'));
+    document.getElementById('shareButton').addEventListener('click',()=>showToast('Share options opened.'));
+    document.getElementById('chatForm').addEventListener('submit',event=>{event.preventDefault();const input=document.getElementById('chatInput');showToast(input.value.trim()?'Opening Ask Ovie with your question.':'Ask Ovie voice input would start here.')});
+  </script>
+<script src="assets/ovie-upload-flow.js?v=20260910b"></script>
+  <script src="assets/ovie-upload-options.js?v=20260911a"></script>
+  <script src="assets/ovie-upload-indicator.js?v=20260911e"></script>
+</body>
+</html>
