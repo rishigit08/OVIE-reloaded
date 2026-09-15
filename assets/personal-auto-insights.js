@@ -57,7 +57,7 @@ function showSource(id, trigger) {
   $('sourceBody').replaceChildren(...parts);openDialog(sourceSheet,trigger);
 }
 document.addEventListener('click', event => { const button=event.target.closest('[data-source]'); if(button) showSource(button.dataset.source,button); });
-$('backButton').onclick = () => { window.location.href = '../Insights.html'; };
+$('backButton').onclick = () => { window.location.href = 'Insights.html'; };
 $('shareButton').onclick = event => window.personalShare(event.currentTarget);
 
 // Search navigates to actual visible prototype content, opening containing disclosures.

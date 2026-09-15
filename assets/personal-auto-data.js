@@ -1,5 +1,5 @@
 /* One reviewed historical document snapshot. Values are never borrowed from other policies. */
-const POLICY_URL = '../assets/policies/personal-auto-root.pdf';
+const POLICY_URL = 'assets/policies/personal-auto-root.pdf';
 const EVIDENCE = {};
 function paSource(id,title,pages,form,entries,excerpt='') {
   EVIDENCE[id]={title,page:pages[0],pages,ref:`${title} · PDF page${pages.length>1?'s':''} ${pages.join(', ')} of 61`,form,entries,excerpt};
