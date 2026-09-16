@@ -12,15 +12,15 @@ const boatCard = (title,body) => `<section class="card card-pad"><h2 class="sect
 const boatDisclaimer = 'Insights are based on the documents provided; incomplete or missing documents may result in incomplete or inaccurate insights. OVIE is not intended to serve as evidence of insurance for third parties, nor does OVIE provide advice or guidance on the adequacy of coverage. Users should consult their agent or insurance carrier for coverage-related questions or determinations.';
 
 document.getElementById('autoMain').innerHTML = `
-<section class="card card-pad"><div class="heading-row"><h2 class="section-title">Your policy simplified</h2><span class="boat-sample">Sample wording</span></div>
-${paField('Policy type','Personal boat / yacht','identity')}
-${paField('Policy name',BOAT_TITLE,'identity')}
-${paField('Governing form',BOAT_FORM,'identity')}
-${paField('Policyholder','Not available','identity')}
-${paField('Underwriting company','Not available','identity')}
-${paField('Policy number','Not available','identity')}
-${paField('Policy period','Not available','identity')}
-${paField('Premium & term','Not available','identity')}
+<section class="card card-pad"><div class="heading-row"><h2 class="section-title">Your policy simplified</h2></div>
+${paField('Policy type','Personal boat / yacht')}
+${paField('Policy name',BOAT_TITLE)}
+${paField('Governing form',BOAT_FORM)}
+${paField('Policyholder','Not available')}
+${paField('Underwriting company','Not available')}
+${paField('Policy number','Not available')}
+${paField('Policy period','Not available')}
+${paField('Premium & term','Not available')}
 ${boatNote('Declarations not supplied','This sample summary describes policy wording. Your vessel, selected coverages, limits and policy status cannot be confirmed.')}</section>
 ${boatCard('Who is covered',boatRows([
  {title:'Named insured and resident spouse',text:'Described by the definitions, but no person is identified in the supplied summary.',source:'people'},

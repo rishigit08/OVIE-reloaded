@@ -1,6 +1,5 @@
 /* Boat content uses the existing auto Insights primitives and canonical tokens. */
 .heading-row{gap:8px;flex-wrap:wrap}
-.boat-sample{font-size:12px;line-height:16px;padding:4px 8px;border-radius:var(--pill);background:var(--page);color:var(--text);white-space:nowrap}
 .boat-note{color:var(--text);margin-top:12px;padding:12px;background:var(--page);border-radius:var(--radius)}
 .boat-note p{color:var(--text);margin-top:4px}
 .boat-group{margin-top:20px}.boat-group+.boat-group{border-top:1px solid var(--line);padding-top:16px}

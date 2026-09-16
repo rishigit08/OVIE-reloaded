@@ -2,11 +2,11 @@
 
 Reference: user-supplied 16-section structured summary of Yachtsman / Windjammer / Boatsman Policy, MA-14558A (04/05), received September 16, 2026. No separate boat SME template or original PDF was supplied for this task. This implements all supplied summary sections; it does not claim independent policy or SME verification.
 
-Design authority: workspace-root DESIGN.md. Composition reference: ovie_personal_auto_insights.html. Personal-auto visibility exceptions are not applied to boat insights. Shared native disclosure/dialog primitives, tokens, source controls, feedback and composer are reused.
+Design authority: workspace-root DESIGN.md. Composition reference: ovie_personal_auto_insights.html. The approved Personal Boat simplified-card visibility rules are recorded in the root contract. Shared native disclosure/dialog primitives, tokens, source controls, feedback and composer are reused.
 
 | Supplied requirement | Destination | Evidence and qualification |
 |---|---|---|
-| 1. Policy overview | Your policy simplified | Form/product known from summary; insured, carrier, number, dates, premium unavailable. Sample wording badge describes document type, not policy status. |
+| 1. Policy overview | Your policy simplified | Form/product known from summary; insured, carrier, number, dates, premium unavailable. Document type is explained in the availability note. |
 | 2. Who is covered | Who is covered | Definitions pp. 3–6 as reported; no individual/operator identified. Passenger benefit eligibility does not establish insured status. |
 | 3. Vessels / assets | Vessels & marine assets | Definitions p. 3; missing schedule is not zero insured vessels. |
 | 4. Navigation / mooring / lay-up | Navigation & lay-up disclosure | Reported pp. 7–8. Ambiguous geographical grouping and breach wording require original wording; no definitive operating radius or cure period promised. |
