@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ovie: Recreational vehicle insights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary:#6b4062; --primary-dark:#54324d; --ink:#111; --text:#333a3d;
+      --muted:#5f6368; --icon-default:#5f6368; --icon-strong:#111111; --surface:#fff; --page:#f6f6f6; --bg-subtle:#f6f6f6; --canvas:#e3e3e3;
+      --success:#0d7d07; --warning:#8a5a06; --danger:#a63a33;
+      --plum-soft:#f5edf3; --warning-soft:#fff5df; --danger-soft:#ffeded;
+      --border:#d8dddb; --line:#ecefed; --overlay:rgba(17,24,23,.58);
+      --radius:12px; --pill:999px; --focus:0 0 0 3px rgba(107,64,98,.24);
+      --motion-duration-press:160ms; --motion-ease-out:cubic-bezier(.23,1,.32,1);
+      --z-sticky:20; --z-modal:40; --z-toast:60;
+      --icon-warning:#8a5a06; --warning-text:#634106; --warning-border:#e7c982;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--canvas);color:var(--ink);font:400 14px/20px "Figtree",system-ui,sans-serif}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    h1,h2,h3,p{margin:0}
+    h1,h2,h3,strong{font-weight:600}
+    img{display:block}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+    :where(button,input,textarea,summary):focus-visible{outline:0;box-shadow:var(--focus)}
+    .canvas{position:fixed;inset:0;display:flex;justify-content:center;overflow:auto}
+    .phone{position:relative;width:min(390px,100vw);height:100dvh;min-height:620px;overflow:auto;background:var(--page);scrollbar-width:thin;scrollbar-color:var(--border) var(--page);scroll-padding-bottom:96px}
+    .phone::-webkit-scrollbar,.sheet-body::-webkit-scrollbar{width:8px}
+    .phone::-webkit-scrollbar-track,.sheet-body::-webkit-scrollbar-track{background:var(--page)}
+    .phone::-webkit-scrollbar-thumb,.sheet-body::-webkit-scrollbar-thumb{background:var(--border);border:2px solid var(--page);border-radius:var(--pill)}
+    .topbar{position:sticky;top:0;z-index:var(--z-sticky);background:rgba(255,255,255,.97);border-bottom:1px solid var(--line)}
+    .statusbar{height:34px;padding:8px 22px 0;display:flex;justify-content:space-between;font-size:12px;font-weight:600}
+    .statusbar span:last-child{color:var(--muted)}
+    .titlebar{height:58px;padding:4px 18px 10px;display:flex;align-items:center;gap:8px}
+    .titlebar h1{font-size:18px;line-height:24px}
+    .icon-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center}
+    .icon-button img,.icon-button svg{width:22px;height:22px}
+    .back-button{background:transparent;color:var(--icon-strong)}
+    .sheet-close{background:transparent}
+    #searchButton{margin-left:auto}
+    #searchButton,#shareButton{position:relative;background:var(--bg-subtle);color:var(--icon-default);transition:background-color var(--motion-duration-press) ease,transform var(--motion-duration-press) var(--motion-ease-out)}
+    #searchButton svg,#shareButton svg{width:19px;height:19px}
+    #searchButton:active,#shareButton:active{transform:scale(.96)}
+    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}.back-button:hover,.sheet-close:hover,.source-button:hover{background:transparent}.ask-composer-action:hover{background:var(--primary-dark)}}
+    main{padding:18px 16px 112px;display:flex;flex-direction:column;gap:18px}
+    .card{background:var(--surface);border-radius:var(--radius);overflow:hidden}
+    .card-pad{padding:16px}
+    .section-title{font-size:18px;line-height:24px;margin-bottom:14px}
+    .card-pad>.section-title:last-child{margin-bottom:0}
+    .heading-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .heading-row .section-title{margin:0}
+    .status-pill,.severity{display:inline-flex;align-items:center;gap:6px;border-radius:var(--pill);font-size:12px;line-height:16px;font-weight:600}
+    .status-pill{padding:6px 10px;background:var(--danger-soft);color:var(--danger)}
+    .status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+    .field{padding:12px 0;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .field:first-child{padding-top:0}.field:last-child{padding-bottom:0;border-bottom:0}
+    .field-copy{flex:1;min-width:0}
+    .label{color:var(--muted)}
+    .value{margin-top:3px;font-weight:600;overflow-wrap:anywhere}
+    .value.unavailable{font-weight:400;color:var(--text)}
+    .person{min-height:58px;display:flex;align-items:center;gap:12px}
+    .person-icon{width:40px;height:40px;border-radius:var(--radius);background:var(--plum-soft);color:var(--primary);display:grid;place-items:center;flex:0 0 auto}
+    .person-icon img,.person-icon svg{width:20px;height:20px}
+    .source-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;color:var(--icon-default);display:grid;place-items:center;flex:0 0 auto}
+    .source-button img,.source-button svg{width:19px;height:19px}
+    .coverage-list{display:flex;flex-direction:column}
+    .coverage-row{min-height:84px;padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+    .coverage-row:last-child{border-bottom:0}
+    .coverage-copy{flex:1;min-width:0}
+    .coverage-copy .value{font-size:18px;line-height:24px}
+    .coverage-description{margin-top:2px;color:var(--muted)}
+    .policy-details-header{padding:16px 16px 8px}
+    .policy-details-header .section-title{margin:0}
+    .policy-details-header+details{border-top:0}
+    .policy-detail-body{padding:0 16px 12px}
+    .summary-title{flex:1}
+    .count-pill{flex:0 0 auto;padding:3px 8px;border-radius:var(--pill);background:var(--plum-soft);color:var(--primary);font-size:12px;line-height:16px;font-weight:600}
+    .insight-item{position:relative;min-height:52px;padding:12px 44px 12px 0;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;color:var(--text)}
+    .insight-item:last-child{border-bottom:0}
+    .insight-item::before{content:"";width:4px;height:4px;margin-right:10px;margin-top:8px;border-radius:50%;background:var(--text);flex:0 0 auto}
+    .insight-item>span{min-width:0;overflow-wrap:anywhere}
+    .insight-item .source-button{position:absolute;right:-8px;top:2px}
+    .spec-row,.deductible-row{padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--line)}
+    .spec-row:first-of-type,.deductible-row:first-of-type{border-top:0}
+    .card-pad+.spec-row,.card-pad+.deductible-row{border-top:0}
+    .spec-copy,.deductible-copy{flex:1;min-width:0}
+    .spec-copy p,.deductible-copy p{margin-top:3px;color:var(--muted)}
+    .spec-copy>.value{font-size:18px;line-height:24px;color:var(--ink)}
+    .attention{display:flex;gap:12px;background:var(--warning-soft);border:1px solid var(--warning-border);color:var(--warning-text)}
+    .attention>svg{color:var(--icon-warning);width:22px;height:22px;flex:0 0 22px;margin-top:1px}
+    .attention-body{flex:1;min-width:0}
+    .attention-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+    .attention-head strong{color:var(--warning-text)}
+    .attention p{margin-top:4px;color:var(--warning-text)}
+    .attention .source-button{color:var(--icon-warning);margin:-8px -8px 0 0}
+    .evidence-note{color:var(--text);background:var(--page);padding:12px;border-radius:var(--radius)}
+    .evidence-note p{margin-top:4px}
+    .watchpoint{padding:12px 0;border-bottom:1px solid var(--line)}
+    .watchpoint:first-child{padding-top:0}
+    .watchpoint:last-child{padding-bottom:0;border-bottom:0}
+    .watchpoint-head{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .severity{flex:0 0 auto;padding:4px 8px}.severity.moderate{background:var(--warning-soft);color:var(--warning)}.severity.low{background:var(--plum-soft);color:var(--primary)}.severity.critical{background:var(--warning-soft);color:#7a3000}
+    .watchpoint p{color:var(--muted)}
+    .footer-card .card-pad>p{color:var(--muted);line-height:21px}
+    details{border-top:1px solid var(--line)}
+    summary{min-height:54px;padding:10px 10px 10px 16px;list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+    summary::-webkit-details-marker{display:none}
+    summary:hover{background:#fafafa}
+    summary span{flex:1}.chevron{width:18px;height:18px;color:var(--icon-default);transition:transform 180ms ease-out}details[open] .chevron{transform:rotate(180deg)}
+    .details-body{padding:0 16px 14px;color:var(--text)}
+    .details-body ul{margin:0;padding-left:18px}.details-body li+li{margin-top:8px}
+    .feedback{padding:0 16px;min-height:76px;display:flex;align-items:center;gap:8px}
+    .feedback-question{flex:1;font-weight:600}
+    .feedback-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center;transition:background-color 180ms ease-out,color 180ms ease-out,transform 180ms ease-out}
+    .feedback-button:hover{background:var(--plum-soft);color:var(--primary)}.feedback-button:active{transform:scale(.96)}
+    .feedback-button svg{width:25px;height:25px}.feedback-button[data-feedback="up"][aria-pressed="true"]{color:var(--success)}.feedback-button[data-feedback="down"][aria-pressed="true"]{color:var(--danger)}
+    .chat-dock{position:sticky;bottom:0;z-index:var(--z-sticky);width:100%;min-height:74px;margin-top:-74px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:0;background:rgba(255,255,255,.3);-webkit-backdrop-filter:blur(14px) saturate(1.1);backdrop-filter:blur(14px) saturate(1.1);display:flex;align-items:center;gap:10px}
+    .chat-dock .ask-sheet-composer-row{width:100%}
+    .ask-sheet-composer-row{display:flex;align-items:center;gap:8px}
+    .ask-sheet-input-row{min-width:0;min-height:56px;flex:1;padding:5px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
+    .ask-sheet-input-row:focus-within{border-color:var(--primary);box-shadow:var(--focus)}
+    .ask-sheet-input{min-width:0;flex:1;padding:8px 12px;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;line-height:20px;box-shadow:none}
+    .ask-sheet-input::placeholder{color:var(--muted);opacity:1}
+    .ask-composer-action{width:44px;height:44px;flex:0 0 auto;padding:0;border:0;border-radius:var(--radius);background:var(--primary);color:#fff;display:grid;place-items:center;transition:transform var(--motion-duration-press) var(--motion-ease-out)}
+    .ask-composer-action:active{transform:scale(.97)}
+    .ask-composer-action svg{width:22px;height:22px}
+    dialog{width:min(390px,100vw);max-width:100vw;max-height:min(76dvh,680px);margin:auto auto 0;padding:0;border:0;border-radius:12px 12px 0 0;background:var(--surface);color:var(--ink);box-shadow:0 -6px 16px rgba(17,17,17,.14)}
+    dialog::backdrop{background:var(--overlay)}
+    .sheet-handle{width:40px;height:4px;margin:10px auto 3px;border-radius:2px;background:var(--border)}
+    .sheet-head{min-height:58px;padding:8px 10px 8px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.sheet-head h2{flex:1;font-size:18px;line-height:24px}
+    .sheet-body{padding:17px 18px calc(26px + env(safe-area-inset-bottom));overflow:auto;max-height:calc(76dvh - 75px);scrollbar-width:thin;scrollbar-color:var(--border) var(--page)}
+    .source-meta{color:var(--primary);font-weight:600}.source-excerpt{margin:10px 0 18px;padding:13px;border-radius:var(--radius);background:var(--page);line-height:21px}
+    .primary-action,.secondary-action{width:100%;min-height:44px;border-radius:var(--radius);font-weight:600}.primary-action{border:0;background:var(--primary);color:#fff}.primary-action:hover{background:var(--primary-dark)}.secondary-action{margin-top:8px;border:1px solid var(--border);background:#fff;color:var(--text)}
+    .feedback-form fieldset{margin:0;padding:0;border:0}.feedback-option{min-height:52px;padding:8px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}.feedback-option span{flex:1}.feedback-option input{width:20px;height:20px;accent-color:var(--primary)}
+    .feedback-followup{margin-top:14px}.feedback-followup label{display:block;margin-bottom:6px;font-weight:600}.feedback-followup textarea{width:100%;min-height:100px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);resize:none;color:var(--ink)}
+    .error{min-height:20px;margin-top:8px;color:var(--danger)}
+    .toast{position:fixed;left:50%;bottom:94px;z-index:var(--z-toast);transform:translate(-50%,18px);min-width:250px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:var(--radius);background:var(--ink);color:#fff;text-align:center;opacity:0;pointer-events:none;transition:opacity 180ms ease-out,transform 180ms ease-out}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:420px){.canvas{display:block}.phone{width:100vw}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}#searchButton:active,#shareButton:active,.ask-composer-action:active{transform:none}}
+  </style>
+</head>
+<body>
+  <div class="canvas"><div class="phone" id="phone">
+    <header class="topbar">
+      <div class="statusbar"><span>9:41</span><span>5G&nbsp;&nbsp;96%</span></div>
+      <div class="titlebar">
+        <button class="icon-button back-button" type="button" aria-label="Go back"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></button>
+        <h1>Insights</h1>
+        <button class="icon-button" id="searchButton" type="button" aria-label="Search insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+        <button class="icon-button" id="shareButton" type="button" aria-label="Share insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card card-pad" aria-labelledby="simplified-title">
+        <h2 class="section-title" id="simplified-title">Your policy simplified</h2>
+        <div class="field"><div class="field-copy"><div class="label">Policy type</div><div class="value">Recreational Vehicle Insurance (Automobile)</div></div></div>
+        <div class="field"><div class="field-copy"><div class="label">Carrier</div><div class="value">Imperial Fire &amp; Casualty Insurance Company, a member of National General</div></div></div>
+        <div class="field"><div class="field-copy"><div class="label">Governing form</div><div class="value">Louisiana Recreational Vehicle Policy &mdash; Form 11429 (10012015)</div></div></div>
+        <div class="field"><div class="field-copy"><div class="label">Named insured</div><div class="value unavailable">Not available &mdash; Declarations Page not provided</div></div></div>
+        <div class="field"><div class="field-copy"><div class="label">Policy number</div><div class="value unavailable">Not available &mdash; Declarations Page not provided</div></div></div>
+        <div class="field"><div class="field-copy"><div class="label">Coverage period</div><div class="value unavailable">Not available &mdash; Declarations Page not provided</div></div></div>
+        <div class="field"><div class="field-copy"><div class="label">Scheduled RV(s)</div><div class="value unavailable">Not available &mdash; unit schedule not provided</div></div></div>
+      </section>
+
+      <section class="card card-pad attention" aria-labelledby="verify-title">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+        <div class="attention-body">
+          <div class="attention-head"><strong id="verify-title">Confirm your coverage is currently in force</strong><button class="source-button" type="button" aria-label="View source for the missing declarations note" data-title="No personalized declarations supplied" data-meta="No Declarations Page or schedule provided" data-excerpt="No Declarations Page, unit schedule, named insureds, limits, deductibles, or endorsements were supplied with this form, so this summary cannot establish who or what recreational vehicle is insured, at what limits, or whether coverage is currently active."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          <p>No Declarations Page, unit schedule, or endorsements were supplied with this form. Ovie cannot confirm who or what RV is insured, at what limits, or whether coverage is currently active &mdash; contact your agent or Imperial Fire &amp; Casualty to verify.</p>
+        </div>
+      </section>
+
+      <section class="card card-pad" aria-labelledby="covered-title">
+        <h2 class="section-title" id="covered-title">Who's covered</h2>
+        <div class="field"><div class="field-copy"><div class="label">Named insured</div><div class="value">The individual(s) designated on the Declarations Page</div></div><button class="source-button" type="button" aria-label="View source for named insured definition" data-title="Named insured" data-meta="Definition of &ldquo;Named insured,&rdquo; Page 6/37" data-excerpt="Named insured means the individual(s) named as such on the Declarations Page of this policy."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="field"><div class="field-copy"><div class="label">Family members</div><div class="value">Persons related by blood, marriage, or adoption residing in the household, plus unmarried dependent children temporarily away from home</div></div><button class="source-button" type="button" aria-label="View source for family member definition" data-title="Family member" data-meta="Definition of &ldquo;Family member,&rdquo; Page 6/37" data-excerpt="Family member means a person related to the named insured by blood, marriage, or adoption who resides in the named insured's household, including a ward or foster child, and an unmarried dependent child while temporarily living away from home."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="field"><div class="field-copy"><div class="label">Permissive users</div><div class="value">Anyone using a covered RV with express or implied permission</div></div><button class="source-button" type="button" aria-label="View source for permissive user coverage" data-title="Permissive users" data-meta="Part A, Liability Coverage insured definition, Page 6/37" data-excerpt="Insured under Part A includes any person using a covered recreational vehicle with the express or implied permission of the named insured."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="field"><div class="field-copy"><div class="label">Scheduled or excluded operators</div><div class="value unavailable">Not available &mdash; would be listed on the Declarations Page or by endorsement</div></div></div>
+        <div class="field"><div class="field-copy"><div class="label">Passengers &amp; campsite guests</div><div class="value">Covered only where they meet the policy's definition of &ldquo;insured&rdquo;; not automatically covered as passengers or occupants</div></div><button class="source-button" type="button" aria-label="View source for passenger and occupant coverage" data-title="Passengers and occupants" data-meta="Definition of &ldquo;Insured,&rdquo; Parts A and B, Pages 6/37, 11/37" data-excerpt="Passengers and occupants are treated as insured only when they independently meet the policy's definition of insured under the applicable part; general occupancy does not by itself confer insured status."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+      </section>
+
+      <section class="card card-pad" aria-labelledby="units-title">
+        <h2 class="section-title" id="units-title">Recreational vehicles covered</h2>
+        <div class="evidence-note">
+          <strong>Not available in the pages analyzed</strong>
+          <p>The Declarations Page and unit schedule were not supplied, so the year, make, model, VIN, subtype, value, and storage location of the covered recreational vehicle(s) cannot be determined from this form alone.</p>
+        </div>
+      </section>
+
+      <section class="card disclosure-card" aria-labelledby="policy-details-title">
+        <div class="policy-details-header"><h2 class="section-title" id="policy-details-title">Policy details</h2></div>
+        <details open>
+          <summary><span class="summary-title">What's included</span><span class="count-pill">9</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item"><span>Liability coverage for bodily injury and property damage an insured is legally responsible for from an accident involving a covered RV, with defense costs paid in addition to the limit</span><button class="source-button" type="button" aria-label="View source for liability coverage" data-title="Liability &mdash; Part A" data-meta="Part A, Insuring Agreement, Pages 5&ndash;6/37" data-excerpt="Part A pays compensatory damages for which an insured is legally liable because of an accident arising from ownership, maintenance, or use of a covered recreational vehicle, and pays defense costs in addition to the limit of liability."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Named insured, family members, and permissive users are covered as an &ldquo;insured&rdquo; under liability coverage</span><button class="source-button" type="button" aria-label="View source for insured definition under liability" data-title="Who is covered under Part A" data-meta="Part A, Definition of Insured, Page 6/37" data-excerpt="Insured under Part A means the named insured, resident family members, and any other person using the covered recreational vehicle with permission."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Uninsured/Underinsured Motorist coverage (bodily injury and property damage) and Medical Payments, when a premium is shown on the Declarations</span><button class="source-button" type="button" aria-label="View source for UM/UIM and medical payments coverage" data-title="Uninsured motorist &amp; medical payments &mdash; Parts B &amp; C" data-meta="Parts B and C, Pages 10&ndash;18/37" data-excerpt="Uninsured/Underinsured Motorist and Medical Payments coverages are available when a premium and limit are shown for these coverages on the Declarations Page, subject to the triggers and classes of covered persons defined in Parts B and C."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Collision coverage for loss from collision or overturn, when shown on the Declarations</span><button class="source-button" type="button" aria-label="View source for collision coverage" data-title="Collision coverage &mdash; Part D" data-meta="Part D, Insuring Agreement, Page 22/37" data-excerpt="Collision coverage pays for direct and accidental loss to the covered recreational vehicle caused by collision with another object or by overturn, when shown as a coverage on the Declarations Page."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Comprehensive coverage for loss from perils other than collision &mdash; theft, vandalism, fire, flood, animal impact, hail &mdash; when shown on the Declarations</span><button class="source-button" type="button" aria-label="View source for comprehensive coverage" data-title="Comprehensive coverage &mdash; Part D" data-meta="Part D, Insuring Agreement, Page 22/37" data-excerpt="Comprehensive coverage pays for direct and accidental loss to the covered recreational vehicle from a cause other than collision, including theft, vandalism, fire, flood, contact with an animal, and hail, when shown as a coverage on the Declarations Page."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Permanently attached customized equipment is covered, subject to policy terms</span><button class="source-button" type="button" aria-label="View source for customized equipment coverage" data-title="Customized equipment" data-meta="Definition of Customized Equipment, Page 6/37; Part D, Page 22/37" data-excerpt="Customized equipment that is permanently installed in or upon the covered recreational vehicle is covered under Part D, subject to the policy's terms and any applicable sublimit."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Emergency Expense coverage for lodging, transportation, meals, and pet boarding if the RV is inoperable or uninhabitable more than 50 miles from principal storage</span><button class="source-button" type="button" aria-label="View source for emergency expense coverage" data-title="Emergency Expense coverage" data-meta="Emergency Expense Coverage, Page 23/37" data-excerpt="Emergency Expense pays for reasonable lodging, transportation, meals, and pet boarding expenses, up to $250 per day, when the covered recreational vehicle becomes inoperable or uninhabitable more than 50 miles from its principal place of storage."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Pet Protection for veterinary costs, boarding, recovery, and equipment replacement</span><button class="source-button" type="button" aria-label="View source for pet protection coverage" data-title="Pet Protection" data-meta="Pet Protection, Page 23/37" data-excerpt="Pet Protection pays veterinary treatment costs, boarding, pet recovery services, and replacement of pet-related equipment following a covered accident, subject to the coverage's sub-limits."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Towing and Labor coverage, when a premium is shown, limited to 6 occurrences per policy period</span><button class="source-button" type="button" aria-label="View source for towing and labor coverage" data-title="Towing and Labor coverage" data-meta="Towing and Labor Coverage, Page 23/37" data-excerpt="Towing and Labor coverage, when shown on the Declarations, pays for towing and labor at the place of disablement, limited to 6 occurrences per policy period and subject to the coverage's other terms and exclusions."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">What's not included</span><span class="count-pill">5</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item"><span>Commercial, rental, livery, or business use, unless business or artisan use is specifically stated on the Declarations</span><button class="source-button" type="button" aria-label="View source for commercial use exclusion" data-title="Commercial and rental use exclusion" data-meta="Part A, Page 11/37; Part D, Items A.2&ndash;4, Pages 29&ndash;30/37" data-excerpt="Coverage excludes use of the recreational vehicle for commercial purposes, rental, or livery, and use as a public or livery conveyance, unless business or artisan use is specifically shown on the Declarations Page."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Use as a permanent residence, and premises liability arising from that use</span><button class="source-button" type="button" aria-label="View source for permanent residence exclusion" data-title="Permanent residence exclusion" data-meta="Part A, Exclusion 17, Page 12/37" data-excerpt="Coverage does not apply to bodily injury or property damage liability arising out of use of the recreational vehicle as a permanent residence or business premises."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Wear and tear, mechanical or electrical breakdown, rust, rot, corrosion, mold, infestation, water leaks or damage, and gradual deterioration</span><button class="source-button" type="button" aria-label="View source for wear and tear exclusion" data-title="Wear, mechanical breakdown, and mold exclusion" data-meta="Part D, Items A.11&ndash;12, 21, Pages 29&ndash;30/37" data-excerpt="Comprehensive and collision coverages exclude loss caused by wear and tear, mechanical or electrical breakdown or failure, rust, corrosion, rot, mold, infestation by insects or vermin, and water damage or leaks, and any gradual deterioration."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Portable equipment, personal effects, electronics, and other items not permanently installed, unless separately endorsed</span><button class="source-button" type="button" aria-label="View source for portable property exclusion" data-title="Portable equipment and personal effects exclusion" data-meta="Part D, Exclusion A.15, Page 29/37" data-excerpt="Part D excludes loss to portable equipment, personal effects, and other property that is not permanently installed in or upon the covered recreational vehicle, unless coverage for that property is added by endorsement."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Racing, intentional acts, use by an unlicensed driver, and unauthorized use</span><button class="source-button" type="button" aria-label="View source for racing and unauthorized use exclusion" data-title="Racing and unauthorized use exclusion" data-meta="Part A Exclusions, Page 11/37; Part D Exclusions, Pages 29&ndash;30/37" data-excerpt="Coverage excludes loss or liability arising from racing, speed contests, intentional acts, operation by a person not licensed to drive, and use of the recreational vehicle without a reasonable belief of being entitled to do so."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">Coverage limitations</span><span class="count-pill">8</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item"><span>Physical-damage deductibles are not stated in this form and would be shown on the Declarations Page</span><button class="source-button" type="button" aria-label="View source for physical damage deductible note" data-title="Physical damage deductibles" data-meta="Part D, Page 22/37" data-excerpt="Deductibles reduce the amount payable for a covered physical-damage loss and are shown for each applicable coverage on the Declarations Page."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Uninsured Motorist Property Damage pays only in excess of a $250 deductible</span><button class="source-button" type="button" aria-label="View source for UMPD deductible" data-title="Uninsured Motorist Property Damage deductible" data-meta="Part C(II), Page 19/37" data-excerpt="Uninsured Motorist Property Damage coverage applies only to the amount of loss in excess of a $250 deductible."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Emergency Expense is capped at $250 per day, up to the maximum shown on the Declarations, and applies only more than 50 miles from principal storage</span><button class="source-button" type="button" aria-label="View source for emergency expense limit" data-title="Emergency Expense limit" data-meta="Page 23/37" data-excerpt="Emergency Expense is limited to $250 per day, up to the maximum amount shown on the Declarations Page, and applies only when the recreational vehicle is more than 50 miles from its principal place of storage."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Pet Protection is limited to $1,000 per incident and $3,000 per policy period, plus separate sub-limits for boarding, recovery, and equipment</span><button class="source-button" type="button" aria-label="View source for pet protection sub-limits" data-title="Pet Protection sub-limits" data-meta="Page 23/37" data-excerpt="Pet Protection is limited to $1,000 per incident and $3,000 per policy period, with additional sub-limits applying to boarding, pet recovery, and pet-equipment replacement."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Towing and Labor is limited to 6 occurrences per policy period</span><button class="source-button" type="button" aria-label="View source for towing and labor limit" data-title="Towing and Labor occurrence limit" data-meta="Page 23/37" data-excerpt="Towing and Labor coverage is limited to a maximum of 6 occurrences during the policy period."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>A newly acquired or replacement RV must be reported within 30 calendar days for automatic coverage to continue</span><button class="source-button" type="button" aria-label="View source for newly acquired RV reporting duty" data-title="Newly acquired or replacement RV" data-meta="Pages 5, 7, 8/37" data-excerpt="Coverage for a newly acquired or replacement recreational vehicle applies automatically for a limited period only if it is reported to the company within 30 calendar days of acquisition; without timely notice, no ongoing coverage applies."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Permissive-user limitations, operator licensing, and garaging duties apply</span><button class="source-button" type="button" aria-label="View source for permissive user and licensing duties" data-title="Operator and garaging duties" data-meta="General Duties, Additional Duties, Pages 8&ndash;9/37" data-excerpt="The named insured must maintain proper licensing for operators, garage the recreational vehicle as represented, and notify the company of newly acquired or replacement vehicles as required."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item"><span>Theft or vandalism must be reported within 24 hours, or as soon as practicable</span><button class="source-button" type="button" aria-label="View source for theft reporting duty" data-title="Theft and vandalism reporting" data-meta="Additional Duties, Part D, Page 9/37" data-excerpt="In the event of theft or vandalism, the insured must notify the police within 24 hours or as soon as practicable, in addition to notifying the company."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">Coverage watch points</span><span class="count-pill">4</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity critical">Critical</span><button class="source-button" type="button" aria-label="View source for missing declarations watch point" data-title="Missing Declarations Page and schedule" data-meta="No Declarations or personalized schedules provided" data-excerpt="No Declarations Page, scheduled units, insureds, limits, deductibles, or endorsements were provided, so no coverage in force can be confirmed from this form alone."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Without a Declarations Page, unit schedule, insureds, limits, or endorsements, this summary cannot confirm what coverage is actually in force, for whom, or for which recreational vehicle.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for portable equipment watch point" data-title="Portable equipment and personal effects" data-meta="Part D, Exclusion A.15, Page 29/37" data-excerpt="Portable equipment and personal effects are excluded unless permanently installed, so unsecured gear and belongings carried in the RV may not be covered without an endorsement."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Portable equipment and personal effects are not covered unless permanently installed &mdash; confirm valuable gear is documented as customized equipment if you want it covered.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for commercial and full-timer use watch point" data-title="Commercial, rental, or full-time residency use" data-meta="Part D, Pages 29&ndash;30/37" data-excerpt="Commercial use, rental or livery, and use as a permanent residence are excluded from Part D coverage unless a business or full-timer endorsement is shown on the Declarations."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Commercial, rental, or full-time residency use is largely excluded unless a business or full-timer endorsement has been added &mdash; confirm your intended use is reflected on the Declarations.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for loss settlement watch point" data-title="Loss settlement uses ACV or stated value" data-meta="Limit of Liability, Part D, Page 27/37" data-excerpt="Loss settlement is limited to the lowest of actual cash value, the cost to repair or replace, or a stated amount if declared, with depreciation and betterment adjustments applied."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Loss settlement is limited to actual cash value or a stated/agreed value, with depreciation applied to parts and total-loss payments &mdash; confirm this matches your expectations for a large claim.</p></div>
+          </div>
+        </details>
+      </section>
+
+      <section class="card" aria-labelledby="specs-title">
+        <div class="card-pad"><h2 class="section-title" id="specs-title">Policy specifications</h2></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Newly acquired or replacement RV</strong><p>Must be reported to the company within 30 calendar days of acquisition for automatic coverage to continue; otherwise, no ongoing coverage applies.</p></div><button class="source-button" type="button" aria-label="View source for newly acquired RV reporting" data-title="Newly acquired or replacement RV reporting" data-meta="Pages 5, 7, 8/37" data-excerpt="Coverage for an additional or replacement recreational vehicle applies automatically for a limited time only when reported to the company within 30 calendar days."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Policy territory</strong><p>United States, its territories or possessions, and Canada, including while the RV is being transported between ports.</p></div><button class="source-button" type="button" aria-label="View source for policy territory" data-title="Policy territory" data-meta="Policy Period and Territory, Page 31/37" data-excerpt="This policy applies to accidents and losses occurring within the United States, its territories or possessions, and Canada, and while the covered recreational vehicle is being transported between ports of these territories."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Valuation and loss settlement</strong><p>Payment is capped at the lowest of actual cash value, the cost to repair or replace, or a stated amount if declared; depreciation and betterment adjustments apply.</p></div><button class="source-button" type="button" aria-label="View source for valuation and loss settlement" data-title="Valuation and loss settlement" data-meta="Limit of Liability, Part D, Page 27/37" data-excerpt="The limit of liability for a covered loss is the lowest of the actual cash value of the property, the amount necessary to repair or replace it, or the stated amount shown on the Declarations, with deductions for depreciation and betterment."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Endorsements</strong><p class="value unavailable" style="color:var(--muted);font-weight:400;margin-top:3px">Not available &mdash; no endorsement schedule was supplied with this form.</p></div></div>
+      </section>
+
+      <section class="card" aria-labelledby="deductibles-title">
+        <div class="card-pad"><h2 class="section-title" id="deductibles-title">Deductibles</h2></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>Collision &amp; Comprehensive</strong><p>Not available &mdash; deductible amounts would be shown on the Declarations Page.</p></div></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>$250 &middot; Uninsured Motorist Property Damage</strong><p>Claims are paid only in excess of this deductible.</p></div><button class="source-button" type="button" aria-label="View source for uninsured motorist property damage deductible" data-title="Uninsured Motorist Property Damage deductible" data-meta="Part C(II), Page 19/37" data-excerpt="Uninsured Motorist Property Damage pays only the amount of loss that exceeds a $250 deductible."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>No deductible &middot; Child safety seats &amp; Pet Protection</strong><p>These benefits are not reduced by a deductible.</p></div><button class="source-button" type="button" aria-label="View source for no-deductible benefits" data-title="Benefits without a deductible" data-meta="Part D, Child Restraints and Pet Protection, Pages 22&ndash;23/37" data-excerpt="Child safety seat replacement and Pet Protection benefits are payable without application of a physical-damage deductible."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+      </section>
+
+      <section class="card footer-card" aria-labelledby="about-title">
+        <div class="card-pad"><h2 class="section-title" id="about-title">About these insights</h2><p>Insights are based on the documents provided; incomplete or missing documents may result in incomplete or inaccurate insights. OVIE is not intended to serve as evidence of insurance for third parties, nor does OVIE provide advice or guidance on the adequacy of coverage. Users should consult their agent or insurance carrier for coverage-related questions or determinations.</p></div>
+        <details><summary><span>Document sources</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary><div class="details-body"><ul><li>Form 11429 (10012015) &mdash; Louisiana Recreational Vehicle Policy, cover page, pages 1&ndash;37</li><li>Form 11429 (10012015) &mdash; Definitions, pages 5&ndash;8</li><li>Form 11429 (10012015) &mdash; Part A, Liability Coverage, pages 5&ndash;12</li><li>Form 11429 (10012015) &mdash; Parts B &amp; C, Medical Payments and Uninsured/Underinsured Motorist Coverage, pages 10&ndash;19</li><li>Form 11429 (10012015) &mdash; Part D, Physical Damage Coverage, pages 22&ndash;30</li><li>Form 11429 (10012015) &mdash; Policy Period, Territory, and General Conditions, page 31</li></ul></div></details>
+        <details><summary><span>Not available in the pages analyzed</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary><div class="details-body"><ul><li>Declarations Page</li><li>Named insured(s), additional insureds, and listed operators</li><li>Recreational vehicle schedule (VIN, year, make, model, subtype, value, storage location)</li><li>Selected limits, deductibles, and unit-specific coverages</li><li>Premium and rating data</li><li>Endorsement schedule</li><li>Personalized exclusions or amendments</li></ul></div></details>
+      </section>
+
+      <div class="feedback" role="group" aria-labelledby="feedback-question">
+        <span class="feedback-question" id="feedback-question">Were these insights helpful?</span>
+        <button class="feedback-button" type="button" data-feedback="up" aria-label="Yes, these insights were helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg></button>
+        <button class="feedback-button" type="button" data-feedback="down" aria-label="No, these insights were not helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"></path><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path></svg></button>
+      </div>
+    </main>
+
+    <form class="chat-dock" id="chatForm" novalidate>
+      <label class="sr-only" for="chatInput">Ask Ovie about this policy</label>
+      <div class="ask-sheet-composer-row">
+        <div class="ask-sheet-input-row">
+          <input class="ask-sheet-input" id="chatInput" type="text" placeholder="Ask anything about this policy..." autocomplete="off">
+        </div>
+        <button class="ask-composer-action" id="chatAskButton" type="submit" aria-label="Ask Ovie"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><path d="M12 19v3"></path></svg></button>
+      </div>
+    </form>
+  </div></div>
+
+  <dialog id="sourceSheet" aria-labelledby="sourceTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head"><h2 id="sourceTitle">Source from your policy</h2><button class="icon-button sheet-close" id="closeSource" type="button" aria-label="Close source"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    <div class="sheet-body" id="sourceBody"></div>
+  </dialog>
+
+  <dialog id="feedbackSheet" aria-labelledby="feedbackTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head"><h2 id="feedbackTitle">Tell us more</h2><button class="icon-button sheet-close" id="closeFeedback" type="button" aria-label="Close feedback form"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    <div class="sheet-body">
+      <form class="feedback-form" id="feedbackForm" novalidate>
+        <fieldset><legend class="sr-only">What could be improved?</legend>
+          <label class="feedback-option"><span>Insights are unclear or confusing</span><input type="radio" name="reason" value="unclear"></label>
+          <label class="feedback-option"><span>Information is incorrect</span><input type="radio" name="reason" value="incorrect"></label>
+          <label class="feedback-option"><span>Missing or incomplete details</span><input type="radio" name="reason" value="missing"></label>
+          <label class="feedback-option"><span>Other (tell us more)</span><input type="radio" name="reason" value="other"></label>
+        </fieldset>
+        <div class="feedback-followup" id="feedbackFollowup" hidden><label for="feedbackConcern">Enter your concern here</label><textarea id="feedbackConcern" name="concern" placeholder="Type here"></textarea></div>
+        <p class="error" id="feedbackError" role="alert" aria-live="polite"></p>
+        <button class="primary-action" type="submit">Submit</button><button class="secondary-action" id="cancelFeedback" type="button">Cancel</button>
+      </form>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const sourceSheet=document.getElementById('sourceSheet');
+    const sourceTitle=document.getElementById('sourceTitle');
+    const sourceBody=document.getElementById('sourceBody');
+    const feedbackSheet=document.getElementById('feedbackSheet');
+    const feedbackForm=document.getElementById('feedbackForm');
+    const feedbackFollowup=document.getElementById('feedbackFollowup');
+    const feedbackConcern=document.getElementById('feedbackConcern');
+    const feedbackError=document.getElementById('feedbackError');
+    const toast=document.getElementById('toast');
+    let lastTrigger=null,toastTimer;
+
+    function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
+    function closeDialog(dialog){dialog.close()}
+    function bindBackdrop(dialog){dialog.addEventListener('click',event=>{const b=dialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)dialog.close()})}
+    function sheetNode(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text)node.textContent=text;return node}
+    function openSource(button){lastTrigger=button;sourceTitle.textContent=button.dataset.title;const action=sheetNode('button','primary-action','View in document');action.type='button';action.addEventListener('click',()=>showToast('Document view is not connected in this mock.'));sourceBody.replaceChildren(sheetNode('div','source-meta',button.dataset.meta),sheetNode('div','source-excerpt',button.dataset.excerpt),action);sourceSheet.showModal();document.getElementById('closeSource').focus({preventScroll:true})}
+
+    document.querySelectorAll('.source-button').forEach(button=>button.addEventListener('click',()=>openSource(button)));
+    document.getElementById('closeSource').addEventListener('click',()=>closeDialog(sourceSheet));
+    sourceSheet.addEventListener('close',()=>{if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});lastTrigger=null});
+    bindBackdrop(sourceSheet);bindBackdrop(feedbackSheet);
+
+    document.querySelectorAll('.feedback-button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.feedback-button').forEach(option=>option.setAttribute('aria-pressed',String(option===button)));if(button.dataset.feedback==='up'){showToast('Thanks for your feedback.')}else{lastTrigger=button;feedbackForm.reset();feedbackFollowup.hidden=true;feedbackError.textContent='';feedbackSheet.showModal();document.getElementById('closeFeedback').focus({preventScroll:true})}}));
+    feedbackForm.addEventListener('change',event=>{if(event.target.name==='reason'){feedbackFollowup.hidden=event.target.value!=='other';feedbackError.textContent=''}});
+    feedbackForm.addEventListener('submit',event=>{event.preventDefault();const reason=new FormData(feedbackForm).get('reason');if(!reason){feedbackError.textContent='Select one reason to continue.';feedbackForm.querySelector('input[name="reason"]').focus();return}if(reason==='other'&&!feedbackConcern.value.trim()){feedbackError.textContent='Enter your concern to continue.';feedbackConcern.focus();return}feedbackSheet.close();showToast('Thanks for helping us improve these insights.')});
+    feedbackSheet.addEventListener('close',()=>{if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});lastTrigger=null});
+    document.getElementById('closeFeedback').addEventListener('click',()=>feedbackSheet.close());
+    document.getElementById('cancelFeedback').addEventListener('click',()=>feedbackSheet.close());
+    document.getElementById('searchButton').addEventListener('click',()=>showToast('Search is not available in this prototype.'));
+    document.getElementById('shareButton').addEventListener('click',()=>showToast('Share options opened.'));
+    document.getElementById('chatForm').addEventListener('submit',event=>{event.preventDefault();const input=document.getElementById('chatInput');showToast(input.value.trim()?'Opening Ask Ovie with your question.':'Ask Ovie voice input would start here.')});
+  </script>
+<script src="assets/ovie-upload-flow.js?v=20260910b"></script>
+  <script src="assets/ovie-upload-options.js?v=20260911a"></script>
+  <script src="assets/ovie-upload-indicator.js?v=20260911e"></script>
+</body>
+</html>
