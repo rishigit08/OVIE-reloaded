@@ -1,0 +1,15 @@
+/* Boat content uses the existing auto Insights primitives and canonical tokens. */
+.heading-row{gap:8px;flex-wrap:wrap}
+.boat-sample{font-size:12px;line-height:16px;padding:4px 8px;border-radius:var(--pill);background:var(--page);color:var(--text);white-space:nowrap}
+.boat-note{color:var(--text);margin-top:12px;padding:12px;background:var(--page);border-radius:var(--radius)}
+.boat-note p{color:var(--text);margin-top:4px}
+.boat-group{margin-top:20px}.boat-group+.boat-group{border-top:1px solid var(--line);padding-top:16px}
+.boat-group .coverage-detail:last-child{padding-bottom:0}
+.auto-field>.source-button{margin-top:0;margin-right:-8px;flex-shrink:0}
+.auto-detail-head .source-button{flex-shrink:0}
+.auto-disclosure-body>.boat-note:first-child{margin-top:0;margin-bottom:16px}
+.source-list li+li{margin-top:12px}
+.source-excerpt{font-style:normal}
+.boat-document-unavailable{margin-top:16px;color:var(--text)}
+.boat-document-unavailable a{color:var(--primary);display:inline-flex;align-items:center;min-height:44px;font-weight:600}
+@media(min-width:860px){#sourceSheet{max-height:100dvh}}

@@ -1,0 +1,314 @@
+[Below is a structured summary and insights based on the provided sample policy wording for the “Yachtsman / Windjammer / Boatsman Policy” and its attached endorsements. **No declarations page or schedule was included, so all vessel-, insured-, operator-, limit-, and deductible-specific details are missing. If such a page is supplied, a personalized summary can be generated.** Insights are generated from the specimen wording and endorsements provided.
+
+---
+
+## 1. Policy Simplified View
+
+- **Major Category:** Property  
+   *General policy purpose: insures owned recreational watercraft against physical damage and liability*  
+   [Yachtsman / Windjammer / Boatsman Policy, Policy Cover & Definitions, p.3]
+
+- **Parent Policy Type:** Watercraft Insurance  
+  [Same as above]
+
+- **Policy Subtype:** Boat / Yacht (applies to owned recreational watercraft as defined by the policy; exact subtype determined by scheduled vessel)  
+  [Definitions, p.3]
+
+- **Carrier Product Title:** Yachtsman / Windjammer / Boatsman Policy  
+  [Top of p.3]
+
+- **Named Insured:** *Not specified (Declarations Page absent)*
+
+- **Mailing Address/Primary Mooring:** *Not specified*
+
+- **Policy Number:** *Not specified*
+
+- **Underwriting Company:** *Not specified on sample wording*
+
+- **Effective and Expiration Dates:** *Not specified*
+
+- **Policy Status:** *Not specified*
+
+- **Governing Form:** Yachtsman / Windjammer / Boatsman Policy, Form MA-14558A (04/05)  
+  [Footer, all pages]
+
+- **Scheduled Vessels:** *None shown* (would be on Declarations)
+
+- **Primary Watercraft Liability Limit:** *Not specified*
+
+- **Primary Hull/Physical-Damage Deductible:** *Not specified*
+
+- **Total Premium and Premium Term:** *Not specified*
+
+- **Producer/Agent/Broker:** *Not specified*
+
+**Citation for all above generalized fields:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), pp. 3–10]
+
+---
+
+## 2. Who Is Covered
+
+- **Named Insured(s):** Named on Declarations page (not shown in sample).  
+  [Definitions, “You and your,” p.3]
+
+- **Operators, Relatives, Permissive Users:**  
+   - “You or your”: Named insured and resident spouse.  
+   - “Covered Person”: May include person or organization permitted by you to operate your vessel, but not commercial rental or paid operators, unless named.  
+   [Definitions, “Covered Person”, “Insured person,” p.3]
+
+- **Passengers/Towed Persons:** Not automatically insured unless specifically included per the policy wording for liability/medical payments.  
+   [Part B – Liability, Part C – Medical Payments, pp.5-6]
+
+- **Crew Members/Paid Crew:** Not covered for liability for bodily injury or property damage to paid crew members.  
+   [Exclusions, Part B/B-3, p.6]
+
+- **Excluded Operators:** Not specified; subject to Declarations or endorsements.
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), Definitions and Part B Exclusions, pp. 3–6]
+
+---
+
+## 3. Covered Vessels and Marine Assets
+
+- **Scheduled Vessel(s):** Not specified.  
+   *Would include all boats, PWC, or yachts scheduled on the Declarations page.*
+
+- **Motors, Tenders, Equipment:**  
+   *Factory/original equipment and permanently attached property are insured. Coverage for outboard motors, tenders, trailers, and personal effects if listed or as defined.*  
+   [Definitions, “Insured property,” p.3]
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), Definitions, p.3]
+
+---
+
+## 4. Navigation, Territory, Mooring, and Lay-Up
+
+- **Territory:** United States (including Alaska, Hawaii, Puerto Rico, and Canada) unless otherwise amended or subject to scheduled navigation warranty.  
+   [Part E, Perils Insured Against, p.7]
+
+- **Navigation and Lay-Up Warranties:**  
+   - Breach of Navigation or Lay-Up Warranty may result in claim denial if not corrected within 10 days of breach notice, unless loss occurs before correction.  
+   [General Conditions, “Extension of Coverage” and “Change in Navigation/Lay-Up,” p.8]
+
+- **Home Port/Mooring:** Not specified.  
+   *Would be scheduled on Declarations page.*
+
+- **Lay-Up Period:** Not specified.  
+   *Would be shown on Declarations if applicable.*
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), Part E, p.7 and General Conditions, p.8]
+
+---
+
+## 5. Per-Vessel Coverage
+
+*Not available — Vessel schedule, limits, and deductibles are absent.*
+
+---
+
+## 6. What's Included — Liability and Injury Coverage
+
+- **Watercraft Liability (Part B):** Covers damages for which the insured is legally liable due to ownership, maintenance, or use of a covered vessel, subject to policy exclusions.  
+   [Part B, p.5]
+
+- **Medical Payments (Part C):** Pays for medical/funeral expenses for accidental bodily injury to an insured person arising from use of the insured vessel.  
+   [Part C, p.6]
+
+- **Uninsured Boater (Part D):** Pays compensatory damages for bodily injury received in a collision with an uninsured vessel, subject to limits.  
+   [Part D, p.6]
+
+- **Defense Costs:** Insurer will settle or defend any claim or suit, with defense costs in addition to liability limits (unless otherwise amended by endorsement).  
+   [Part B, p.5]
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), Parts B–D, pp.5–6]
+
+---
+
+## 7. What's Included — Hull, Equipment, and Watercraft Benefits
+
+- **Property Damage (Part A):** Covers accidental direct physical loss or damage to insured watercraft, spars, sails, machinery, electronics, trailers (if listed), and attached equipment.  
+   [Part A: Property Damage, p.3]
+
+- **Towing and Assistance:** Commercial towing and assistance for breakdown or disablement “in the event there is an emergency situation where you and your vessel are not in imminent danger,” up to stated policy limits.  
+   [Commercial Towing and Assistance, p.5]
+
+- **Salvage/Wreck Removal:** All sums required to remove the wreck of the insured vessel as required by law, up to policy limits.  
+   [Loss Settlement, Part A, p.4]
+
+- **Personal Property Coverage:** Direct and accidental loss to personally owned property on board if insured under Part G and declared on Declarations.  
+   [Part G, pp.7–8]
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), Parts A, F, G, pp.3–8]
+
+---
+
+## 8. Yacht-Specific and Crew Provisions
+
+- **Paid Crew/Captain:** Claims for injury to paid crew members are excluded from liability.  
+   [Part B Exclusions, p.6]
+
+- **Charter/Commercial Use:** Policy does not cover use for hire, livery, or commercial carriage of passengers/cargo.  
+   [General Conditions, “Use of Vessel,” p.9]
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), pp.6, 9]
+
+---
+
+## 9. What's Not Included
+
+- **Exclusions — Property Damage:**  
+   - Wear and tear, gradual deterioration, rot, corrosion, marine growth, zebra mussels, vermin, manufacturer’s defects, mechanical/electrical breakdown (limited exceptions), theft without visible force, loss outside policy territory, use for commercial purposes, illegal use, nuclear hazard, war, racing, unlicensed operators, navigation in violation of warranties, professional/paid crew injuries, among others.  
+     [Exclusions, Part A, p.4; General Conditions and Exclusions, pp.8-10]
+
+- **Exclusions — Liability:**  
+   - Injury to insured’s household, employees, paid crew; intentional/criminal acts; use outside covered territory/warranty; bodily injury/property damage from pollution or while using vessel for commercial purposes.  
+     [Part B Exclusions, p.6]
+
+- **Exclusions — Personal Property:**  
+   - No coverage for wear and tear, gradual deterioration, marine life, or theft if vessel is not locked or secured.  
+     [Part G Exclusions, p.7]
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), multiple exclusions, pp.4, 6, 7, 8–10]
+
+---
+
+## 10. Coverage Limitations, Warranties, and Usage Conditions
+
+- **Navigation and Lay-Up Warranties:** Breach of Navigation or Lay-Up Warranty without correction may void coverage if loss occurs during breach period.  
+   [General Conditions, “Extension of Coverage,” p.8]
+
+- **Operator Use:** No coverage if operated by unlicensed/unapproved operator; commercial use and racing are excluded.  
+   [General Conditions, “Use of Vessel,” p.9]
+
+- **Transfer/Assignment:** Assignment of policy requires insurer’s written consent.  
+   [General Conditions, “Transfer of Interest,” p.9]
+
+- **Fraud/Misrepresentation:** Policy void if insured conceals/misrepresents facts or commits fraud.  
+   [General Conditions, p.9]
+
+- **Notice of Acquisition:** Policy does not include automatic coverage for newly acquired/replacement vessels unless stated on Declarations or amended by endorsement.  
+   [No evidence of automatic coverage found in sample wording.]
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), General Conditions, pp.8–10]
+
+---
+
+## 11. Valuation and Loss Settlement
+
+- **Physical Damage Valuation:**  
+   - Default treatment: policy pays lesser of cost to repair, cost of replacement, or actual cash value—minus depreciation for certain items (see below).
+   - For vessel trailer: policy pays the lowest of actual cash value, cost to repair, or cost to replace.  
+   [Loss Settlement, Part A, p.4; Part G, p.7]
+
+- **Endorsements (Per Page 13):**
+   - **MA7Z04 (Boats >26’):** Loss to plastics/canvas, sails, and outboards/outdrives >5 years old is on ACV/depreciated basis.
+   - **MA6508b (Boats <27’):** Same for plastics/canvas, sails, outboards/outdrives >5 years, and machinery inside vessel >7 years old.  
+   [Endorsements, p.13]
+
+- **Personal Property/Fishing Equipment:**  
+   Pays lowest of ACV, repair, or replacement cost for scheduled items.
+   [Part G, p.7]
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), Loss Settlement and Endorsements pp.4, 7, 13]
+
+---
+
+## 12. Deductibles and Retentions
+
+- **Deductible:**  
+   - The deductible shown on the Declarations applies separately to each part and each item of property, per occurrence.  
+   - Separate deductible may apply to insured property versus trailers, personal property, etc.  
+   [Deductible Amount, p.4; Part G, p.7]
+
+- **Named Storm / Hurricane Deductibles:** Not specified in specimen; could be scheduled on Declarations.
+
+- **Liability/Meds/UM:** No deductible applies unless otherwise shown.  
+   [Deductible Amount, pp.4, 7]
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), p.4, 7]
+
+---
+
+## 13. Claims, Towing, Salvage, and Wreck Removal Administration
+
+- **Claims Notice:** Written sworn proof-of-loss required for Medical Payments and upon request for Property Damage.
+   [Part C, p.6]
+
+- **Insurer's Claims Administration:**  
+   - No specific contact or company named in provided text.
+   - Insured must cooperate, protect property, allow inspection, and separate damaged property.
+   - Emergency towing/recovery covered under Commercial Towing/Assistance, limits apply, subject to prior approval conditions as scheduled.  
+   [Assistance/Cooperation, Payment of Loss, Commercial Towing, pp.5, 10]
+
+**Citation:**  
+[Yachtsman / Windjammer / Boatsman Policy (MA-14558A (04/05)), various, pp.5, 6, 10]
+
+---
+
+## 14. Coverage Watch Points
+
+- **Critical – Missing Schedule:** No Declarations page or schedule; no Named Insured, vessel, HIN, policy number, coverage limits, deductibles, mooring, or navigation area provided.  
+   [Declarations placeholder, p.1]
+
+- **Moderate – Valuation May Vary:** Physical damage settlement basis depends on vessel age/type and relevant endorsement (ACV/depreciation for items over age threshold).  
+   [Endorsements, p.13]
+
+- **Moderate – Deductibles Can Differ:** Separate deductibles may apply to different coverages/parts.  
+   [Deductible Amount, pp.4, 7]
+
+- **Critical – Use/Operator Restriction:** No coverage for commercial use, racing, unlicensed/unapproved operator, or breach of navigation/lay-up warranty.  
+   [Use of Vessel, General Conditions, p.9]
+
+**Citation:**  
+[All referenced pages above]
+
+---
+
+## 15. Policy Specifications — Material Endorsements
+
+- **MA7Z04 (4/00):** For vessels >26ft, property settlement for plastics/canvas/sails/outboards/outdrives >5 years old is based on depreciated value (ACV/repair/replacement, whichever less).  
+   [Page 13]
+
+- **MA6508b (04/01):** For vessels <27ft, similar ACV/depreciated settlement for plastics/canvas/sails/outboards >5 years, machinery inside vessel >7 years, or parts thereof.  
+   [Page 13]
+
+- **Scope:** Endorsement used is based on vessel length as scheduled on Declarations.
+
+**Citation:**  
+[Endorsement language, p.13]
+
+---
+
+## 16. Premium, Discounts, and Rating Information
+
+- **Premium and Term:** Not specified in forms provided.
+
+- **Rating/Discounts:**  
+   *Not stated. Could be based on vessel age/type, operator history, navigation, etc., but such factors are not confirmed for this sample.*
+
+**Citation:**  
+[No data present]
+
+---
+
+### Missing Items
+
+- Declarations page with scheduled vessels, operators, values, limits, deductibles, address, policy number, effective/expiration dates, broker/agent info
+- Personalized limits, coverage amounts, deductibles, Named Insured, operators, mooring details, premium
+
+---
+
+**This summary reflects only the sample policy wording and generic endorsement language supplied. No vessel or insured-specific selections are present, so coverage, value, and limit determinations remain illustrative and general.** 
+
+**Citations are from: Yachtsman / Windjammer / Boatsman Policy, Form MA-14558A (04/05), pp.1–13, and Endorsements (p.13).**]
