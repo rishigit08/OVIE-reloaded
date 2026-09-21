@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ovie: Private flood policy insights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary:#6b4062; --primary-dark:#54324d; --ink:#111; --text:#333a3d;
+      --muted:#5f6368; --icon-default:#5f6368; --icon-strong:#111111; --surface:#fff; --page:#f6f6f6; --bg-subtle:#f6f6f6; --canvas:#e3e3e3;
+      --success:#0d7d07; --warning:#8a5a06; --danger:#a63a33;
+      --plum-soft:#f5edf3; --warning-soft:#fff5df; --danger-soft:#ffeded;
+      --border:#d8dddb; --line:#ecefed; --overlay:rgba(17,24,23,.58);
+      --radius:12px; --pill:999px; --focus:0 0 0 3px rgba(107,64,98,.24);
+      --motion-duration-press:160ms; --motion-ease-out:cubic-bezier(.23,1,.32,1);
+      --z-sticky:20; --z-modal:40; --z-toast:60;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--canvas);color:var(--ink);font:400 14px/20px "Figtree",system-ui,sans-serif}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    h1,h2,h3,p{margin:0}
+    h1,h2,h3,strong{font-weight:600}
+    img{display:block}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+    :where(button,input,textarea,summary):focus-visible{outline:0;box-shadow:var(--focus)}
+    .canvas{position:fixed;inset:0;display:flex;justify-content:center;overflow:auto}
+    .phone{position:relative;width:min(390px,100vw);height:100dvh;min-height:620px;overflow:auto;background:var(--page);scrollbar-width:thin;scrollbar-color:var(--border) var(--page);scroll-padding-bottom:96px}
+    .phone::-webkit-scrollbar,.sheet-body::-webkit-scrollbar{width:8px}
+    .phone::-webkit-scrollbar-track,.sheet-body::-webkit-scrollbar-track{background:var(--page)}
+    .phone::-webkit-scrollbar-thumb,.sheet-body::-webkit-scrollbar-thumb{background:var(--border);border:2px solid var(--page);border-radius:var(--pill)}
+    .topbar{position:sticky;top:0;z-index:var(--z-sticky);background:rgba(255,255,255,.97);border-bottom:1px solid var(--line)}
+    .statusbar{height:34px;padding:8px 22px 0;display:flex;justify-content:space-between;font-size:12px;font-weight:600}
+    .statusbar span:last-child{color:var(--muted)}
+    .titlebar{height:58px;padding:4px 18px 10px;display:flex;align-items:center;gap:8px}
+    .titlebar h1{font-size:18px;line-height:24px}
+    .icon-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center}
+    .icon-button img,.icon-button svg{width:22px;height:22px}
+    .back-button{background:transparent;color:var(--icon-strong)}
+    .sheet-close{background:transparent}
+    #searchButton{margin-left:auto}
+    #searchButton,#shareButton{position:relative;background:var(--bg-subtle);color:var(--icon-default);transition:background-color var(--motion-duration-press) ease,transform var(--motion-duration-press) var(--motion-ease-out)}
+    #searchButton svg,#shareButton svg{width:19px;height:19px}
+    #searchButton:active,#shareButton:active{transform:scale(.96)}
+    @media(hover:hover) and (pointer:fine){.icon-button:hover{background:var(--plum-soft)}.back-button:hover,.sheet-close:hover,.source-button:hover{background:transparent}.ask-composer-action:hover{background:var(--primary-dark)}}
+    main{padding:18px 16px 112px;display:flex;flex-direction:column;gap:18px}
+    .card{background:var(--surface);border-radius:var(--radius);overflow:hidden}
+    .card-pad{padding:16px}
+    .section-title{font-size:18px;line-height:24px;margin-bottom:14px}
+    .card-pad>.section-title:last-child{margin-bottom:0}
+    .heading-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .heading-row .section-title{margin:0}
+    .status-pill,.severity{display:inline-flex;align-items:center;gap:6px;border-radius:var(--pill);font-size:12px;line-height:16px;font-weight:600}
+    .status-pill{padding:6px 10px;background:var(--danger-soft);color:var(--danger)}
+    .status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+    .field{padding:12px 0;border-bottom:1px solid var(--line)}
+    .field:first-child{padding-top:0}.field:last-child{padding-bottom:0;border-bottom:0}
+    .label{color:var(--muted)}
+    .value{margin-top:3px;font-weight:600;overflow-wrap:anywhere}
+    .person{min-height:58px;display:flex;align-items:center;gap:12px}
+    .person-icon{width:40px;height:40px;border-radius:var(--radius);background:var(--plum-soft);color:var(--primary);display:grid;place-items:center}
+    .person-icon img,.person-icon svg{width:20px;height:20px}
+    .source-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:transparent;color:var(--icon-default);display:grid;place-items:center;flex:0 0 auto}
+    .source-button img,.source-button svg{width:19px;height:19px}
+    .coverage-list{display:flex;flex-direction:column}
+    .coverage-row{min-height:84px;padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+    .coverage-row:last-child{border-bottom:0}
+    .coverage-copy{flex:1;min-width:0}
+    .coverage-copy .value{font-size:18px;line-height:24px}
+    .coverage-description{margin-top:2px;color:var(--muted)}
+    .policy-details-header{padding:16px 16px 8px}
+    .policy-details-header .section-title{margin:0}
+    .policy-details-header+details{border-top:0}
+    .policy-detail-body{padding:0 16px 12px}
+    .summary-title{flex:1}
+    .count-pill{flex:0 0 auto;padding:3px 8px;border-radius:var(--pill);background:var(--plum-soft);color:var(--primary);font-size:12px;line-height:16px;font-weight:600}
+    .insight-item{position:relative;min-height:52px;padding:12px 44px 12px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;color:var(--text)}
+    .insight-item:last-child{border-bottom:0}
+    .insight-item::before{content:"";width:4px;height:4px;margin-right:10px;border-radius:50%;background:var(--text);flex:0 0 auto}
+    .insight-item .source-button{position:absolute;right:-10px;top:50%;transform:translateY(-50%)}
+    .spec-row,.deductible-row{padding:14px 6px 14px 16px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--line)}
+    .spec-row:first-of-type,.deductible-row:first-of-type{border-top:0}
+    .card-pad+.spec-row,.card-pad+.deductible-row{border-top:0}
+    .spec-copy,.deductible-copy{flex:1;min-width:0}
+    .spec-copy p,.deductible-copy p{margin-top:3px;color:var(--muted)}
+    .spec-copy>.value{font-size:18px;line-height:24px;color:var(--ink)}
+    .tip{padding:14px 6px 14px 16px;background:var(--warning-soft);color:var(--warning);display:flex;align-items:flex-start;gap:10px}
+    .tip>img{width:22px;height:22px;margin-top:1px}.tip-copy{flex:1}.tip-copy p{margin-top:3px;color:var(--warning)}
+    .watchpoint{padding:12px 0;border-bottom:1px solid var(--line)}
+    .watchpoint:first-child{padding-top:0}
+    .watchpoint:last-child{padding-bottom:0;border-bottom:0}
+    .watchpoint-head{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .severity{flex:0 0 auto;padding:4px 8px}.severity.critical{background:var(--danger-soft);color:var(--danger)}.severity.moderate{background:var(--warning-soft);color:var(--warning)}.severity.low{background:var(--plum-soft);color:var(--primary)}
+    .watchpoint p{color:var(--muted)}
+    .footer-card .card-pad>p{color:var(--muted);line-height:21px}
+    details{border-top:1px solid var(--line)}
+    summary{min-height:54px;padding:10px 10px 10px 16px;list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+    summary::-webkit-details-marker{display:none}
+    summary:hover{background:#fafafa}
+    summary span{flex:1}.chevron{width:18px;height:18px;color:var(--icon-default);transition:transform 180ms ease-out}details[open] .chevron{transform:rotate(180deg)}
+    .details-body{padding:0 16px 14px;color:var(--text)}
+    .details-body ul{margin:0;padding-left:18px}.details-body li+li{margin-top:8px}
+    .feedback{padding:0 16px;min-height:76px;display:flex;align-items:center;gap:8px}
+    .feedback-question{flex:1;font-weight:600}
+    .feedback-button{width:44px;height:44px;border:0;border-radius:var(--radius);background:var(--bg-subtle);color:var(--icon-default);display:grid;place-items:center;transition:background-color 180ms ease-out,color 180ms ease-out,transform 180ms ease-out}
+    .feedback-button:hover{background:var(--plum-soft);color:var(--primary)}.feedback-button:active{transform:scale(.96)}
+    .feedback-button svg{width:25px;height:25px}.feedback-button[data-feedback="up"][aria-pressed="true"]{color:var(--success)}.feedback-button[data-feedback="down"][aria-pressed="true"]{color:var(--danger)}
+    .chat-dock{position:sticky;bottom:0;z-index:var(--z-sticky);width:100%;min-height:74px;margin-top:-74px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:0;background:rgba(255,255,255,.3);-webkit-backdrop-filter:blur(14px) saturate(1.1);backdrop-filter:blur(14px) saturate(1.1);display:flex;align-items:center;gap:10px}
+    .chat-dock .ask-sheet-composer-row{width:100%}
+    .ask-sheet-composer-row{display:flex;align-items:center;gap:8px}
+    .ask-sheet-input-row{min-width:0;min-height:56px;flex:1;padding:5px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
+    .ask-sheet-input-row:focus-within{border-color:var(--primary);box-shadow:var(--focus)}
+    .ask-sheet-input{min-width:0;flex:1;padding:8px 12px;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;line-height:20px;box-shadow:none}
+    .ask-sheet-input::placeholder{color:var(--muted);opacity:1}
+    .ask-composer-action{width:44px;height:44px;flex:0 0 auto;padding:0;border:0;border-radius:var(--radius);background:var(--primary);color:#fff;display:grid;place-items:center;transition:transform var(--motion-duration-press) var(--motion-ease-out)}
+    .ask-composer-action:active{transform:scale(.97)}
+    .ask-composer-action svg{width:22px;height:22px}
+    dialog{width:min(390px,100vw);max-width:100vw;max-height:min(76dvh,680px);margin:auto auto 0;padding:0;border:0;border-radius:12px 12px 0 0;background:var(--surface);color:var(--ink);box-shadow:0 -6px 16px rgba(17,17,17,.14)}
+    dialog::backdrop{background:var(--overlay)}
+    .sheet-handle{width:40px;height:4px;margin:10px auto 3px;border-radius:2px;background:var(--border)}
+    .sheet-head{min-height:58px;padding:8px 10px 8px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.sheet-head h2{flex:1;font-size:18px;line-height:24px}
+    .sheet-body{padding:17px 18px calc(26px + env(safe-area-inset-bottom));overflow:auto;max-height:calc(76dvh - 75px);scrollbar-width:thin;scrollbar-color:var(--border) var(--page)}
+    .source-meta{color:var(--primary);font-weight:600}.source-excerpt{margin:10px 0 18px;padding:13px;border-radius:var(--radius);background:var(--page);line-height:21px}
+    .primary-action,.secondary-action{width:100%;min-height:44px;border-radius:var(--radius);font-weight:600}.primary-action{border:0;background:var(--primary);color:#fff}.primary-action:hover{background:var(--primary-dark)}.secondary-action{margin-top:8px;border:1px solid var(--border);background:#fff;color:var(--text)}
+    .feedback-form fieldset{margin:0;padding:0;border:0}.feedback-option{min-height:52px;padding:8px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}.feedback-option span{flex:1}.feedback-option input{width:20px;height:20px;accent-color:var(--primary)}
+    .feedback-followup{margin-top:14px}.feedback-followup label{display:block;margin-bottom:6px;font-weight:600}.feedback-followup textarea{width:100%;min-height:100px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);resize:none;color:var(--ink)}
+    .error{min-height:20px;margin-top:8px;color:var(--danger)}
+    .toast{position:fixed;left:50%;bottom:94px;z-index:var(--z-toast);transform:translate(-50%,18px);min-width:250px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:var(--radius);background:var(--ink);color:#fff;text-align:center;opacity:0;pointer-events:none;transition:opacity 180ms ease-out,transform 180ms ease-out}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:420px){.canvas{display:block}.phone{width:100vw}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}#searchButton:active,#shareButton:active,.ask-composer-action:active{transform:none}}
+  </style>
+</head>
+<body>
+  <div class="canvas"><div class="phone" id="phone">
+    <header class="topbar">
+      <div class="statusbar"><span>9:41</span><span>5G&nbsp;&nbsp;96%</span></div>
+      <div class="titlebar">
+        <button class="icon-button back-button" type="button" aria-label="Go back"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg></button>
+        <h1>Insights</h1>
+        <button class="icon-button" id="searchButton" type="button" aria-label="Search insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+        <button class="icon-button" id="shareButton" type="button" aria-label="Share insights"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card card-pad" aria-labelledby="simplified-title">
+        <h2 class="section-title" id="simplified-title">Your policy simplified</h2>
+        <div class="field"><div class="label">Policyholder</div><div class="value">Lakeview Terrace Condominium Association</div></div>
+        <div class="field"><div class="label">Policy number</div><div class="value">NV-XFLD-RCBAP-441028</div></div>
+        <div class="field"><div class="label">Carrier</div><div class="value">Neptune Excess Flood Insurance Co.</div></div>
+        <div class="field"><div class="label">Policy type</div><div class="value">Private Excess Flood — RCBAP</div></div>
+        <div class="field"><div class="label">Insured building</div><div class="value">2840 Lakeshore Boulevard<br>Henderson, NV 89011</div></div>
+        <div class="field"><div class="label">Coverage period</div><div class="value">Mar 1, 2026–Mar 1, 2027</div></div>
+        <div class="field"><div class="label">Underlying NFIP RCBAP</div><div class="value">Required at maximum primary limits</div></div>
+        <div class="field"><div class="label">Annual premium</div><div class="value">$4,820</div></div>
+      </section>
+
+      <section class="card card-pad" aria-labelledby="people-title">
+        <h2 class="section-title" id="people-title">Named insured</h2>
+        <div class="person"><span class="person-icon"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 9h.01"></path><path d="M9 13h.01"></path><path d="M9 17h.01"></path><path d="M15 9h.01"></path><path d="M15 13h.01"></path><path d="M15 17h.01"></path></svg></span><strong>Lakeview Terrace Condominium Association</strong></div>
+      </section>
+
+      <section class="card" aria-labelledby="coverage-limits-title">
+        <div class="card-pad"><h2 class="section-title" id="coverage-limits-title">Property covered</h2></div>
+        <div class="coverage-list">
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Building coverage (excess)</div><div class="value">$2,500,000</div><div class="coverage-description">Direct physical flood loss to the residential condominium building, above the NFIP RCBAP maximum</div></div><button class="source-button" type="button" aria-label="View source for building coverage" data-title="Building coverage (excess)" data-meta="Pages 2, 4 · NCXF RCBAP POL 2024 02" data-excerpt="Applies to the insured residential condominium building (including units and improvements) for direct physical loss by or from flood; only for damage exceeding the maximum NFIP RCBAP policy limits."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Contents coverage (excess)</div><div class="value">$100,000</div><div class="coverage-description">Association-owned personal property in common areas, above NFIP contents limits</div></div><button class="source-button" type="button" aria-label="View source for contents coverage" data-title="Contents coverage (excess)" data-meta="Page 5 · NCXF RCBAP POL 2024 02, III.B" data-excerpt="If selected, for association/common-owned property inside the building and used for association purposes, above NFIP contents limits."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          <div class="coverage-row"><div class="coverage-copy"><div class="label">Attachment point</div><div class="value">NFIP RCBAP maximum</div><div class="coverage-description">Pays only for losses that exceed the underlying NFIP RCBAP primary limits</div></div><button class="source-button" type="button" aria-label="View source for attachment point" data-title="Attachment point" data-meta="Pages 2, 4 · NCXF RCBAP POL 2024 02, I.C, II.12" data-excerpt="Must maintain an NFIP RCBAP up to NFIP maximum primary limits; this policy pays only for losses in excess of NFIP limits. No separate deductible—policy attachment point is equal to the NFIP RCBAP maximum limit."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        </div>
+      </section>
+
+      <section class="card disclosure-card" aria-labelledby="policy-details-title">
+        <div class="policy-details-header"><h2 class="section-title" id="policy-details-title">Policy details</h2></div>
+        <details open>
+          <summary><span class="summary-title">What's included</span><span class="count-pill">5</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item">Direct physical flood damage to the condominium building above NFIP RCBAP maximum limits<button class="source-button" type="button" aria-label="View source for direct physical flood damage" data-title="Direct physical flood damage" data-meta="Pages 2–5 · NCXF RCBAP POL 2024 02, I.C, III.A" data-excerpt="Coverage for direct, physical damage (not indirect consequences) caused by flood as defined (includes overflow, rapid accumulation, mudflow, etc.), in excess of NFIP RCBAP primary limits."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Entire condo building, attached additions, fixtures, machinery, equipment and unit improvements<button class="source-button" type="button" aria-label="View source for building property scope" data-title="Building property scope" data-meta="Pages 4–5 · NCXF RCBAP POL 2024 02, III.A" data-excerpt="Includes the entire condominium building, attached additions/extensions, fixtures, machinery, equipment, and improvements in the units, subject to policy terms."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Association-owned personal property in common areas, if contents coverage is elected<button class="source-button" type="button" aria-label="View source for association contents" data-title="Association-owned contents" data-meta="Page 5 · NCXF RCBAP POL 2024 02, III.B" data-excerpt="Only association/common-owned personal property inside the insured building if contents coverage purchased; strictly limited by class and location (e.g., common-area furniture, appliances)."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Mudflow and certain flood-related erosion are treated as covered flood perils<button class="source-button" type="button" aria-label="View source for mudflow and erosion" data-title="Mudflow and erosion" data-meta="Pages 2–3 · NCXF RCBAP POL 2024 02, II.B" data-excerpt="Flood, as defined, includes overflow, rapid accumulation, mudflow, and certain erosion."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Losses settle at the lesser of the excess policy limit, actual cash value, or repair or replacement cost<button class="source-button" type="button" aria-label="View source for loss settlement" data-title="Loss settlement" data-meta="Page 13 · NCXF RCBAP POL 2024 02, R. Loss Settlement" data-excerpt="Pays the least of the (a) excess policy limit, (b) actual cash value, or (c) cost to repair/replace with like kind/quality, in excess of NFIP RCBAP limits."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">What's not included</span><span class="count-pill">5</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item">Loss of use, additional living expense, business interruption, and Increased Cost of Compliance<button class="source-button" type="button" aria-label="View source for loss-of-use exclusion" data-title="Loss of use, ALE and ICC excluded" data-meta="Page 7 · NCXF RCBAP POL 2024 02, V.A" data-excerpt="No coverage for loss of use, business/interruption, additional living expense, ordinance/law costs, loss avoidance/mitigation, or indirect economic loss."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Land, landscaping, fences, decks, pools, hot tubs and spas outside bathroom fixtures<button class="source-button" type="button" aria-label="View source for property not insured" data-title="Property not insured" data-meta="Pages 6–7 · NCXF RCBAP POL 2024 02, IV" data-excerpt="Excludes property outside of the building, land, landscaping, fences, decks, pools, hot tubs/spas not bathroom fixtures."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Self-propelled vehicles, aircraft, and underground equipment<button class="source-button" type="button" aria-label="View source for vehicles and underground equipment exclusion" data-title="Vehicles and underground equipment" data-meta="Pages 6–7 · NCXF RCBAP POL 2024 02, IV" data-excerpt="Self-propelled vehicles, aircraft, and underground equipment are not insured."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Non-flood perils and any loss below the NFIP RCBAP maximum primary limits<button class="source-button" type="button" aria-label="View source for non-flood and below-attachment exclusion" data-title="Non-flood perils and losses below attachment" data-meta="Pages 2–3, 7–8 · NCXF RCBAP POL 2024 02, I.C, V.A, V.C, V.D" data-excerpt="No coverage for losses below NFIP maximums or for non-flood perils (except mudflow and certain erosion)."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Pollutant testing costs unless required by law, and only within the excess limit<button class="source-button" type="button" aria-label="View source for pollutant testing exclusion" data-title="Pollutant testing" data-meta="Page 8 · NCXF RCBAP POL 2024 02, V.F" data-excerpt="No testing for pollutants unless required by law, and costs reduce excess limit."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">Coverage limitations</span><span class="count-pill">5</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="insight-item">Excess only — pays after the NFIP RCBAP maximum is exhausted, with no separate deductible<button class="source-button" type="button" aria-label="View source for excess-only attachment" data-title="Excess-only attachment" data-meta="Pages 2, 4, 8 · NCXF RCBAP POL 2024 02, I.C, II.12, VI.B" data-excerpt="Only pays excess of NFIP RCBAP maximum limits—proof of underlying insurance or 'as if' scenario required. The NFIP limit serves as the threshold/deductible."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Only one insured building per excess flood policy<button class="source-button" type="button" aria-label="View source for one building per policy" data-title="One building per policy" data-meta="Page 2 · NCXF RCBAP POL 2024 02, I.E" data-excerpt="Only one building per policy."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Very limited coverage in basements and areas below the lowest elevated floor<button class="source-button" type="button" aria-label="View source for basement limitation" data-title="Basement and below-lowest-floor limits" data-meta="Pages 5–6 · NCXF RCBAP POL 2024 02, III.A.6, III.B.3" data-excerpt="Only very limited property and building components covered in basements or below the lowest elevated floor."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">$2,500 special limit per loss for art, jewelry, furs and similar valuable classes<button class="source-button" type="button" aria-label="View source for contents special limits" data-title="Contents special limits" data-meta="Page 6 · NCXF RCBAP POL 2024 02, III.B.4" data-excerpt="$2,500 for defined valuable classes (art, jewelry, furs, etc.), per loss."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+            <div class="insight-item">Antiques settle at functional value rather than replacement cost<button class="source-button" type="button" aria-label="View source for antiques valuation" data-title="Antiques valuation" data-meta="Pages 6, 13 · NCXF RCBAP POL 2024 02, III.B.5, R. Loss Settlement" data-excerpt="Functional value for antiques; basis otherwise governed by valuation section."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+          </div>
+        </details>
+        <details>
+          <summary><span class="summary-title">Coverage watch points</span><span class="count-pill">5</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+          <div class="policy-detail-body">
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity critical">Critical</span><button class="source-button" type="button" aria-label="View source for underlying NFIP requirement" data-title="Underlying NFIP RCBAP must be in force" data-meta="Pages 2, 8 · NCXF RCBAP POL 2024 02, I.C, VI.B" data-excerpt="This policy pays only AFTER NFIP RCBAP maximum limits are exhausted. Failing to maintain or exhaust the underlying NFIP can result in NO excess payment."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>The excess policy only pays after the NFIP RCBAP maximum is reached. If the underlying NFIP RCBAP lapses or is under-limit, this policy may pay nothing.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for basement watch point" data-title="Basement and lowest-floor limits" data-meta="Pages 5–6 · NCXF RCBAP POL 2024 02, III.A.6, III.B.3" data-excerpt="Only very limited property and building components covered in basements or below the lowest elevated floor."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Property in basements or below the lowest elevated floor is only lightly covered — mechanical rooms, storage, and finished basements are largely out of scope.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for no ALE watch point" data-title="No loss of use or ALE" data-meta="Page 7 · NCXF RCBAP POL 2024 02, V.A" data-excerpt="Loss of use, additional living expense, business interruption, and Increased Cost of Compliance are specifically excluded."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Displacement costs, temporary housing for unit owners, and lost rental income are not covered — those exposures belong on separate policies.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity moderate">Moderate</span><button class="source-button" type="button" aria-label="View source for contents sublimit watch point" data-title="Contents special-class sublimit" data-meta="Page 6 · NCXF RCBAP POL 2024 02, III.B.4-5" data-excerpt="Special limits for artwork, jewelry, and functional valuation for antiques."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>Association-owned art, décor and other valuable items in common areas are capped at $2,500 per loss, and antiques settle at functional value.</p></div>
+            <div class="watchpoint"><div class="watchpoint-head"><span class="severity low">Low</span><button class="source-button" type="button" aria-label="View source for declarations availability" data-title="No declarations page in sample" data-meta="Not available in the pages analyzed" data-excerpt="No personalized limits, insured, or building identification available in the sample; declarations, effective dates, and premium are not shown."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div><p>The provided sample lacks a declarations page, so limits, effective dates and endorsements shown here are illustrative — confirm actual values with your agent.</p></div>
+          </div>
+        </details>
+      </section>
+
+      <section class="card" aria-labelledby="specs-title">
+        <div class="card-pad"><h2 class="section-title" id="specs-title">Policy specifications</h2></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Underlying NFIP RCBAP required</strong><p>An NFIP Residential Condominium Building Association Policy must be in force at maximum primary limits; this excess policy attaches only above that.</p></div><button class="source-button" type="button" aria-label="View source for underlying NFIP requirement" data-title="Underlying NFIP RCBAP requirement" data-meta="Pages 2, 8 · NCXF RCBAP POL 2024 02, I.C, VI.B" data-excerpt="Must maintain an NFIP RCBAP (Standard Flood Insurance Policy) up to NFIP maximum primary limits; this policy pays only for losses in excess of NFIP limits."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Single-building scope</strong><p>Only one insured building per excess flood policy — additional buildings require separate policies.</p></div><button class="source-button" type="button" aria-label="View source for single-building scope" data-title="Single-building scope" data-meta="Page 2 · NCXF RCBAP POL 2024 02, I.E" data-excerpt="Only one building per policy."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Mortgagee and loss payee</strong><p>Named mortgagees and loss payees are covered for their insurable interest; payments follow the mortgage clause order of precedence.</p></div><button class="source-button" type="button" aria-label="View source for mortgage clause" data-title="Mortgagee and loss payee" data-meta="Pages 2, 4, 12 · NCXF RCBAP POL 2024 02, II.A, II.23, VI.N" data-excerpt="All mortgagees named or determined at time of loss are covered for their insurable interest. Losses will be paid as their interests appear, including order of precedence."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="spec-row"><div class="spec-copy"><strong>Endorsements</strong><p>No endorsements, amendments or riders are included with this sample; all terms reference the base policy form.</p></div><button class="source-button" type="button" aria-label="View source for endorsements" data-title="Endorsements" data-meta="Throughout · NCXF RCBAP POL 2024 02" data-excerpt="No sample endorsements, amendments, or riders are provided; all terms reference base policy."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+      </section>
+
+      <section class="card" aria-labelledby="deductibles-title">
+        <div class="card-pad"><h2 class="section-title" id="deductibles-title">Deductibles</h2></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>No separate deductible</strong><p>The policy attaches only above the NFIP RCBAP maximum primary limit — that limit acts as the effective deductible.</p></div><button class="source-button" type="button" aria-label="View source for no separate deductible" data-title="No separate deductible" data-meta="Pages 2, 4 · NCXF RCBAP POL 2024 02, I.C, II.12" data-excerpt="No separate deductibles apply; the 'deductible' is the amount equal to the primary NFIP RCBAP policy maximum."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="deductible-row"><div class="deductible-copy"><strong>NFIP RCBAP primary deductibles</strong><p>Deductibles on the underlying NFIP RCBAP still apply to primary-layer losses and are not covered by this excess policy.</p></div><button class="source-button" type="button" aria-label="View source for NFIP primary deductibles" data-title="NFIP primary deductibles" data-meta="Not covered by this policy · NCXF RCBAP POL 2024 02, I.C, VI.B" data-excerpt="The excess policy does not respond to the underlying NFIP RCBAP deductible or to losses within the NFIP primary limit."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></button></div>
+        <div class="tip"><svg aria-hidden="true" focusable="false" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto;margin-top:1px"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg><div class="tip-copy"><strong>Consumer tip</strong><p>Keep the underlying NFIP RCBAP in force at maximum primary limits. Ask your agent for proof of the NFIP policy and its deductible schedule so you know where this excess layer attaches.</p></div></div>
+      </section>
+
+      <section class="card footer-card" aria-labelledby="about-title">
+        <div class="card-pad"><h2 class="section-title" id="about-title">About these insights</h2><p>Insights are based on the documents provided; incomplete or missing documents may result in incomplete or inaccurate insights. OVIE is not intended to serve as evidence of insurance for third parties, nor does OVIE provide advice or guidance on the adequacy of coverage. Users should consult their agent or insurance carrier for coverage-related questions or determinations.</p></div>
+        <details><summary><span>Document sources</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary><div class="details-body"><ul><li>NCXF RCBAP POL 2024 02 — Private Excess Flood Insurance Policy, RCBAP Form, pages 1–13</li><li>Referenced sections: I. Agreement (p. 2), II. Definitions (pp. 2–5), III. Property Covered (pp. 4–6), IV. Property Not Insured (pp. 6–7), V. Exclusions (pp. 7–8), VI. General Conditions (pp. 8–12), R. Loss Settlement (p. 13)</li></ul></div></details>
+        <details><summary><span>Not available in the pages analyzed</span><svg class="chevron" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary><div class="details-body"><ul><li>Personalized declarations page (named insured, insured building address, policy number, effective dates)</li><li>Actual building and contents limits, premium and policy fee amounts</li><li>Endorsements, riders, or amendments to the base policy form</li><li>Agent, broker, or claims administrator information</li><li>Underlying NFIP RCBAP policy documentation and deductible schedule</li></ul></div></details>
+      </section>
+
+      <div class="feedback" role="group" aria-labelledby="feedback-question">
+        <span class="feedback-question" id="feedback-question">Were these insights helpful?</span>
+        <button class="feedback-button" type="button" data-feedback="up" aria-label="Yes, these insights were helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg></button>
+        <button class="feedback-button" type="button" data-feedback="down" aria-label="No, these insights were not helpful" aria-pressed="false"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"></path><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path></svg></button>
+      </div>
+    </main>
+
+    <form class="chat-dock" id="chatForm" novalidate>
+      <label class="sr-only" for="chatInput">Ask Ovie about this policy</label>
+      <div class="ask-sheet-composer-row">
+        <div class="ask-sheet-input-row">
+          <input class="ask-sheet-input" id="chatInput" type="text" placeholder="Ask anything about this policy..." autocomplete="off">
+        </div>
+        <button class="ask-composer-action" id="chatAskButton" type="submit" aria-label="Ask Ovie"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><path d="M12 19v3"></path></svg></button>
+      </div>
+    </form>
+  </div></div>
+
+  <dialog id="sourceSheet" aria-labelledby="sourceTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head"><h2 id="sourceTitle">Source from your policy</h2><button class="icon-button sheet-close" id="closeSource" type="button" aria-label="Close source"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    <div class="sheet-body" id="sourceBody"></div>
+  </dialog>
+
+  <dialog id="feedbackSheet" aria-labelledby="feedbackTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-head"><h2 id="feedbackTitle">Tell us more</h2><button class="icon-button sheet-close" id="closeFeedback" type="button" aria-label="Close feedback form"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    <div class="sheet-body">
+      <form class="feedback-form" id="feedbackForm" novalidate>
+        <fieldset><legend class="sr-only">What could be improved?</legend>
+          <label class="feedback-option"><span>Insights are unclear or confusing</span><input type="radio" name="reason" value="unclear"></label>
+          <label class="feedback-option"><span>Information is incorrect</span><input type="radio" name="reason" value="incorrect"></label>
+          <label class="feedback-option"><span>Missing or incomplete details</span><input type="radio" name="reason" value="missing"></label>
+          <label class="feedback-option"><span>Other (tell us more)</span><input type="radio" name="reason" value="other"></label>
+        </fieldset>
+        <div class="feedback-followup" id="feedbackFollowup" hidden><label for="feedbackConcern">Enter your concern here</label><textarea id="feedbackConcern" name="concern" placeholder="Type here"></textarea></div>
+        <p class="error" id="feedbackError" role="alert" aria-live="polite"></p>
+        <button class="primary-action" type="submit">Submit</button><button class="secondary-action" id="cancelFeedback" type="button">Cancel</button>
+      </form>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const sourceSheet=document.getElementById('sourceSheet');
+    const sourceTitle=document.getElementById('sourceTitle');
+    const sourceBody=document.getElementById('sourceBody');
+    const feedbackSheet=document.getElementById('feedbackSheet');
+    const feedbackForm=document.getElementById('feedbackForm');
+    const feedbackFollowup=document.getElementById('feedbackFollowup');
+    const feedbackConcern=document.getElementById('feedbackConcern');
+    const feedbackError=document.getElementById('feedbackError');
+    const toast=document.getElementById('toast');
+    let lastTrigger=null,toastTimer;
+
+    function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
+    function closeDialog(dialog){dialog.close()}
+    function bindBackdrop(dialog){dialog.addEventListener('click',event=>{const b=dialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)dialog.close()})}
+    function sheetNode(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text)node.textContent=text;return node}
+    function openSource(button){lastTrigger=button;sourceTitle.textContent=button.dataset.title;const action=sheetNode('button','primary-action','View in document');action.type='button';action.addEventListener('click',()=>showToast('Document view is not connected in this mock.'));sourceBody.replaceChildren(sheetNode('div','source-meta',button.dataset.meta),sheetNode('div','source-excerpt',button.dataset.excerpt),action);sourceSheet.showModal();document.getElementById('closeSource').focus({preventScroll:true})}
+
+    document.querySelectorAll('.source-button').forEach(button=>button.addEventListener('click',()=>openSource(button)));
+    document.getElementById('closeSource').addEventListener('click',()=>closeDialog(sourceSheet));
+    sourceSheet.addEventListener('close',()=>{if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});lastTrigger=null});
+    bindBackdrop(sourceSheet);bindBackdrop(feedbackSheet);
+
+    document.querySelectorAll('.feedback-button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.feedback-button').forEach(option=>option.setAttribute('aria-pressed',String(option===button)));if(button.dataset.feedback==='up'){showToast('Thanks for your feedback.')}else{lastTrigger=button;feedbackForm.reset();feedbackFollowup.hidden=true;feedbackError.textContent='';feedbackSheet.showModal();document.getElementById('closeFeedback').focus({preventScroll:true})}}));
+    feedbackForm.addEventListener('change',event=>{if(event.target.name==='reason'){feedbackFollowup.hidden=event.target.value!=='other';feedbackError.textContent=''}});
+    feedbackForm.addEventListener('submit',event=>{event.preventDefault();const reason=new FormData(feedbackForm).get('reason');if(!reason){feedbackError.textContent='Select one reason to continue.';feedbackForm.querySelector('input[name="reason"]').focus();return}if(reason==='other'&&!feedbackConcern.value.trim()){feedbackError.textContent='Enter your concern to continue.';feedbackConcern.focus();return}feedbackSheet.close();showToast('Thanks for helping us improve these insights.')});
+    feedbackSheet.addEventListener('close',()=>{if(lastTrigger?.isConnected)lastTrigger.focus({preventScroll:true});lastTrigger=null});
+    document.getElementById('closeFeedback').addEventListener('click',()=>feedbackSheet.close());
+    document.getElementById('cancelFeedback').addEventListener('click',()=>feedbackSheet.close());
+    document.getElementById('searchButton').addEventListener('click',()=>showToast('Search is not available in this prototype.'));
+    document.getElementById('shareButton').addEventListener('click',()=>showToast('Share options opened.'));
+    document.getElementById('chatForm').addEventListener('submit',event=>{event.preventDefault();const input=document.getElementById('chatInput');showToast(input.value.trim()?'Opening Ask Ovie with your question.':'Ask Ovie voice input would start here.')});
+  </script>
+<script src="assets/ovie-upload-flow.js?v=20260910b"></script>
+  <script src="assets/ovie-upload-options.js?v=20260911a"></script>
+  <script src="assets/ovie-upload-indicator.js?v=20260911e"></script>
+</body>
+</html>
