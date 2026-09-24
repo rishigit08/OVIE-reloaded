@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "myfiles-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "ovie-umbrella-web"],
+      "port": 5173
+    },
+    {
+      "name": "static-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-l", "4173", "."],
+      "port": 4173
+    },
+    {
+      "name": "static-preview-2",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-l", "4174", "."],
+      "port": 4174
+    }
+  ]
+}
