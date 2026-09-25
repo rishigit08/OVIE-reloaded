@@ -664,7 +664,7 @@
       flex: 0 0 auto;
       border: 0;
       border-radius: var(--radius);
-      background: var(--bg-control);
+      background: var(--bg-subtle);
       color: var(--muted);
       cursor: pointer;
     }
@@ -718,6 +718,72 @@
       overflow-wrap: anywhere;
     }
 
+    .more-actions-sheet {
+      position: fixed;
+      z-index: var(--z-sheet);
+      inset: auto auto 0 50%;
+      width: min(100%, 480px);
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 -4px 8px rgba(17, 17, 17, .12);
+      transform: translate(-50%, 100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      will-change: transform;
+    }
+
+    .more-actions-sheet[open].is-visible { transform: translate(-50%, 0); }
+    .more-actions-sheet::backdrop {
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+    .more-actions-sheet.is-visible::backdrop { opacity: 1; }
+    .more-actions-sheet-inner { padding: 8px 16px calc(18px + env(safe-area-inset-bottom)); }
+
+    .action-sheet-list { margin-top: 4px; display: grid; }
+
+    .action-sheet-row {
+      width: 100%;
+      min-height: 60px;
+      padding: 8px 4px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      border-top: 1px solid var(--border-soft);
+      background: transparent;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .action-sheet-row:first-child { border-top: 0; }
+    .action-sheet-row:active { background: var(--bg-subtle); }
+
+    .action-sheet-icon {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .action-sheet-label { font-size: 14px; line-height: 20px; font-weight: 600; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .action-sheet-row:hover { background: var(--bg-subtle); }
+    }
+
     .profile-drawer-close {
       width: 44px;
       height: 44px;
@@ -734,6 +800,43 @@
     }
 
     .profile-drawer-close:active { transform: scale(.97); }
+
+    .profile-back-button {
+      width: 44px;
+      height: 44px;
+      margin-left: -8px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) var(--motion-ease-out), transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .profile-back-button:active { transform: scale(.97); }
+    .profile-back-button[hidden], .profile-avatar[hidden], .profile-inbox[hidden] { display: none; }
+
+    .profile-views { overflow: hidden; overflow: clip; }
+
+    .profile-views-track {
+      display: flex;
+      align-items: flex-start;
+      width: 200%;
+      transform: translateX(0%);
+      transition: transform var(--motion-duration-standard) var(--motion-ease-in-out);
+    }
+
+    .profile-views.is-settings .profile-views-track { transform: translateX(-50%); }
+
+    .profile-view { width: 50%; flex: 0 0 50%; min-width: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .profile-views-track { transition: none; }
+    }
 
     .profile-menu { display: grid; margin-top: 0; padding: 16px 0 24px; }
 
@@ -786,6 +889,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       .profile-drawer-close:hover,
+      .profile-back-button:hover,
       .profile-inbox-info-button:hover,
       .profile-inbox-copy-button:hover,
       .profile-menu-item:hover,
@@ -1446,17 +1550,20 @@
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
       .ask-sheet,
       .inbox-info-sheet,
-      .policy-picker-sheet {
+      .policy-picker-sheet,
+      .more-actions-sheet {
         transform: translate(-50%, 0);
         opacity: 0;
         transition: opacity 120ms var(--motion-ease-out) !important;
       }
       .ask-sheet[open].is-visible,
       .inbox-info-sheet[open].is-visible,
-      .policy-picker-sheet[open].is-visible { opacity: 1; }
+      .policy-picker-sheet[open].is-visible,
+      .more-actions-sheet[open].is-visible { opacity: 1; }
       .ask-sheet::backdrop,
       .inbox-info-sheet::backdrop,
-      .policy-picker-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
+      .policy-picker-sheet::backdrop,
+      .more-actions-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
       .profile-drawer-inner {
         transform: none;
         opacity: 0;
@@ -1467,7 +1574,7 @@
 
     @media (forced-colors: active) {
       * { scrollbar-color: auto; }
-      .premium-card, .status-pill, .policy-icon, .insight-icon, .nav-icon { forced-color-adjust: none; }
+      .premium-card, .status-pill, .policy-icon, .insight-icon, .nav-icon, .action-sheet-icon { forced-color-adjust: none; }
       .nav-upload { background: ButtonFace; color: ButtonText; }
       .nav-upload .nav-icon { color: ButtonText; }
       .nav-upload .nav-icon::before { border: 2px solid ButtonText; background: ButtonFace; box-shadow: none; }
@@ -1645,22 +1752,25 @@
     <button class="nav-button" type="button" id="myFiles"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span>My Files</span></button>
     <button class="nav-upload" type="button" id="uploadPolicy" aria-label="Upload"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg></span></button>
     <a class="nav-link" id="insightsNav" href="#insights-heading"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span><span>Insights</span></a>
-    <button class="nav-button" type="button" id="moreMenu"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span>More</span></button>
+    <button class="nav-button" type="button" id="moreMenu" aria-haspopup="dialog" aria-controls="moreActionsSheet"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span>More</span></button>
   </nav>
   <dialog class="profile-drawer" id="profileDrawer" aria-labelledby="profileDrawerTitle">
     <div class="profile-drawer-inner">
       <div class="profile-drawer-header">
         <div class="profile-identity">
-          <span class="profile-avatar" aria-hidden="true">RV</span>
+          <button class="profile-back-button" id="profileSettingsBack" type="button" aria-label="Back to profile menu" hidden>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          </button>
+          <span class="profile-avatar" id="profileAvatar" aria-hidden="true">RV</span>
           <span class="profile-identity-copy">
-            <h2 class="profile-drawer-title profile-name" id="profileDrawerTitle">Rishi Verma</h2>
+            <h2 class="profile-drawer-title profile-name" id="profileDrawerTitle" data-default-title="Rishi Verma">Rishi Verma</h2>
           </span>
         </div>
         <button class="profile-drawer-close" id="closeProfileDrawer" type="button" aria-label="Close profile">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
         </button>
       </div>
-      <div class="profile-inbox">
+      <div class="profile-inbox" id="profileInbox">
         <div class="profile-inbox-copy">
           <div class="profile-inbox-heading-row">
             <h3 class="profile-inbox-heading">My Ovie Inbox</h3>
@@ -1674,42 +1784,72 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
         </button>
       </div>
-      <div class="profile-menu" aria-label="Profile options">
-        <button class="profile-menu-item" type="button" data-profile-action="My Profile">
-          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
-          <span class="profile-menu-copy"><span class="profile-menu-label">My Profile</span><span class="profile-menu-description">Make changes to your account</span></span>
-          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button class="profile-menu-item" type="button" data-profile-action="Account Password">
-          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
-          <span class="profile-menu-copy"><span class="profile-menu-label">Account Password</span><span class="profile-menu-description">Password management</span></span>
-          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button class="profile-menu-item" type="button" data-profile-action="Manage Device Activity">
-          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M9 18h6"/><path d="M9 6h6"/></svg>
-          <span class="profile-menu-copy"><span class="profile-menu-label">Manage Device Activity</span><span class="profile-menu-description">Login activity</span></span>
-          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button class="profile-menu-item" type="button" data-profile-action="App Unlock">
-          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
-          <span class="profile-menu-copy"><span class="profile-menu-label">App Unlock</span><span class="profile-menu-description">Set biometric permission</span></span>
-          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button class="profile-menu-item" type="button" data-profile-action="Support">
-          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/></svg>
-          <span class="profile-menu-copy"><span class="profile-menu-label">Support</span><span class="profile-menu-description">Help &amp; support</span></span>
-          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button class="profile-menu-item logout" type="button" data-profile-action="Log out">
-          <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
-          <span class="profile-menu-copy"><span class="profile-menu-label">Log out</span><span class="profile-menu-description">Sign out of your Ovie account</span></span>
-          <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-      </div>
-      <div class="profile-legal-links" aria-label="Ovie information">
-        <button type="button" data-profile-action="About Us">About Us</button>
-        <button type="button" data-profile-action="Privacy Policy">Privacy Policy</button>
-        <button type="button" data-profile-action="Terms &amp; Conditions">Terms &amp; Conditions</button>
+      <div class="profile-views" id="profileViews">
+        <div class="profile-views-track" id="profileViewsTrack">
+          <div class="profile-view" id="profileViewRoot">
+            <div class="profile-menu" aria-label="Profile options">
+              <button class="profile-menu-item" type="button" data-profile-action="My Profile">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">My Profile</span><span class="profile-menu-description">Make changes to your account</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <button class="profile-menu-item" id="openProfileSettings" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="profileViewSettings">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">Settings</span><span class="profile-menu-description">Password, devices &amp; more</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <button class="profile-menu-item" type="button" data-profile-action="Support">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">Support</span><span class="profile-menu-description">Help &amp; support</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <button class="profile-menu-item logout" type="button" data-profile-action="Log out">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">Log out</span><span class="profile-menu-description">Sign out of your Ovie account</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+            <div class="profile-legal-links" aria-label="Ovie information">
+              <button type="button" data-profile-action="About Us">About Us</button>
+              <button type="button" data-profile-action="Privacy Policy">Privacy Policy</button>
+              <button type="button" data-profile-action="Terms &amp; Conditions">Terms &amp; Conditions</button>
+            </div>
+          </div>
+          <div class="profile-view" id="profileViewSettings" inert>
+            <div class="profile-menu" aria-label="Settings options">
+              <button class="profile-menu-item" type="button" data-profile-action="Account Password">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">Account Password</span><span class="profile-menu-description">Password management</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <button class="profile-menu-item" type="button" data-profile-action="Manage Device Activity">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M9 18h6"/><path d="M9 6h6"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">Manage Device Activity</span><span class="profile-menu-description">Login activity</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <button class="profile-menu-item" type="button" data-profile-action="App Unlock">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">App Unlock</span><span class="profile-menu-description">Set biometric permission</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <button class="profile-menu-item" type="button" data-profile-action="Notifications">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">Notifications</span><span class="profile-menu-description">Manage alert preferences</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <button class="profile-menu-item" type="button" data-profile-action="Refer a Friend">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">Refer a Friend</span><span class="profile-menu-description">Invite friends to Ovie</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <button class="profile-menu-item" type="button" data-profile-action="Deactivate Account">
+                <svg class="profile-menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 3.87 3"/><path d="m17 17 5 5"/><path d="m22 17-5 5"/></svg>
+                <span class="profile-menu-copy"><span class="profile-menu-label">Deactivate Account</span><span class="profile-menu-description">Temporarily disable your account</span></span>
+                <svg class="profile-menu-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </dialog>
@@ -1727,6 +1867,27 @@
         <span class="inbox-info-address">ov20261112@inbox.ovie.ai</span>
         <button class="profile-inbox-copy-button" id="copyOvieInboxFromSheet" data-copy-ovie-inbox type="button" aria-label="Copy Ovie inbox email address" title="Copy Ovie inbox email address">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </dialog>
+  <dialog class="more-actions-sheet" id="moreActionsSheet" aria-labelledby="moreActionsTitle">
+    <div class="more-actions-sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="section-heading" id="moreActionsTitle">More</h2>
+        <button class="sheet-close" id="closeMoreActions" type="button" aria-label="Close more options">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="action-sheet-list">
+        <button class="action-sheet-row" type="button" data-more-action="Manage Shared Documents">
+          <span class="action-sheet-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 8a1 1 0 0 1-1-1V2a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8z"/><path d="M20 8v12a2 2 0 0 1-2 2h-4.182"/><path d="m3.305 19.53.923-.382"/><path d="M4 10.592V4a2 2 0 0 1 2-2h8"/><path d="m4.228 16.852-.924-.383"/><path d="m5.852 15.228-.383-.923"/><path d="m5.852 20.772-.383.924"/><path d="m8.148 15.228.383-.923"/><path d="m8.53 21.696-.382-.924"/><path d="m9.773 16.852.922-.383"/><path d="m9.773 19.148.922.383"/><circle cx="7" cy="18" r="3"/></svg></span>
+          <span class="action-sheet-label">Manage Shared Documents</span>
+        </button>
+        <button class="action-sheet-row" type="button" data-more-action="Compare Quotes">
+          <span class="action-sheet-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 13H7"/><path d="M19 9h-4"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="15" y="5" width="4" height="12" rx="1"/><rect x="7" y="8" width="4" height="9" rx="1"/></svg></span>
+          <span class="action-sheet-label">Compare Quotes</span>
         </button>
       </div>
     </div>
@@ -1840,11 +2001,23 @@
       const profileDrawer = document.querySelector('#profileDrawer');
       const profileDrawerPanel = profileDrawer.querySelector('.profile-drawer-inner');
       const closeProfileDrawerButton = document.querySelector('#closeProfileDrawer');
+      const profileViews = document.querySelector('#profileViews');
+      const profileViewSettings = document.querySelector('#profileViewSettings');
+      const openProfileSettingsButton = document.querySelector('#openProfileSettings');
+      const profileSettingsBackButton = document.querySelector('#profileSettingsBack');
+      const profileAvatarEl = document.querySelector('#profileAvatar');
+      const profileTitleEl = document.querySelector('#profileDrawerTitle');
+      const profileInboxEl = document.querySelector('#profileInbox');
+      const profileDefaultTitle = profileTitleEl.dataset.defaultTitle || profileTitleEl.textContent;
       const copyOvieInboxButtons = document.querySelectorAll('[data-copy-ovie-inbox]');
       const ovieInboxAddress = document.querySelector('#ovieInboxAddress');
       const ovieInboxInfoButton = document.querySelector('#ovieInboxInfo');
       const ovieInboxInfoSheet = document.querySelector('#ovieInboxInfoSheet');
       const closeOvieInboxInfoButton = document.querySelector('#closeOvieInboxInfo');
+      const moreMenuButton = document.querySelector('#moreMenu');
+      const moreActionsSheet = document.querySelector('#moreActionsSheet');
+      const closeMoreActionsButton = document.querySelector('#closeMoreActions');
+      const moreActionButtons = Array.from(document.querySelectorAll('[data-more-action]'));
       const askOvieFab = document.querySelector('#askOvieFab');
       const askOvieSheet = document.querySelector('#askOvieSheet');
       const closeAskOvie = document.querySelector('#closeAskOvie');
@@ -1873,6 +2046,7 @@
       let toastTimer;
       let profileDrawerCloseTimer;
       let inboxInfoCloseTimer;
+      let moreActionsCloseTimer;
       let sheetCloseTimer;
       let policyPickerCloseTimer;
       let sheetExpandAnimation;
@@ -1951,8 +2125,32 @@
         return Math.max(0, ...durations);
       }
 
+      function setProfileSettingsView(isSettings) {
+        profileViews.classList.toggle('is-settings', isSettings);
+        profileViewSettings.inert = !isSettings;
+        profileAvatarEl.hidden = isSettings;
+        profileSettingsBackButton.hidden = !isSettings;
+        profileTitleEl.textContent = isSettings ? 'Settings' : profileDefaultTitle;
+        profileInboxEl.hidden = isSettings;
+        openProfileSettingsButton.setAttribute('aria-expanded', String(isSettings));
+      }
+
+      function openProfileSettingsView() {
+        setProfileSettingsView(true);
+        profileSettingsBackButton.focus({ preventScroll: true });
+      }
+
+      function closeProfileSettingsView(focusTrigger = true) {
+        setProfileSettingsView(false);
+        if (focusTrigger) openProfileSettingsButton.focus({ preventScroll: true });
+      }
+
+      openProfileSettingsButton.addEventListener('click', openProfileSettingsView);
+      profileSettingsBackButton.addEventListener('click', () => closeProfileSettingsView());
+
       function openProfileDrawer() {
         window.clearTimeout(profileDrawerCloseTimer);
+        setProfileSettingsView(false);
         profileDrawer.classList.remove('is-visible');
         profileDrawer.showModal();
         profileButton.setAttribute('aria-expanded', 'true');
@@ -1984,7 +2182,11 @@
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && profileDrawer.open && !ovieInboxInfoSheet.open) {
           event.preventDefault();
-          closeProfileDrawer();
+          if (profileViews.classList.contains('is-settings')) {
+            closeProfileSettingsView();
+          } else {
+            closeProfileDrawer();
+          }
         }
       });
       profileDrawer.addEventListener('pointerdown', (event) => {
@@ -2053,6 +2255,56 @@
         const bounds = ovieInboxInfoSheet.getBoundingClientRect();
         const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
         if (outsideSheet) closeOvieInboxInfo();
+      });
+
+      function moreActionsTransitionDuration() {
+        const styles = window.getComputedStyle(moreActionsSheet);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function openMoreActions() {
+        window.clearTimeout(moreActionsCloseTimer);
+        moreActionsSheet.classList.remove('is-visible');
+        moreActionsSheet.showModal();
+        document.body.classList.add('sheet-open');
+        closeMoreActionsButton.focus({ preventScroll: true });
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => moreActionsSheet.classList.add('is-visible'));
+        });
+      }
+
+      function closeMoreActions(returnFocus = true) {
+        if (!moreActionsSheet.open) return;
+        moreActionsSheet.classList.remove('is-visible');
+        window.clearTimeout(moreActionsCloseTimer);
+        moreActionsCloseTimer = window.setTimeout(() => {
+          moreActionsSheet.close();
+          document.body.classList.remove('sheet-open');
+          if (returnFocus) moreMenuButton.focus({ preventScroll: true });
+        }, moreActionsTransitionDuration() + 34);
+      }
+
+      moreMenuButton.addEventListener('click', openMoreActions);
+      closeMoreActionsButton.addEventListener('click', () => closeMoreActions());
+      moreActionsSheet.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeMoreActions();
+      });
+      moreActionsSheet.addEventListener('pointerdown', (event) => {
+        const bounds = moreActionsSheet.getBoundingClientRect();
+        const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideSheet) closeMoreActions();
+      });
+      moreActionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const action = button.dataset.moreAction;
+          closeMoreActions();
+          window.setTimeout(() => showToast(`${action} is not connected in this prototype`), moreActionsTransitionDuration() + 50);
+        });
       });
 
       function syncAskSheetToViewport() {
@@ -2411,7 +2663,6 @@
       });
       document.querySelector('#searchOvie').addEventListener('click', () => showToast('Search policies and documents'));
       document.querySelector('#myFiles').addEventListener('click', () => showToast('My Files'));
-      document.querySelector('#moreMenu').addEventListener('click', () => showToast('More'));
 
       const uploadPolicy = document.querySelector('#uploadPolicy');
       const policyFilePicker = document.querySelector('#policyFilePicker');
