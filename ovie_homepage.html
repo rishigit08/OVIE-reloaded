@@ -2198,6 +2198,10 @@
         button.addEventListener('click', () => {
           const action = button.dataset.profileAction;
           closeProfileDrawer();
+          if (action === 'My Profile') {
+            window.setTimeout(() => { location.href = 'MyProfile.html'; }, profileDrawerTransitionDuration() + 50);
+            return;
+          }
           window.setTimeout(() => showToast(`${action} is not connected in this prototype`), profileDrawerTransitionDuration() + 50);
         });
       });
