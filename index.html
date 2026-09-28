@@ -2303,6 +2303,10 @@
         button.addEventListener('click', () => {
           const action = button.dataset.moreAction;
           closeMoreActions();
+          if (action === 'Compare Quotes') {
+            window.setTimeout(() => { location.href = 'ovie_upload_quote_comparison.html'; }, moreActionsTransitionDuration() + 50);
+            return;
+          }
           window.setTimeout(() => showToast(`${action} is not connected in this prototype`), moreActionsTransitionDuration() + 50);
         });
       });
