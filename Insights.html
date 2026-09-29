@@ -24,6 +24,22 @@
         --line: #ecefed;
         --border: #d8dddb;
         --radius: 12px;
+        --ink: #111111;
+        --copy: #333a3d;
+        --muted: #5f6368;
+        --border-soft: #ecefed;
+        --bg-subtle: #f6f6f6;
+        --success: #0d7d07;
+        --danger: #a63a33;
+        --focus: #6b4062;
+        --ai-gradient-start: #bd4ba5;
+        --ai-gradient-end: #5c2e8b;
+        --nav-height: 72px;
+        --z-fab: 450;
+        --z-backdrop: 500;
+        --z-sheet: 700;
+        --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        --motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
         --motion-duration-press: 160ms;
         --motion-duration-standard: 200ms;
         --motion-duration-overlay: 260ms;
@@ -51,7 +67,7 @@
       }
       h1, h2, p { margin: 0; }
       h1, h2 { font-weight: 600; }
-      .sr-only {
+      .sr-only, .visually-hidden {
         position: absolute;
         width: 1px;
         height: 1px;
@@ -114,7 +130,7 @@
       .topbar.is-hidden .topbar-inner { transform: translateY(-100%); pointer-events: none; }
       .topbar h1 { font-size: 18px; line-height: 24px; }
 
-      .main-content { padding: 18px 16px 112px; }
+      .main-content { padding: 18px 16px 176px; }
       .search-row {
         width: 100%;
         max-width: 358px;
@@ -159,34 +175,41 @@
       .search-clear { margin-right: -12px; flex: 0 0 auto; }
       .search-clear[hidden] { display: none; }
 
-      .filter-toolbar {
+      .filter-chips {
         width: 100%;
         max-width: 358px;
-        min-height: 44px;
-        margin: 0 auto 18px;
+        margin: 0 auto 6px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
         gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
       }
-      .filter-trigger {
-        min-width: 0;
+      .filter-chips::-webkit-scrollbar { display: none; }
+      .filter-chip {
         min-height: 44px;
-        padding: 0 8px;
+        padding: 0;
         border: 0;
-        border-radius: var(--radius);
+        flex: 0 0 auto;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        background: var(--surface);
+        background: transparent;
         color: var(--text-secondary);
         font-size: 14px;
         line-height: 20px;
         font-weight: 600;
-        transition: transform var(--motion-duration-press) var(--motion-ease-out);
+        white-space: nowrap;
       }
-      .filter-trigger > span:not(.filter-count) { min-width: 0; overflow-wrap: anywhere; }
-      .filter-count {
+      .filter-chip-face {
+        min-height: 36px;
+        padding: 0 14px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        background: var(--surface);
+      }
+      .filter-chip-face { gap: 8px; }
+      .filter-chip-count {
         min-width: 20px;
         height: 20px;
         padding: 0 6px;
@@ -198,47 +221,14 @@
         font-size: 11px;
         line-height: 16px;
       }
-      .shared-filter-toggle {
-        min-height: 44px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex: 0 0 auto;
-        color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-      .shared-filter-toggle input { position: absolute; opacity: 0; pointer-events: none; }
-      .shared-filter-track {
-        width: 44px;
-        height: 24px;
-        padding: 2px;
-        border-radius: 999px;
-        display: block;
-        flex: 0 0 auto;
-        background: var(--border);
-      }
-      .shared-filter-thumb {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        display: block;
-        background: var(--surface);
-        transform: translateX(0);
-      }
-      .shared-filter-toggle input:checked + .shared-filter-track { background: var(--primary); }
-      .shared-filter-toggle input:checked + .shared-filter-track .shared-filter-thumb { transform: translateX(20px); }
-      .shared-filter-toggle input:focus-visible + .shared-filter-track {
-        outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
-        outline-offset: 2px;
-      }
+      .filter-chip[aria-checked="true"] { color: var(--primary); }
+      .filter-chip[aria-checked="true"] .filter-chip-count { background: var(--surface); color: var(--primary); }
+      .filter-chip[aria-checked="true"] .filter-chip-face { background: var(--primary-soft); box-shadow: inset 0 0 0 1px var(--primary); }
 
       .insight-list {
         width: 100%;
         max-width: 358px;
-        margin: 0 auto;
+        margin: 12px auto 0;
         display: grid;
         gap: 8px;
       }
@@ -302,7 +292,9 @@
       }
       .policy-number-line strong { color: var(--text-secondary); font-size: 12px; line-height: 16px; font-weight: 600; overflow-wrap: anywhere; }
       .policy-number-toggle { width: 44px; height: 32px; margin: -6px 0 -6px -5px; padding: 0; border: 0; display: inline-grid; place-items: center; background: transparent; color: var(--text-tertiary); }
+      .scope-line { display: block; margin-top: 6px; color: var(--text-secondary); font-size: 12px; line-height: 16px; font-weight: 600; }
       .generated-date { display: block; margin-top: 4px; color: var(--text-tertiary); font-size: 12px; line-height: 16px; }
+      .insight-row.no-options { grid-template-columns: 44px minmax(0, 1fr); padding-right: 12px; }
       .insight-options { margin-right: 12px; justify-self: end; align-self: center; }
 
       .empty-state { padding: 54px 16px; display: grid; justify-items: center; text-align: center; color: var(--text-tertiary); }
@@ -411,7 +403,7 @@
         font-weight: 600;
       }
       .sheet-actions button:last-child { border-bottom: 0; }
-      .sheet-action-icon, .filter-option-icon {
+      .sheet-action-icon {
         width: 40px;
         height: 40px;
         border-radius: var(--radius);
@@ -421,26 +413,6 @@
         background: var(--primary-soft);
         color: var(--primary);
       }
-      .filter-option-list { display: grid; }
-      .filter-option {
-        width: 100%;
-        min-height: 56px;
-        padding: 8px 4px;
-        border-bottom: 1px solid var(--line);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        color: var(--text-primary);
-        cursor: pointer;
-      }
-      .filter-option:last-child { border-bottom: 0; }
-      .filter-option-leading { min-width: 0; display: flex; align-items: center; gap: 12px; }
-      .filter-option-icon { background: #e3e3e3; color: var(--text-tertiary); }
-      .filter-option-name { min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 600; }
-      .filter-option.selected .filter-option-name { color: var(--primary); }
-      .filter-option.selected .filter-option-icon, .filter-option.selected .filter-count { background: var(--primary-soft); color: var(--primary); }
-      .filter-option input { width: 20px; height: 20px; margin: 0; flex: 0 0 auto; accent-color: var(--primary); }
 
       .toast {
         position: fixed;
@@ -460,20 +432,648 @@
       }
       .toast.visible { opacity: 1; transform: translate(-50%, 0); }
 
-      .icon-button:active, .filter-trigger:active, .insight-open:active, .mobile-nav button:active { transform: scale(0.97); }
+      .icon-button:active, .insight-open:active, .mobile-nav button:active { transform: scale(0.97); }
       @media (hover: hover) and (pointer: fine) {
         .icon-button:hover { background: var(--primary-soft); color: var(--primary); }
         .insight-open:hover { background: #faf8fa; }
         .sheet-actions button:hover { background: var(--canvas); }
       }
       @media (prefers-reduced-motion: reduce) {
-        .topbar-inner, .icon-button, .filter-trigger, .insight-open, .mobile-nav button, .toast { transition-duration: 0.01ms; }
+        .topbar-inner, .icon-button, .insight-open, .mobile-nav button, .toast { transition-duration: 0.01ms; }
         .topbar.is-hidden .topbar-inner { transform: none; }
-        .icon-button:active, .filter-trigger:active, .insight-open:active, .mobile-nav button:active, .toast, .toast.visible { transform: none; }
+        .icon-button:active, .insight-open:active, .mobile-nav button:active, .toast, .toast.visible { transform: none; }
         dialog.sheet-dialog { transform: translate(-50%, 0); opacity: 0; transition: opacity 120ms var(--motion-ease-out); }
         dialog.sheet-dialog::backdrop { transition: opacity 120ms var(--motion-ease-out); }
         dialog.sheet-dialog.is-visible { opacity: 1; }
       }
+      .ask-close {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        transition: background-color 160ms var(--ease), transform 160ms var(--ease);
+      }
+      .ask-close:active { transform: scale(.96); }
+      @media (hover: hover) and (pointer: fine) {
+        .ask-close:hover { background: var(--primary-soft); color: var(--primary); }
+      }
+      .ask-sheet .section-heading, .policy-picker-sheet .section-heading { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
+
+      .ask-fab {
+        position: fixed;
+        z-index: var(--z-fab);
+        right: max(18px, calc((100vw - 390px) / 2 + 18px));
+        bottom: calc(var(--nav-height) + 22px + env(safe-area-inset-bottom));
+        width: 56px;
+        height: 56px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border: 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--ai-gradient-start) 0%, var(--ai-gradient-end) 100%);
+        color: var(--surface);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 4px 8px rgba(84, 50, 77, .28);
+        cursor: pointer;
+        isolation: isolate;
+        transition: transform 160ms var(--ease);
+      }
+
+      .ask-fab::before {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: inherit;
+        background: rgba(255, 255, 255, .10);
+        content: "";
+        opacity: 0;
+        transition: opacity 160ms var(--ease);
+      }
+
+      .ask-fab:active { transform: scale(.96); }
+
+      .ovie-assistant-mark {
+        width: 24px;
+        height: 24px;
+        display: block;
+        flex: 0 0 auto;
+        overflow: visible;
+      }
+
+      .ask-fab .ovie-assistant-mark { width: 28px; height: 28px; }
+
+      @media (hover: hover) and (pointer: fine) {
+        .ask-fab:hover::before { opacity: 1; }
+      }
+
+      .ask-sheet {
+        position: fixed;
+        z-index: var(--z-sheet);
+        inset: auto auto var(--keyboard-inset, 0px) 50%;
+        width: min(100%, 480px);
+        max-width: none;
+        max-height: min(calc(var(--visual-viewport-height, 100dvh) - 12px), 560px);
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        border: 0;
+        border-radius: var(--radius) var(--radius) 0 0;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 -4px 8px rgba(17, 17, 17, .12);
+        opacity: 1;
+        transform: translate(-50%, 100%);
+        transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+        will-change: transform;
+      }
+
+      .ask-sheet[open].is-visible { transform: translate(-50%, 0); }
+
+      .ask-sheet.chat-view {
+        inset: calc(var(--visual-viewport-top, 0px) + 52px) auto auto 50%;
+        width: min(100%, 480px);
+        height: calc(var(--visual-viewport-height, 100dvh) - 52px);
+        max-height: none;
+        border-radius: var(--radius) var(--radius) 0 0;
+        transform: translate(-50%, 0);
+      }
+
+      .ask-sheet[open].is-visible.chat-view { transform: translate(-50%, 0); }
+      .ask-sheet.chat-view:not(.is-visible) { transform: translate(-50%, 100%); }
+
+      .ask-sheet::backdrop {
+        z-index: var(--z-backdrop);
+        background: rgba(17, 24, 23, .58);
+        opacity: 0;
+        transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+      }
+
+      .ask-sheet.is-visible::backdrop { opacity: 1; }
+
+      .ask-sheet-inner {
+        padding: 8px 16px calc(18px + env(safe-area-inset-bottom));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+
+      .ask-sheet.chat-view .ask-sheet-inner {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .ask-sheet.chat-view .sheet-handle { display: none; }
+
+      .ask-sheet.chat-view .ask-sheet-header {
+        flex: 0 0 auto;
+        margin: -8px -16px 0;
+        padding: 8px 16px;
+        border-bottom: 1px solid var(--border-soft);
+      }
+
+      .ask-sheet-header {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .ask-sheet-title { display: flex; align-items: center; gap: 8px; }
+      .ask-sheet-title .ovie-assistant-mark { width: 22px; height: 22px; color: var(--primary); }
+
+      .ask-sheet-conversation {
+        min-height: 0;
+        padding: 20px 2px 16px;
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        gap: 18px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+
+      .ask-sheet.chat-view .ask-sheet-conversation { display: flex; }
+
+      .ask-user-message {
+        max-width: 84%;
+        margin-left: auto;
+        padding: 10px 14px;
+        border-radius: 12px 12px 2px 12px;
+        background: var(--primary);
+        color: var(--surface);
+        font-weight: 500;
+        overflow-wrap: anywhere;
+      }
+
+      .ask-ovie-response { display: block; }
+      .ask-response-body { min-width: 0; flex: 1; }
+      .ask-response-text { margin: 0; color: var(--copy); white-space: pre-line; }
+
+      .ask-answer-actions {
+        margin-top: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .ask-answer-action,
+      .ask-composer-action {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 auto;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 160ms var(--ease);
+      }
+
+      .ask-answer-action { border: 1px solid var(--border-soft); background: var(--surface); }
+      .ask-answer-action:active,
+      .ask-composer-action:active { transform: scale(.96); }
+      .ask-answer-action[aria-pressed="true"][data-answer-action="helpful"] { color: var(--success); }
+      .ask-answer-action[aria-pressed="true"][data-answer-action="not-helpful"] { color: var(--danger); }
+      .ask-answer-action.is-saved { color: var(--primary); background: var(--primary-soft); }
+
+      @media (hover: hover) and (pointer: fine) {
+        .ask-answer-action:hover,
+        .ask-composer-action:hover { background: var(--primary-soft); color: var(--primary); }
+      }
+
+      .ask-sheet-form { width: 100%; margin: 8px auto 0; flex: 0 0 auto; }
+      .ask-sheet.chat-view .ask-sheet-form { margin-top: auto; }
+
+      .ask-ovie-disclaimer {
+        margin: 8px 8px 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 16px;
+        text-align: center;
+      }
+
+      .ask-sheet.keyboard-visible .ask-ovie-disclaimer,
+      .ask-sheet.show-android-keyboard-preview .ask-ovie-disclaimer { display: none; }
+
+      .ask-sheet-composer-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .ask-sheet-input-row {
+        min-height: 56px;
+        min-width: 0;
+        flex: 1;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .ask-sheet-input-row:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 18%, transparent);
+      }
+
+      .ask-sheet-input {
+        min-width: 0;
+        flex: 1;
+        padding: 8px 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--ink);
+        line-height: 20px;
+      }
+
+      .ask-sheet-input:focus-visible, .policy-picker-search input:focus-visible { outline: 0; }
+        .ask-sheet-input::placeholder { color: var(--muted); opacity: 1; }
+
+      .ask-policy-context {
+        min-height: 44px;
+        margin: 0 52px 8px 0;
+        padding: 6px 6px 6px 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: var(--radius);
+        background: var(--primary-soft);
+        color: var(--copy);
+      }
+
+      .ask-policy-context[hidden] { display: none; }
+
+      .ask-policy-context-icon,
+      .ask-user-policy-icon {
+        color: var(--primary);
+        flex: 0 0 auto;
+      }
+
+      .ask-policy-context-copy {
+        min-width: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .ask-policy-context-name { font-weight: 600; color: var(--ink); }
+      .ask-policy-context-meta { color: var(--muted); font-size: 12px; line-height: 16px; }
+
+      .ask-policy-context-remove {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 auto;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        transition: background-color var(--motion-duration-press) ease, color var(--motion-duration-press) ease, transform var(--motion-duration-press) var(--motion-ease-out);
+      }
+
+      .ask-policy-context-remove:active { transform: scale(.97); }
+
+      .ask-user-policy {
+        max-width: 84%;
+        margin-left: auto;
+        padding: 6px 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: var(--radius);
+        background: var(--primary-soft);
+        color: var(--copy);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 600;
+      }
+
+      .ask-user-policy[hidden] { display: none; }
+
+      .ask-composer-action {
+        background: var(--bg-subtle);
+        color: var(--muted);
+      }
+
+      .ask-composer-action.attachment { color: var(--muted); }
+
+      .ask-composer-action:not(.attachment) {
+        background: var(--primary);
+        color: var(--surface);
+      }
+
+      .ask-composer-action.is-send { background: var(--primary); color: var(--surface); }
+      .ask-composer-action .composer-send-icon { display: none; }
+      .ask-composer-action.is-send .composer-mic-icon { display: none; }
+      .ask-composer-action.is-send .composer-send-icon { display: block; }
+
+      @media (hover: hover) and (pointer: fine) {
+        .ask-composer-action.is-send:hover { background: var(--primary-dark); color: var(--surface); }
+        .ask-policy-context-remove:hover { background: var(--surface); color: var(--primary); }
+      }
+
+      .policy-picker-sheet {
+        position: fixed;
+        z-index: calc(var(--z-sheet) + 1);
+        inset: 52px auto auto 50%;
+        width: min(100%, 480px);
+        height: calc(100dvh - 52px);
+        max-width: none;
+        max-height: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        border: 0;
+        border-radius: var(--radius) var(--radius) 0 0;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 6px 16px rgba(17, 17, 17, .12);
+        transform: translate(-50%, 100%);
+        transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      }
+
+      .policy-picker-sheet[open].is-visible { transform: translate(-50%, 0); }
+
+      .policy-picker-sheet::backdrop {
+        background: rgba(17, 24, 23, .58);
+        opacity: 0;
+        transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+      }
+
+      .policy-picker-sheet.is-visible::backdrop { opacity: 1; }
+
+      .policy-picker-inner {
+        padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        max-height: none;
+      }
+
+      .policy-picker-search {
+        min-height: 44px;
+        margin: 8px 0 12px;
+        padding-left: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        color: var(--muted);
+      }
+
+      .policy-picker-search:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(107, 64, 98, .24);
+      }
+
+      .policy-picker-search input {
+        min-width: 0;
+        flex: 1;
+        padding: 10px 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--ink);
+      }
+
+      .policy-picker-search input::placeholder { color: var(--muted); opacity: 1; }
+      .policy-picker-search input::-webkit-search-cancel-button { display: none; -webkit-appearance: none; appearance: none; }
+      .policy-picker-search input::-ms-clear { display: none; width: 0; height: 0; }
+
+      .policy-search-clear {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 auto;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .policy-search-clear[hidden] { display: none; }
+
+      .policy-picker-list {
+        min-height: 0;
+        margin: 0 -16px;
+        padding: 0;
+        overflow-y: auto;
+        list-style: none;
+        overscroll-behavior: contain;
+      }
+
+      .policy-picker-item { margin: 0; }
+      .policy-picker-item + .policy-picker-item { border-top: 1px solid var(--border-soft); }
+
+      .policy-picker-option {
+        width: 100%;
+        min-height: 64px;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 0;
+        background: var(--surface);
+        text-align: left;
+        cursor: pointer;
+        transition: background-color var(--motion-duration-press) ease, transform var(--motion-duration-press) var(--motion-ease-out);
+      }
+
+      .policy-picker-option:active { transform: scale(.97); }
+      .policy-picker-option[aria-pressed="true"] { background: var(--primary-soft); }
+
+      .policy-picker-icon {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        border-radius: var(--radius);
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .policy-picker-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+      .policy-picker-name { color: var(--ink); font-weight: 600; }
+      .policy-picker-meta { color: var(--muted); }
+      .policy-picker-check { color: var(--primary); opacity: 0; }
+      .policy-picker-option[aria-pressed="true"] .policy-picker-check { opacity: 1; }
+
+      .policy-picker-empty {
+        margin: 0;
+        padding: 24px 16px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .policy-picker-empty[hidden] { display: none; }
+
+      @media (hover: hover) and (pointer: fine) {
+        .policy-picker-option:hover { background: var(--bg-subtle); }
+        .policy-search-clear:hover { background: var(--primary-soft); color: var(--primary); }
+      }
+
+      .android-keyboard-preview {
+        display: none;
+        margin: 14px -16px -18px;
+        padding: 0 5px calc(7px + env(safe-area-inset-bottom));
+        background: #eef0f3;
+        color: #202124;
+        font-family: Roboto, system-ui, sans-serif;
+        font-size: 13px;
+        line-height: 16px;
+        font-weight: 500;
+        user-select: none;
+      }
+
+      .android-suggestions {
+        min-height: 38px;
+        margin-inline: -5px;
+        padding-inline: 6px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: center;
+        border-bottom: 1px solid #d5d8dc;
+        background: #f8f9fa;
+      }
+
+      .android-suggestion {
+        min-width: 0;
+        padding-inline: 8px;
+        overflow: hidden;
+        color: #3c4043;
+        text-align: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .android-suggestion + .android-suggestion { border-left: 1px solid #dfe1e5; }
+
+      .keyboard-row {
+        display: grid;
+        gap: 5px;
+        margin-top: 6px;
+      }
+
+      .keyboard-row.ten { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+      .keyboard-row.nine { grid-template-columns: repeat(9, minmax(0, 1fr)); padding-inline: 14px; }
+      .keyboard-row.shift { grid-template-columns: 1.35fr repeat(7, minmax(0, 1fr)) 1.35fr; }
+      .keyboard-row.android-bottom { grid-template-columns: 1.25fr .7fr .7fr 3.4fr .7fr 1.25fr; }
+
+      .keyboard-key {
+        min-width: 0;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 7px;
+        background: var(--surface);
+        box-shadow: 0 1px 1px rgba(60, 64, 67, .28);
+        white-space: nowrap;
+      }
+
+      .keyboard-key.utility {
+        background: #d8dce2;
+        color: #3c4043;
+        box-shadow: none;
+      }
+
+      .keyboard-key.space {
+        color: #5f6368;
+        font-size: 11px;
+        font-weight: 400;
+      }
+
+      .keyboard-key.send {
+        background: #d9c8d4;
+        color: var(--primary-dark);
+      }
+
+      .android-gesture-bar {
+        height: 30px;
+        position: relative;
+        display: grid;
+        place-items: end center;
+      }
+
+      .android-gesture-bar::before {
+        width: 108px;
+        height: 4px;
+        border-radius: 999px;
+        background: #4a4d50;
+        content: "";
+      }
+
+      .android-hide-keyboard {
+        position: absolute;
+        left: 2px;
+        bottom: -7px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: #4a4d50;
+        cursor: pointer;
+      }
+
+      .android-hide-keyboard:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 1px;
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .android-hide-keyboard:hover { background: rgba(74, 77, 80, .08); }
+      }
+
+      .ask-sheet.is-visible.show-android-keyboard-preview .android-keyboard-preview { display: block; }
+
+      .ask-sheet.chat-view.show-android-keyboard-preview .android-keyboard-preview {
+        flex: 0 0 auto;
+        margin-top: 10px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ask-fab, .ask-fab::before, .ask-close, .ask-answer-action, .ask-composer-action, .ask-policy-context-remove, .policy-picker-option { transition-duration: .01ms !important; }
+        .ask-fab:active, .ask-close:active, .ask-answer-action:active, .ask-composer-action:active, .ask-policy-context-remove:active, .policy-picker-option:active { transform: none; }
+        .ask-sheet,
+        .policy-picker-sheet {
+          transform: translate(-50%, 0);
+          opacity: 0;
+          transition: opacity 120ms var(--motion-ease-out) !important;
+        }
+        .ask-sheet[open].is-visible,
+        .policy-picker-sheet[open].is-visible { opacity: 1; }
+        .ask-sheet::backdrop,
+        .policy-picker-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
+      }
+
     </style>
   </head>
   <body>
@@ -495,26 +1095,15 @@
           <div class="search-row">
             <label class="sr-only" for="insight-search">Search insights</label>
             <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input id="insight-search" type="search" placeholder="Search policy insights" autocomplete="off" />
+            <input id="insight-search" type="search" placeholder="Search insights" autocomplete="off" />
             <button class="icon-button search-clear" type="button" aria-label="Clear search" hidden>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </button>
           </div>
 
-          <div class="filter-toolbar">
-            <button class="filter-trigger" type="button" aria-haspopup="dialog" aria-expanded="false">
-              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
-              <span class="filter-label">All insights</span>
-              <span class="filter-count" aria-label="3 insights">3</span>
-            </button>
-            <label class="shared-filter-toggle">
-              <span>Shared with me</span>
-              <input id="shared-filter" type="checkbox" />
-              <span class="shared-filter-track" aria-hidden="true"><span class="shared-filter-thumb"></span></span>
-            </label>
-          </div>
+          <div class="filter-chips" role="radiogroup" aria-label="Insight type"></div>
 
-          <section aria-label="Policy insights">
+          <section aria-label="Insights">
             <div class="insight-list" role="list"></div>
           </section>
         </main>
@@ -565,32 +1154,129 @@
       </div>
     </dialog>
 
-    <dialog class="sheet-dialog filter-sheet" aria-labelledby="filter-sheet-title">
-      <div class="sheet">
+    <button class="ask-fab" id="askOvieFab" type="button" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet">
+      <svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg>
+    </button>
+
+    <dialog class="ask-sheet" id="askOvieSheet" aria-labelledby="askOvieTitle">
+      <div class="ask-sheet-inner">
         <div class="sheet-handle" aria-hidden="true"></div>
-        <div class="sheet-header">
-          <h2 id="filter-sheet-title">Filter by policy type</h2>
-          <button type="button" class="icon-button sheet-close" aria-label="Close filters">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        <div class="ask-sheet-header">
+          <h2 class="section-heading ask-sheet-title" id="askOvieTitle"><svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg><span>Ask Ovie</span></h2>
+          <button class="ask-close" id="closeAskOvie" type="button" aria-label="Close Ask Ovie">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
           </button>
         </div>
-        <div class="filter-option-list" role="radiogroup" aria-labelledby="filter-sheet-title"></div>
+        <div class="ask-sheet-conversation" id="askOvieConversation" aria-live="polite" hidden>
+          <div class="ask-user-policy" id="askOvieQuestionPolicy" hidden>
+            <svg class="ask-user-policy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+            <span id="askOvieQuestionPolicyName"></span>
+          </div>
+          <div class="ask-user-message" id="askOvieQuestion"></div>
+          <div class="ask-ovie-response">
+            <div class="ask-response-body">
+              <p class="ask-response-text" id="askOvieAnswer"></p>
+              <div class="ask-answer-actions" aria-label="Answer actions">
+                <button class="ask-answer-action" type="button" data-answer-action="copy" aria-label="Copy answer" title="Copy answer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
+                <button class="ask-answer-action" type="button" data-answer-action="regenerate" aria-label="Regenerate answer" title="Regenerate answer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/><path d="M16 16h5v5"/></svg></button>
+                <button class="ask-answer-action" type="button" data-answer-action="helpful" aria-label="Helpful answer" title="Helpful answer" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg></button>
+                <button class="ask-answer-action" type="button" data-answer-action="not-helpful" aria-label="Not helpful" title="Not helpful" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg></button>
+                <button class="ask-answer-action" type="button" data-answer-action="source" aria-label="View source information" title="View source information"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
+                <button class="ask-answer-action" type="button" data-answer-action="save" aria-label="Save answer" title="Save answer" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form class="ask-sheet-form" id="askOvieForm" novalidate>
+          <label class="visually-hidden" for="askOvieInput">Ask anything about your policies</label>
+          <div class="ask-policy-context" id="askPolicyContext" hidden>
+            <svg class="ask-policy-context-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+            <span class="ask-policy-context-copy"><span class="ask-policy-context-name" id="askPolicyContextName"></span><span class="ask-policy-context-meta" id="askPolicyContextMeta"></span></span>
+            <button class="ask-policy-context-remove" id="removeAskPolicy" type="button" aria-label="Remove policy from chat" title="Remove policy from chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+          </div>
+          <div class="ask-sheet-composer-row">
+            <div class="ask-sheet-input-row">
+              <button class="ask-composer-action attachment" id="askAttachmentButton" type="button" aria-label="Add a policy to this chat" aria-haspopup="dialog" aria-controls="askPolicyPicker" title="Add a policy to this chat"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
+              <input class="ask-sheet-input" id="askOvieInput" name="question" type="text" inputmode="text" enterkeyhint="send" autocomplete="off" placeholder="Ask anything about your policies...">
+            </div>
+            <button class="ask-composer-action" id="askComposerAction" type="button" aria-label="Use voice input" title="Use voice input">
+              <svg class="composer-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>
+              <svg class="composer-send-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          </div>
+        </form>
+        <p class="ask-ovie-disclaimer">Ovie provides policy summaries only and does not offer policy recommendations or insurance advice.</p>
+        <div class="android-keyboard-preview">
+          <div class="android-suggestions" aria-hidden="true"><span class="android-suggestion">your</span><span class="android-suggestion">coverage</span><span class="android-suggestion">policy</span></div>
+          <div class="keyboard-row ten" aria-hidden="true"><span class="keyboard-key">Q</span><span class="keyboard-key">W</span><span class="keyboard-key">E</span><span class="keyboard-key">R</span><span class="keyboard-key">T</span><span class="keyboard-key">Y</span><span class="keyboard-key">U</span><span class="keyboard-key">I</span><span class="keyboard-key">O</span><span class="keyboard-key">P</span></div>
+          <div class="keyboard-row nine" aria-hidden="true"><span class="keyboard-key">A</span><span class="keyboard-key">S</span><span class="keyboard-key">D</span><span class="keyboard-key">F</span><span class="keyboard-key">G</span><span class="keyboard-key">H</span><span class="keyboard-key">J</span><span class="keyboard-key">K</span><span class="keyboard-key">L</span></div>
+          <div class="keyboard-row shift" aria-hidden="true"><span class="keyboard-key utility"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/><path d="M12 9v12"/></svg></span><span class="keyboard-key">Z</span><span class="keyboard-key">X</span><span class="keyboard-key">C</span><span class="keyboard-key">V</span><span class="keyboard-key">B</span><span class="keyboard-key">N</span><span class="keyboard-key">M</span><span class="keyboard-key utility"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6"/><path d="m12 9 6 6"/></svg></span></div>
+          <div class="keyboard-row android-bottom" aria-hidden="true"><span class="keyboard-key utility">?123</span><span class="keyboard-key utility">,</span><span class="keyboard-key utility"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></span><span class="keyboard-key space">English (US)</span><span class="keyboard-key utility">.</span><span class="keyboard-key utility send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></div>
+          <div class="android-gesture-bar">
+            <button class="android-hide-keyboard" id="hidePreviewKeyboard" type="button" aria-label="Hide keyboard" title="Hide keyboard">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+    <dialog class="policy-picker-sheet" id="askPolicyPicker" aria-labelledby="askPolicyPickerTitle">
+      <div class="policy-picker-inner">
+        <div class="sheet-handle" aria-hidden="true"></div>
+        <div class="ask-sheet-header">
+          <h2 class="section-heading" id="askPolicyPickerTitle">Add a policy</h2>
+          <button class="ask-close" id="closeAskPolicyPicker" type="button" aria-label="Close policy list">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+        <label class="visually-hidden" for="askPolicySearch">Search policies</label>
+        <div class="policy-picker-search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="askPolicySearch" type="search" autocomplete="off" placeholder="Search policies">
+          <button class="policy-search-clear" id="clearAskPolicySearch" type="button" aria-label="Clear policy search" title="Clear policy search" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+        </div>
+        <ul class="policy-picker-list" id="askPolicyList" aria-label="Policy folders">
+          <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="crv" data-policy-name="2022 Honda CR-V" data-policy-meta="State Farm · •• 4721" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">2022 Honda CR-V</span><span class="policy-picker-meta">State Farm · •• 4721</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+          <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="austin-home" data-policy-name="Austin home" data-policy-meta="Travelers · •• 1840" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Austin home</span><span class="policy-picker-meta">Travelers · •• 1840</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+          <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="umbrella" data-policy-name="Family umbrella" data-policy-meta="Chubb · •• 9062" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Family umbrella</span><span class="policy-picker-meta">Chubb · •• 9062</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+          <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="downtown" data-policy-name="Downtown apartment" data-policy-meta="Lemonade · •• 3218" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Downtown apartment</span><span class="policy-picker-meta">Lemonade · •• 3218</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+          <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="camry" data-policy-name="2018 Toyota Camry" data-policy-meta="State Farm · •• 7784" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">2018 Toyota Camry</span><span class="policy-picker-meta">State Farm · •• 7784</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        </ul>
+        <p class="policy-picker-empty" id="askPolicyEmpty" hidden>No policies match your search.</p>
       </div>
     </dialog>
 
     <div class="toast" role="status" aria-live="polite"></div>
 
     <script>
+      const filters = [
+        { value: "policy", label: "Policies" },
+        { value: "general", label: "Portfolio" },
+        { value: "comparison", label: "Comparisons" },
+        { value: "shared", label: "Shared with me" }
+      ];
+
       const insights = [
-        { id: "umbrella", title: "Family umbrella", policyType: "Umbrella", policyNumber: "PU202610438389", sharing: "Shared with others", generated: "Sep 3, 2026" },
-        { id: "auto", title: "2022 Honda CR-V", policyType: "Automobile", policyNumber: "PA202634848340", sharing: "Private", generated: "Aug 29, 2026" },
-        { id: "home", title: "Austin home", policyType: "Homeowners", policyNumber: "HO202625818341", sharing: "Shared with me", generated: "Aug 22, 2026" }
+        { id: "umbrella", category: "policy", title: "Family umbrella", tag: "Umbrella", icon: "Insights", policyNumber: "PU202610438389", generated: "Sep 3, 2026" },
+        { id: "auto", category: "policy", title: "2022 Honda CR-V", tag: "Automobile", icon: "Insights", policyNumber: "PA202634848340", generated: "Aug 29, 2026" },
+        { id: "home-expiry", category: "general", title: "Home policy ends in 12 days", tag: "Expiry", icon: "Expiry", scope: "Austin home · Travelers", generated: "Sep 3, 2026" },
+        { id: "duplicate", category: "general", title: "Possible duplicate coverage", tag: "Overlaps", icon: "Overlaps", scope: "Austin home · Downtown apartment", generated: "Sep 3, 2026" },
+        { id: "state-minimum", category: "general", title: "State minimum coverage not established", tag: "Gaps", icon: "Gaps", scope: "2018 Toyota Camry · State Farm", generated: "Sep 3, 2026" },
+        { id: "umbrella-underlying", category: "general", title: "Underlying limits not established", tag: "Gaps", icon: "Gaps", scope: "Family umbrella · Chubb", generated: "Aug 25, 2026" },
+        { id: "apartment-expiry", category: "general", title: "Apartment policy ends in 47 days", tag: "Expiry", icon: "Expiry", scope: "Downtown apartment · Lemonade", generated: "Aug 18, 2026" },
+        { id: "auto-quotes", category: "comparison", title: "Auto quote comparison", tag: "Quote to quote", icon: "Compare", scope: "3 quotes compared", generated: "Sep 10, 2026" },
+        { id: "umbrella-quote", category: "comparison", title: "Family umbrella vs. new quote", tag: "Policy to quote", icon: "Compare", scope: "1 policy and 1 quote compared", generated: "Sep 12, 2026" },
+        { id: "home", category: "shared", title: "Austin home", tag: "Homeowners", icon: "Insights", policyNumber: "HO202625818341", generated: "Aug 22, 2026" }
       ];
 
       const iconPaths = {
         Automobile: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>',
         Homeowners: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
         Umbrella: '<path d="M12 13v7a2 2 0 0 0 4 0"/><path d="M12 2v2"/><path d="M20.992 13a1 1 0 0 0 .97-1.274 10.284 10.284 0 0 0-19.923 0A1 1 0 0 0 3 13z"/>',
+        Gaps: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+        Overlaps: '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+        Expiry: '<path d="M16 14v2.2l1.6 1"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><path d="M8 2v4"/><circle cx="16" cy="16" r="6"/>',
+        Compare: '<circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/>',
         All: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
         Insights: '<path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/>'
       };
@@ -598,16 +1284,11 @@
       const list = document.querySelector(".insight-list");
       const search = document.querySelector("#insight-search");
       const clearSearch = document.querySelector(".search-clear");
-      const sharedFilter = document.querySelector("#shared-filter");
-      const filterTrigger = document.querySelector(".filter-trigger");
-      const filterLabel = document.querySelector(".filter-label");
-      const filterCount = document.querySelector(".filter-trigger .filter-count");
+      const chipGroup = document.querySelector(".filter-chips");
       const actionSheet = document.querySelector(".action-sheet");
-      const filterSheet = document.querySelector(".filter-sheet");
       const actionTitle = document.querySelector("#action-sheet-title");
-      const filterOptions = document.querySelector(".filter-option-list");
       const toast = document.querySelector(".toast");
-      let selectedType = "All";
+      let selectedFilter = "policy";
       let activeInsight = null;
       let returnFocus = null;
       let toastTimer;
@@ -628,43 +1309,44 @@
       function filteredInsights() {
         const term = search.value.trim().toLowerCase();
         return insights.filter(item => {
-          const matchesSearch = !term || `${item.title} ${item.policyType} ${item.policyNumber}`.toLowerCase().includes(term);
-          const matchesType = selectedType === "All" || item.policyType === selectedType;
-          const matchesShared = !sharedFilter.checked || item.sharing === "Shared with me";
-          return matchesSearch && matchesType && matchesShared;
+          const haystack = `${item.title} ${item.tag} ${item.policyNumber || ""} ${item.scope || ""}`.toLowerCase();
+          return item.category === selectedFilter && (!term || haystack.includes(term));
         });
+      }
+
+      function filterCount(value) { return insights.filter(item => item.category === value).length; }
+
+      function renderChips() {
+        chipGroup.innerHTML = filters.map(filter => `<button type="button" role="radio" class="filter-chip" data-filter="${filter.value}" aria-label="${filter.label}, ${filterCount(filter.value)}" aria-checked="${selectedFilter === filter.value}"><span class="filter-chip-face">${filter.label}<span class="filter-chip-count">${filterCount(filter.value)}</span></span></button>`).join("");
       }
 
       function render() {
         const visible = filteredInsights();
-        filterLabel.textContent = selectedType === "All" ? "All insights" : selectedType;
-        filterCount.textContent = visible.length;
-        filterCount.setAttribute("aria-label", `${visible.length} ${visible.length === 1 ? "insight" : "insights"}`);
         clearSearch.hidden = !search.value;
 
         if (!visible.length) {
-          list.innerHTML = `<div class="empty-state">${icon("All", 24)}<h2>No matching insights</h2><p>Try another search or clear a filter.</p></div>`;
+          list.innerHTML = `<div class="empty-state">${icon("All", 24)}<h2>No matching insights</h2><p>Try another search or filter.</p></div>`;
           return;
         }
 
         list.innerHTML = visible.map(item => `
-          <article class="insight-row" role="listitem" data-id="${item.id}">
+          <article class="insight-row${item.category === "general" ? " no-options" : ""}" role="listitem" data-id="${item.id}">
             <button type="button" class="insight-open" aria-label="Open ${item.title} insights"></button>
-            <span class="insight-icon">${icon("Insights")}</span>
+            <span class="insight-icon">${icon(item.icon)}</span>
             <span class="insight-copy">
               <strong class="insight-title">${item.title}</strong>
-              <span class="policy-line"><span class="policy-type-tag">${item.policyType}</span></span>
-              <span class="policy-number-line">
+              <span class="policy-line"><span class="policy-type-tag">${item.tag}</span></span>
+              ${item.policyNumber ? `<span class="policy-number-line">
                 <strong data-policy-number>${masked(item.policyNumber)}</strong>
                 <button type="button" class="policy-number-toggle" aria-label="Show policy number for ${item.title}" aria-pressed="false">
                   ${policyNumberIcon(false)}
                 </button>
-              </span>
+              </span>` : `<span class="scope-line">${item.scope}</span>`}
               <span class="generated-date">Generated on ${item.generated}</span>
             </span>
-            <button type="button" class="icon-button insight-options" aria-label="More options for ${item.title}" aria-haspopup="dialog" aria-expanded="false">
+            ${item.category === "general" ? "" : `<button type="button" class="icon-button insight-options" aria-label="More options for ${item.title}" aria-haspopup="dialog" aria-expanded="false">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-            </button>
+            </button>`}
           </article>`).join("");
       }
 
@@ -684,7 +1366,6 @@
         window.setTimeout(() => {
           dialog.close();
           document.body.classList.remove("sheet-open");
-          if (dialog === filterSheet) filterTrigger.setAttribute("aria-expanded", "false");
           if (dialog === actionSheet && returnFocus) returnFocus.setAttribute("aria-expanded", "false");
           if (returnFocus && document.contains(returnFocus)) returnFocus.focus();
           if (afterClose) afterClose();
@@ -698,31 +1379,26 @@
         toastTimer = setTimeout(() => toast.classList.remove("visible"), 2200);
       }
 
-      function buildFilterOptions() {
-        const types = [
-          { value: "All", label: "All insights" },
-          { value: "Automobile", label: "Automobile" },
-          { value: "Homeowners", label: "Homeowners" },
-          { value: "Umbrella", label: "Umbrella" }
-        ];
-        filterOptions.innerHTML = types.map(type => {
-          const count = type.value === "All" ? insights.length : insights.filter(item => item.policyType === type.value).length;
-          const selected = selectedType === type.value;
-          return `<label class="filter-option${selected ? " selected" : ""}">
-            <span class="filter-option-leading">
-              <span class="filter-option-icon">${icon(type.value, 20)}</span>
-              <span class="filter-option-name"><span>${type.label}</span><span class="filter-count" aria-label="${count} ${count === 1 ? "policy" : "policies"}">${count}</span></span>
-            </span>
-            <input type="radio" name="policy-type-filter" value="${type.value}" ${selected ? "checked" : ""} />
-          </label>`;
-        }).join("");
-      }
-
       search.addEventListener("input", render);
       clearSearch.addEventListener("click", () => { search.value = ""; render(); search.focus(); });
-      sharedFilter.addEventListener("change", render);
-      filterTrigger.addEventListener("click", event => { buildFilterOptions(); filterTrigger.setAttribute("aria-expanded", "true"); openSheet(filterSheet, event.currentTarget); });
-
+      chipGroup.addEventListener("click", event => {
+        const chip = event.target.closest(".filter-chip");
+        if (!chip || chip.dataset.filter === selectedFilter) return;
+        selectedFilter = chip.dataset.filter;
+        renderChips();
+        render();
+        chipGroup.querySelector(`[data-filter="${selectedFilter}"]`).focus();
+      });
+      chipGroup.addEventListener("keydown", event => {
+        const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+        if (!(event.key in keys)) return;
+        event.preventDefault();
+        const index = filters.findIndex(filter => filter.value === selectedFilter);
+        selectedFilter = filters[(index + keys[event.key] + filters.length) % filters.length].value;
+        renderChips();
+        render();
+        chipGroup.querySelector(`[data-filter="${selectedFilter}"]`).focus();
+      });
       list.addEventListener("click", event => {
         const row = event.target.closest(".insight-row");
         if (!row) return;
@@ -748,21 +1424,14 @@
         }
       });
 
-      filterOptions.addEventListener("change", event => {
-        if (!event.target.matches("input[type=radio]")) return;
-        selectedType = event.target.value;
-        closeSheet(filterSheet, () => { filterTrigger.setAttribute("aria-expanded", "false"); render(); });
-      });
-
       document.querySelectorAll(".sheet-close").forEach(button => button.addEventListener("click", () => {
         const dialog = button.closest("dialog");
         closeSheet(dialog, () => {
-          if (dialog === filterSheet) filterTrigger.setAttribute("aria-expanded", "false");
           if (dialog === actionSheet && returnFocus) returnFocus.setAttribute("aria-expanded", "false");
         });
       }));
 
-      [actionSheet, filterSheet].forEach(dialog => {
+      [actionSheet].forEach(dialog => {
         dialog.addEventListener("cancel", event => { event.preventDefault(); closeSheet(dialog); });
         dialog.addEventListener("click", event => { if (event.target === dialog) closeSheet(dialog); });
       });
@@ -771,7 +1440,7 @@
         const button = event.target.closest("button[data-action]");
         if (!button || !activeInsight) return;
         const action = button.dataset.action;
-        const message = action === "regenerate" ? `Regenerating ${activeInsight.policyType.toLowerCase()} insights` : `Opening documents for ${activeInsight.title}`;
+        const message = action === "regenerate" ? `Regenerating ${activeInsight.tag.toLowerCase()} insights` : `Opening documents for ${activeInsight.title}`;
         closeSheet(actionSheet, () => {
           if (returnFocus) returnFocus.setAttribute("aria-expanded", "false");
           showToast(message);
@@ -806,7 +1475,367 @@
         if (!scrollFrame) scrollFrame = requestAnimationFrame(updateTopbar);
       }, { passive: true });
 
+      renderChips();
       render();
+    </script>
+    <script>
+      (() => {
+      const askOvieFab = document.querySelector('#askOvieFab');
+      const askOvieSheet = document.querySelector('#askOvieSheet');
+      const closeAskOvie = document.querySelector('#closeAskOvie');
+      const askOvieForm = document.querySelector('#askOvieForm');
+      const askOvieInput = document.querySelector('#askOvieInput');
+      const askComposerAction = document.querySelector('#askComposerAction');
+      const askOvieConversation = document.querySelector('#askOvieConversation');
+      const askOvieQuestion = document.querySelector('#askOvieQuestion');
+      const askOvieQuestionPolicy = document.querySelector('#askOvieQuestionPolicy');
+      const askOvieQuestionPolicyName = document.querySelector('#askOvieQuestionPolicyName');
+      const askOvieAnswer = document.querySelector('#askOvieAnswer');
+      const askAttachmentButton = document.querySelector('#askAttachmentButton');
+      const askPolicyContext = document.querySelector('#askPolicyContext');
+      const askPolicyContextName = document.querySelector('#askPolicyContextName');
+      const askPolicyContextMeta = document.querySelector('#askPolicyContextMeta');
+      const removeAskPolicy = document.querySelector('#removeAskPolicy');
+      const askPolicyPicker = document.querySelector('#askPolicyPicker');
+      const closeAskPolicyPickerButton = document.querySelector('#closeAskPolicyPicker');
+      const askPolicySearch = document.querySelector('#askPolicySearch');
+      const clearAskPolicySearch = document.querySelector('#clearAskPolicySearch');
+      const askPolicyOptions = Array.from(document.querySelectorAll('.policy-picker-option'));
+      const askPolicyEmpty = document.querySelector('#askPolicyEmpty');
+      const hidePreviewKeyboard = document.querySelector('#hidePreviewKeyboard');
+      const answerActions = Array.from(document.querySelectorAll('[data-answer-action]'));
+      const visualViewport = window.visualViewport;
+      let sheetCloseTimer;
+      let policyPickerCloseTimer;
+      let sheetExpandAnimation;
+      let askSheetLayoutHeight = window.innerHeight;
+      let selectedAskPolicy = null;
+
+      async function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          try {
+            await navigator.clipboard.writeText(text);
+            return;
+          } catch {
+            // Fall through to the local-preview-safe copy method.
+          }
+        }
+
+        const activeElement = document.activeElement;
+        const copyArea = document.createElement('textarea');
+        copyArea.value = text;
+        copyArea.setAttribute('readonly', '');
+        copyArea.style.position = 'fixed';
+        copyArea.style.opacity = '0';
+        document.body.appendChild(copyArea);
+        copyArea.select();
+        const copied = document.execCommand('copy');
+        copyArea.remove();
+        activeElement?.focus({ preventScroll: true });
+        if (!copied) throw new Error('Copy failed');
+      }
+
+      function syncAskSheetToViewport() {
+        if (!askOvieSheet.open || document.activeElement !== askOvieInput || !visualViewport) {
+          askOvieSheet.classList.remove('keyboard-visible');
+          askSheetLayoutHeight = window.innerHeight;
+          document.documentElement.style.setProperty('--keyboard-inset', '0px');
+          document.documentElement.style.setProperty('--visual-viewport-height', '100dvh');
+          document.documentElement.style.setProperty('--visual-viewport-top', '0px');
+          return;
+        }
+
+        const visualViewportBottom = visualViewport.offsetTop + visualViewport.height;
+        const layoutViewportResized = window.innerHeight < askSheetLayoutHeight - 80;
+        const keyboardInset = layoutViewportResized ? 0 : Math.max(0, askSheetLayoutHeight - visualViewportBottom);
+        const keyboardVisible = layoutViewportResized || keyboardInset > 80 || visualViewport.height < askSheetLayoutHeight - 80;
+        askOvieSheet.classList.toggle('keyboard-visible', keyboardVisible);
+        document.documentElement.style.setProperty('--keyboard-inset', `${keyboardInset}px`);
+        document.documentElement.style.setProperty('--visual-viewport-height', `${visualViewport.height}px`);
+        document.documentElement.style.setProperty('--visual-viewport-top', `${visualViewport.offsetTop}px`);
+      }
+
+      if (visualViewport) {
+        visualViewport.addEventListener('resize', syncAskSheetToViewport);
+        visualViewport.addEventListener('scroll', syncAskSheetToViewport);
+      }
+
+      hidePreviewKeyboard.addEventListener('click', () => {
+        askOvieInput.blur();
+        askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+        syncAskSheetToViewport();
+      });
+
+      askOvieInput.addEventListener('focus', () => {
+        if (!window.matchMedia('(pointer: coarse)').matches) {
+          askOvieSheet.classList.add('show-android-keyboard-preview');
+        }
+        syncAskSheetToViewport();
+      });
+
+      function openAskSheet() {
+        window.clearTimeout(sheetCloseTimer);
+        const showPreviewKeyboard = !window.matchMedia('(pointer: coarse)').matches;
+        askOvieSheet.classList.toggle('show-android-keyboard-preview', showPreviewKeyboard);
+        askOvieSheet.classList.remove('chat-view');
+        askOvieConversation.hidden = true;
+        clearAskPolicySelection();
+        askOvieQuestionPolicy.hidden = true;
+        askPolicySearch.value = '';
+        filterAskPolicies();
+        syncComposerAction();
+        askOvieSheet.classList.remove('is-visible');
+        askOvieSheet.showModal();
+        document.body.classList.add('sheet-open');
+        askSheetLayoutHeight = window.innerHeight;
+        askOvieInput.focus({ preventScroll: true });
+        syncAskSheetToViewport();
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            syncAskSheetToViewport();
+            askOvieSheet.classList.add('is-visible');
+          });
+        });
+      }
+
+      function sheetTransitionDuration() {
+        const styles = window.getComputedStyle(askOvieSheet);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function closeAskSheet(returnFocus = true) {
+        if (!askOvieSheet.open) return;
+        sheetExpandAnimation?.cancel();
+        askOvieSheet.classList.remove('is-visible');
+        window.clearTimeout(sheetCloseTimer);
+        sheetCloseTimer = window.setTimeout(() => {
+          askOvieSheet.close();
+          askOvieSheet.classList.remove('chat-view');
+          askOvieConversation.hidden = true;
+          document.body.classList.remove('sheet-open');
+          syncAskSheetToViewport();
+          if (returnFocus) askOvieFab.focus({ preventScroll: true });
+        }, sheetTransitionDuration() + 34);
+      }
+
+      askOvieFab.addEventListener('click', openAskSheet);
+      closeAskOvie.addEventListener('click', () => closeAskSheet());
+      askOvieSheet.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeAskSheet();
+      });
+      askOvieSheet.addEventListener('pointerdown', (event) => {
+        const bounds = askOvieSheet.getBoundingClientRect();
+        const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideSheet) closeAskSheet();
+      });
+      askOvieInput.addEventListener('input', () => {
+        const hasQuestion = askOvieInput.value.trim().length > 0;
+        syncComposerAction(hasQuestion);
+      });
+
+      askOvieInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !event.isComposing) event.preventDefault();
+      });
+
+      function policyPickerTransitionDuration() {
+        const styles = window.getComputedStyle(askPolicyPicker);
+        const durations = styles.transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        return Math.max(0, ...durations);
+      }
+
+      function filterAskPolicies() {
+        const query = askPolicySearch.value.trim().toLocaleLowerCase();
+        let visibleCount = 0;
+        askPolicyOptions.forEach((button) => {
+          const searchableText = `${button.dataset.policyName} ${button.dataset.policyMeta}`.toLocaleLowerCase();
+          const matches = !query || searchableText.includes(query);
+          button.closest('.policy-picker-item').hidden = !matches;
+          if (matches) visibleCount += 1;
+        });
+        clearAskPolicySearch.hidden = query.length === 0;
+        askPolicyEmpty.hidden = visibleCount !== 0;
+      }
+
+      function renderAskPolicySelection() {
+        askPolicyContext.hidden = !selectedAskPolicy;
+        askPolicyContextName.textContent = selectedAskPolicy?.name || '';
+        askPolicyContextMeta.textContent = selectedAskPolicy?.meta || '';
+        askPolicyOptions.forEach((button) => {
+          button.setAttribute('aria-pressed', String(button.dataset.policyId === selectedAskPolicy?.id));
+        });
+      }
+
+      function clearAskPolicySelection(returnFocus = false) {
+        selectedAskPolicy = null;
+        renderAskPolicySelection();
+        if (returnFocus) askOvieInput.focus({ preventScroll: true });
+      }
+
+      function openAskPolicyPicker() {
+        window.clearTimeout(policyPickerCloseTimer);
+        askOvieInput.blur();
+        askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+        syncAskSheetToViewport();
+        askPolicySearch.value = '';
+        filterAskPolicies();
+        askPolicyPicker.classList.remove('is-visible');
+        askPolicyPicker.showModal();
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            askPolicyPicker.classList.add('is-visible');
+            askPolicySearch.focus({ preventScroll: true });
+          });
+        });
+      }
+
+      function closeAskPolicyPicker(returnFocus = true) {
+        if (!askPolicyPicker.open) return;
+        askPolicyPicker.classList.remove('is-visible');
+        window.clearTimeout(policyPickerCloseTimer);
+        policyPickerCloseTimer = window.setTimeout(() => {
+          askPolicyPicker.close();
+          if (returnFocus) askOvieInput.focus({ preventScroll: true });
+        }, policyPickerTransitionDuration() + 34);
+      }
+
+      askAttachmentButton.addEventListener('click', openAskPolicyPicker);
+      closeAskPolicyPickerButton.addEventListener('click', () => closeAskPolicyPicker());
+      askPolicyPicker.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeAskPolicyPicker();
+      });
+      askPolicyPicker.addEventListener('pointerdown', (event) => {
+        const bounds = askPolicyPicker.getBoundingClientRect();
+        const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (outsideSheet) closeAskPolicyPicker();
+      });
+      askPolicySearch.addEventListener('input', filterAskPolicies);
+      clearAskPolicySearch.addEventListener('click', () => {
+        askPolicySearch.value = '';
+        filterAskPolicies();
+        askPolicySearch.focus({ preventScroll: true });
+      });
+      askPolicyOptions.forEach((button) => {
+        button.addEventListener('click', () => {
+          selectedAskPolicy = {
+            id: button.dataset.policyId,
+            name: button.dataset.policyName,
+            meta: button.dataset.policyMeta
+          };
+          renderAskPolicySelection();
+          closeAskPolicyPicker();
+        });
+      });
+      removeAskPolicy.addEventListener('click', () => clearAskPolicySelection(true));
+
+      function syncComposerAction(hasQuestion = askOvieInput.value.trim().length > 0) {
+        askComposerAction.classList.toggle('is-send', hasQuestion);
+        askComposerAction.setAttribute('aria-label', hasQuestion ? 'Send question' : 'Use voice input');
+        askComposerAction.title = hasQuestion ? 'Send question' : 'Use voice input';
+      }
+
+      askComposerAction.addEventListener('click', () => {
+        if (askComposerAction.classList.contains('is-send')) {
+          askOvieForm.requestSubmit();
+          return;
+        }
+        showToast('Voice input is not available in this prototype');
+        askOvieInput.focus({ preventScroll: true });
+      });
+
+      function answerFor(question) {
+        if (/expir|end|renew|date/i.test(question)) {
+          return 'Your Austin home policy ends Sep 12, 2026. No newer policy document is currently uploaded.\n\nReview the policy document before the term ends to confirm renewal details.';
+        }
+        if (/duplicate|overlap|same coverage/i.test(question)) {
+          return 'Your uploaded documents suggest possible overlapping protection between Austin home and Downtown apartment.\n\nOpen the related policy details to compare the covered property and limits.';
+        }
+        if (/deductible/i.test(question)) {
+          return 'I can compare the deductibles established in your uploaded policy documents. Open a source detail before relying on a value for a coverage decision.';
+        }
+        return `I found information in your uploaded policy documents related to “${question}.”\n\nI can help compare coverage, policy dates, deductibles, and possible overlaps. Open a source detail to review the policy wording.`;
+      }
+
+      function expandAskSheet(fromTop) {
+        sheetExpandAnimation?.cancel();
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const expandedTop = askOvieSheet.getBoundingClientRect().top;
+        const revealInset = Math.max(0, Math.round(fromTop - expandedTop));
+        const motionStyles = window.getComputedStyle(document.documentElement);
+        const duration = Number.parseFloat(motionStyles.getPropertyValue('--motion-duration-overlay')) || 260;
+        const easing = motionStyles.getPropertyValue('--motion-ease-drawer').trim() || 'cubic-bezier(.32, .72, 0, 1)';
+        sheetExpandAnimation = askOvieSheet.animate([
+          { clipPath: `inset(${revealInset}px 0 0 0 round 12px)` },
+          { clipPath: 'inset(0 0 0 0 round 12px)' }
+        ], {
+          duration,
+          easing,
+          fill: 'both'
+        });
+        sheetExpandAnimation.finished.then(() => sheetExpandAnimation?.cancel()).catch(() => {});
+      }
+
+      askOvieForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const question = askOvieInput.value.trim();
+        if (!question) return;
+        const compactTop = askOvieSheet.getBoundingClientRect().top;
+        askOvieQuestion.textContent = question;
+        askOvieQuestionPolicy.hidden = !selectedAskPolicy;
+        askOvieQuestionPolicyName.textContent = selectedAskPolicy ? `${selectedAskPolicy.name} · ${selectedAskPolicy.meta}` : '';
+        askOvieAnswer.textContent = answerFor(question);
+        askOvieConversation.hidden = false;
+        askOvieSheet.classList.add('chat-view');
+        expandAskSheet(compactTop);
+        answerActions.forEach((button) => {
+          if (button.hasAttribute('aria-pressed')) button.setAttribute('aria-pressed', 'false');
+          button.classList.remove('is-saved');
+        });
+        askOvieInput.value = '';
+        clearAskPolicySelection();
+        syncComposerAction(false);
+        syncAskSheetToViewport();
+        window.requestAnimationFrame(() => {
+          askOvieConversation.scrollTop = askOvieConversation.scrollHeight;
+          askOvieInput.focus({ preventScroll: true });
+        });
+      });
+
+      answerActions.forEach((button) => {
+        button.addEventListener('click', async () => {
+          const action = button.dataset.answerAction;
+          if (action === 'copy') {
+            try {
+              await copyText(askOvieAnswer.textContent);
+              showToast('Answer copied');
+            } catch {
+              showToast('Copy is unavailable in this browser');
+            }
+          } else if (action === 'regenerate') {
+            askOvieAnswer.textContent = answerFor(askOvieQuestion.textContent);
+            showToast('Answer refreshed');
+          } else if (action === 'helpful' || action === 'not-helpful') {
+            answerActions.filter((item) => item.dataset.answerAction === 'helpful' || item.dataset.answerAction === 'not-helpful').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+            showToast(action === 'helpful' ? 'Thanks for the feedback' : 'Feedback recorded');
+          } else if (action === 'source') {
+            showToast('Opening source information');
+          } else if (action === 'save') {
+            button.classList.toggle('is-saved');
+            button.setAttribute('aria-pressed', String(button.classList.contains('is-saved')));
+            showToast(button.classList.contains('is-saved') ? 'Answer saved' : 'Answer removed from saved');
+          }
+        });
+      });
+
+      })();
     </script>
   <script src="assets/ovie-upload-flow.js?v=20260910b"></script>
   <script src="assets/ovie-upload-options.js?v=20260911a"></script>
