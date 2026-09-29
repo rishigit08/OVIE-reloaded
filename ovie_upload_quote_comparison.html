@@ -176,6 +176,16 @@
     .toast{position:fixed;left:50%;bottom:24px;z-index:var(--z-toast);transform:translate(-50%,18px);min-width:220px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:var(--radius);background:var(--ink);color:var(--surface);text-align:center;opacity:0;pointer-events:none;transition:opacity var(--motion-duration-standard) var(--motion-ease-out),transform var(--motion-duration-standard) var(--motion-ease-out)}
     .toast.show{opacity:1;transform:translate(-50%,0)}
 
+    /* Comparing overlay: covers the intake screen while quotes are "read"
+       and compared, before handing off to the results page. */
+    .comparing-overlay{position:absolute;inset:0;z-index:var(--z-modal);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;background:var(--page);opacity:0;transform:scale(.97);transition:opacity var(--motion-duration-overlay) var(--motion-ease-out),transform var(--motion-duration-overlay) var(--motion-ease-out)}
+    .comparing-overlay[hidden]{display:none}
+    .comparing-overlay.is-visible{opacity:1;transform:scale(1)}
+    .comparing-lottie{width:220px;height:220px}
+    .comparing-lottie svg,.comparing-lottie canvas{display:block}
+    .comparing-status{min-height:20px;font-size:15px;font-weight:600;color:var(--ink);text-align:center;opacity:1;transition:opacity var(--motion-duration-standard) ease}
+    .comparing-status.is-swapping{opacity:0}
+
     @media(max-width:440px){.canvas{display:block}.phone{width:100vw}}
     @media(prefers-reduced-motion:reduce){
       *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}
@@ -184,8 +194,10 @@
       .add-source-sheet[open].is-visible,.myfiles-sheet[open].is-visible{opacity:1}
       .add-source-sheet::backdrop,.myfiles-sheet::backdrop{transition:opacity 120ms var(--motion-ease-out)!important}
       .slot-card.slot-enter,.slot-card.slot-leave{transform:none}
+      .comparing-overlay{transform:none}
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
 </head>
 <body>
   <div class="canvas"><div class="phone" id="phone">
@@ -214,6 +226,11 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="comparing-overlay" id="comparingOverlay" aria-live="polite" aria-atomic="true" hidden>
+      <div class="comparing-lottie" id="comparingLottie" role="img" aria-label="Reading and comparing your quotes"></div>
+      <p class="comparing-status" id="comparingStatus">Reading your quotes…</p>
+    </div>
   </div></div>
 
   <dialog class="add-source-sheet" id="addSourceSheet" aria-labelledby="addSourceTitle">
@@ -286,9 +303,39 @@
         { id: 'd', name: 'Quote_D.jpg', meta: 'JPG · Uploaded Sep 24' }
       ];
 
-      var slots = [];
+      var STORAGE_KEY = 'ovie.compareQuotes.slots.v1';
+
+      function loadStoredSlots() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return [];
+          var parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) return [];
+          return parsed.filter(function (slot) {
+            return slot && typeof slot.name === 'string' && typeof slot.source === 'string';
+          }).slice(0, MAX_SLOTS);
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function persistSlots() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(slots.map(function (s) {
+            return { name: s.name, source: s.source };
+          })));
+        } catch (e) {}
+      }
+
       var seenIds = Object.create(null);
       var nextId = 1;
+      // Restore quotes carried over from a previous visit (e.g. tapping Edit
+      // on the results screen) so they arrive already filled, not blank.
+      var slots = loadStoredSlots().map(function (stored) {
+        var id = 'slot-' + (nextId++);
+        seenIds[id] = true;
+        return { id: id, name: stored.name, source: stored.source };
+      });
       var pendingSlotIndex = null;
       var myFilesSelectedId = null;
 
@@ -296,6 +343,19 @@
       var compareBtn = document.getElementById('compareBtn');
       var toast = document.getElementById('toast');
       var toastTimer;
+
+      var comparingOverlay = document.getElementById('comparingOverlay');
+      var comparingLottieEl = document.getElementById('comparingLottie');
+      var comparingStatusEl = document.getElementById('comparingStatus');
+      var comparingLottieAnim = null;
+      var comparingTimers = [];
+      var COMPARING_MESSAGES = [
+        'Reading your quotes…',
+        'Comparing coverage and pricing…',
+        'Finalizing your comparison…'
+      ];
+      var COMPARING_MESSAGE_MS = 1500;
+      var COMPARING_SWAP_MS = 200;
 
       var docIcon = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg>';
       var uploadIcon = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>';
@@ -314,6 +374,7 @@
       }
 
       function render() {
+        persistSlots();
         // Slot list: filled rows, then remaining empty/add-more state
         var html = '';
         slots.forEach(function (slot, index) {
@@ -565,9 +626,73 @@
         addSlot(selectedFile.name, 'From My Files');
       });
 
+      function reducedMotion() {
+        return matchMedia('(prefers-reduced-motion:reduce)').matches;
+      }
+
+      function clearComparingTimers() {
+        comparingTimers.forEach(clearTimeout);
+        comparingTimers = [];
+      }
+
+      function scheduleNextComparingMessage(index) {
+        if (index >= COMPARING_MESSAGES.length) return;
+        comparingStatusEl.classList.add('is-swapping');
+        comparingTimers.push(setTimeout(function () {
+          comparingStatusEl.textContent = COMPARING_MESSAGES[index];
+          comparingStatusEl.classList.remove('is-swapping');
+          comparingTimers.push(setTimeout(function () {
+            scheduleNextComparingMessage(index + 1);
+          }, COMPARING_MESSAGE_MS - COMPARING_SWAP_MS));
+        }, COMPARING_SWAP_MS));
+      }
+
+      function startComparingSequence() {
+        comparingStatusEl.textContent = COMPARING_MESSAGES[0];
+        comparingStatusEl.classList.remove('is-swapping');
+        comparingOverlay.hidden = false;
+        comparingOverlay.classList.remove('is-visible');
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { comparingOverlay.classList.add('is-visible'); });
+        });
+
+        if (window.lottie) {
+          if (!comparingLottieAnim) {
+            comparingLottieAnim = window.lottie.loadAnimation({
+              container: comparingLottieEl,
+              // Canvas renderer, not svg: lottie-web 5.12.2's svg renderer
+              // does not correctly animate this asset's intersect mask (the
+              // scan-reveal band stays solid instead of fading/un-revealing
+              // as the bar sweeps up), so the sweep direction reads wrong.
+              // Canvas renders the mask correctly.
+              renderer: 'canvas',
+              loop: true,
+              autoplay: true,
+              path: 'assets/lottie/document-ocr-scan.json'
+            });
+          } else {
+            comparingLottieAnim.goToAndPlay(0, true);
+          }
+        }
+
+        comparingTimers.push(setTimeout(function () {
+          scheduleNextComparingMessage(1);
+        }, COMPARING_MESSAGE_MS - COMPARING_SWAP_MS));
+
+        var totalMs = COMPARING_MESSAGES.length * COMPARING_MESSAGE_MS;
+        comparingTimers.push(setTimeout(function () {
+          clearComparingTimers();
+          comparingOverlay.classList.remove('is-visible');
+          if (comparingLottieAnim) comparingLottieAnim.pause();
+          setTimeout(function () {
+            location.href = 'ovie_auto_quote_comparison.html';
+          }, reducedMotion() ? 0 : 260);
+        }, totalMs));
+      }
+
       compareBtn.addEventListener('click', function () {
         if (compareBtn.disabled) return;
-        location.href = 'ovie_auto_quote_comparison.html';
+        startComparingSequence();
       });
 
       render();

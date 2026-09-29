@@ -174,7 +174,7 @@
           <h1>Compare quotes</h1>
           <p class="subtitle">Auto insurance · 2019 Honda CR-V</p>
         </div>
-        <button class="edit-link" type="button" aria-label="Edit which quotes you're comparing">
+        <button class="edit-link" id="editQuotesLink" type="button" aria-label="Edit which quotes you're comparing">
           <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg>
         </button>
       </div>
@@ -332,6 +332,9 @@
         event.preventDefault();
         var input = document.getElementById('chatInput');
         showToast(input.value.trim() ? 'Opening Ask Ovie with your question.' : 'Ask Ovie voice input would start here.');
+      });
+      document.getElementById('editQuotesLink').addEventListener('click', function () {
+        location.href = 'ovie_upload_quote_comparison.html';
       });
     })();
   </script>
