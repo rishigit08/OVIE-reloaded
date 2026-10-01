@@ -47,7 +47,7 @@
     }
 
     @media (max-width: 480px) {
-      html, body { background: var(--bg-canvas); }
+      html, body { background: var(--primary-soft); }
     }
 
     .app-shell {
@@ -56,7 +56,7 @@
       min-height: 100dvh;
       margin: 0 auto;
       overflow: hidden;
-      background: var(--bg-canvas);
+      background: var(--primary-soft);
       display: flex;
       flex-direction: column;
     }
@@ -77,7 +77,7 @@
       justify-content: center;
       gap: 24px;
       text-align: center;
-      padding: calc(env(safe-area-inset-top) + 26px) 19px 26px;
+      padding: calc(env(safe-area-inset-top) + 18.2px) 19px 18.2px;
       color: var(--primary);
     }
 
@@ -112,9 +112,9 @@
     /* Scoped exception vs DESIGN.md §3 (AI gradient reserved for Ask Ovie): per product direction,
        the headline accent uses the pink→purple gradient as a one-time onboarding focal moment. */
     .headline .accent {
-      /* Accent phrase keeps the original 32px/36px; the first line above is 24px/28px. */
-      font-size: 32px;
-      line-height: 36px;
+      /* Accent phrase is 28px/32px; the first line above is 24px/28px. */
+      font-size: 28px;
+      line-height: 32px;
       background: linear-gradient(90deg, var(--ai-gradient-start), var(--ai-gradient-end));
       -webkit-background-clip: text;
       background-clip: text;
