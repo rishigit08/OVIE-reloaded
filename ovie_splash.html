@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6b4062">
+  <title>Ovie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6b4062;
+      --icon-inverse: #ffffff;
+      --prototype-backdrop: #e3e3e3;
+      --motion-duration-overlay: 260ms;
+      --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100dvh;
+      background: var(--prototype-backdrop);
+      font-family: Figtree, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @media (max-width: 480px) {
+      html, body { background: var(--primary); }
+    }
+
+    .app-shell {
+      width: min(100%, 480px);
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (min-width: 481px) {
+      .app-shell { border-inline: 1px solid #d2d2d2; }
+    }
+
+    /* Brand logo (assets/Ovie Logo.svg), drawn on currentColor so it renders white on plum. */
+    .logo {
+      display: block;
+      width: 96px;
+      height: auto;
+      color: var(--icon-inverse);
+    }
+
+    /* Entrance: the logo settles in from scale(0.96) so the splash doesn't snap on
+       (preventing a jarring change). Browsers without @starting-style show it instantly. */
+    .brand {
+      opacity: 1;
+      transform: scale(1);
+      transition:
+        opacity var(--motion-duration-overlay) var(--motion-ease-out),
+        transform var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+    @starting-style {
+      .brand { opacity: 0; transform: scale(0.96); }
+    }
+
+    /* Exit: just before navigating to Get Started the logo lifts and fades. ease-out so the
+       user sees instant movement; short duration so the handoff feels immediate. */
+    .brand.is-exiting {
+      opacity: 0;
+      transform: scale(1.08);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .brand { transition: opacity var(--motion-duration-overlay) var(--motion-ease-out); }
+      @starting-style { .brand { transform: none; } }
+      .brand.is-exiting { transform: none; }
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <h1 class="visually-hidden">Ovie</h1>
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 180 178" role="img" aria-label="Ovie logo" fill="currentColor">
+        <path d="M85.6978 0.1553C97.4348 -0.6722 97.526 1.8528 106.426 6.64155C105.98 7.60355 105.398 8.7253 104.514 9.3158C101.745 11.1633 98.6205 12.808 95.7142 14.4308L80.9937 22.7215C66.41 30.9498 51.11 39.967 36.4235 47.8415C39.4097 50.45 49.4903 55.2875 53.6058 58.0678C57.167 55.8798 61.658 53.5076 65.3463 51.4316L88.3355 38.4841L110.408 26.0371C114.184 23.9078 117.939 21.6003 121.803 19.6423C122.852 19.1103 124.791 18.0816 125.978 18.1966C128.752 18.4653 166.984 40.3708 172.077 43.7075C173.648 44.7368 175.556 45.983 176.624 47.5398C177.071 48.1915 177.089 48.541 176.938 49.2593C175.315 51.0638 160.706 58.916 157.503 60.7173L113.832 85.2781C106.581 89.3478 96.4203 94.6751 89.6445 99.0183C84.1053 95.8476 77.4855 92.053 72.1852 88.706C74.898 86.1558 88.322 79.0255 92.151 76.872L123.242 59.2386C129.564 55.6618 137.212 51.5886 143.275 47.7073C139.146 45.1706 129.782 39.9371 125.374 38.2663L77.8465 64.9953L63.2518 73.223C60.175 74.959 56.501 77.1345 53.33 78.5595C51.4048 77.1345 43.2675 72.7141 40.8295 71.3588C33.176 67.1043 25.2377 62.2838 17.5242 58.2278C17.2105 61.9666 17.1298 74.3483 17.6943 77.7238C19.804 79.8168 28.7435 84.5013 31.9445 86.2913L55.9583 99.7168L76.663 111.338C80.321 113.407 86.263 117.029 89.9855 118.453C91.768 117.756 95.0868 115.693 96.882 114.669L109.828 107.342L162.66 77.5825C166.411 75.468 175.526 70.0405 178.951 68.6585C179.401 79.6723 178.815 92.3658 179.042 103.528C179.14 108.4 179.281 124.878 178.467 128.547C174.518 132.41 166.942 136.14 161.97 138.953L133.081 155.262L108.454 169.116C104.184 171.521 99.9917 174.048 95.5957 176.209C92.088 177.933 87.2922 177.819 83.8152 176.038C78.8492 173.495 73.9837 170.629 69.096 167.91L43.3138 153.654L20.4853 140.888C15.2298 137.992 9.85475 135.002 4.6605 131.979C3.382 131.235 1.9095 129.619 0.916001 128.478C-0.090499 123.426 -0.421997 114.058 0.718003 109.107C2.5575 109.991 5.4195 111.764 7.3075 112.833L20.5085 120.263L67.5152 146.685L79.9055 153.699C82.941 155.423 86.592 157.612 89.7887 158.844C92.829 157.687 96.6667 155.35 99.5835 153.695L114.705 145.108C124.309 139.769 133.883 134.376 143.427 128.931C148.524 126.08 156.633 121.866 161.271 118.698C161.295 112.223 161.823 105.259 161.266 98.8898C155.72 102.366 148.367 106.282 142.621 109.508L111.358 127.086C107.3 129.344 103.255 131.623 99.2213 133.924C96.3663 135.556 93.2085 137.527 90.153 138.727C89.1657 139.115 84.941 136.713 83.8667 136.096C78.2092 132.842 72.4958 129.683 66.8058 126.483L22.7738 101.777L6.83925 92.8333C4.62425 91.5838 2.6265 90.236 0.345254 89.0723C0.0722537 87.2953 0.0885029 85.3288 0.107003 83.5265C0.210503 73.422 -0.166504 63.2435 0.400246 53.159C0.671246 48.3368 2.9645 45.9735 6.91775 43.4923C10.2315 41.4123 13.8195 39.5518 17.261 37.656L36.481 27.043L66.6675 10.145C70.8132 7.8168 81.835 1.1303 85.6978 0.1553Z"/>
+      </svg>
+    </div>
+  </main>
+  <script>
+    // Hand off to the Get Started screen after the splash has settled. The logo plays a short
+    // scale + fade exit first (reduced motion skips the exit and navigates sooner), so the
+    // transition into the next screen never feels like a hard cut.
+    (function () {
+      var brand = document.querySelector('.brand');
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var dwell = reduce ? 400 : 1300;
+      var exitMs = reduce ? 0 : 200;
+
+      window.setTimeout(function () {
+        if (!reduce && brand) brand.classList.add('is-exiting');
+        window.setTimeout(function () {
+          window.location.href = 'ovie_get_started.html';
+        }, exitMs);
+      }, dwell);
+    })();
+  </script>
+</body>
+</html>
