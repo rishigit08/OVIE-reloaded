@@ -129,6 +129,16 @@
       --base: clamp(176px, 56cqw, 236px);
       width: calc(var(--base) * 1.2);
       margin-block: calc(var(--base) * -0.088);
+      /* +30% on the 24px image-to-copy gap (7.2px), on this slide only. */
+      margin-bottom: calc(var(--base) * -0.088 + 7.2px);
+    }
+
+    /* The folder art is square, 10% larger than the standard illustration size, with a negative
+       margin (half the extra height, per side) so the slide's layout footprint is unchanged. */
+    .illustration[data-illustration="policies"] {
+      --base: clamp(176px, 56cqw, 236px);
+      width: calc(var(--base) * 1.1);
+      margin-block: calc(var(--base) * -0.05);
     }
 
     /* Headline + subtext travel together so they sit close (8px) while the hero keeps its
@@ -238,7 +248,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      /* Bottom-anchored so every slide's last line of copy sits the same distance above the
+         progress bar, whatever the illustration height or subtext wrapping. */
+      justify-content: flex-end;
+      padding-bottom: 12px;
       gap: 24px;
       opacity: 0;
       transform: translateY(8px);
@@ -493,7 +506,7 @@
 
       <div class="hero-stage">
         <div class="slide is-active" data-step="0" aria-hidden="false">
-          <img class="illustration" src="assets/ovie-get-started-illustration.webp" alt="A purple folder holding colorful policy documents" width="1027" height="1024" decoding="async">
+          <img class="illustration" src="assets/ovie-get-started-illustration.webp" data-illustration="policies" alt="A purple folder holding colorful policy documents" width="1027" height="1024" decoding="async">
           <div class="hero-copy">
             <h2 class="headline">All your policies, one place</h2>
             <p class="subtext">Keep every policy safe, organized, and easy to find.</p>
