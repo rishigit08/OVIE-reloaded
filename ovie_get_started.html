@@ -112,8 +112,8 @@
       height: auto;
     }
 
-    /* The find-gaps art is portrait (879x1216), so size it by height to match the square
-       illustrations' rendered height (same clamp as .illustration's width, via cqw of the .hero-stage container). */
+    /* The find-gaps art is sized by height off the same clamp as .illustration's width
+       (via cqw of the .hero-stage container), then scaled up below. */
     .illustration[data-illustration="gaps"] {
       --base: clamp(176px, 56cqw, 236px);
       width: auto;
@@ -121,6 +121,14 @@
          keeps the slide's layout footprint unchanged so the copy and progress bar don't shift. */
       height: calc(var(--base) * 1.2);
       margin-block: calc(var(--base) * -0.1);
+    }
+
+    /* The ask-anything art is landscape (1091x960): 20% wider than the standard illustration, with a
+       negative margin (half the extra height, per side) so the slide's layout footprint is unchanged. */
+    .illustration[data-illustration="ask"] {
+      --base: clamp(176px, 56cqw, 236px);
+      width: calc(var(--base) * 1.2);
+      margin-block: calc(var(--base) * -0.088);
     }
 
     /* Headline + subtext travel together so they sit close (8px) while the hero keeps its
@@ -492,15 +500,14 @@
           </div>
         </div>
         <div class="slide" data-step="1" aria-hidden="true">
-          <img class="illustration" src="assets/illustration-find-gaps.webp" data-illustration="gaps" alt="A magnifying glass over a clipboard of policy pages" width="879" height="1216" decoding="async" loading="lazy">
+          <img class="illustration" src="assets/illustration-find-gaps.webp" data-illustration="gaps" alt="A magnifying glass over a clipboard of policy pages" width="1027" height="1024" decoding="async" loading="lazy">
           <div class="hero-copy">
             <h2 class="headline">Find gaps early</h2>
             <p class="subtext">Ovie flags what's missing before you claim.</p>
           </div>
         </div>
         <div class="slide" data-step="2" aria-hidden="true">
-          <!-- TODO: swap src for the step-3 illustration when supplied (reusing step 1's art as a placeholder for now). -->
-          <img class="illustration" src="assets/ovie-get-started-illustration.webp" data-illustration="ask" alt="Asking Ovie a question about your policy" width="1027" height="1024" decoding="async" loading="lazy">
+          <img class="illustration" src="assets/illustration-ask-anything.webp" data-illustration="ask" alt="A phone showing a policy document with chat bubbles for asking Ovie a question" width="1091" height="960" decoding="async" loading="lazy">
           <div class="hero-copy">
             <h2 class="headline">Ask your policy anything</h2>
             <p class="subtext">Your questions, answered from your documents.</p>
