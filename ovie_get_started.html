@@ -85,11 +85,24 @@
 
     /* Hero actors — a plain Figtree "ovie" wordmark in neutral grey, sized to a quiet 26px
        so it reads as a label above the value prop rather than a competing title. */
+    /* Lockup: brand mark + "ovie" text, side by side, sharing one muted color. The text SVG has
+       ~11px of blank space on its left, so a 4.2px CSS gap gives a ~15px visible gap (20% tighter
+       than the original 8px gap, which looked like ~19px). */
     .wordmark {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 4.2px;
       height: 26px;
       /* Alpha on the color rather than element opacity, which the reveal transition animates. */
       color: rgba(95, 99, 104, 0.55);
+    }
+    .wordmark-logo {
+      height: 24px;
+      width: auto;
+    }
+    .wordmark-text {
+      height: 26px;
+      width: auto;
     }
 
     /* Illustration: assets/ovie-get-started-illustration.webp (transparent background). */
@@ -99,27 +112,125 @@
       height: auto;
     }
 
+    /* Headline + subtext travel together so they sit close (8px) while the hero keeps its
+       24px rhythm between the wordmark, illustration and this block. */
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      max-width: 100%;
+    }
+
+    .subtext {
+      margin: 0;
+      font-size: 14px;
+      line-height: 20px;
+      text-align: center;
+      text-wrap: balance;
+      color: var(--muted);
+    }
+
+    /* Scoped exception vs DESIGN.md §3 (AI gradient reserved for Ask Ovie): per product direction,
+       the whole headline uses the pink→purple gradient as a one-time onboarding focal moment.
+       fit-content keeps the gradient spanning the text itself (not the full row), and balanced
+       wrapping splits a long headline into even lines on narrow phones. */
     .headline {
       margin: 0;
-      /* 15ch was sized for a single 32px size; the accent line is wider than 15ch of the 24px first line. */
+      width: fit-content;
       max-width: 100%;
-      font-size: 24px;
-      line-height: 28px;
+      /* One line on every phone: 28px where it fits, scaling down with the viewport on narrow
+         screens (the hero is viewport minus 38px of padding). */
+      font-size: clamp(22px, 7.4vw, 28px);
+      line-height: 32px;
       font-weight: 600;
       letter-spacing: -0.5px;
-      color: var(--ink);
-    }
-    /* Scoped exception vs DESIGN.md §3 (AI gradient reserved for Ask Ovie): per product direction,
-       the headline accent uses the pink→purple gradient as a one-time onboarding focal moment. */
-    .headline .accent {
-      /* Accent phrase is 28px/32px; the first line above is 24px/28px. */
-      font-size: 28px;
-      line-height: 32px;
+      white-space: nowrap;
       background: linear-gradient(90deg, var(--ai-gradient-start), var(--ai-gradient-end));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       -webkit-text-fill-color: transparent;
+    }
+
+    /* ---------- Onboarding progress (story-style segmented bars) ---------- */
+    .progress {
+      display: flex;
+      gap: 6px;
+      /* Matches the widest slide copy line; JS sets --copy-max-width (322px = the longest headline
+         at its 28px maximum, used until it measures). */
+      width: min(100%, var(--copy-max-width, 322px));
+      /* Pull the 44px hit area up so the 3px bars sit ~12px under the slide copy. */
+      margin-top: -20px;
+    }
+    /* Each segment is a 44px-tall button (the contract's minimum target) that draws a 3px bar:
+       the transparent padding is the hit area, background-clip:content-box paints only the bar. */
+    .progress-seg {
+      flex: 1;
+      height: 44px;
+      padding: 20.5px 0;
+      border: 0;
+      border-radius: 0;
+      background: rgba(107, 64, 98, 0.1);
+      background-clip: content-box;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .progress-fill {
+      position: absolute;
+      inset: 20.5px 0;
+      border-radius: 999px;
+      /* Alpha on the color (not element opacity) so the reveal transition stays independent. */
+      background: rgba(107, 64, 98, 0.5);
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .progress-seg.is-done .progress-fill { transform: scaleX(1); }
+    /* The active bar fills left→right over the step's dwell. Linear (determinate progress),
+       transform-only (GPU), and a CSS animation so it stays smooth while the page is busy.
+       Gated on .carousel-running so it only starts after the splash reveal. */
+    .carousel-running .progress-seg.is-active .progress-fill {
+      animation: progress-fill 3600ms linear forwards;
+    }
+    @keyframes progress-fill {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    /* ---------- Hero carousel layout ---------- */
+    .hero-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+    }
+    /* Fixed-height stage so the absolutely-stacked slides can crossfade without reflow. */
+    .hero-stage {
+      position: relative;
+      width: 100%;
+      height: 310px;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition:
+        opacity var(--motion-duration-overlay) var(--motion-ease-out),
+        transform var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+    .slide.is-active {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
     }
 
     /* ---------- Auth sheet (bottom): the CTAs live on a white rounded sheet docked to the
@@ -289,9 +400,9 @@
       transform: translateY(0);
     }
 
+    .progress,
     .wordmark,
-    .illustration,
-    .headline {
+    .hero-stage {
       /* From state: nudged 16px down + invisible. On reveal they rise upward into place. */
       opacity: 0;
       transform: translateY(16px);
@@ -299,23 +410,24 @@
         opacity var(--motion-duration-overlay) var(--motion-ease-out),
         transform var(--motion-duration-overlay) var(--motion-ease-out);
     }
+    .is-revealed .progress,
     .is-revealed .wordmark,
-    .is-revealed .illustration,
-    .is-revealed .headline {
+    .is-revealed .hero-stage {
       opacity: 1;
       transform: translateY(0);
     }
-    /* Stagger top to bottom: wordmark, illustration, headline. */
-    .is-revealed .wordmark     { transition-delay: 60ms; }
-    .is-revealed .illustration { transition-delay: 120ms; }
-    .is-revealed .headline     { transition-delay: 180ms; }
+    /* Stagger top to bottom: progress, wordmark, stage. */
+    .is-revealed .progress   { transition-delay: 60ms; }
+    .is-revealed .wordmark   { transition-delay: 120ms; }
+    .is-revealed .hero-stage { transition-delay: 180ms; }
 
     @media (prefers-reduced-motion: reduce) {
       .splash,
       .splash-brand,
+      .progress,
       .wordmark,
-      .illustration,
-      .headline,
+      .hero-stage,
+      .slide,
       .auth-panel {
         transition: opacity var(--motion-duration-standard) var(--motion-ease-out);
         transition-delay: 0ms;
@@ -323,9 +435,13 @@
       .splash-brand.is-growing { transform: none; }
       .auth-panel,
       .is-revealed .auth-panel { transform: none; }
+      .progress,
       .wordmark,
-      .illustration,
-      .headline { transform: none; }
+      .hero-stage,
+      .slide { transform: none; }
+      /* No smooth fill or auto-advance under reduced motion: the active bar reads as filled and
+         the user taps the segments to move between steps. */
+      .carousel-running .progress-seg.is-active .progress-fill { animation: none; transform: scaleX(1); }
       .splash.is-fading { transition-duration: var(--motion-duration-standard); }
       @starting-style {
         .splash-brand { transform: none; }
@@ -345,19 +461,52 @@
     </div>
 
     <section class="hero">
-      <h1 class="visually-hidden">Ovie — every policy, clearly explained</h1>
+      <h1 class="visually-hidden">Ovie onboarding</h1>
 
-      <svg class="wordmark" viewBox="0 0 148 56" role="img" aria-label="Ovie" fill="currentColor">
-        <text x="74" y="44" text-anchor="middle" font-family="Figtree, system-ui, sans-serif" font-size="56" font-weight="600" letter-spacing="-1.5">ovie</text>
-      </svg>
+      <div class="hero-main">
+      <div class="wordmark" role="img" aria-label="Ovie">
+        <svg class="wordmark-logo" viewBox="0 0 180 178" fill="currentColor" aria-hidden="true"><path d="M85.6978 0.1553C97.4348 -0.6722 97.526 1.8528 106.426 6.64155C105.98 7.60355 105.398 8.7253 104.514 9.3158C101.745 11.1633 98.6205 12.808 95.7142 14.4308L80.9937 22.7215C66.41 30.9498 51.11 39.967 36.4235 47.8415C39.4097 50.45 49.4903 55.2875 53.6058 58.0678C57.167 55.8798 61.658 53.5076 65.3463 51.4316L88.3355 38.4841L110.408 26.0371C114.184 23.9078 117.939 21.6003 121.803 19.6423C122.852 19.1103 124.791 18.0816 125.978 18.1966C128.752 18.4653 166.984 40.3708 172.077 43.7075C173.648 44.7368 175.556 45.983 176.624 47.5398C177.071 48.1915 177.089 48.541 176.938 49.2593C175.315 51.0638 160.706 58.916 157.503 60.7173L113.832 85.2781C106.581 89.3478 96.4203 94.6751 89.6445 99.0183C84.1053 95.8476 77.4855 92.053 72.1852 88.706C74.898 86.1558 88.322 79.0255 92.151 76.872L123.242 59.2386C129.564 55.6618 137.212 51.5886 143.275 47.7073C139.146 45.1706 129.782 39.9371 125.374 38.2663L77.8465 64.9953L63.2518 73.223C60.175 74.959 56.501 77.1345 53.33 78.5595C51.4048 77.1345 43.2675 72.7141 40.8295 71.3588C33.176 67.1043 25.2377 62.2838 17.5242 58.2278C17.2105 61.9666 17.1298 74.3483 17.6943 77.7238C19.804 79.8168 28.7435 84.5013 31.9445 86.2913L55.9583 99.7168L76.663 111.338C80.321 113.407 86.263 117.029 89.9855 118.453C91.768 117.756 95.0868 115.693 96.882 114.669L109.828 107.342L162.66 77.5825C166.411 75.468 175.526 70.0405 178.951 68.6585C179.401 79.6723 178.815 92.3658 179.042 103.528C179.14 108.4 179.281 124.878 178.467 128.547C174.518 132.41 166.942 136.14 161.97 138.953L133.081 155.262L108.454 169.116C104.184 171.521 99.9917 174.048 95.5957 176.209C92.088 177.933 87.2922 177.819 83.8152 176.038C78.8492 173.495 73.9837 170.629 69.096 167.91L43.3138 153.654L20.4853 140.888C15.2298 137.992 9.85475 135.002 4.6605 131.979C3.382 131.235 1.9095 129.619 0.916001 128.478C-0.090499 123.426 -0.421997 114.058 0.718003 109.107C2.5575 109.991 5.4195 111.764 7.3075 112.833L20.5085 120.263L67.5152 146.685L79.9055 153.699C82.941 155.423 86.592 157.612 89.7887 158.844C92.829 157.687 96.6667 155.35 99.5835 153.695L114.705 145.108C124.309 139.769 133.883 134.376 143.427 128.931C148.524 126.08 156.633 121.866 161.271 118.698C161.295 112.223 161.823 105.259 161.266 98.8898C155.72 102.366 148.367 106.282 142.621 109.508L111.358 127.086C107.3 129.344 103.255 131.623 99.2213 133.924C96.3663 135.556 93.2085 137.527 90.153 138.727C89.1657 139.115 84.941 136.713 83.8667 136.096C78.2092 132.842 72.4958 129.683 66.8058 126.483L22.7738 101.777L6.83925 92.8333C4.62425 91.5838 2.6265 90.236 0.345254 89.0723C0.0722537 87.2953 0.0885029 85.3288 0.107003 83.5265C0.210503 73.422 -0.166504 63.2435 0.400246 53.159C0.671246 48.3368 2.9645 45.9735 6.91775 43.4923C10.2315 41.4123 13.8195 39.5518 17.261 37.656L36.481 27.043L66.6675 10.145C70.8132 7.8168 81.835 1.1303 85.6978 0.1553Z"/></svg>
+        <svg class="wordmark-text" viewBox="0 0 148 56" fill="currentColor" aria-hidden="true">
+          <text x="74" y="44" text-anchor="middle" font-family="Figtree, system-ui, sans-serif" font-size="56" font-weight="600" letter-spacing="-1.5">ovie</text>
+        </svg>
+      </div>
 
-      <img class="illustration" src="assets/ovie-get-started-illustration.webp" alt="A purple folder holding colorful policy documents" width="1027" height="1024" decoding="async">
+      <div class="hero-stage">
+        <div class="slide is-active" data-step="0" aria-hidden="false">
+          <img class="illustration" src="assets/ovie-get-started-illustration.webp" alt="A purple folder holding colorful policy documents" width="1027" height="1024" decoding="async">
+          <div class="hero-copy">
+            <h2 class="headline">All your policies, one place</h2>
+            <p class="subtext">Keep every policy safe, organized, and easy to find.</p>
+          </div>
+        </div>
+        <div class="slide" data-step="1" aria-hidden="true">
+          <!-- TODO: swap src for the step-2 illustration when supplied (reusing step 1's art as a placeholder for now). -->
+          <img class="illustration" src="assets/ovie-get-started-illustration.webp" data-illustration="gaps" alt="Ovie highlighting a gap in your coverage" width="1027" height="1024" decoding="async" loading="lazy">
+          <div class="hero-copy">
+            <h2 class="headline">Find gaps early</h2>
+            <p class="subtext">Ovie flags what's missing before you claim.</p>
+          </div>
+        </div>
+        <div class="slide" data-step="2" aria-hidden="true">
+          <!-- TODO: swap src for the step-3 illustration when supplied (reusing step 1's art as a placeholder for now). -->
+          <img class="illustration" src="assets/ovie-get-started-illustration.webp" data-illustration="ask" alt="Asking Ovie a question about your policy" width="1027" height="1024" decoding="async" loading="lazy">
+          <div class="hero-copy">
+            <h2 class="headline">Ask your policy anything</h2>
+            <p class="subtext">Your questions, answered from your documents.</p>
+          </div>
+        </div>
+      </div>
 
-      <h2 class="headline">Every policy,<br><span class="accent">clearly explained</span></h2>
+      <div class="progress" role="group" aria-label="Onboarding progress">
+        <button class="progress-seg is-active" type="button" aria-label="Step 1 of 3"><span class="progress-fill"></span></button>
+        <button class="progress-seg" type="button" aria-label="Step 2 of 3"><span class="progress-fill"></span></button>
+        <button class="progress-seg" type="button" aria-label="Step 3 of 3"><span class="progress-fill"></span></button>
+      </div>
+      </div>
     </section>
 
     <section class="auth-panel" aria-label="Sign in or create an account">
-      <p class="auth-subtitle">Everything you're insured for, kept safe and explained simply.</p>
+      <p class="auth-subtitle">Get started with Ovie now</p>
 
       <button class="primary-action" type="button" data-next="ovie_get_started_phone.html">Continue with phone</button>
       <button class="secondary-action" type="button" data-next="ovie_get_started_email.html">Continue with email</button>
@@ -389,13 +538,66 @@
   </main>
 
   <script>
-    // Drives the one-time onboarding intro: splash dwell → splash exit → reveal.
+    // Drives the one-time onboarding intro: splash dwell → splash exit → reveal → carousel.
     // Refreshing the page replays the whole sequence from the splash.
     (function () {
       var shell = document.querySelector('.app-shell');
+      var hero = document.querySelector('.hero');
       var splash = document.getElementById('splash');
       var brand = document.getElementById('splashBrand');
       var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ---- Onboarding carousel ----
+      var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+      var segs = Array.prototype.slice.call(document.querySelectorAll('.progress-seg'));
+      var fills = Array.prototype.slice.call(document.querySelectorAll('.progress-fill'));
+      var current = 0;
+
+      function setStep(i) {
+        current = Math.max(0, Math.min(slides.length - 1, i));
+        slides.forEach(function (sl, idx) {
+          sl.classList.toggle('is-active', idx === current);
+          sl.setAttribute('aria-hidden', idx === current ? 'false' : 'true');
+        });
+        segs.forEach(function (sg, idx) {
+          sg.classList.toggle('is-done', idx < current);
+          sg.classList.toggle('is-active', idx === current);
+        });
+        // Restart the active segment's fill from 0 (needed when jumping back to a visited step).
+        var f = fills[current];
+        if (f) { f.style.animation = 'none'; void f.offsetWidth; f.style.animation = ''; }
+      }
+
+      // When the active bar finishes filling, advance; after the last step, loop to the first.
+      fills.forEach(function (f, idx) {
+        f.addEventListener('animationend', function () {
+          if (idx === current) setStep((current + 1) % slides.length);
+        });
+      });
+      // Tapping a segment jumps to that step.
+      segs.forEach(function (sg, idx) {
+        sg.addEventListener('click', function () { setStep(idx); });
+      });
+
+      // Size the progress bar to the widest line of slide copy (headline or subtext).
+      var progress = document.querySelector('.progress');
+      function sizeProgress() {
+        var max = 0;
+        document.querySelectorAll('.headline, .subtext').forEach(function (el) {
+          var range = document.createRange();
+          range.selectNodeContents(el);
+          max = Math.max(max, range.getBoundingClientRect().width);
+        });
+        if (max) progress.style.setProperty('--copy-max-width', Math.ceil(max) + 'px');
+      }
+      sizeProgress();
+      window.addEventListener('resize', sizeProgress);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeProgress);
+
+      function startCarousel() {
+        hero.classList.add('carousel-running');
+        setStep(0);
+      }
 
       // Timeline (ms after load):
       //   DWELL            logo rests, centered
@@ -416,6 +618,8 @@
           splash.classList.add('is-fading');
           shell.classList.add('is-revealed');
           window.setTimeout(function () { splash.remove(); }, FADE + 40);
+          // Start the carousel once the reveal has settled.
+          window.setTimeout(startCarousel, reduce ? 0 : 600);
         }, FADE_AT);
       }, DWELL);
     })();
