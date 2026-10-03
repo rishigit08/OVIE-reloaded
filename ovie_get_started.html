@@ -53,7 +53,9 @@
     .app-shell {
       position: relative;
       width: min(100%, 480px);
-      min-height: 100dvh;
+      /* Pin to the viewport so short screens compress the hero instead of pushing the auth
+         panel (and its terms line) past the bottom edge. */
+      height: 100dvh;
       margin: 0 auto;
       overflow: hidden;
       background: var(--primary-soft);
@@ -77,7 +79,9 @@
       justify-content: center;
       gap: 24px;
       text-align: center;
-      padding: calc(env(safe-area-inset-top) + 14.56px) 19px 18.2px;
+      /* Top padding clears the phone's native status bar: the device safe-area inset on notched
+         phones, or a 24px floor where the browser reports no inset, plus 10px of breathing room. */
+      padding: calc(max(env(safe-area-inset-top), 24px) + 10px) 19px 10px;
       color: var(--primary);
     }
 
@@ -110,35 +114,33 @@
       display: block;
       width: clamp(176px, 56%, 236px);
       height: auto;
+      /* On short viewports the stage flexes below the art's natural size; cap it so the art
+         shrinks (keeping aspect ratio) instead of bleeding up over the wordmark. */
+      max-height: 100%;
+      object-fit: contain;
     }
 
-    /* The find-gaps art is sized by height off the same clamp as .illustration's width
-       (via cqw of the .hero-stage container), then scaled up below. */
+    /* Per-slide illustration sizes, as multiples of --base (the standard clamp, via cqw of the
+       .hero-stage container). The copy is bottom-anchored with a fixed gap, so size changes only
+       affect the whitespace above each image — no footprint hack needed. */
     .illustration[data-illustration="gaps"] {
       --base: clamp(176px, 56cqw, 236px);
       width: auto;
-      /* 20% larger than the other slides' art; the negative margin (half the extra, per side)
-         keeps the slide's layout footprint unchanged so the copy and progress bar don't shift. */
-      height: calc(var(--base) * 1.2);
-      margin-block: calc(var(--base) * -0.1);
+      height: calc(var(--base) * 0.96);
     }
 
-    /* The ask-anything art is landscape (1091x960): 20% wider than the standard illustration, with a
-       negative margin (half the extra height, per side) so the slide's layout footprint is unchanged. */
+    /* Landscape art (1091x960), sized by width. */
     .illustration[data-illustration="ask"] {
       --base: clamp(176px, 56cqw, 236px);
-      width: calc(var(--base) * 1.2);
-      margin-block: calc(var(--base) * -0.088);
-      /* +30% on the 24px image-to-copy gap (7.2px), on this slide only. */
-      margin-bottom: calc(var(--base) * -0.088 + 7.2px);
+      width: calc(var(--base) * 0.96);
+      /* +7.2px on the 24px image-to-copy gap, on this slide only. */
+      margin-bottom: 7.2px;
     }
 
-    /* The folder art is square, 10% larger than the standard illustration size, with a negative
-       margin (half the extra height, per side) so the slide's layout footprint is unchanged. */
+    /* Square folder art. */
     .illustration[data-illustration="policies"] {
       --base: clamp(176px, 56cqw, 236px);
-      width: calc(var(--base) * 1.1);
-      margin-block: calc(var(--base) * -0.05);
+      width: calc(var(--base) * 0.88);
     }
 
     /* Headline + subtext travel together so they sit close (8px) while the hero keeps its
@@ -232,15 +234,24 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
+      gap: 16px;
       width: 100%;
+      /* Fill the hero and center within it, so the stage can flex on short viewports. */
+      flex: 1;
+      min-height: 0;
+      justify-content: center;
     }
-    /* Fixed-height stage so the absolutely-stacked slides can crossfade without reflow. */
+    /* Stage for the absolutely-stacked slides (crossfade without reflow). Flexes down on short
+       screens, capped at 310px so it never grows beyond the original design height. */
     .hero-stage {
       position: relative;
       width: 100%;
-      height: 310px;
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: 310px;
       container-type: inline-size;
+      /* Backstop: clip any residual overflow from the enlarged art's negative margins. */
+      overflow: hidden;
     }
     .slide {
       position: absolute;
@@ -274,7 +285,7 @@
       background: var(--surface);
       border-radius: 24px 24px 0 0;
       box-shadow: 0 -6px 16px rgba(17, 17, 17, 0.12);
-      padding: 20px 16px calc(18px + env(safe-area-inset-bottom));
+      padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
     }
 
     .auth-subtitle {
