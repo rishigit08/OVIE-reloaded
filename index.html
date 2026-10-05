@@ -967,6 +967,11 @@
 
     .ask-sheet[open].is-visible { transform: translate(-50%, 0); }
 
+    /* The desktop keyboard preview adds ~250px to the compact sheet; give it room so its bottom bar stays visible. */
+    .ask-sheet.show-android-keyboard-preview:not(.chat-view):not(.is-resized) {
+      max-height: min(calc(var(--visual-viewport-height, 100dvh) - 12px), 640px);
+    }
+
     .ask-sheet.chat-view {
       inset: calc(var(--visual-viewport-top, 0px) + 52px) auto auto 50%;
       width: min(100%, 480px);
@@ -1001,11 +1006,10 @@
       overflow: hidden;
     }
 
-    .ask-sheet.chat-view .sheet-handle { display: none; }
 
     .ask-sheet.chat-view .ask-sheet-header {
       flex: 0 0 auto;
-      margin: -8px -16px 0;
+      margin: 0 -16px 0;
       padding: 8px 16px;
       border-bottom: 1px solid var(--border-soft);
     }
@@ -1026,8 +1030,109 @@
       gap: 12px;
     }
 
-    .ask-sheet-title { display: flex; align-items: center; gap: 8px; }
-    .ask-sheet-title .ovie-assistant-mark { width: 22px; height: 22px; color: var(--primary); }
+    /* ---------- Resizable sheet: the handle drags the sheet between snap heights; far down dismisses ---------- */
+    .ask-sheet-handle {
+      position: relative;
+      cursor: grab;
+      touch-action: none;
+    }
+    /* 44px-tall hit area around the 4px bar. */
+    .ask-sheet-handle::before { content: ""; position: absolute; inset: -20px -48px; }
+    .ask-sheet-handle:active { cursor: grabbing; }
+    .ask-sheet-handle:focus-visible { outline-offset: 6px; }
+    .ask-sheet.is-resized.chat-view,
+    .ask-sheet.is-resized {
+      inset: auto auto var(--keyboard-inset, 0px) 50%;
+      height: var(--ask-sheet-height);
+      max-height: none;
+      transition:
+        transform var(--motion-duration-overlay) var(--motion-ease-drawer),
+        height var(--motion-duration-overlay) var(--motion-ease-drawer);
+    }
+    .ask-sheet.is-resized .ask-sheet-inner { height: 100%; display: flex; flex-direction: column; }
+    .ask-sheet.is-resized .ask-sheet-header,
+    .ask-sheet.is-resized .ask-greeting { flex: 0 0 auto; }
+    .ask-sheet.is-resized .ask-sheet-form { margin-top: auto; }
+    .ask-sheet.is-dragging { transition: none; }
+    .ask-sheet.is-dragging * { user-select: none; }
+    .ask-sheet-heading { display: flex; align-items: center; gap: 4px; }
+    .ask-sheet-title { margin: 0; }
+
+    /* ---------- Chat history: panel inside the Ask Ovie sheet, same size as the sheet; enters from the sheet's left edge, where the menu button sits ---------- */
+    .chat-history {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: var(--surface);
+      color: var(--ink);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-100%);
+      opacity: 0;
+      transition:
+        transform var(--motion-duration-overlay) var(--motion-ease-drawer),
+        opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+    .chat-history[hidden] { display: none; }
+    .chat-history.is-visible { transform: none; opacity: 1; }
+    .chat-history-inner {
+      min-height: 0;
+      flex: 1;
+      padding: 20px 16px calc(16px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-history-header { flex: 0 0 auto; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .chat-history-header .section-heading { margin: 0; }
+    .chat-history-body { min-height: 0; flex: 1; padding-top: 12px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+    .chat-history-body::-webkit-scrollbar { display: none; }
+    .chat-history-new {
+      width: 100%;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease;
+    }
+    .chat-history-new:active { transform: scale(.97); }
+    .chat-history-group-title { margin: 20px 0 4px; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--muted); }
+    .chat-history-list { margin: 0; padding: 0; list-style: none; }
+    .chat-history-row {
+      width: 100%;
+      min-height: 56px;
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 0;
+      border-bottom: 1px solid var(--border-soft);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+    .chat-history-list li:last-child .chat-history-row { border-bottom: 0; }
+    .chat-history-row-copy { min-width: 0; display: flex; flex-direction: column; }
+    .chat-history-row-title { font-weight: 600; color: var(--copy); }
+    .chat-history-row-meta { font-size: 12px; line-height: 16px; color: var(--muted); }
+    .chat-history-row svg { flex: 0 0 auto; color: var(--muted); }
+    .chat-history-row:active { background: var(--bg-subtle); }
+    @media (hover: hover) and (pointer: fine) {
+      .chat-history-new:hover { background: var(--primary-dark); }
+      .chat-history-row:hover { background: var(--bg-subtle); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .chat-history { transform: none; transition: opacity var(--motion-duration-standard) var(--motion-ease-out); }
+      .chat-history-new:active { transform: none; }
+    }
 
     .sheet-close {
       width: 44px;
@@ -1105,7 +1210,57 @@
     .ask-composer-action:active { transform: scale(.96); }
     .ask-answer-action[aria-pressed="true"][data-answer-action="helpful"] { color: var(--success); }
     .ask-answer-action[aria-pressed="true"][data-answer-action="not-helpful"] { color: var(--danger); }
-    .ask-answer-action.is-saved { color: var(--primary); background: var(--primary-soft); }
+    .ask-citations { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 16px 8px; }
+    .ask-citations[hidden] { display: none; }
+    .ask-followups { margin-top: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .ask-followups[hidden] { display: none; }
+    /* Follow-up suggestions: outlined chips (12px radius, same as the composer input) stacked vertically, each as wide as its content, no trailing icon. */
+    .ask-followup {
+      max-width: 100%;
+      min-height: 44px;
+      padding: 8px 14px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--copy);
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease, border-color var(--motion-duration-press) ease;
+    }
+    .ask-followup:active { transform: scale(.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-followup:hover { background: var(--primary-soft); border-color: var(--primary-soft); }
+    }
+    @media (prefers-reduced-motion: reduce) { .ask-followup:active { transform: none; } }
+    .ask-citation {
+      position: relative;
+      max-width: 100%;
+      min-height: 28px;
+      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--bg-subtle);
+      color: var(--copy);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease;
+    }
+    .ask-citation::before { content: ""; position: absolute; inset: -8px 0; }
+    .ask-citation svg { flex: 0 0 auto; color: var(--muted); }
+    .ask-citation:active { transform: scale(.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-citation:hover { background: var(--primary-soft); }
+    }
+    @media (prefers-reduced-motion: reduce) { .ask-citation:active { transform: none; } }
 
     @media (hover: hover) and (pointer: fine) {
       .ask-answer-action:hover,
@@ -1579,6 +1734,58 @@
       .nav-upload .nav-icon { color: ButtonText; }
       .nav-upload .nav-icon::before { border: 2px solid ButtonText; background: ButtonFace; box-shadow: none; }
     }
+
+    /* ---------- First-time greeting inside Ask Ovie (empty state; shown until the first question or close) ---------- */
+    .ask-greeting {
+      padding: 20px 0 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+    .ask-greeting[hidden],
+    .ask-sheet.chat-view .ask-greeting { display: none; }
+    .ask-greeting-title { margin: 0; max-width: 300px; font-size: 18px; line-height: 24px; font-weight: 600; text-wrap: balance; }
+    .ask-greeting-copy { margin: -8px 0 0; max-width: 300px; color: var(--muted); text-wrap: balance; }
+    /* Suggestion cards: a horizontal row that bleeds to the sheet edges so the next card peeks in. */
+    .ask-greeting-chips {
+      width: calc(100% + 32px);
+      margin: 8px -16px 0;
+      padding: 0 16px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scroll-padding-inline: 16px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .ask-greeting-chips::-webkit-scrollbar { display: none; }
+    .ask-greeting-chip {
+      flex: 0 0 auto;
+      width: 152px;
+      min-height: 56px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--bg-subtle);
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease;
+    }
+    .ask-greeting-chip-title { color: var(--copy); font-weight: 600; }
+    .ask-greeting-chip-meta { color: var(--muted); font-size: 12px; line-height: 16px; }
+    .ask-greeting-chip:active { transform: scale(.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-greeting-chip:hover { background: var(--primary-soft); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ask-greeting-chip:active { transform: none; }
+    }
   </style>
 </head>
 <body>
@@ -1898,13 +2105,27 @@
 
   <dialog class="ask-sheet" id="askOvieSheet" aria-labelledby="askOvieTitle">
     <div class="ask-sheet-inner">
-      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-handle ask-sheet-handle" id="askSheetHandle" role="button" tabindex="0" aria-label="Resize chat window. Drag, or use the up and down arrow keys."></div>
       <div class="ask-sheet-header">
-        <h2 class="section-heading ask-sheet-title" id="askOvieTitle"><svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg><span>Ask Ovie</span></h2>
+        <div class="ask-sheet-heading">
+          <button class="sheet-close" id="openChatHistory" type="button" aria-label="Chat history" aria-haspopup="dialog" aria-controls="chatHistory">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg>
+          </button>
+          <h2 class="section-heading ask-sheet-title" id="askOvieTitle">Ask Ovie</h2>
+        </div>
         <button class="sheet-close" id="closeAskOvie" type="button" aria-label="Close Ask Ovie">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
         </button>
       </div>
+      <section class="ask-greeting" id="askOvieGreeting" aria-labelledby="askGreetingTitle">
+        <h3 class="ask-greeting-title" id="askGreetingTitle">Hi Rishi, how can we help you?</h3>
+        <p class="ask-greeting-copy">Ask about the policies you have uploaded.</p>
+        <div class="ask-greeting-chips" role="group" aria-label="Suggested questions">
+          <button class="ask-greeting-chip" type="button" data-greeting-question="What does my policy cover?"><span class="ask-greeting-chip-title">What does my policy cover?</span><span class="ask-greeting-chip-meta">Coverage, limits and exclusions</span></button>
+          <button class="ask-greeting-chip" type="button" data-greeting-question="Where might I have gaps in my coverage?"><span class="ask-greeting-chip-title">Where might I have gaps?</span><span class="ask-greeting-chip-meta">Missing or unclear coverage</span></button>
+          <button class="ask-greeting-chip" type="button" data-greeting-question="When do my policies end?"><span class="ask-greeting-chip-title">When do my policies end?</span><span class="ask-greeting-chip-meta">Dates from your documents</span></button>
+        </div>
+      </section>
       <div class="ask-sheet-conversation" id="askOvieConversation" aria-live="polite" hidden>
         <div class="ask-user-policy" id="askOvieQuestionPolicy" hidden>
           <svg class="ask-user-policy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
@@ -1914,14 +2135,13 @@
         <div class="ask-ovie-response">
           <div class="ask-response-body">
             <p class="ask-response-text" id="askOvieAnswer"></p>
+            <div class="ask-citations" id="askOvieCitations" role="group" aria-label="Sources" hidden></div>
             <div class="ask-answer-actions" aria-label="Answer actions">
               <button class="ask-answer-action" type="button" data-answer-action="copy" aria-label="Copy answer" title="Copy answer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
-              <button class="ask-answer-action" type="button" data-answer-action="regenerate" aria-label="Regenerate answer" title="Regenerate answer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/><path d="M16 16h5v5"/></svg></button>
               <button class="ask-answer-action" type="button" data-answer-action="helpful" aria-label="Helpful answer" title="Helpful answer" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg></button>
               <button class="ask-answer-action" type="button" data-answer-action="not-helpful" aria-label="Not helpful" title="Not helpful" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg></button>
-              <button class="ask-answer-action" type="button" data-answer-action="source" aria-label="View source information" title="View source information"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
-              <button class="ask-answer-action" type="button" data-answer-action="save" aria-label="Save answer" title="Save answer" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
             </div>
+            <div class="ask-followups" id="askOvieFollowups" role="group" aria-label="Follow-up questions" hidden></div>
           </div>
         </div>
       </div>
@@ -1954,6 +2174,23 @@
           <button class="android-hide-keyboard" id="hidePreviewKeyboard" type="button" aria-label="Hide keyboard" title="Hide keyboard">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
           </button>
+        </div>
+      </div>
+    </div>
+    <div class="chat-history" id="chatHistory" role="dialog" aria-modal="true" aria-labelledby="chatHistoryTitle" hidden>
+      <div class="chat-history-inner">
+        <div class="chat-history-header">
+          <h2 class="section-heading" id="chatHistoryTitle">Chat history</h2>
+          <button class="sheet-close" id="closeChatHistory" type="button" aria-label="Close chat history">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+        <div class="chat-history-body">
+          <button class="chat-history-new" id="newChat" type="button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            <span>New chat</span>
+          </button>
+          <div id="chatHistoryGroups"></div>
         </div>
       </div>
     </div>
@@ -2025,6 +2262,8 @@
       const askOvieInput = document.querySelector('#askOvieInput');
       const askComposerAction = document.querySelector('#askComposerAction');
       const askOvieConversation = document.querySelector('#askOvieConversation');
+      const askOvieCitations = document.querySelector('#askOvieCitations');
+      const askOvieFollowups = document.querySelector('#askOvieFollowups');
       const askOvieQuestion = document.querySelector('#askOvieQuestion');
       const askOvieQuestionPolicy = document.querySelector('#askOvieQuestionPolicy');
       const askOvieQuestionPolicyName = document.querySelector('#askOvieQuestionPolicyName');
@@ -2353,7 +2592,196 @@
         syncAskSheetToViewport();
       });
 
+      // Greeting: shown in the empty Ask Ovie sheet every time it opens; hidden while a conversation is on screen.
+      const askOvieGreeting = document.querySelector('#askOvieGreeting');
+      askOvieGreeting.querySelectorAll('[data-greeting-question]').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          askOvieInput.value = chip.dataset.greetingQuestion;
+          syncComposerAction();
+          askOvieForm.requestSubmit();
+        });
+      });
+
+      // Chat history: sample past chats. Tapping one re-asks it; New chat clears the sheet.
+      const chatHistory = document.querySelector('#chatHistory');
+      const openChatHistoryButton = document.querySelector('#openChatHistory');
+      const chatHistoryGroups = document.querySelector('#chatHistoryGroups');
+      const askSheetInner = askOvieSheet.querySelector('.ask-sheet-inner');
+      let chatHistoryTimer;
+      const pastChats = [
+        { group: 'Today', questions: ['When do my policies end?'] },
+        { group: 'Yesterday', questions: ['Where might I have gaps in my coverage?', 'What is my deductible?'] },
+        { group: 'Previous 7 days', questions: ['Do any of my policies overlap?', 'What does my policy cover?'] }
+      ];
+
+      function renderChatHistory() {
+        chatHistoryGroups.replaceChildren(...pastChats.map((entry, index) => {
+          const section = document.createElement('section');
+          section.setAttribute('aria-labelledby', 'chatHistoryGroup' + index);
+          const title = document.createElement('h3');
+          title.className = 'chat-history-group-title';
+          title.id = 'chatHistoryGroup' + index;
+          title.textContent = entry.group;
+          const list = document.createElement('ul');
+          list.className = 'chat-history-list';
+          entry.questions.forEach((question) => {
+            const item = document.createElement('li');
+            const row = document.createElement('button');
+            row.type = 'button';
+            row.className = 'chat-history-row';
+            row.innerHTML = '<span class="chat-history-row-copy"><span class="chat-history-row-title"></span><span class="chat-history-row-meta"></span></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+            row.querySelector('.chat-history-row-title').textContent = question;
+            row.querySelector('.chat-history-row-meta').textContent = citationsFor(question)[0].split(' · ')[0];
+            row.addEventListener('click', () => closeChatHistory(false, () => {
+              resetChat();
+              askOvieInput.value = question;
+              syncComposerAction();
+              askOvieForm.requestSubmit();
+            }));
+            item.append(row);
+            list.append(item);
+          });
+          section.append(title, list);
+          return section;
+        }));
+      }
+
+      function resetChat() {
+        sheetExpandAnimation?.cancel();
+        askOvieSheet.classList.remove('chat-view');
+        askOvieConversation.hidden = true;
+        askOvieInput.value = '';
+        clearAskPolicySelection();
+        syncComposerAction(false);
+        syncAskSheetToViewport();
+      }
+
+      function openChatHistory() {
+        window.clearTimeout(chatHistoryTimer);
+        renderChatHistory();
+        chatHistory.classList.remove('is-visible');
+        chatHistory.hidden = false;
+        askSheetInner.inert = true;
+        document.querySelector('#closeChatHistory').focus({ preventScroll: true });
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => chatHistory.classList.add('is-visible'));
+        });
+      }
+
+      function closeChatHistory(returnFocus = true, then) {
+        if (chatHistory.hidden) return;
+        chatHistory.classList.remove('is-visible');
+        window.clearTimeout(chatHistoryTimer);
+        const durations = window.getComputedStyle(chatHistory).transitionDuration.split(',').map((value) => {
+          const duration = Number.parseFloat(value);
+          return value.trim().endsWith('ms') ? duration : duration * 1000;
+        });
+        chatHistoryTimer = window.setTimeout(() => {
+          chatHistory.hidden = true;
+          askSheetInner.inert = false;
+          if (returnFocus) openChatHistoryButton.focus({ preventScroll: true });
+          if (then) then();
+        }, Math.max(0, ...durations) + 34);
+      }
+
+      openChatHistoryButton.addEventListener('click', openChatHistory);
+      document.querySelector('#closeChatHistory').addEventListener('click', () => closeChatHistory());
+      document.querySelector('#newChat').addEventListener('click', () => closeChatHistory(false, () => {
+        resetChat();
+        askOvieInput.focus({ preventScroll: true });
+      }));
+      chatHistory.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        event.preventDefault();
+        event.stopPropagation();
+        closeChatHistory();
+      });
+
+      // Resizable sheet. The handle tracks the pointer 1:1 (no animation while dragging), then snaps on release
+      // using the release velocity. Dragging below the smallest height pulls the sheet down; far enough, or a
+      // fast downward flick, dismisses it. Arrow Up/Down on the focused handle steps between snap heights.
+      const askSheetHandle = document.querySelector('#askSheetHandle');
+      const SHEET_TOP_GAP = 52;
+
+      function askSheetSnaps() {
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const tall = Math.round(viewportHeight - SHEET_TOP_GAP);
+        const medium = Math.min(askOvieSheet.classList.contains('show-android-keyboard-preview') ? 640 : 560, tall);
+        const small = Math.min(300, medium);
+        return Array.from(new Set([small, medium, tall]));
+      }
+
+      function setAskSheetHeight(height) {
+        askOvieSheet.classList.add('is-resized');
+        askOvieSheet.style.setProperty('--ask-sheet-height', Math.round(height) + 'px');
+      }
+
+      function resetAskSheetSize() {
+        askOvieSheet.classList.remove('is-resized', 'is-dragging');
+        askOvieSheet.style.removeProperty('--ask-sheet-height');
+        askOvieSheet.style.removeProperty('transform');
+      }
+
+      let sheetDrag = null;
+
+      askSheetHandle.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        sheetExpandAnimation?.cancel();
+        const startHeight = askOvieSheet.getBoundingClientRect().height;
+        sheetDrag = { id: event.pointerId, startY: event.clientY, startHeight, snaps: askSheetSnaps(), samples: [{ y: event.clientY, t: event.timeStamp }], height: startHeight, over: 0 };
+        setAskSheetHeight(startHeight);
+        askOvieSheet.classList.add('is-dragging');
+        askSheetHandle.setPointerCapture(event.pointerId);
+      });
+
+      askSheetHandle.addEventListener('pointermove', (event) => {
+        if (!sheetDrag || event.pointerId !== sheetDrag.id) return;
+        const { snaps } = sheetDrag;
+        const raw = sheetDrag.startHeight + (sheetDrag.startY - event.clientY);
+        const min = snaps[0];
+        const max = snaps[snaps.length - 1];
+        sheetDrag.height = Math.min(max, Math.max(min, raw));
+        sheetDrag.over = Math.max(0, min - raw);
+        setAskSheetHeight(sheetDrag.height);
+        askOvieSheet.style.transform = sheetDrag.over ? 'translate(-50%, ' + Math.round(sheetDrag.over) + 'px)' : '';
+        sheetDrag.samples.push({ y: event.clientY, t: event.timeStamp });
+        if (sheetDrag.samples.length > 6) sheetDrag.samples.shift();
+        syncAskSheetToViewport();
+      });
+
+      function endSheetDrag(event) {
+        if (!sheetDrag || event.pointerId !== sheetDrag.id) return;
+        const { snaps, height, over, samples } = sheetDrag;
+        sheetDrag = null;
+        const first = samples[0];
+        const last = samples[samples.length - 1];
+        const velocity = last.t > first.t ? (last.y - first.y) / (last.t - first.t) : 0; // px/ms, positive = downward
+        askOvieSheet.classList.remove('is-dragging');
+        askOvieSheet.style.removeProperty('transform');
+        if (over > 80 || (velocity > 0.8 && height <= snaps[0] + 24)) {
+          closeAskSheet();
+          return;
+        }
+        const projected = height - velocity * 180;
+        const target = snaps.reduce((best, snap) => (Math.abs(snap - projected) < Math.abs(best - projected) ? snap : best), snaps[0]);
+        setAskSheetHeight(target);
+      }
+
+      askSheetHandle.addEventListener('pointerup', endSheetDrag);
+      askSheetHandle.addEventListener('pointercancel', endSheetDrag);
+
+      askSheetHandle.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+        event.preventDefault();
+        const snaps = askSheetSnaps();
+        const current = askOvieSheet.getBoundingClientRect().height;
+        const index = snaps.reduce((best, snap, i) => (Math.abs(snap - current) < Math.abs(snaps[best] - current) ? i : best), 0);
+        const next = Math.min(snaps.length - 1, Math.max(0, index + (event.key === 'ArrowUp' ? 1 : -1)));
+        setAskSheetHeight(snaps[next]);
+      });
+
       function openAskSheet() {
+        resetAskSheetSize();
         window.clearTimeout(sheetCloseTimer);
         const showPreviewKeyboard = !window.matchMedia('(pointer: coarse)').matches;
         askOvieSheet.classList.toggle('show-android-keyboard-preview', showPreviewKeyboard);
@@ -2394,6 +2822,10 @@
         window.clearTimeout(sheetCloseTimer);
         sheetCloseTimer = window.setTimeout(() => {
           askOvieSheet.close();
+          chatHistory.hidden = true;
+          chatHistory.classList.remove('is-visible');
+          askSheetInner.inert = false;
+          resetAskSheetSize();
           askOvieSheet.classList.remove('chat-view');
           askOvieConversation.hidden = true;
           document.body.classList.remove('sheet-open');
@@ -2406,6 +2838,7 @@
       closeAskOvie.addEventListener('click', () => closeAskSheet());
       askOvieSheet.addEventListener('cancel', (event) => {
         event.preventDefault();
+        if (!chatHistory.hidden) { closeChatHistory(); return; }
         closeAskSheet();
       });
       askOvieSheet.addEventListener('pointerdown', (event) => {
@@ -2544,6 +2977,53 @@
         return `I found information in your uploaded policy documents related to “${question}.”\n\nI can help compare coverage, policy dates, deductibles, and possible overlaps. Open a source detail to review the policy wording.`;
       }
 
+      // Document citations shown as chips once the answer is in. Sample sources only; each names a supplied document and page.
+      function citationsFor(question) {
+        if (/duplicate|overlap|same coverage/i.test(question)) return ['Travelers home policy · p. 2', 'Lemonade renters policy · p. 1'];
+        if (/expir|end|renew|date/i.test(question)) return ['Travelers home policy · p. 1'];
+        if (/deductible/i.test(question)) return ['State Farm auto declarations · p. 2'];
+        return ['Travelers home policy · p. 3', 'Chubb umbrella policy · p. 2'];
+      }
+
+      // Follow-up suggestions: three related questions per topic; tapping one asks it.
+      function followupsFor(question) {
+        let list;
+        if (/duplicate|overlap|same coverage/i.test(question)) list = ['Which coverage overlaps between the two?', 'Which policy has the higher limits?', 'When does each policy end?'];
+        else if (/expir|end|renew|date/i.test(question)) list = ['Which policy ends first?', 'What is my deductible?', 'Do any of my policies overlap?'];
+        else if (/deductible/i.test(question)) list = ['What does my policy cover?', 'Where might I have gaps in my coverage?', 'When do my policies end?'];
+        else list = ['What is my deductible?', 'Where might I have gaps in my coverage?', 'When do my policies end?'];
+        return list.filter((item) => item.toLowerCase() !== question.trim().toLowerCase()).slice(0, 3);
+      }
+
+      function renderFollowups(question) {
+        askOvieFollowups.replaceChildren(...followupsFor(question).map((text) => {
+          const row = document.createElement('button');
+          row.type = 'button';
+          row.className = 'ask-followup';
+          row.textContent = text;
+          row.addEventListener('click', () => {
+            askOvieInput.value = text;
+            syncComposerAction();
+            askOvieForm.requestSubmit();
+          });
+          return row;
+        }));
+        askOvieFollowups.hidden = false;
+      }
+
+      function renderCitations(question) {
+        askOvieCitations.replaceChildren(...citationsFor(question).map((label) => {
+          const chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'ask-citation';
+          chip.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>';
+          chip.append(label);
+          chip.addEventListener('click', () => showToast('Opening ' + label));
+          return chip;
+        }));
+        askOvieCitations.hidden = false;
+      }
+
       function expandAskSheet(fromTop) {
         sheetExpandAnimation?.cancel();
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -2572,20 +3052,24 @@
         askOvieQuestionPolicy.hidden = !selectedAskPolicy;
         askOvieQuestionPolicyName.textContent = selectedAskPolicy ? `${selectedAskPolicy.name} · ${selectedAskPolicy.meta}` : '';
         askOvieAnswer.textContent = answerFor(question);
+        renderCitations(question);
+        renderFollowups(question);
         askOvieConversation.hidden = false;
         askOvieSheet.classList.add('chat-view');
         expandAskSheet(compactTop);
         answerActions.forEach((button) => {
           if (button.hasAttribute('aria-pressed')) button.setAttribute('aria-pressed', 'false');
-          button.classList.remove('is-saved');
         });
         askOvieInput.value = '';
         clearAskPolicySelection();
         syncComposerAction(false);
         syncAskSheetToViewport();
+        // Sending dismisses the keyboard so the whole answer is visible; tapping the input brings it back.
+        askOvieInput.blur();
+        askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+        syncAskSheetToViewport();
         window.requestAnimationFrame(() => {
           askOvieConversation.scrollTop = askOvieConversation.scrollHeight;
-          askOvieInput.focus({ preventScroll: true });
         });
       });
 
@@ -2599,18 +3083,9 @@
             } catch {
               showToast('Copy is unavailable in this browser');
             }
-          } else if (action === 'regenerate') {
-            askOvieAnswer.textContent = answerFor(askOvieQuestion.textContent);
-            showToast('Answer refreshed');
           } else if (action === 'helpful' || action === 'not-helpful') {
             answerActions.filter((item) => item.dataset.answerAction === 'helpful' || item.dataset.answerAction === 'not-helpful').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
             showToast(action === 'helpful' ? 'Thanks for the feedback' : 'Feedback recorded');
-          } else if (action === 'source') {
-            showToast('Opening source information');
-          } else if (action === 'save') {
-            button.classList.toggle('is-saved');
-            button.setAttribute('aria-pressed', String(button.classList.contains('is-saved')));
-            showToast(button.classList.contains('is-saved') ? 'Answer saved' : 'Answer removed from saved');
           }
         });
       });
