@@ -1055,8 +1055,15 @@
     .ask-sheet.is-resized .ask-sheet-form { margin-top: auto; }
     .ask-sheet.is-dragging { transition: none; }
     .ask-sheet.is-dragging * { user-select: none; }
-    .ask-sheet-heading { display: flex; align-items: center; gap: 4px; }
-    .ask-sheet-actions { display: flex; align-items: center; }
+    .ask-sheet-heading { display: flex; align-items: center; gap: 12px; }
+    .ask-sheet-actions { display: flex; align-items: center; gap: 8px; }
+    /* Header icon buttons (menu, new chat, close) sit in grey containers, like the top-bar utility buttons. */
+    .ask-sheet .ask-sheet-header .sheet-close,
+    .ask-sheet .chat-history-header .sheet-close { background: var(--bg-subtle); }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-sheet .ask-sheet-header .sheet-close:hover,
+      .ask-sheet .chat-history-header .sheet-close:hover { background: var(--primary-soft); }
+    }
     /* New chat is only offered while a conversation is on screen. */
     .ask-sheet:not(.chat-view) .ask-new-chat { display: none; }
     .ask-sheet-title { margin: 0; }
