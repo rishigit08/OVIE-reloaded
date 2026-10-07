@@ -1196,7 +1196,7 @@
       margin-top: 14px;
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 0;
     }
 
     .ask-answer-action,
@@ -1215,26 +1215,29 @@
       transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 160ms var(--ease);
     }
 
-    .ask-answer-action { border: 1px solid var(--border-soft); background: var(--surface); }
+    .ask-answer-action { width: 32px; height: 32px; }
+    .ask-answer-action svg { width: 16px; height: 16px; }
     .ask-answer-action:active,
     .ask-composer-action:active { transform: scale(.96); }
     .ask-answer-action[aria-pressed="true"][data-answer-action="helpful"] { color: var(--success); }
     .ask-answer-action[aria-pressed="true"][data-answer-action="not-helpful"] { color: var(--danger); }
-    .ask-citations { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 16px 8px; }
+    .ask-citations { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
     .ask-citations[hidden] { display: none; }
-    .ask-followups { margin-top: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .ask-followups { margin-top: 16px; display: flex; flex-flow: row wrap; align-items: flex-start; gap: 8px; }
     .ask-followups[hidden] { display: none; }
     /* Follow-up suggestions: outlined chips (12px radius, same as the composer input) stacked vertically, each as wide as its content, no trailing icon. */
     .ask-followup {
       max-width: 100%;
-      min-height: 44px;
-      padding: 8px 14px;
+      min-height: 32px;
+      padding: 6px 12px;
       display: inline-flex;
       align-items: center;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: 999px;
       background: var(--surface);
       color: var(--copy);
+      font-size: 12px;
+      line-height: 16px;
       font-weight: 600;
       text-align: left;
       cursor: pointer;
@@ -1273,7 +1276,7 @@
     @media (prefers-reduced-motion: reduce) { .ask-citation:active { transform: none; } }
 
     @media (hover: hover) and (pointer: fine) {
-      .ask-answer-action:hover,
+      .ask-answer-action:hover { color: var(--primary); }
       .ask-composer-action:hover { background: var(--primary-soft); color: var(--primary); }
     }
 
