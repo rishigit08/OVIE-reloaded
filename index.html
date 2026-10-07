@@ -1057,12 +1057,12 @@
     .ask-sheet.is-dragging * { user-select: none; }
     .ask-sheet-heading { display: flex; align-items: center; gap: 12px; }
     .ask-sheet-actions { display: flex; align-items: center; gap: 8px; }
-    /* Header icon buttons (menu, new chat, close) sit in grey containers, like the top-bar utility buttons. */
+    /* Header icon buttons (menu, new chat, close) have no container; hover only recolours the icon. */
     .ask-sheet .ask-sheet-header .sheet-close,
-    .ask-sheet .chat-history-header .sheet-close { background: var(--bg-subtle); }
+    .ask-sheet .chat-history-header .sheet-close { background: transparent; }
     @media (hover: hover) and (pointer: fine) {
       .ask-sheet .ask-sheet-header .sheet-close:hover,
-      .ask-sheet .chat-history-header .sheet-close:hover { background: var(--primary-soft); }
+      .ask-sheet .chat-history-header .sheet-close:hover { background: transparent; }
     }
     /* New chat is only offered while a conversation is on screen. */
     .ask-sheet:not(.chat-view) .ask-new-chat { display: none; }
@@ -1186,6 +1186,43 @@
       color: var(--surface);
       font-weight: 500;
       overflow-wrap: anywhere;
+    }
+
+    .ask-user-row { position: relative; display: flex; flex-direction: column; align-items: flex-end; }
+    /* Long-press target: suppress text selection and the native callout so the menu is the only response. */
+    .ask-user-row .ask-user-message { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+    .ask-user-menu {
+      position: absolute;
+      z-index: 2;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 148px;
+      padding: 4px;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 8px 24px rgba(17, 17, 17, .12);
+    }
+    .ask-user-menu[hidden] { display: none; }
+    .ask-user-menu-item {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--copy);
+      font: inherit;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+    }
+    .ask-user-menu-item:active { background: var(--primary-soft); color: var(--primary); }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-user-menu-item:hover { background: var(--primary-soft); color: var(--primary); }
     }
 
     .ask-ovie-response { display: block; }
@@ -2149,7 +2186,13 @@
           <svg class="ask-user-policy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
           <span id="askOvieQuestionPolicyName"></span>
         </div>
-        <div class="ask-user-message" id="askOvieQuestion"></div>
+        <div class="ask-user-row">
+          <div class="ask-user-message" id="askOvieQuestion" tabindex="0" aria-haspopup="menu" aria-expanded="false" aria-controls="askUserMenu"></div>
+          <div class="ask-user-menu" id="askUserMenu" role="menu" aria-label="Prompt options" hidden>
+            <button class="ask-user-menu-item" type="button" role="menuitem" data-user-menu-action="copy"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>Copy</button>
+            <button class="ask-user-menu-item" type="button" role="menuitem" data-user-menu-action="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>Edit</button>
+          </div>
+        </div>
         <div class="ask-ovie-response">
           <div class="ask-response-body">
             <p class="ask-response-text" id="askOvieAnswer"></p>
@@ -3071,6 +3114,7 @@
         if (!question) return;
         const compactTop = askOvieSheet.getBoundingClientRect().top;
         askOvieQuestion.textContent = question;
+        setUserMenuOpen(false);
         askOvieQuestionPolicy.hidden = !selectedAskPolicy;
         askOvieQuestionPolicyName.textContent = selectedAskPolicy ? `${selectedAskPolicy.name} · ${selectedAskPolicy.meta}` : '';
         askOvieAnswer.textContent = answerFor(question);
@@ -3092,6 +3136,86 @@
         syncAskSheetToViewport();
         window.requestAnimationFrame(() => {
           askOvieConversation.scrollTop = askOvieConversation.scrollHeight;
+        });
+      });
+
+      // Sent-prompt menu: Copy puts the prompt on the clipboard; Edit drops it back into the composer.
+      const askUserMenu = document.querySelector('#askUserMenu');
+      const LONG_PRESS_MS = 450;
+      const LONG_PRESS_SLOP = 8;
+      let longPressTimer = 0;
+      let longPressOrigin = null;
+      let suppressMenuDismissUntil = 0;
+
+      function setUserMenuOpen(open) {
+        askUserMenu.hidden = !open;
+        askOvieQuestion.setAttribute('aria-expanded', String(open));
+      }
+
+      function openUserMenu() {
+        setUserMenuOpen(true);
+        suppressMenuDismissUntil = performance.now() + 400;
+        askUserMenu.querySelector('[role="menuitem"]').focus({ preventScroll: true });
+      }
+
+      function cancelLongPress() {
+        window.clearTimeout(longPressTimer);
+        longPressOrigin = null;
+      }
+
+      askOvieQuestion.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        longPressOrigin = { x: event.clientX, y: event.clientY };
+        window.clearTimeout(longPressTimer);
+        longPressTimer = window.setTimeout(() => {
+          longPressOrigin = null;
+          openUserMenu();
+        }, LONG_PRESS_MS);
+      });
+      askOvieQuestion.addEventListener('pointermove', (event) => {
+        if (longPressOrigin && Math.hypot(event.clientX - longPressOrigin.x, event.clientY - longPressOrigin.y) > LONG_PRESS_SLOP) cancelLongPress();
+      });
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach((type) => askOvieQuestion.addEventListener(type, cancelLongPress));
+      // Right-click and the keyboard menu key also open it; the native touch/context menu is replaced.
+      askOvieQuestion.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+        cancelLongPress();
+        openUserMenu();
+      });
+
+      document.addEventListener('click', (event) => {
+        if (askUserMenu.hidden || askUserMenu.contains(event.target) || performance.now() < suppressMenuDismissUntil) return;
+        setUserMenuOpen(false);
+      });
+
+      askUserMenu.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          event.stopPropagation();
+          setUserMenuOpen(false);
+          askOvieQuestion.focus({ preventScroll: true });
+        }
+      });
+
+      askUserMenu.querySelectorAll('[data-user-menu-action]').forEach((item) => {
+        item.addEventListener('click', async () => {
+          const prompt = askOvieQuestion.textContent;
+          setUserMenuOpen(false);
+          if (item.dataset.userMenuAction === 'copy') {
+            try {
+              await copyText(prompt);
+              showToast('Prompt copied');
+            } catch {
+              showToast('Copy is unavailable in this browser');
+            }
+          } else {
+            askOvieInput.value = prompt;
+            syncComposerAction();
+            askOvieInput.focus({ preventScroll: true });
+            askOvieInput.setSelectionRange(prompt.length, prompt.length);
+            // Focus alone doesn't re-fire if the input already holds it, so raise the keyboard state explicitly.
+            if (!window.matchMedia('(pointer: coarse)').matches) askOvieSheet.classList.add('show-android-keyboard-preview');
+            syncAskSheetToViewport();
+          }
         });
       });
 
