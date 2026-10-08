@@ -1,0 +1,2333 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#6B4062" />
+    <title>Portfolio insights · Ovie</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap");
+
+      :root {
+        font-family: Figtree, system-ui, sans-serif;
+        color: #111;
+        background: #f6f6f6;
+        font-synthesis: none;
+        --primary: #6b4062;
+        --primary-dark: #54324d;
+        --primary-soft: #f5edf3;
+        --text-primary: #111111;
+        --text-secondary: #333a3d;
+        --text-tertiary: #5f6368;
+        --surface: #ffffff;
+        --canvas: #f6f6f6;
+        --line: #ecefed;
+        --border: #d8dddb;
+        --radius: 12px;
+        --ink: #111111;
+        --copy: #333a3d;
+        --muted: #5f6368;
+        --border-soft: #ecefed;
+        --bg-subtle: #f6f6f6;
+        --success: #0d7d07;
+        --danger: #a63a33;
+        --focus: #6b4062;
+        --ai-gradient-start: #bd4ba5;
+        --ai-gradient-end: #5c2e8b;
+        --nav-height: 72px;
+        --z-fab: 450;
+        --z-backdrop: 500;
+        --z-sheet: 700;
+        --z-toast: 900;
+        --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        --motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+        --motion-duration-press: 160ms;
+        --motion-duration-standard: 200ms;
+        --motion-duration-overlay: 260ms;
+        --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+        --motion-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+      }
+
+      * { box-sizing: border-box; }
+      html { min-width: 320px; scrollbar-width: none; }
+      html::-webkit-scrollbar { display: none; }
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background: #e3e3e3;
+        -webkit-font-smoothing: antialiased;
+      }
+      body.sheet-open { overflow: hidden; }
+      button, input { font: inherit; }
+      button { cursor: pointer; }
+      button { -webkit-tap-highlight-color: transparent; }
+      button:focus-visible, input:focus-visible {
+        outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+        outline-offset: 2px;
+      }
+      h1, h2, p { margin: 0; }
+      h1, h2 { font-weight: 600; }
+      .sr-only, .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .app-shell {
+        width: min(100%, 390px);
+        min-height: 100vh;
+        margin: 0 auto;
+        background: var(--canvas);
+      }
+      .workspace { width: 100%; min-width: 0; }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 15;
+        background: transparent;
+        pointer-events: none;
+      }
+      .phone-status-bar {
+        height: 34px;
+        padding: 8px 22px 0;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.97);
+        color: var(--text-primary);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 600;
+      }
+      .phone-status-icons {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--text-tertiary);
+      }
+      .topbar-inner {
+        min-height: 58px;
+        padding: 4px 18px 12px;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.97);
+        border-bottom: 1px solid var(--line);
+        pointer-events: auto;
+        transform: translateY(0);
+        transition: transform var(--motion-duration-standard) var(--motion-ease-out);
+        will-change: transform;
+      }
+      .topbar.is-hidden .topbar-inner { transform: translateY(-100%); pointer-events: none; }
+      .topbar h1 { font-size: 18px; line-height: 24px; }
+
+      .main-content { padding: 18px 16px 176px; }
+
+      .icon-button {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius);
+        display: inline-grid;
+        place-items: center;
+        background: transparent;
+        color: var(--text-tertiary);
+        transition: transform var(--motion-duration-press) var(--motion-ease-out);
+      }
+
+      .filter-chips {
+        width: 100%;
+        max-width: 358px;
+        margin: 0 auto 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .filter-chips::-webkit-scrollbar { display: none; }
+      .filter-chip {
+        min-height: 44px;
+        padding: 0;
+        border: 0;
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .filter-chip-face {
+        min-height: 36px;
+        padding: 0 14px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        background: var(--surface);
+      }
+      .filter-chip-face { gap: 8px; }
+      .filter-chip-count {
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 999px;
+        display: inline-grid;
+        place-items: center;
+        background: var(--line);
+        color: var(--text-tertiary);
+        font-size: 11px;
+        line-height: 16px;
+      }
+      .filter-chip[aria-checked="true"] { color: var(--primary); }
+      .filter-chip[aria-checked="true"] .filter-chip-count { background: var(--surface); color: var(--primary); }
+      .filter-chip[aria-checked="true"] .filter-chip-face { background: var(--primary-soft); box-shadow: inset 0 0 0 1px var(--primary); }
+
+      .insight-list {
+        width: 100%;
+        max-width: 358px;
+        margin: 12px auto 0;
+        display: grid;
+        gap: 12px;
+      }
+      .insight-card {
+        padding: 16px;
+        border-radius: var(--radius);
+        background: var(--surface);
+        display: grid;
+        gap: 14px;
+      }
+      .insight-head { display: flex; align-items: flex-start; gap: 12px; }
+      .insight-icon {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 auto;
+        border-radius: var(--radius);
+        display: grid;
+        place-items: center;
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .insight-headline { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+      .insight-title { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--text-primary); overflow-wrap: anywhere; }
+      .insight-meta { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+      .policy-type-tag {
+        min-height: 20px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 600;
+      }
+      .scope-line { color: var(--text-secondary); font-size: 12px; line-height: 16px; font-weight: 600; overflow-wrap: anywhere; }
+
+      .insight-explain {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 20px;
+        overflow-wrap: anywhere;
+      }
+
+      .insight-tagline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .insight-head .ask-ovie-cta { margin: -12px -12px 0 0; }
+      .generated-date { color: var(--text-tertiary); font-size: 12px; line-height: 16px; }
+      .ask-ovie-cta {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 auto;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius);
+        display: inline-grid;
+        place-items: center;
+        background: transparent;
+        color: var(--primary);
+        transition: background-color var(--motion-duration-press) var(--ease), color var(--motion-duration-press) var(--ease), transform var(--motion-duration-press) var(--motion-ease-out);
+      }
+      .ask-ovie-cta:active { transform: scale(0.97); }
+
+      .empty-state { padding: 54px 16px; display: grid; justify-items: center; text-align: center; color: var(--text-tertiary); }
+      .empty-state h2 { margin-top: 12px; color: var(--text-primary); font-size: 18px; line-height: 24px; }
+      .empty-state p { margin-top: 5px; font-size: 14px; line-height: 20px; }
+
+      .mobile-nav {
+        position: fixed;
+        z-index: 20;
+        left: 50%;
+        bottom: max(8px, env(safe-area-inset-bottom));
+        width: min(calc(100% - 24px), 366px);
+        min-height: 72px;
+        padding: 6px;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        align-items: center;
+        transform: translateX(-50%);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        box-shadow: 0 4px 8px rgba(17, 17, 17, 0.1);
+      }
+      .mobile-nav button {
+        min-width: 0;
+        min-height: 58px;
+        padding: 5px 2px;
+        border: 0;
+        border-radius: 999px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        background: transparent;
+        color: var(--text-tertiary);
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 600;
+        transition: transform var(--motion-duration-press) var(--motion-ease-out);
+      }
+      .mobile-nav button[aria-current="page"] { background: var(--primary-soft); color: var(--primary); }
+      .nav-icon { width: 32px; height: 28px; display: grid; place-items: center; border-radius: 999px; }
+      .mobile-nav .upload-nav { background: transparent; color: #fff; }
+      .upload-nav .nav-icon { position: relative; }
+      .upload-nav .nav-icon::before {
+        width: 48px;
+        height: 48px;
+        position: absolute;
+        z-index: 0;
+        inset: 50% auto auto 50%;
+        content: "";
+        transform: translate(-50%, -50%);
+        border-radius: 999px;
+        background: var(--primary);
+        box-shadow: 0 2px 4px rgba(84, 50, 77, 0.22);
+      }
+      .upload-nav svg { position: relative; z-index: 1; }
+
+      .toast {
+        position: fixed;
+        z-index: var(--z-toast);
+        left: 50%;
+        bottom: calc(var(--nav-height) + 18px + env(safe-area-inset-bottom));
+        width: min(calc(100% - 32px), 358px);
+        padding: 12px 14px;
+        transform: translate(-50%, 16px);
+        border-radius: 10px;
+        background: var(--ink);
+        color: #fff;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 180ms var(--ease), transform 180ms var(--ease);
+      }
+      .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+      .icon-button:active, .mobile-nav button:active { transform: scale(0.97); }
+      @media (hover: hover) and (pointer: fine) {
+        .icon-button:hover { background: var(--primary-soft); color: var(--primary); }
+        .ask-ovie-cta:hover { color: var(--primary-dark); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .topbar-inner, .icon-button, .mobile-nav button, .toast, .ask-ovie-cta { transition-duration: 0.01ms; }
+        .topbar.is-hidden .topbar-inner { transform: none; }
+        .icon-button:active, .mobile-nav button:active, .ask-ovie-cta:active, .toast, .toast.show { transform: none; }
+      }
+      .ask-sheet .section-heading, .policy-picker-sheet .section-heading { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
+
+      .ask-fab {
+        position: fixed;
+        z-index: var(--z-fab);
+        right: max(18px, calc((100vw - 390px) / 2 + 18px));
+        bottom: calc(var(--nav-height) + 22px + env(safe-area-inset-bottom));
+        width: 56px;
+        height: 56px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border: 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--ai-gradient-start) 0%, var(--ai-gradient-end) 100%);
+        color: var(--surface);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 4px 8px rgba(84, 50, 77, .28);
+        cursor: pointer;
+        isolation: isolate;
+        transition: transform 160ms var(--ease);
+      }
+
+      .ask-fab::before {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: inherit;
+        background: rgba(255, 255, 255, .10);
+        content: "";
+        opacity: 0;
+        transition: opacity 160ms var(--ease);
+      }
+
+      .ask-fab:active { transform: scale(.96); }
+
+      .ovie-assistant-mark {
+        width: 24px;
+        height: 24px;
+        display: block;
+        flex: 0 0 auto;
+        overflow: visible;
+      }
+
+      .ask-fab .ovie-assistant-mark { width: 28px; height: 28px; }
+
+      @media (hover: hover) and (pointer: fine) {
+        .ask-fab:hover::before { opacity: 1; }
+      }
+
+    .ask-sheet {
+      position: fixed;
+      z-index: var(--z-sheet);
+      inset: auto auto var(--keyboard-inset, 0px) 50%;
+      width: min(100%, 390px);
+      max-width: none;
+      max-height: min(calc(var(--visual-viewport-height, 100dvh) - 12px), 560px);
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 -4px 8px rgba(17, 17, 17, .12);
+      opacity: 1;
+      transform: translate(-50%, 100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+      will-change: transform;
+    }
+
+    .ask-sheet[open].is-visible { transform: translate(-50%, 0); }
+
+    /* The desktop keyboard preview adds ~250px to the compact sheet; give it room so its bottom bar stays visible. */
+    .ask-sheet.show-android-keyboard-preview:not(.chat-view):not(.is-resized) {
+      max-height: min(calc(var(--visual-viewport-height, 100dvh) - 12px), 640px);
+    }
+
+    .ask-sheet.chat-view {
+      inset: calc(var(--visual-viewport-top, 0px) + 52px) auto auto 50%;
+      width: min(100%, 390px);
+      height: calc(var(--visual-viewport-height, 100dvh) - 52px);
+      max-height: none;
+      border-radius: var(--radius) var(--radius) 0 0;
+      transform: translate(-50%, 0);
+    }
+
+    .ask-sheet[open].is-visible.chat-view { transform: translate(-50%, 0); }
+    .ask-sheet.chat-view:not(.is-visible) { transform: translate(-50%, 100%); }
+
+    .ask-sheet::backdrop {
+      z-index: var(--z-backdrop);
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+
+    .ask-sheet.is-visible::backdrop { opacity: 1; }
+
+    .ask-sheet-inner {
+      padding: 8px 16px calc(18px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .ask-sheet.chat-view .ask-sheet-inner {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+
+    .ask-sheet.chat-view .ask-sheet-header {
+      flex: 0 0 auto;
+      margin: 0 -16px 0;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      margin: 0 auto 8px;
+      border-radius: 999px;
+      background: var(--border);
+    }
+
+    .ask-sheet-header {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    /* ---------- Resizable sheet: the handle drags the sheet between snap heights; far down dismisses ---------- */
+    .ask-sheet-handle {
+      position: relative;
+      cursor: grab;
+      touch-action: none;
+    }
+    /* 44px-tall hit area around the 4px bar. */
+    .ask-sheet-handle::before { content: ""; position: absolute; inset: -20px -48px; }
+    .ask-sheet-handle:active { cursor: grabbing; }
+    .ask-sheet-handle:focus-visible { outline-offset: 6px; }
+    .ask-sheet.is-resized.chat-view,
+    .ask-sheet.is-resized {
+      inset: auto auto var(--keyboard-inset, 0px) 50%;
+      height: var(--ask-sheet-height);
+      max-height: none;
+      transition:
+        transform var(--motion-duration-overlay) var(--motion-ease-drawer),
+        height var(--motion-duration-overlay) var(--motion-ease-drawer);
+    }
+    .ask-sheet.is-resized .ask-sheet-inner { height: 100%; display: flex; flex-direction: column; }
+    .ask-sheet.is-resized .ask-sheet-header,
+    .ask-sheet.is-resized .ask-greeting { flex: 0 0 auto; }
+    .ask-sheet.is-resized .ask-sheet-form { margin-top: auto; }
+    .ask-sheet.is-dragging { transition: none; }
+    .ask-sheet.is-dragging * { user-select: none; }
+    .ask-sheet-heading { display: flex; align-items: center; gap: 12px; }
+    .ask-sheet-actions { display: flex; align-items: center; gap: 8px; }
+    /* Header icon buttons (menu, new chat, close) have no container; hover only recolours the icon. */
+    .ask-sheet .ask-sheet-header .sheet-close,
+    .ask-sheet .chat-history-header .sheet-close { background: transparent; }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-sheet .ask-sheet-header .sheet-close:hover,
+      .ask-sheet .chat-history-header .sheet-close:hover { background: transparent; }
+    }
+    /* New chat is only offered while a conversation is on screen. */
+    .ask-sheet:not(.chat-view) .ask-new-chat { display: none; }
+    .ask-sheet-title { margin: 0; }
+
+    /* ---------- Chat history: panel inside the Ask Ovie sheet, same size as the sheet; enters from the sheet's left edge, where the menu button sits ---------- */
+    .chat-history {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: var(--surface);
+      color: var(--ink);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-100%);
+      opacity: 0;
+      transition:
+        transform var(--motion-duration-overlay) var(--motion-ease-drawer),
+        opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+    .chat-history[hidden] { display: none; }
+    .chat-history.is-visible { transform: none; opacity: 1; }
+    .chat-history-inner {
+      min-height: 0;
+      flex: 1;
+      padding: 20px 16px calc(16px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-history-header { flex: 0 0 auto; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .chat-history-header .section-heading { margin: 0; }
+    .chat-history-body { min-height: 0; flex: 1; padding-top: 12px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+    .chat-history-body::-webkit-scrollbar { display: none; }
+    .chat-history-new {
+      width: 100%;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease;
+    }
+    .chat-history-new:active { transform: scale(.97); }
+    .chat-history-group-title { margin: 20px 0 4px; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--muted); }
+    .chat-history-list { margin: 0; padding: 0; list-style: none; }
+    .chat-history-row {
+      width: 100%;
+      min-height: 56px;
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 0;
+      border-bottom: 1px solid var(--border-soft);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+    .chat-history-list li:last-child .chat-history-row { border-bottom: 0; }
+    .chat-history-row-copy { min-width: 0; display: flex; flex-direction: column; }
+    .chat-history-row-title { font-weight: 600; color: var(--copy); }
+    .chat-history-row-meta { font-size: 12px; line-height: 16px; color: var(--muted); }
+    .chat-history-row svg { flex: 0 0 auto; color: var(--muted); }
+    .chat-history-row:active { background: var(--bg-subtle); }
+    @media (hover: hover) and (pointer: fine) {
+      .chat-history-new:hover { background: var(--primary-dark); }
+      .chat-history-row:hover { background: var(--bg-subtle); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .chat-history { transform: none; transition: opacity var(--motion-duration-standard) var(--motion-ease-out); }
+      .chat-history-new:active { transform: none; }
+    }
+
+    .sheet-close {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color 160ms var(--ease), transform 160ms var(--ease);
+    }
+
+    .sheet-close:active { transform: scale(.96); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .sheet-close:hover { background: var(--primary-soft); color: var(--primary); }
+    }
+
+    .ask-sheet-conversation {
+      min-height: 0;
+      padding: 20px 2px 16px;
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .ask-sheet.chat-view .ask-sheet-conversation { display: flex; }
+
+    .ask-user-message {
+      max-width: 84%;
+      margin-left: auto;
+      padding: 10px 14px;
+      border-radius: 12px 12px 2px 12px;
+      background: var(--primary);
+      color: var(--surface);
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+
+    .ask-user-row { position: relative; display: flex; flex-direction: column; align-items: flex-end; }
+    /* Long-press target: suppress text selection and the native callout so the menu is the only response. */
+    .ask-user-row .ask-user-message { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+    .ask-user-menu {
+      position: absolute;
+      z-index: 2;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 148px;
+      padding: 4px;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 8px 24px rgba(17, 17, 17, .12);
+    }
+    .ask-user-menu[hidden] { display: none; }
+    .ask-user-menu-item {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--copy);
+      font: inherit;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+    }
+    .ask-user-menu-item:active { background: var(--primary-soft); color: var(--primary); }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-user-menu-item:hover { background: var(--primary-soft); color: var(--primary); }
+    }
+
+    .ask-ovie-response { display: block; }
+    .ask-response-body { min-width: 0; flex: 1; }
+    .ask-response-text { margin: 0; color: var(--copy); white-space: pre-line; }
+    .ask-response-heading { margin: 0 0 8px; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--ink); }
+    .ask-response-heading[hidden], .ask-user-row[hidden] { display: none; }
+
+    .ask-answer-actions {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+
+    .ask-answer-action,
+    .ask-composer-action {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 160ms var(--ease);
+    }
+
+    .ask-answer-action { width: 32px; height: 32px; }
+    .ask-answer-action svg { width: 16px; height: 16px; }
+    .ask-answer-action:active,
+    .ask-composer-action:active { transform: scale(.96); }
+    .ask-answer-action[aria-pressed="true"][data-answer-action="helpful"] { color: var(--success); }
+    .ask-answer-action[aria-pressed="true"][data-answer-action="not-helpful"] { color: var(--danger); }
+    .ask-citations { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .ask-citations[hidden] { display: none; }
+    .ask-followups { margin-top: 16px; display: flex; flex-flow: row wrap; align-items: flex-start; gap: 8px; }
+    .ask-followups[hidden] { display: none; }
+    /* Follow-up suggestions: outlined chips (12px radius, same as the composer input) stacked vertically, each as wide as its content, no trailing icon. */
+    .ask-followup {
+      max-width: 100%;
+      min-height: 32px;
+      padding: 6px 12px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--copy);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease, border-color var(--motion-duration-press) ease;
+    }
+    .ask-followup:active { transform: scale(.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-followup:hover { background: var(--primary-soft); border-color: var(--primary-soft); }
+    }
+    @media (prefers-reduced-motion: reduce) { .ask-followup:active { transform: none; } }
+    .ask-citation {
+      position: relative;
+      max-width: 100%;
+      min-height: 28px;
+      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--bg-subtle);
+      color: var(--copy);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease;
+    }
+    .ask-citation::before { content: ""; position: absolute; inset: -8px 0; }
+    .ask-citation svg { flex: 0 0 auto; color: var(--muted); }
+    .ask-citation:active { transform: scale(.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-citation:hover { background: var(--primary-soft); }
+    }
+    @media (prefers-reduced-motion: reduce) { .ask-citation:active { transform: none; } }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ask-answer-action:hover { color: var(--primary); }
+      .ask-composer-action:hover { background: var(--primary-soft); color: var(--primary); }
+    }
+
+    .ask-sheet-form { width: 100%; margin: 8px auto 0; flex: 0 0 auto; }
+    .ask-sheet.chat-view .ask-sheet-form { margin-top: auto; }
+
+    .ask-ovie-disclaimer {
+      margin: 8px 8px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+    }
+
+    .ask-sheet.keyboard-visible .ask-ovie-disclaimer,
+    .ask-sheet.show-android-keyboard-preview .ask-ovie-disclaimer { display: none; }
+
+    .ask-sheet-composer-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ask-sheet-input-row {
+      min-height: 56px;
+      min-width: 0;
+      flex: 1;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .ask-sheet-input-row:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 18%, transparent);
+    }
+
+    .ask-sheet-input {
+      min-width: 0;
+      flex: 1;
+      padding: 8px 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      line-height: 20px;
+    }
+
+    .ask-sheet-input::placeholder { color: var(--muted); opacity: 1; }
+
+    .ask-policy-context {
+      min-height: 44px;
+      margin: 0 52px 8px 0;
+      padding: 6px 6px 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--copy);
+    }
+
+    .ask-policy-context[hidden] { display: none; }
+
+    .ask-policy-context-icon,
+    .ask-user-policy-icon {
+      color: var(--primary);
+      flex: 0 0 auto;
+    }
+
+    .ask-policy-context-copy {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ask-policy-context-name { font-weight: 600; color: var(--ink); }
+    .ask-policy-context-meta { color: var(--muted); font-size: 12px; line-height: 16px; }
+
+    .ask-policy-context-remove {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) ease, color var(--motion-duration-press) ease, transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .ask-policy-context-remove:active { transform: scale(.97); }
+
+    .ask-user-policy {
+      max-width: 84%;
+      margin-left: auto;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--copy);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+    }
+
+    .ask-user-policy[hidden] { display: none; }
+
+    .ask-composer-action {
+      background: var(--bg-subtle);
+      color: var(--muted);
+    }
+
+    .ask-composer-action.attachment { color: var(--muted); }
+
+    .ask-composer-action:not(.attachment) {
+      background: var(--primary);
+      color: var(--surface);
+    }
+
+    .ask-composer-action.is-send { background: var(--primary); color: var(--surface); }
+    .ask-composer-action .composer-send-icon { display: none; }
+    .ask-composer-action.is-send .composer-mic-icon { display: none; }
+    .ask-composer-action.is-send .composer-send-icon { display: block; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .ask-composer-action.is-send:hover { background: var(--primary-dark); color: var(--surface); }
+      .ask-policy-context-remove:hover { background: var(--surface); color: var(--primary); }
+    }
+
+    .policy-picker-sheet {
+      position: fixed;
+      z-index: calc(var(--z-sheet) + 1);
+      inset: 52px auto auto 50%;
+      width: min(100%, 390px);
+      height: calc(100dvh - 52px);
+      max-width: none;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 6px 16px rgba(17, 17, 17, .12);
+      transform: translate(-50%, 100%);
+      transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+    }
+
+    .policy-picker-sheet[open].is-visible { transform: translate(-50%, 0); }
+
+    .policy-picker-sheet::backdrop {
+      background: rgba(17, 24, 23, .58);
+      opacity: 0;
+      transition: opacity var(--motion-duration-overlay) var(--motion-ease-out);
+    }
+
+    .policy-picker-sheet.is-visible::backdrop { opacity: 1; }
+
+    .policy-picker-inner {
+      padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: none;
+    }
+
+    .policy-picker-search {
+      min-height: 44px;
+      margin: 8px 0 12px;
+      padding-left: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--muted);
+    }
+
+    .policy-picker-search:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107, 64, 98, .24);
+    }
+
+    .policy-picker-search input {
+      min-width: 0;
+      flex: 1;
+      padding: 10px 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .policy-picker-search input::placeholder { color: var(--muted); opacity: 1; }
+    .policy-picker-search input::-webkit-search-cancel-button { display: none; -webkit-appearance: none; appearance: none; }
+    .policy-picker-search input::-ms-clear { display: none; width: 0; height: 0; }
+
+    .policy-search-clear {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .policy-search-clear[hidden] { display: none; }
+
+    .policy-picker-list {
+      min-height: 0;
+      margin: 0 -16px;
+      padding: 0;
+      overflow-y: auto;
+      list-style: none;
+      overscroll-behavior: contain;
+    }
+
+    .policy-picker-item { margin: 0; }
+    .policy-picker-item + .policy-picker-item { border-top: 1px solid var(--border-soft); }
+
+    .policy-picker-option {
+      width: 100%;
+      min-height: 64px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      background: var(--surface);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--motion-duration-press) ease, transform var(--motion-duration-press) var(--motion-ease-out);
+    }
+
+    .policy-picker-option:active { transform: scale(.97); }
+    .policy-picker-option[aria-pressed="true"] { background: var(--primary-soft); }
+
+    .policy-picker-icon {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .policy-picker-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .policy-picker-name { color: var(--ink); font-weight: 600; }
+    .policy-picker-meta { color: var(--muted); }
+    .policy-picker-check { color: var(--primary); opacity: 0; }
+    .policy-picker-option[aria-pressed="true"] .policy-picker-check { opacity: 1; }
+
+    .policy-picker-empty {
+      margin: 0;
+      padding: 24px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .policy-picker-empty[hidden] { display: none; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .policy-picker-option:hover { background: var(--bg-subtle); }
+      .policy-search-clear:hover { background: var(--primary-soft); color: var(--primary); }
+    }
+
+    .android-keyboard-preview {
+      display: none;
+      margin: 14px -16px -18px;
+      padding: 0 5px calc(7px + env(safe-area-inset-bottom));
+      background: #eef0f3;
+      color: #202124;
+      font-family: Roboto, system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 16px;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    .android-suggestions {
+      min-height: 38px;
+      margin-inline: -5px;
+      padding-inline: 6px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: center;
+      border-bottom: 1px solid #d5d8dc;
+      background: #f8f9fa;
+    }
+
+    .android-suggestion {
+      min-width: 0;
+      padding-inline: 8px;
+      overflow: hidden;
+      color: #3c4043;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .android-suggestion + .android-suggestion { border-left: 1px solid #dfe1e5; }
+
+    .keyboard-row {
+      display: grid;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .keyboard-row.ten { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+    .keyboard-row.nine { grid-template-columns: repeat(9, minmax(0, 1fr)); padding-inline: 14px; }
+    .keyboard-row.shift { grid-template-columns: 1.35fr repeat(7, minmax(0, 1fr)) 1.35fr; }
+    .keyboard-row.android-bottom { grid-template-columns: 1.25fr .7fr .7fr 3.4fr .7fr 1.25fr; }
+
+    .keyboard-key {
+      min-width: 0;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: var(--surface);
+      box-shadow: 0 1px 1px rgba(60, 64, 67, .28);
+      white-space: nowrap;
+    }
+
+    .keyboard-key.utility {
+      background: #d8dce2;
+      color: #3c4043;
+      box-shadow: none;
+    }
+
+    .keyboard-key.space {
+      color: #5f6368;
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .keyboard-key.send {
+      background: #d9c8d4;
+      color: var(--primary-dark);
+    }
+
+    .android-gesture-bar {
+      height: 30px;
+      position: relative;
+      display: grid;
+      place-items: end center;
+    }
+
+    .android-gesture-bar::before {
+      width: 108px;
+      height: 4px;
+      border-radius: 999px;
+      background: #4a4d50;
+      content: "";
+    }
+
+    .android-hide-keyboard {
+      position: absolute;
+      left: 2px;
+      bottom: -7px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #4a4d50;
+      cursor: pointer;
+    }
+
+    .android-hide-keyboard:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 1px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .android-hide-keyboard:hover { background: rgba(74, 77, 80, .08); }
+    }
+
+    .ask-sheet.is-visible.show-android-keyboard-preview .android-keyboard-preview { display: block; }
+
+    .ask-sheet.chat-view.show-android-keyboard-preview .android-keyboard-preview {
+      flex: 0 0 auto;
+      margin-top: 10px;
+    }
+
+    .ask-greeting {
+      padding: 20px 0 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+    .ask-greeting[hidden],
+    .ask-sheet.chat-view .ask-greeting { display: none; }
+    .ask-greeting-title { margin: 0; max-width: 300px; font-size: 18px; line-height: 24px; font-weight: 600; text-wrap: balance; }
+    .ask-greeting-copy { margin: -8px 0 0; max-width: 300px; color: var(--muted); text-wrap: balance; }
+    /* Suggestion cards: a horizontal row that bleeds to the sheet edges so the next card peeks in. */
+    .ask-greeting-chips {
+      width: calc(100% + 32px);
+      margin: 8px -16px 0;
+      padding: 0 16px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scroll-padding-inline: 16px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .ask-greeting-chips::-webkit-scrollbar { display: none; }
+    .ask-greeting-chip {
+      flex: 0 0 auto;
+      width: 152px;
+      min-height: 56px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--bg-subtle);
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color var(--motion-duration-press) ease;
+    }
+    .ask-greeting-chip-title { color: var(--copy); font-weight: 600; }
+    .ask-greeting-chip-meta { color: var(--muted); font-size: 12px; line-height: 16px; }
+    .ask-greeting-chip:active { transform: scale(.97); }
+    @media (hover: hover) and (pointer: fine) {
+      .ask-greeting-chip:hover { background: var(--primary-soft); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ask-greeting-chip:active { transform: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ask-fab, .ask-fab::before, .sheet-close, .ask-answer-action, .ask-composer-action, .ask-policy-context-remove, .policy-picker-option { transition-duration: .01ms !important; }
+      .ask-fab:active, .sheet-close:active, .ask-answer-action:active, .ask-composer-action:active, .ask-policy-context-remove:active, .policy-picker-option:active { transform: none; }
+      .ask-sheet,
+      .policy-picker-sheet {
+        transform: translate(-50%, 0);
+        opacity: 0;
+        transition: opacity 120ms var(--motion-ease-out) !important;
+      }
+      .ask-sheet[open].is-visible,
+      .policy-picker-sheet[open].is-visible { opacity: 1; }
+      .ask-sheet::backdrop,
+      .policy-picker-sheet::backdrop { transition: opacity 120ms var(--motion-ease-out) !important; }
+    }
+
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="workspace">
+        <header class="topbar">
+          <div class="phone-status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <span class="phone-status-icons">
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M1 9h2v3H1zm4-3h2v6H5zm4-3h2v9H9zm4-3h2v12h-2z"/></svg>
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5A9.2 9.2 0 0 1 15 4.5M4.7 7.2a5.4 5.4 0 0 1 7.6 0M7.2 9.7a1.8 1.8 0 0 1 2.6 0"/></svg>
+              <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".5" y=".5" width="20" height="11" rx="3" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M22 4v4c1-.3 1.5-1 1.5-2S23 4.3 22 4Z" fill="currentColor" opacity=".45"/></svg>
+            </span>
+          </div>
+          <div class="topbar-inner"><h1>Insights</h1></div>
+        </header>
+
+        <main class="main-content">
+          <div class="filter-chips" role="radiogroup" aria-label="Portfolio insight type"></div>
+
+          <section aria-label="Portfolio insights">
+            <div class="insight-list" role="list"></div>
+          </section>
+        </main>
+
+        <nav class="mobile-nav" aria-label="Primary navigation">
+          <button type="button">
+            <span class="nav-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg></span>
+            <span>Home</span>
+          </button>
+          <button type="button">
+            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></span>
+            <span>My Files</span>
+          </button>
+          <button type="button" class="upload-nav" aria-label="Upload">
+            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5M5 21h14a2 2 0 0 0 2-2v-4M3 15v4a2 2 0 0 0 2 2"/></svg></span>
+          </button>
+          <button type="button" aria-current="page">
+            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span>
+            <span>Insights</span>
+          </button>
+          <button type="button">
+            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></span>
+            <span>More</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+
+  <button class="ask-fab" id="askOvieFab" type="button" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet">
+    <svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg>
+  </button>
+
+  <dialog class="ask-sheet" id="askOvieSheet" aria-labelledby="askOvieTitle">
+    <div class="ask-sheet-inner">
+      <div class="sheet-handle ask-sheet-handle" id="askSheetHandle" role="button" tabindex="0" aria-label="Resize chat window. Drag, or use the up and down arrow keys."></div>
+      <div class="ask-sheet-header">
+        <div class="ask-sheet-heading">
+          <button class="sheet-close" id="openChatHistory" type="button" aria-label="Chat history" aria-haspopup="dialog" aria-controls="chatHistory">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg>
+          </button>
+          <h2 class="section-heading ask-sheet-title" id="askOvieTitle">Ask Ovie</h2>
+        </div>
+        <div class="ask-sheet-actions">
+          <button class="sheet-close ask-new-chat" id="newChatHeader" type="button" aria-label="New chat" title="New chat">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/><path d="M12 8v6"/><path d="M9 11h6"/></svg>
+          </button>
+          <button class="sheet-close" id="closeAskOvie" type="button" aria-label="Close Ask Ovie">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+      </div>
+      <section class="ask-greeting" id="askOvieGreeting" aria-labelledby="askGreetingTitle">
+        <h3 class="ask-greeting-title" id="askGreetingTitle">Hi Rishi, how can we help you?</h3>
+        <p class="ask-greeting-copy">Ask about the policies you have uploaded.</p>
+        <div class="ask-greeting-chips" role="group" aria-label="Suggested questions">
+          <button class="ask-greeting-chip" type="button" data-greeting-question="What does my policy cover?"><span class="ask-greeting-chip-title">What does my policy cover?</span><span class="ask-greeting-chip-meta">Coverage, limits and exclusions</span></button>
+          <button class="ask-greeting-chip" type="button" data-greeting-question="Where might I have gaps in my coverage?"><span class="ask-greeting-chip-title">Where might I have gaps?</span><span class="ask-greeting-chip-meta">Missing or unclear coverage</span></button>
+          <button class="ask-greeting-chip" type="button" data-greeting-question="When do my policies end?"><span class="ask-greeting-chip-title">When do my policies end?</span><span class="ask-greeting-chip-meta">Dates from your documents</span></button>
+        </div>
+      </section>
+      <div class="ask-sheet-conversation" id="askOvieConversation" aria-live="polite" hidden>
+        <div class="ask-user-policy" id="askOvieQuestionPolicy" hidden>
+          <svg class="ask-user-policy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+          <span id="askOvieQuestionPolicyName"></span>
+        </div>
+        <div class="ask-user-row">
+          <div class="ask-user-message" id="askOvieQuestion" tabindex="0" aria-haspopup="menu" aria-expanded="false" aria-controls="askUserMenu"></div>
+          <div class="ask-user-menu" id="askUserMenu" role="menu" aria-label="Prompt options" hidden>
+            <button class="ask-user-menu-item" type="button" role="menuitem" data-user-menu-action="copy"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>Copy</button>
+            <button class="ask-user-menu-item" type="button" role="menuitem" data-user-menu-action="edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></svg>Edit</button>
+          </div>
+        </div>
+        <div class="ask-ovie-response">
+          <div class="ask-response-body">
+            <h3 class="ask-response-heading" id="askOvieAnswerHeading" hidden></h3>
+            <p class="ask-response-text" id="askOvieAnswer"></p>
+            <div class="ask-citations" id="askOvieCitations" role="group" aria-label="Sources" hidden></div>
+            <div class="ask-answer-actions" aria-label="Answer actions">
+              <button class="ask-answer-action" type="button" data-answer-action="copy" aria-label="Copy answer" title="Copy answer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
+              <button class="ask-answer-action" type="button" data-answer-action="helpful" aria-label="Helpful answer" title="Helpful answer" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg></button>
+              <button class="ask-answer-action" type="button" data-answer-action="not-helpful" aria-label="Not helpful" title="Not helpful" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg></button>
+            </div>
+            <div class="ask-followups" id="askOvieFollowups" role="group" aria-label="Follow-up questions" hidden></div>
+          </div>
+        </div>
+      </div>
+      <form class="ask-sheet-form" id="askOvieForm" novalidate>
+        <label class="visually-hidden" for="askOvieInput">Ask anything about your policies</label>
+        <div class="ask-policy-context" id="askPolicyContext" hidden>
+          <svg class="ask-policy-context-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+          <span class="ask-policy-context-copy"><span class="ask-policy-context-name" id="askPolicyContextName"></span><span class="ask-policy-context-meta" id="askPolicyContextMeta"></span></span>
+          <button class="ask-policy-context-remove" id="removeAskPolicy" type="button" aria-label="Remove policy from chat" title="Remove policy from chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+        </div>
+        <div class="ask-sheet-composer-row">
+          <div class="ask-sheet-input-row">
+            <button class="ask-composer-action attachment" id="askAttachmentButton" type="button" aria-label="Add a policy to this chat" aria-haspopup="dialog" aria-controls="askPolicyPicker" title="Add a policy to this chat"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
+            <input class="ask-sheet-input" id="askOvieInput" name="question" type="text" inputmode="text" enterkeyhint="send" autocomplete="off" placeholder="Ask anything about your policies...">
+          </div>
+          <button class="ask-composer-action" id="askComposerAction" type="button" aria-label="Use voice input" title="Use voice input">
+            <svg class="composer-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>
+            <svg class="composer-send-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </div>
+      </form>
+      <p class="ask-ovie-disclaimer">Ovie provides policy summaries only and does not offer policy recommendations or insurance advice.</p>
+      <div class="android-keyboard-preview">
+        <div class="android-suggestions" aria-hidden="true"><span class="android-suggestion">your</span><span class="android-suggestion">coverage</span><span class="android-suggestion">policy</span></div>
+        <div class="keyboard-row ten" aria-hidden="true"><span class="keyboard-key">Q</span><span class="keyboard-key">W</span><span class="keyboard-key">E</span><span class="keyboard-key">R</span><span class="keyboard-key">T</span><span class="keyboard-key">Y</span><span class="keyboard-key">U</span><span class="keyboard-key">I</span><span class="keyboard-key">O</span><span class="keyboard-key">P</span></div>
+        <div class="keyboard-row nine" aria-hidden="true"><span class="keyboard-key">A</span><span class="keyboard-key">S</span><span class="keyboard-key">D</span><span class="keyboard-key">F</span><span class="keyboard-key">G</span><span class="keyboard-key">H</span><span class="keyboard-key">J</span><span class="keyboard-key">K</span><span class="keyboard-key">L</span></div>
+        <div class="keyboard-row shift" aria-hidden="true"><span class="keyboard-key utility"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/><path d="M12 9v12"/></svg></span><span class="keyboard-key">Z</span><span class="keyboard-key">X</span><span class="keyboard-key">C</span><span class="keyboard-key">V</span><span class="keyboard-key">B</span><span class="keyboard-key">N</span><span class="keyboard-key">M</span><span class="keyboard-key utility"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6"/><path d="m12 9 6 6"/></svg></span></div>
+        <div class="keyboard-row android-bottom" aria-hidden="true"><span class="keyboard-key utility">?123</span><span class="keyboard-key utility">,</span><span class="keyboard-key utility"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></span><span class="keyboard-key space">English (US)</span><span class="keyboard-key utility">.</span><span class="keyboard-key utility send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></div>
+        <div class="android-gesture-bar">
+          <button class="android-hide-keyboard" id="hidePreviewKeyboard" type="button" aria-label="Hide keyboard" title="Hide keyboard">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="chat-history" id="chatHistory" role="dialog" aria-modal="true" aria-labelledby="chatHistoryTitle" hidden>
+      <div class="chat-history-inner">
+        <div class="chat-history-header">
+          <h2 class="section-heading" id="chatHistoryTitle">Chat history</h2>
+          <button class="sheet-close" id="closeChatHistory" type="button" aria-label="Close chat history">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+        <div class="chat-history-body">
+          <button class="chat-history-new" id="newChat" type="button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            <span>New chat</span>
+          </button>
+          <div id="chatHistoryGroups"></div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+  <dialog class="policy-picker-sheet" id="askPolicyPicker" aria-labelledby="askPolicyPickerTitle">
+    <div class="policy-picker-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="ask-sheet-header">
+        <h2 class="section-heading" id="askPolicyPickerTitle">Add a policy</h2>
+        <button class="sheet-close" id="closeAskPolicyPicker" type="button" aria-label="Close policy list">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <label class="visually-hidden" for="askPolicySearch">Search policies</label>
+      <div class="policy-picker-search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="askPolicySearch" type="search" autocomplete="off" placeholder="Search policies">
+        <button class="policy-search-clear" id="clearAskPolicySearch" type="button" aria-label="Clear policy search" title="Clear policy search" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <ul class="policy-picker-list" id="askPolicyList" aria-label="Policy folders">
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="crv" data-policy-name="2022 Honda CR-V" data-policy-meta="State Farm · •• 4721" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">2022 Honda CR-V</span><span class="policy-picker-meta">State Farm · •• 4721</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="austin-home" data-policy-name="Austin home" data-policy-meta="Travelers · •• 1840" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Austin home</span><span class="policy-picker-meta">Travelers · •• 1840</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="umbrella" data-policy-name="Family umbrella" data-policy-meta="Chubb · •• 9062" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Family umbrella</span><span class="policy-picker-meta">Chubb · •• 9062</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="downtown" data-policy-name="Downtown apartment" data-policy-meta="Lemonade · •• 3218" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">Downtown apartment</span><span class="policy-picker-meta">Lemonade · •• 3218</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+        <li class="policy-picker-item"><button class="policy-picker-option" type="button" data-policy-id="camry" data-policy-name="2018 Toyota Camry" data-policy-meta="State Farm · •• 7784" aria-pressed="false"><span class="policy-picker-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span class="policy-picker-copy"><span class="policy-picker-name">2018 Toyota Camry</span><span class="policy-picker-meta">State Farm · •• 7784</span></span><svg class="policy-picker-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></button></li>
+      </ul>
+      <p class="policy-picker-empty" id="askPolicyEmpty" hidden>No policies match your search.</p>
+    </div>
+  </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      const filters = [
+        { value: "all", label: "All" },
+        { value: "expiry", label: "Expiry" },
+        { value: "gaps", label: "Gaps" },
+        { value: "duplicate", label: "Duplicate" }
+      ];
+
+      const insights = [
+        {
+          id: "home-expiry",
+          kind: "expiry",
+          title: "Home policy ends in 12 days",
+          tag: "Expiry",
+          icon: "Expiry",
+          scope: "Austin home · Travelers",
+          generated: "Sep 3, 2026",
+          what: "Your Austin home policy term ends on Sep 12, 2026 — 12 days from now.",
+          why: "If the term lapses before a renewal is in place, your home could be left without coverage.",
+          where: "Based on the declarations page of your uploaded Travelers home policy.",
+          question: "When does my Austin home policy expire and what should I check before it renews?"
+        },
+        {
+          id: "apartment-expiry",
+          kind: "expiry",
+          title: "Apartment policy ends in 47 days",
+          tag: "Expiry",
+          icon: "Expiry",
+          scope: "Downtown apartment · Lemonade",
+          generated: "Aug 18, 2026",
+          what: "Your Downtown apartment renters policy term ends in 47 days.",
+          why: "Renewing before the term ends keeps your belongings and personal liability covered without a gap.",
+          where: "Based on the declarations page of your uploaded Lemonade renters policy.",
+          question: "When does my Downtown apartment renters policy expire?"
+        },
+        {
+          id: "state-minimum",
+          kind: "gaps",
+          title: "State minimum coverage not established",
+          tag: "Gaps",
+          icon: "Gaps",
+          scope: "2018 Toyota Camry · State Farm",
+          generated: "Sep 3, 2026",
+          what: "The uploaded documents don't establish that your Camry meets Texas minimum auto liability limits.",
+          why: "Driving below the state-required minimum can expose you to fines and out-of-pocket liability after a claim.",
+          where: "No liability-limit schedule was found in the pages analyzed for this State Farm policy.",
+          question: "Does my 2018 Toyota Camry policy meet Texas minimum auto liability limits?"
+        },
+        {
+          id: "umbrella-underlying",
+          kind: "gaps",
+          title: "Underlying limits not established",
+          tag: "Gaps",
+          icon: "Gaps",
+          scope: "Family umbrella · Chubb",
+          generated: "Aug 25, 2026",
+          what: "The required underlying liability limits for your umbrella policy aren't established in the uploaded documents.",
+          why: "Umbrella coverage may not respond if the underlying policies don't meet the limits it requires.",
+          where: "The schedule of underlying insurance wasn't found in the pages analyzed for this Chubb policy.",
+          question: "What underlying limits does my Chubb family umbrella policy require?"
+        },
+        {
+          id: "duplicate",
+          kind: "duplicate",
+          title: "Possible duplicate coverage",
+          tag: "Duplicate",
+          icon: "Overlaps",
+          scope: "Austin home · Downtown apartment",
+          generated: "Sep 3, 2026",
+          what: "Your Austin home and Downtown apartment policies may both cover the same personal property.",
+          why: "Paying for overlapping coverage usually doesn't increase what you can actually claim.",
+          where: "Based on the personal property sections of both uploaded policies.",
+          question: "Do my Austin home and Downtown apartment policies have duplicate coverage?"
+        }
+      ];
+
+      const iconPaths = {
+        Gaps: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+        Overlaps: '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+        Expiry: '<path d="M16 14v2.2l1.6 1"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><path d="M8 2v4"/><circle cx="16" cy="16" r="6"/>',
+        All: '<path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/>'
+      };
+
+      const list = document.querySelector(".insight-list");
+      const chipGroup = document.querySelector(".filter-chips");
+      const toast = document.querySelector("#toast");
+      let selectedFilter = "all";
+      let toastTimer;
+
+      function icon(type, size = 22) {
+        return `<svg aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${iconPaths[type] || iconPaths.All}</svg>`;
+      }
+
+      function escapeAttr(value) {
+        return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      function filteredInsights() {
+        return insights.filter(item => selectedFilter === "all" || item.kind === selectedFilter);
+      }
+
+      function filterCount(value) {
+        return value === "all" ? insights.length : insights.filter(item => item.kind === value).length;
+      }
+
+      function renderChips() {
+        chipGroup.innerHTML = filters.map(filter => `<button type="button" role="radio" class="filter-chip" data-filter="${filter.value}" aria-label="${filter.label}, ${filterCount(filter.value)}" aria-checked="${selectedFilter === filter.value}"><span class="filter-chip-face">${filter.label}<span class="filter-chip-count">${filterCount(filter.value)}</span></span></button>`).join("");
+      }
+
+      function render() {
+        const visible = filteredInsights();
+
+        if (!visible.length) {
+          list.innerHTML = `<div class="empty-state">${icon("All", 24)}<h2>No matching insights</h2><p>Try another category.</p></div>`;
+          return;
+        }
+
+        list.innerHTML = visible.map(item => `
+          <article class="insight-card" role="listitem" data-id="${item.id}">
+            <div class="insight-head">
+              <span class="insight-icon">${icon(item.icon)}</span>
+              <div class="insight-headline">
+                <strong class="insight-title">${item.title}</strong>
+                <span class="insight-meta">
+                  <span class="scope-line">${item.scope}</span>
+                  <span class="insight-tagline"><span class="policy-type-tag">${item.tag}</span><span class="generated-date">${item.generated}</span></span>
+                </span>
+              </div>
+              <button type="button" class="ask-ovie-cta" data-question="${escapeAttr(item.question)}" aria-label="Ask Ovie about ${escapeAttr(item.title)}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+            <p class="insight-explain">${item.what} ${item.why} ${item.where}</p>
+          </article>`).join("");
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+      }
+
+      chipGroup.addEventListener("click", event => {
+        const chip = event.target.closest(".filter-chip");
+        if (!chip || chip.dataset.filter === selectedFilter) return;
+        selectedFilter = chip.dataset.filter;
+        renderChips();
+        render();
+        chipGroup.querySelector(`[data-filter="${selectedFilter}"]`).focus();
+      });
+      chipGroup.addEventListener("keydown", event => {
+        const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+        if (!(event.key in keys)) return;
+        event.preventDefault();
+        const index = filters.findIndex(filter => filter.value === selectedFilter);
+        selectedFilter = filters[(index + keys[event.key] + filters.length) % filters.length].value;
+        renderChips();
+        render();
+        chipGroup.querySelector(`[data-filter="${selectedFilter}"]`).focus();
+      });
+
+      list.addEventListener("click", event => {
+        const cta = event.target.closest(".ask-ovie-cta");
+        if (!cta) return;
+        const card = cta.closest(".insight-card");
+        const item = insights.find(value => value.id === (card && card.dataset.id));
+        if (!item || typeof window.openAskOvieInsight !== "function") return;
+        window.openAskOvieInsight({
+          title: item.title,
+          explanation: `${item.what} ${item.why} ${item.where}`,
+          topic: item.question
+        });
+      });
+
+      const topbar = document.querySelector(".topbar");
+      let lastScroll = Math.max(0, window.scrollY);
+      let downwardTravel = 0;
+      let scrollDirection = 0;
+      let scrollFrame;
+      function updateTopbar() {
+        scrollFrame = undefined;
+        const current = Math.max(0, window.scrollY);
+        const delta = current - lastScroll;
+        if (current <= 24 || topbar.contains(document.activeElement)) {
+          downwardTravel = 0;
+          topbar.classList.remove("is-hidden");
+        } else if (delta < -1) {
+          scrollDirection = -1;
+          downwardTravel = 0;
+          topbar.classList.remove("is-hidden");
+        } else if (delta > 1) {
+          if (scrollDirection !== 1) downwardTravel = 0;
+          scrollDirection = 1;
+          downwardTravel += delta;
+          if (downwardTravel >= 24) topbar.classList.add("is-hidden");
+        }
+        lastScroll = current;
+      }
+      window.addEventListener("scroll", () => {
+        if (!scrollFrame) scrollFrame = requestAnimationFrame(updateTopbar);
+      }, { passive: true });
+
+      renderChips();
+      render();
+    </script>
+    <script>
+      (() => {
+        const askOvieFab = document.querySelector('#askOvieFab');
+        const askOvieSheet = document.querySelector('#askOvieSheet');
+        const closeAskOvie = document.querySelector('#closeAskOvie');
+        const askOvieForm = document.querySelector('#askOvieForm');
+        const askOvieInput = document.querySelector('#askOvieInput');
+        const askComposerAction = document.querySelector('#askComposerAction');
+        const askOvieConversation = document.querySelector('#askOvieConversation');
+        const askOvieCitations = document.querySelector('#askOvieCitations');
+        const askOvieFollowups = document.querySelector('#askOvieFollowups');
+        const askOvieQuestion = document.querySelector('#askOvieQuestion');
+        const askOvieQuestionPolicy = document.querySelector('#askOvieQuestionPolicy');
+        const askOvieQuestionPolicyName = document.querySelector('#askOvieQuestionPolicyName');
+        const askOvieAnswer = document.querySelector('#askOvieAnswer');
+        const askAttachmentButton = document.querySelector('#askAttachmentButton');
+        const askPolicyContext = document.querySelector('#askPolicyContext');
+        const askPolicyContextName = document.querySelector('#askPolicyContextName');
+        const askPolicyContextMeta = document.querySelector('#askPolicyContextMeta');
+        const removeAskPolicy = document.querySelector('#removeAskPolicy');
+        const askPolicyPicker = document.querySelector('#askPolicyPicker');
+        const closeAskPolicyPickerButton = document.querySelector('#closeAskPolicyPicker');
+        const askPolicySearch = document.querySelector('#askPolicySearch');
+        const clearAskPolicySearch = document.querySelector('#clearAskPolicySearch');
+        const askPolicyOptions = Array.from(document.querySelectorAll('.policy-picker-option'));
+        const askPolicyEmpty = document.querySelector('#askPolicyEmpty');
+        const hidePreviewKeyboard = document.querySelector('#hidePreviewKeyboard');
+        const answerActions = Array.from(document.querySelectorAll('[data-answer-action]'));
+        const toast = document.querySelector('#toast');
+        const visualViewport = window.visualViewport;
+        let toastTimer;
+        let sheetCloseTimer;
+        let policyPickerCloseTimer;
+        let sheetExpandAnimation;
+        let askSheetLayoutHeight = window.innerHeight;
+        let selectedAskPolicy = null;
+
+        function showToast(message) {
+          toast.textContent = message;
+          toast.classList.add('show');
+          window.clearTimeout(toastTimer);
+          toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
+        async function copyText(text) {
+          if (navigator.clipboard && window.isSecureContext) {
+            try { await navigator.clipboard.writeText(text); return; } catch {}
+          }
+          const activeElement = document.activeElement;
+          const copyArea = document.createElement('textarea');
+          copyArea.value = text;
+          copyArea.setAttribute('readonly', '');
+          copyArea.style.position = 'fixed';
+          copyArea.style.opacity = '0';
+          document.body.appendChild(copyArea);
+          copyArea.select();
+          const copied = document.execCommand('copy');
+          copyArea.remove();
+          activeElement?.focus({ preventScroll: true });
+          if (!copied) throw new Error('Copy failed');
+        }
+
+        function syncAskSheetToViewport() {
+          if (!askOvieSheet.open || document.activeElement !== askOvieInput || !visualViewport) {
+            askOvieSheet.classList.remove('keyboard-visible');
+            askSheetLayoutHeight = window.innerHeight;
+            document.documentElement.style.setProperty('--keyboard-inset', '0px');
+            document.documentElement.style.setProperty('--visual-viewport-height', '100dvh');
+            document.documentElement.style.setProperty('--visual-viewport-top', '0px');
+            return;
+          }
+          const visualViewportBottom = visualViewport.offsetTop + visualViewport.height;
+          const layoutViewportResized = window.innerHeight < askSheetLayoutHeight - 80;
+          const keyboardInset = layoutViewportResized ? 0 : Math.max(0, askSheetLayoutHeight - visualViewportBottom);
+          const keyboardVisible = layoutViewportResized || keyboardInset > 80 || visualViewport.height < askSheetLayoutHeight - 80;
+          askOvieSheet.classList.toggle('keyboard-visible', keyboardVisible);
+          document.documentElement.style.setProperty('--keyboard-inset', `${keyboardInset}px`);
+          document.documentElement.style.setProperty('--visual-viewport-height', `${visualViewport.height}px`);
+          document.documentElement.style.setProperty('--visual-viewport-top', `${visualViewport.offsetTop}px`);
+        }
+
+        if (visualViewport) {
+          visualViewport.addEventListener('resize', syncAskSheetToViewport);
+          visualViewport.addEventListener('scroll', syncAskSheetToViewport);
+        }
+
+        hidePreviewKeyboard.addEventListener('click', () => {
+          askOvieInput.blur();
+          askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+          syncAskSheetToViewport();
+        });
+
+        askOvieInput.addEventListener('focus', () => {
+          if (!window.matchMedia('(pointer: coarse)').matches) {
+            askOvieSheet.classList.add('show-android-keyboard-preview');
+          }
+          syncAskSheetToViewport();
+        });
+
+        // Greeting suggestion cards: ask immediately on tap.
+        const askOvieGreeting = document.querySelector('#askOvieGreeting');
+        askOvieGreeting.querySelectorAll('[data-greeting-question]').forEach((chip) => {
+          chip.addEventListener('click', () => {
+            askOvieInput.value = chip.dataset.greetingQuestion;
+            syncComposerAction();
+            askOvieForm.requestSubmit();
+          });
+        });
+
+        // Chat history: sample past chats.
+        const chatHistory = document.querySelector('#chatHistory');
+        const openChatHistoryButton = document.querySelector('#openChatHistory');
+        const chatHistoryGroups = document.querySelector('#chatHistoryGroups');
+        const askSheetInner = askOvieSheet.querySelector('.ask-sheet-inner');
+        let chatHistoryTimer;
+        const pastChats = [
+          { group: 'Today', questions: ['When do my policies end?'] },
+          { group: 'Yesterday', questions: ['Where might I have gaps in my coverage?', 'What is my deductible?'] },
+          { group: 'Previous 7 days', questions: ['Do any of my policies overlap?', 'What does my policy cover?'] }
+        ];
+
+        function renderChatHistory() {
+          chatHistoryGroups.replaceChildren(...pastChats.map((entry, index) => {
+            const section = document.createElement('section');
+            section.setAttribute('aria-labelledby', 'chatHistoryGroup' + index);
+            const title = document.createElement('h3');
+            title.className = 'chat-history-group-title';
+            title.id = 'chatHistoryGroup' + index;
+            title.textContent = entry.group;
+            const list = document.createElement('ul');
+            list.className = 'chat-history-list';
+            entry.questions.forEach((question) => {
+              const item = document.createElement('li');
+              const row = document.createElement('button');
+              row.type = 'button';
+              row.className = 'chat-history-row';
+              row.innerHTML = '<span class="chat-history-row-copy"><span class="chat-history-row-title"></span><span class="chat-history-row-meta"></span></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+              row.querySelector('.chat-history-row-title').textContent = question;
+              row.querySelector('.chat-history-row-meta').textContent = citationsFor(question)[0].split(' · ')[0];
+              row.addEventListener('click', () => closeChatHistory(false, () => {
+                resetChat();
+                askOvieInput.value = question;
+                syncComposerAction();
+                askOvieForm.requestSubmit();
+              }));
+              item.append(row);
+              list.append(item);
+            });
+            section.append(title, list);
+            return section;
+          }));
+        }
+
+        function resetChat() {
+          sheetExpandAnimation?.cancel();
+          askOvieSheet.classList.remove('chat-view');
+          askOvieConversation.hidden = true;
+          askOvieInput.value = '';
+          clearAskPolicySelection();
+          syncComposerAction(false);
+          syncAskSheetToViewport();
+        }
+
+        function openChatHistory() {
+          window.clearTimeout(chatHistoryTimer);
+          renderChatHistory();
+          chatHistory.classList.remove('is-visible');
+          chatHistory.hidden = false;
+          askSheetInner.inert = true;
+          document.querySelector('#closeChatHistory').focus({ preventScroll: true });
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => chatHistory.classList.add('is-visible'));
+          });
+        }
+
+        function closeChatHistory(returnFocus = true, then) {
+          if (chatHistory.hidden) return;
+          chatHistory.classList.remove('is-visible');
+          window.clearTimeout(chatHistoryTimer);
+          const durations = window.getComputedStyle(chatHistory).transitionDuration.split(',').map((value) => {
+            const duration = Number.parseFloat(value);
+            return value.trim().endsWith('ms') ? duration : duration * 1000;
+          });
+          chatHistoryTimer = window.setTimeout(() => {
+            chatHistory.hidden = true;
+            askSheetInner.inert = false;
+            if (returnFocus) openChatHistoryButton.focus({ preventScroll: true });
+            if (then) then();
+          }, Math.max(0, ...durations) + 34);
+        }
+
+        openChatHistoryButton.addEventListener('click', openChatHistory);
+        document.querySelector('#closeChatHistory').addEventListener('click', () => closeChatHistory());
+        document.querySelector('#newChat').addEventListener('click', () => closeChatHistory(false, () => {
+          resetChat();
+          askOvieInput.focus({ preventScroll: true });
+        }));
+        document.querySelector('#newChatHeader').addEventListener('click', () => {
+          resetChat();
+          askOvieInput.focus({ preventScroll: true });
+        });
+        chatHistory.addEventListener('keydown', (event) => {
+          if (event.key !== 'Escape') return;
+          event.preventDefault();
+          event.stopPropagation();
+          closeChatHistory();
+        });
+
+        // Resizable sheet.
+        const askSheetHandle = document.querySelector('#askSheetHandle');
+        const SHEET_TOP_GAP = 52;
+
+        function askSheetSnaps() {
+          const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+          const tall = Math.round(viewportHeight - SHEET_TOP_GAP);
+          const medium = Math.min(askOvieSheet.classList.contains('show-android-keyboard-preview') ? 640 : 560, tall);
+          const small = Math.min(300, medium);
+          return Array.from(new Set([small, medium, tall]));
+        }
+
+        function setAskSheetHeight(height) {
+          askOvieSheet.classList.add('is-resized');
+          askOvieSheet.style.setProperty('--ask-sheet-height', Math.round(height) + 'px');
+        }
+
+        function resetAskSheetSize() {
+          askOvieSheet.classList.remove('is-resized', 'is-dragging');
+          askOvieSheet.style.removeProperty('--ask-sheet-height');
+          askOvieSheet.style.removeProperty('transform');
+        }
+
+        let sheetDrag = null;
+
+        askSheetHandle.addEventListener('pointerdown', (event) => {
+          if (event.button !== 0) return;
+          sheetExpandAnimation?.cancel();
+          const startHeight = askOvieSheet.getBoundingClientRect().height;
+          sheetDrag = { id: event.pointerId, startY: event.clientY, startHeight, snaps: askSheetSnaps(), samples: [{ y: event.clientY, t: event.timeStamp }], height: startHeight, over: 0 };
+          setAskSheetHeight(startHeight);
+          askOvieSheet.classList.add('is-dragging');
+          askSheetHandle.setPointerCapture(event.pointerId);
+        });
+
+        askSheetHandle.addEventListener('pointermove', (event) => {
+          if (!sheetDrag || event.pointerId !== sheetDrag.id) return;
+          const { snaps } = sheetDrag;
+          const raw = sheetDrag.startHeight + (sheetDrag.startY - event.clientY);
+          const min = snaps[0];
+          const max = snaps[snaps.length - 1];
+          sheetDrag.height = Math.min(max, Math.max(min, raw));
+          sheetDrag.over = Math.max(0, min - raw);
+          setAskSheetHeight(sheetDrag.height);
+          askOvieSheet.style.transform = sheetDrag.over ? 'translate(-50%, ' + Math.round(sheetDrag.over) + 'px)' : '';
+          sheetDrag.samples.push({ y: event.clientY, t: event.timeStamp });
+          if (sheetDrag.samples.length > 6) sheetDrag.samples.shift();
+          syncAskSheetToViewport();
+        });
+
+        function endSheetDrag(event) {
+          if (!sheetDrag || event.pointerId !== sheetDrag.id) return;
+          const { snaps, height, over, samples } = sheetDrag;
+          sheetDrag = null;
+          const first = samples[0];
+          const last = samples[samples.length - 1];
+          const velocity = last.t > first.t ? (last.y - first.y) / (last.t - first.t) : 0;
+          askOvieSheet.classList.remove('is-dragging');
+          askOvieSheet.style.removeProperty('transform');
+          if (over > 80 || (velocity > 0.8 && height <= snaps[0] + 24)) {
+            closeAskSheet();
+            return;
+          }
+          const projected = height - velocity * 180;
+          const target = snaps.reduce((best, snap) => (Math.abs(snap - projected) < Math.abs(best - projected) ? snap : best), snaps[0]);
+          setAskSheetHeight(target);
+        }
+
+        askSheetHandle.addEventListener('pointerup', endSheetDrag);
+        askSheetHandle.addEventListener('pointercancel', endSheetDrag);
+
+        askSheetHandle.addEventListener('keydown', (event) => {
+          if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+          event.preventDefault();
+          const snaps = askSheetSnaps();
+          const current = askOvieSheet.getBoundingClientRect().height;
+          const index = snaps.reduce((best, snap, i) => (Math.abs(snap - current) < Math.abs(snaps[best] - current) ? i : best), 0);
+          const next = Math.min(snaps.length - 1, Math.max(0, index + (event.key === 'ArrowUp' ? 1 : -1)));
+          setAskSheetHeight(snaps[next]);
+        });
+
+        function openAskSheet() {
+          resetAskSheetSize();
+          window.clearTimeout(sheetCloseTimer);
+          const showPreviewKeyboard = !window.matchMedia('(pointer: coarse)').matches;
+          askOvieSheet.classList.toggle('show-android-keyboard-preview', showPreviewKeyboard);
+          askOvieSheet.classList.remove('chat-view');
+          askOvieConversation.hidden = true;
+          clearAskPolicySelection();
+          askOvieQuestionPolicy.hidden = true;
+          askPolicySearch.value = '';
+          filterAskPolicies();
+          syncComposerAction();
+          askOvieSheet.classList.remove('is-visible');
+          askOvieSheet.showModal();
+          document.body.classList.add('sheet-open');
+          askSheetLayoutHeight = window.innerHeight;
+          askOvieInput.focus({ preventScroll: true });
+          syncAskSheetToViewport();
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
+              syncAskSheetToViewport();
+              askOvieSheet.classList.add('is-visible');
+            });
+          });
+        }
+
+        // Opened from an insight card chevron: seed the chat with the insight's title and
+        // explanation already in view, then show follow-up suggestions for that topic.
+        window.openAskOvieInsight = function (insight) {
+          if (!insight) return;
+          openAskSheet();
+          const topic = insight.topic || insight.title || '';
+          window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+            presentExchange(insight.title || topic, insight.explanation || "", topic, true);
+          }));
+        };
+
+        function sheetTransitionDuration() {
+          const styles = window.getComputedStyle(askOvieSheet);
+          const durations = styles.transitionDuration.split(',').map((value) => {
+            const duration = Number.parseFloat(value);
+            return value.trim().endsWith('ms') ? duration : duration * 1000;
+          });
+          return Math.max(0, ...durations);
+        }
+
+        function closeAskSheet(returnFocus = true) {
+          if (!askOvieSheet.open) return;
+          sheetExpandAnimation?.cancel();
+          askOvieSheet.classList.remove('is-visible');
+          window.clearTimeout(sheetCloseTimer);
+          sheetCloseTimer = window.setTimeout(() => {
+            askOvieSheet.close();
+            chatHistory.hidden = true;
+            chatHistory.classList.remove('is-visible');
+            askSheetInner.inert = false;
+            resetAskSheetSize();
+            askOvieSheet.classList.remove('chat-view');
+            askOvieConversation.hidden = true;
+            document.body.classList.remove('sheet-open');
+            syncAskSheetToViewport();
+            if (returnFocus) askOvieFab.focus({ preventScroll: true });
+          }, sheetTransitionDuration() + 34);
+        }
+
+        askOvieFab.addEventListener('click', openAskSheet);
+        closeAskOvie.addEventListener('click', () => closeAskSheet());
+        askOvieSheet.addEventListener('cancel', (event) => {
+          event.preventDefault();
+          if (!chatHistory.hidden) { closeChatHistory(); return; }
+          closeAskSheet();
+        });
+        askOvieSheet.addEventListener('pointerdown', (event) => {
+          const bounds = askOvieSheet.getBoundingClientRect();
+          const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+          if (outsideSheet) closeAskSheet();
+        });
+        askOvieInput.addEventListener('input', () => {
+          const hasQuestion = askOvieInput.value.trim().length > 0;
+          syncComposerAction(hasQuestion);
+        });
+        askOvieInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' && !event.isComposing) event.preventDefault();
+        });
+
+        function policyPickerTransitionDuration() {
+          const styles = window.getComputedStyle(askPolicyPicker);
+          const durations = styles.transitionDuration.split(',').map((value) => {
+            const duration = Number.parseFloat(value);
+            return value.trim().endsWith('ms') ? duration : duration * 1000;
+          });
+          return Math.max(0, ...durations);
+        }
+
+        function filterAskPolicies() {
+          const query = askPolicySearch.value.trim().toLocaleLowerCase();
+          let visibleCount = 0;
+          askPolicyOptions.forEach((button) => {
+            const searchableText = `${button.dataset.policyName} ${button.dataset.policyMeta}`.toLocaleLowerCase();
+            const matches = !query || searchableText.includes(query);
+            button.closest('.policy-picker-item').hidden = !matches;
+            if (matches) visibleCount += 1;
+          });
+          clearAskPolicySearch.hidden = query.length === 0;
+          askPolicyEmpty.hidden = visibleCount !== 0;
+        }
+
+        function renderAskPolicySelection() {
+          askPolicyContext.hidden = !selectedAskPolicy;
+          askPolicyContextName.textContent = selectedAskPolicy?.name || '';
+          askPolicyContextMeta.textContent = selectedAskPolicy?.meta || '';
+          askPolicyOptions.forEach((button) => {
+            button.setAttribute('aria-pressed', String(button.dataset.policyId === selectedAskPolicy?.id));
+          });
+        }
+
+        function clearAskPolicySelection(returnFocus = false) {
+          selectedAskPolicy = null;
+          renderAskPolicySelection();
+          if (returnFocus) askOvieInput.focus({ preventScroll: true });
+        }
+
+        function openAskPolicyPicker() {
+          window.clearTimeout(policyPickerCloseTimer);
+          askOvieInput.blur();
+          askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+          syncAskSheetToViewport();
+          askPolicySearch.value = '';
+          filterAskPolicies();
+          askPolicyPicker.classList.remove('is-visible');
+          askPolicyPicker.showModal();
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
+              askPolicyPicker.classList.add('is-visible');
+              askPolicySearch.focus({ preventScroll: true });
+            });
+          });
+        }
+
+        function closeAskPolicyPicker(returnFocus = true) {
+          if (!askPolicyPicker.open) return;
+          askPolicyPicker.classList.remove('is-visible');
+          window.clearTimeout(policyPickerCloseTimer);
+          policyPickerCloseTimer = window.setTimeout(() => {
+            askPolicyPicker.close();
+            if (returnFocus) askOvieInput.focus({ preventScroll: true });
+          }, policyPickerTransitionDuration() + 34);
+        }
+
+        askAttachmentButton.addEventListener('click', openAskPolicyPicker);
+        closeAskPolicyPickerButton.addEventListener('click', () => closeAskPolicyPicker());
+        askPolicyPicker.addEventListener('cancel', (event) => {
+          event.preventDefault();
+          closeAskPolicyPicker();
+        });
+        askPolicyPicker.addEventListener('pointerdown', (event) => {
+          const bounds = askPolicyPicker.getBoundingClientRect();
+          const outsideSheet = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+          if (outsideSheet) closeAskPolicyPicker();
+        });
+        askPolicySearch.addEventListener('input', filterAskPolicies);
+        clearAskPolicySearch.addEventListener('click', () => {
+          askPolicySearch.value = '';
+          filterAskPolicies();
+          askPolicySearch.focus({ preventScroll: true });
+        });
+        askPolicyOptions.forEach((button) => {
+          button.addEventListener('click', () => {
+            selectedAskPolicy = { id: button.dataset.policyId, name: button.dataset.policyName, meta: button.dataset.policyMeta };
+            renderAskPolicySelection();
+            closeAskPolicyPicker();
+          });
+        });
+        removeAskPolicy.addEventListener('click', () => clearAskPolicySelection(true));
+
+        function syncComposerAction(hasQuestion = askOvieInput.value.trim().length > 0) {
+          askComposerAction.classList.toggle('is-send', hasQuestion);
+          askComposerAction.setAttribute('aria-label', hasQuestion ? 'Send question' : 'Use voice input');
+          askComposerAction.title = hasQuestion ? 'Send question' : 'Use voice input';
+        }
+
+        askComposerAction.addEventListener('click', () => {
+          if (askComposerAction.classList.contains('is-send')) {
+            askOvieForm.requestSubmit();
+            return;
+          }
+          showToast('Voice input is not available in this prototype');
+          askOvieInput.focus({ preventScroll: true });
+        });
+
+        function answerFor(question) {
+          if (/duplicate|overlap|same coverage/i.test(question)) {
+            return 'Your uploaded documents suggest possible overlapping protection between Austin home and Downtown apartment.\n\nOpen the related policy details to compare the covered property and limits.';
+          }
+          if (/underlying|umbrella/i.test(question)) {
+            return 'The schedule of underlying insurance wasn’t found in the pages analyzed for your Chubb umbrella policy, so the required underlying limits aren’t established.\n\nUpload the umbrella declarations page so Ovie can confirm the required limits.';
+          }
+          if (/minimum|liability|state required|state minimum/i.test(question)) {
+            return 'The uploaded documents don’t establish that your 2018 Toyota Camry meets Texas minimum auto liability limits.\n\nUpload the current declarations page so Ovie can confirm the liability limits.';
+          }
+          if (/expir|end|renew|date/i.test(question)) {
+            return 'Your Austin home policy ends Sep 12, 2026. No newer policy document is currently uploaded.\n\nReview the policy document before the term ends to confirm renewal details.';
+          }
+          if (/deductible/i.test(question)) {
+            return 'I can compare the deductibles established in your uploaded policy documents. Open a source detail before relying on a value for a coverage decision.';
+          }
+          return `I found information in your uploaded policy documents related to “${question}.”\n\nI can help compare coverage, policy dates, deductibles, and possible overlaps. Open a source detail to review the policy wording.`;
+        }
+
+        function citationsFor(question) {
+          if (/duplicate|overlap|same coverage/i.test(question)) return ['Travelers home policy · p. 2', 'Lemonade renters policy · p. 1'];
+          if (/underlying|umbrella/i.test(question)) return ['Chubb umbrella policy · p. 2'];
+          if (/minimum|liability|state required|state minimum/i.test(question)) return ['State Farm auto declarations · p. 1'];
+          if (/expir|end|renew|date/i.test(question)) return ['Travelers home policy · p. 1'];
+          if (/deductible/i.test(question)) return ['State Farm auto declarations · p. 2'];
+          return ['Travelers home policy · p. 3', 'Chubb umbrella policy · p. 2'];
+        }
+
+        function followupsFor(question) {
+          let list;
+          if (/duplicate|overlap|same coverage/i.test(question)) list = ['Which coverage overlaps between the two?', 'Which policy has the higher limits?', 'When does each policy end?'];
+          else if (/underlying|umbrella/i.test(question)) list = ['What happens if my underlying limits are too low?', 'Which policies sit under my umbrella?', 'How much umbrella coverage do I have?'];
+          else if (/minimum|liability|state required|state minimum/i.test(question)) list = ['What are the Texas minimum limits?', 'What liability limits do I have?', 'Where might I have gaps in my coverage?'];
+          else if (/expir|end|renew|date/i.test(question)) list = ['Which policy ends first?', 'What is my deductible?', 'Do any of my policies overlap?'];
+          else if (/gap/i.test(question)) list = ['Where might I have gaps in my coverage?', 'What does my policy not cover?', 'Do any of my policies overlap?'];
+          else if (/deductible/i.test(question)) list = ['What does my policy cover?', 'Where might I have gaps in my coverage?', 'When do my policies end?'];
+          else list = ['What is my deductible?', 'Where might I have gaps in my coverage?', 'When do my policies end?'];
+          return list.filter((item) => item.toLowerCase() !== question.trim().toLowerCase()).slice(0, 3);
+        }
+
+        function renderFollowups(question) {
+          askOvieFollowups.replaceChildren(...followupsFor(question).map((text) => {
+            const row = document.createElement('button');
+            row.type = 'button';
+            row.className = 'ask-followup';
+            row.textContent = text;
+            row.addEventListener('click', () => {
+              askOvieInput.value = text;
+              syncComposerAction();
+              askOvieForm.requestSubmit();
+            });
+            return row;
+          }));
+          askOvieFollowups.hidden = false;
+        }
+
+        function renderCitations(question) {
+          askOvieCitations.replaceChildren(...citationsFor(question).map((label) => {
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'ask-citation';
+            chip.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>';
+            chip.append(label);
+            chip.addEventListener('click', () => showToast('Opening ' + label));
+            return chip;
+          }));
+          askOvieCitations.hidden = false;
+        }
+
+        function expandAskSheet(fromTop) {
+          sheetExpandAnimation?.cancel();
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          const expandedTop = askOvieSheet.getBoundingClientRect().top;
+          const revealInset = Math.max(0, Math.round(fromTop - expandedTop));
+          const motionStyles = window.getComputedStyle(document.documentElement);
+          const duration = Number.parseFloat(motionStyles.getPropertyValue('--motion-duration-overlay')) || 260;
+          const easing = motionStyles.getPropertyValue('--motion-ease-drawer').trim() || 'cubic-bezier(.32, .72, 0, 1)';
+          sheetExpandAnimation = askOvieSheet.animate([
+            { clipPath: `inset(${revealInset}px 0 0 0 round 12px)` },
+            { clipPath: 'inset(0 0 0 0 round 12px)' }
+          ], { duration, easing, fill: 'both' });
+          sheetExpandAnimation.finished.then(() => sheetExpandAnimation?.cancel()).catch(() => {});
+        }
+
+        // Shared presenter: puts a prompt + answer into the chat and renders citations and follow-ups.
+        function presentExchange(promptText, answerText, topic, asHeading = false) {
+          const answerHeading = document.querySelector("#askOvieAnswerHeading");
+          const userRow = document.querySelector(".ask-user-row");
+          answerHeading.hidden = !asHeading;
+          answerHeading.textContent = asHeading ? promptText : "";
+          userRow.hidden = asHeading;
+          const compactTop = askOvieSheet.getBoundingClientRect().top;
+          askOvieQuestion.textContent = promptText;
+          setUserMenuOpen(false);
+          askOvieQuestionPolicy.hidden = !selectedAskPolicy;
+          askOvieQuestionPolicyName.textContent = selectedAskPolicy ? `${selectedAskPolicy.name} · ${selectedAskPolicy.meta}` : '';
+          askOvieAnswer.textContent = answerText;
+          renderCitations(topic);
+          renderFollowups(topic);
+          askOvieConversation.hidden = false;
+          askOvieSheet.classList.add('chat-view');
+          expandAskSheet(compactTop);
+          answerActions.forEach((button) => {
+            if (button.hasAttribute('aria-pressed')) button.setAttribute('aria-pressed', 'false');
+          });
+          askOvieInput.value = '';
+          clearAskPolicySelection();
+          syncComposerAction(false);
+          syncAskSheetToViewport();
+          askOvieInput.blur();
+          askOvieSheet.classList.remove('show-android-keyboard-preview', 'keyboard-visible');
+          syncAskSheetToViewport();
+          window.requestAnimationFrame(() => {
+            askOvieConversation.scrollTop = askOvieConversation.scrollHeight;
+          });
+        }
+
+        askOvieForm.addEventListener('submit', (event) => {
+          event.preventDefault();
+          const question = askOvieInput.value.trim();
+          if (!question) return;
+          presentExchange(question, answerFor(question), question);
+        });
+
+        // Sent-prompt menu: Copy / Edit.
+        const askUserMenu = document.querySelector('#askUserMenu');
+        const LONG_PRESS_MS = 450;
+        const LONG_PRESS_SLOP = 8;
+        let longPressTimer = 0;
+        let longPressOrigin = null;
+        let suppressMenuDismissUntil = 0;
+
+        function setUserMenuOpen(open) {
+          askUserMenu.hidden = !open;
+          askOvieQuestion.setAttribute('aria-expanded', String(open));
+        }
+
+        function openUserMenu() {
+          setUserMenuOpen(true);
+          suppressMenuDismissUntil = performance.now() + 400;
+          askUserMenu.querySelector('[role="menuitem"]').focus({ preventScroll: true });
+        }
+
+        function cancelLongPress() {
+          window.clearTimeout(longPressTimer);
+          longPressOrigin = null;
+        }
+
+        askOvieQuestion.addEventListener('pointerdown', (event) => {
+          if (event.pointerType === 'mouse' && event.button !== 0) return;
+          longPressOrigin = { x: event.clientX, y: event.clientY };
+          window.clearTimeout(longPressTimer);
+          longPressTimer = window.setTimeout(() => {
+            longPressOrigin = null;
+            openUserMenu();
+          }, LONG_PRESS_MS);
+        });
+        askOvieQuestion.addEventListener('pointermove', (event) => {
+          if (longPressOrigin && Math.hypot(event.clientX - longPressOrigin.x, event.clientY - longPressOrigin.y) > LONG_PRESS_SLOP) cancelLongPress();
+        });
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach((type) => askOvieQuestion.addEventListener(type, cancelLongPress));
+        askOvieQuestion.addEventListener('contextmenu', (event) => {
+          event.preventDefault();
+          cancelLongPress();
+          openUserMenu();
+        });
+
+        document.addEventListener('click', (event) => {
+          if (askUserMenu.hidden || askUserMenu.contains(event.target) || performance.now() < suppressMenuDismissUntil) return;
+          setUserMenuOpen(false);
+        });
+
+        askUserMenu.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            event.stopPropagation();
+            setUserMenuOpen(false);
+            askOvieQuestion.focus({ preventScroll: true });
+          }
+        });
+
+        askUserMenu.querySelectorAll('[data-user-menu-action]').forEach((item) => {
+          item.addEventListener('click', async () => {
+            const prompt = askOvieQuestion.textContent;
+            setUserMenuOpen(false);
+            if (item.dataset.userMenuAction === 'copy') {
+              try { await copyText(prompt); showToast('Prompt copied'); }
+              catch { showToast('Copy is unavailable in this browser'); }
+            } else {
+              askOvieInput.value = prompt;
+              syncComposerAction();
+              askOvieInput.focus({ preventScroll: true });
+              askOvieInput.setSelectionRange(prompt.length, prompt.length);
+              if (!window.matchMedia('(pointer: coarse)').matches) askOvieSheet.classList.add('show-android-keyboard-preview');
+              syncAskSheetToViewport();
+            }
+          });
+        });
+
+        answerActions.forEach((button) => {
+          button.addEventListener('click', async () => {
+            const action = button.dataset.answerAction;
+            if (action === 'copy') {
+              try { await copyText(askOvieAnswer.textContent); showToast('Answer copied'); }
+              catch { showToast('Copy is unavailable in this browser'); }
+            } else if (action === 'helpful' || action === 'not-helpful') {
+              answerActions.filter((item) => item.dataset.answerAction === 'helpful' || item.dataset.answerAction === 'not-helpful').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+              showToast(action === 'helpful' ? 'Thanks for the feedback' : 'Feedback recorded');
+            }
+          });
+        });
+      })();
+    </script>
+  <script src="assets/ovie-upload-flow.js?v=20260910b"></script>
+  <script src="assets/ovie-upload-options.js?v=20260911a"></script>
+  <script src="assets/ovie-upload-indicator.js?v=20260911e"></script>
+</body>
+</html>
