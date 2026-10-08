@@ -49,8 +49,17 @@
       }
 
       * { box-sizing: border-box; }
-      html { min-width: 320px; scrollbar-width: none; }
-      html::-webkit-scrollbar { display: none; }
+      html {
+        min-width: 320px;
+        color-scheme: light;
+        scrollbar-gutter: stable;
+        scrollbar-color: #a9afac #ecefed;
+        scrollbar-width: thin;
+      }
+      *::-webkit-scrollbar { width: 8px; height: 8px; }
+      *::-webkit-scrollbar-track { background: #ecefed; }
+      *::-webkit-scrollbar-thumb { background: #a9afac; border: 2px solid #ecefed; border-radius: 999px; }
+      *::-webkit-scrollbar-thumb:hover { background: #7c827f; }
       body {
         margin: 0;
         min-width: 320px;
@@ -81,12 +90,13 @@
       }
 
       .app-shell {
-        width: min(100%, 390px);
+        width: min(100%, 480px);
         min-height: 100vh;
         margin: 0 auto;
         background: var(--canvas);
       }
       .workspace { width: 100%; min-width: 0; }
+      @media (min-width: 481px) { .app-shell { border-inline: 1px solid #d2d2d2; } }
       .topbar {
         position: sticky;
         top: 0;
@@ -148,7 +158,7 @@
 
       .filter-chips {
         width: 100%;
-        max-width: 358px;
+        max-width: 448px;
         margin: 0 auto 6px;
         display: flex;
         align-items: center;
@@ -198,7 +208,7 @@
 
       .insight-list {
         width: 100%;
-        max-width: 358px;
+        max-width: 448px;
         margin: 12px auto 0;
         display: grid;
         gap: 12px;
@@ -268,65 +278,97 @@
       .empty-state h2 { margin-top: 12px; color: var(--text-primary); font-size: 18px; line-height: 24px; }
       .empty-state p { margin-top: 5px; font-size: 14px; line-height: 20px; }
 
-      .mobile-nav {
-        position: fixed;
-        z-index: 20;
-        left: 50%;
-        bottom: max(8px, env(safe-area-inset-bottom));
-        width: min(calc(100% - 24px), 366px);
-        min-height: 72px;
-        padding: 6px;
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        align-items: center;
-        transform: translateX(-50%);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        background: var(--surface);
-        box-shadow: 0 4px 8px rgba(17, 17, 17, 0.1);
-      }
-      .mobile-nav button {
-        min-width: 0;
-        min-height: 58px;
-        padding: 5px 2px;
-        border: 0;
-        border-radius: 999px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 2px;
-        background: transparent;
-        color: var(--text-tertiary);
-        font-size: 11px;
-        line-height: 16px;
-        font-weight: 600;
-        transition: transform var(--motion-duration-press) var(--motion-ease-out);
-      }
-      .mobile-nav button[aria-current="page"] { background: var(--primary-soft); color: var(--primary); }
-      .nav-icon { width: 32px; height: 28px; display: grid; place-items: center; border-radius: 999px; }
-      .mobile-nav .upload-nav { background: transparent; color: #fff; }
-      .upload-nav .nav-icon { position: relative; }
-      .upload-nav .nav-icon::before {
-        width: 48px;
-        height: 48px;
-        position: absolute;
-        z-index: 0;
-        inset: 50% auto auto 50%;
-        content: "";
-        transform: translate(-50%, -50%);
-        border-radius: 999px;
-        background: var(--primary);
-        box-shadow: 0 2px 4px rgba(84, 50, 77, 0.22);
-      }
-      .upload-nav svg { position: relative; z-index: 1; }
+    .bottom-nav {
+      position: fixed;
+      z-index: 400;
+      left: 50%;
+      bottom: max(8px, env(safe-area-inset-bottom));
+      width: min(calc(100% - 24px), 456px);
+      min-height: var(--nav-height);
+      padding: 6px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: center;
+      transform: translateX(-50%);
+      border: 1px solid var(--border-soft);
+      border-radius: 999px;
+      background: var(--surface);
+      box-shadow: 0 4px 8px rgba(17, 17, 17, .10);
+    }
+
+    .nav-link, .nav-button {
+      min-width: 0;
+      min-height: 58px;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-button:hover { background: var(--bg-subtle); color: var(--primary); }
+    .nav-link:active, .nav-button:active { color: var(--primary-dark); }
+    .nav-link[aria-current="page"] { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+    .nav-icon { width: 32px; height: 28px; display: grid; place-items: center; border-radius: 999px; }
+
+    .nav-upload {
+      width: 100%;
+      min-width: 0;
+      min-height: 58px;
+      margin: 0;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      align-self: center;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background-color 180ms var(--ease), color 180ms var(--ease);
+    }
+
+    .nav-upload .nav-icon {
+      position: relative;
+      color: var(--surface);
+    }
+    .nav-upload .nav-icon::before {
+      position: absolute;
+      z-index: 0;
+      inset: 50% auto auto 50%;
+      width: 48px;
+      height: 48px;
+      content: "";
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: var(--primary);
+      box-shadow: 0 2px 4px rgba(84, 50, 77, .22);
+      transition: background-color 180ms var(--ease);
+    }
+    .nav-upload .nav-icon svg { position: relative; z-index: 1; width: 22px; height: 22px; }
+    .nav-upload:hover { background: transparent; color: var(--surface); }
+    .nav-upload:hover .nav-icon::before { background: var(--primary-dark); }
+
 
       .toast {
         position: fixed;
         z-index: var(--z-toast);
         left: 50%;
         bottom: calc(var(--nav-height) + 18px + env(safe-area-inset-bottom));
-        width: min(calc(100% - 32px), 358px);
+        width: min(calc(100% - 32px), 448px);
         padding: 12px 14px;
         transform: translate(-50%, 16px);
         border-radius: 10px;
@@ -338,22 +380,22 @@
       }
       .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-      .icon-button:active, .mobile-nav button:active { transform: scale(0.97); }
+      .icon-button:active { transform: scale(0.97); }
       @media (hover: hover) and (pointer: fine) {
         .icon-button:hover { background: var(--primary-soft); color: var(--primary); }
         .ask-ovie-cta:hover { color: var(--primary-dark); }
       }
       @media (prefers-reduced-motion: reduce) {
-        .topbar-inner, .icon-button, .mobile-nav button, .toast, .ask-ovie-cta { transition-duration: 0.01ms; }
+        .topbar-inner, .icon-button, .toast, .ask-ovie-cta { transition-duration: 0.01ms; }
         .topbar.is-hidden .topbar-inner { transform: none; }
-        .icon-button:active, .mobile-nav button:active, .ask-ovie-cta:active, .toast, .toast.show { transform: none; }
+        .icon-button:active, .ask-ovie-cta:active, .toast, .toast.show { transform: none; }
       }
       .ask-sheet .section-heading, .policy-picker-sheet .section-heading { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; }
 
       .ask-fab {
         position: fixed;
         z-index: var(--z-fab);
-        right: max(18px, calc((100vw - 390px) / 2 + 18px));
+        right: max(18px, calc((100vw - 480px) / 2 + 18px));
         bottom: calc(var(--nav-height) + 22px + env(safe-area-inset-bottom));
         width: 56px;
         height: 56px;
@@ -402,7 +444,7 @@
       position: fixed;
       z-index: var(--z-sheet);
       inset: auto auto var(--keyboard-inset, 0px) 50%;
-      width: min(100%, 390px);
+      width: min(100%, 480px);
       max-width: none;
       max-height: min(calc(var(--visual-viewport-height, 100dvh) - 12px), 560px);
       margin: 0;
@@ -428,7 +470,7 @@
 
     .ask-sheet.chat-view {
       inset: calc(var(--visual-viewport-top, 0px) + 52px) auto auto 50%;
-      width: min(100%, 390px);
+      width: min(100%, 480px);
       height: calc(var(--visual-viewport-height, 100dvh) - 52px);
       max-height: none;
       border-radius: var(--radius) var(--radius) 0 0;
@@ -914,7 +956,7 @@
       position: fixed;
       z-index: calc(var(--z-sheet) + 1);
       inset: 52px auto auto 50%;
-      width: min(100%, 390px);
+      width: min(100%, 480px);
       height: calc(100dvh - 52px);
       max-width: none;
       max-height: none;
@@ -1269,27 +1311,13 @@
           </section>
         </main>
 
-        <nav class="mobile-nav" aria-label="Primary navigation">
-          <button type="button">
-            <span class="nav-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg></span>
-            <span>Home</span>
-          </button>
-          <button type="button">
-            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></span>
-            <span>My Files</span>
-          </button>
-          <button type="button" class="upload-nav" aria-label="Upload">
-            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5M5 21h14a2 2 0 0 0 2-2v-4M3 15v4a2 2 0 0 0 2 2"/></svg></span>
-          </button>
-          <button type="button" aria-current="page">
-            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M6 18a4 4 0 0 1-1.967-.516M12 13h4M12 18h6a2 2 0 0 1 2 2v1M12 8h8M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span>
-            <span>Insights</span>
-          </button>
-          <button type="button">
-            <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></span>
-            <span>More</span>
-          </button>
-        </nav>
+          <nav class="bottom-nav" aria-label="Primary navigation">
+            <a class="nav-link" href="index.html"><span class="nav-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/></svg></span><span>Home</span></a>
+            <button class="nav-button" type="button" id="myFiles"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span>My Files</span></button>
+            <button class="nav-upload" type="button" id="uploadPolicy" aria-label="Upload"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg></span></button>
+            <a class="nav-link" id="insightsNav" href="insights_upd.html" aria-current="page"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></svg></span><span>Insights</span></a>
+            <button class="nav-button" type="button" id="moreMenu" aria-haspopup="dialog" aria-controls="moreActionsSheet"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></span><span>More</span></button>
+          </nav>
       </div>
     </div>
 
@@ -1632,6 +1660,10 @@
         if (!scrollFrame) scrollFrame = requestAnimationFrame(updateTopbar);
       }, { passive: true });
 
+      (() => {
+        const linked = insights.find(value => value.id === new URLSearchParams(location.search).get("insight"));
+        if (linked) selectedFilter = linked.kind;
+      })();
       renderChips();
       render();
     </script>
