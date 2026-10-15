@@ -11,8 +11,8 @@
 .files-search-toggle{width:44px;height:44px;border:0;border-radius:var(--radius);display:grid;place-items:center;background:var(--canvas);color:var(--text-tertiary)}
 .files-search-toggle[aria-expanded=true]{background:var(--primary-soft);color:var(--primary)}
 @media (hover:hover) and (pointer:fine){.files-search-toggle:hover{background:var(--primary-soft)}}
-.files-tabs{min-height:52px;margin:-4px 0 18px;padding:4px;border-radius:var(--radius);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:rgba(227,227,227,.8)}
-.files-tab{min-height:44px;padding:0 4px;border:0;border-radius:8px;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--text-tertiary);font-size:14px;line-height:20px;font-weight:600;text-align:center}
+.files-tabs{min-height:52px;margin:-4px 0 18px;padding:4px;border-radius:var(--radius);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr);gap:4px;background:rgba(227,227,227,.8)}
+.files-tab{min-height:44px;padding:0 4px;border:0;border-radius:8px;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--text-tertiary);font-size:14px;line-height:20px;font-weight:600;text-align:center;white-space:nowrap}
 .files-tab[aria-selected=true]{background:var(--surface);color:var(--primary)}
 @media (hover:hover) and (pointer:fine){.files-tab[aria-selected=false]:hover{color:var(--text-primary)}}
 .files-tab:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 35%,transparent);outline-offset:1px}
@@ -32,6 +32,9 @@
 .document-tag-line{min-height:0;margin-top:8px}
 .document-tag-line .add-tag-button{margin-block:-12px}
 .document-row .document-delete svg{width:14px;height:14px}
+.mobile-shell .folder-row{grid-template-columns:44px minmax(0,1fr)}
+.folder-row>.folder-options{position:absolute;top:0;right:0}
+.folder-row .folder-title-line{padding-right:32px}
 .files-header-actions{display:flex;align-items:center;gap:8px}
 .search-wrap{margin:-4px 0 18px;display:flex;align-items:center;gap:8px}
 .search-wrap .search-row{min-width:0;flex:1;margin:0}
