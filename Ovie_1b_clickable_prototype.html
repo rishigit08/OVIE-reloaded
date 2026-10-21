@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ovie Insights 1b Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,500,1,0&amp;display=block">
+<style>
+body{margin:0; }
+button{font:inherit;color:inherit}
+.ph{width:390px;height:3300px;background:#FAF6EC;font-family:'Figtree',system-ui,sans-serif;font-size:14px;line-height:20px;color:#111;position:relative;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column}
+.nav{height:56px;background:transparent;display:flex;align-items:center;padding:0 16px;flex:none}
+.nav b{font-size:18px;line-height:24px;font-weight:600}
+.body{padding:12px 16px 140px;display:flex;flex-direction:column;gap:40px}
+.card{background:#FBF9FC;border:1px solid #fff;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06)}
+.card.rows{padding:4px 16px}
+.name{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em}
+.muted{color:#5F6368}
+.cap{font-size:12px;line-height:16px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.status{display:inline-flex;align-items:center;gap:6px;background:#FFEDED;color:#A63A33;border-radius:999px;padding:4px 10px;font-size:12px;line-height:16px;font-weight:600;white-space:nowrap}
+.status i{width:7px;height:7px;border-radius:50%;background:#A63A33;display:block}
+.tbar{height:6px;border-radius:3px;background:#E3E3E3;position:relative}
+.tfill{position:absolute;left:0;top:0;bottom:0;right:0;border-radius:3px;background:#6B4062}
+.tdot{position:absolute;right:-2px;top:-3px;width:12px;height:12px;border-radius:50%;background:#A63A33;border:2px solid #fff;box-sizing:border-box}
+.tlab{display:flex;justify-content:space-between;font-size:12px;line-height:16px;color:#5F6368;margin-top:6px}
+.prem{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:none;border:0;border-top:1px solid #ECEFED;border-bottom:1px solid #ECEFED;padding:12px 0;cursor:pointer;min-height:44px}
+.prem .mid{flex:1;min-width:0;display:flex;flex-direction:column}
+.hero{font-size:32px;line-height:36px;font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:14px;line-height:20px}
+.kv span:first-child{color:#5F6368;flex:none}
+.kv span:last-child{font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}
+.attn{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px solid #ECEFED;padding-top:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid currentColor;border-radius:999px;padding:3px 9px;font-size:12px;line-height:16px;font-weight:600;white-space:nowrap;background:transparent}
+.pill i{width:7px;height:7px;border-radius:50%;display:block}
+.p-rev{color:#6B4062}.p-rev i{background:#6B4062}
+.p-warn{color:#634106;border-color:#E7C982;background:#FFF5DF}.p-warn i{background:#8A5A06}
+.more{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:0;border-top:1px solid #ECEFED;padding:12px 0 0;color:#6B4062;font-weight:600;cursor:pointer;min-height:44px;text-align:left}
+.ov{background:#6B4062;border-radius:20px;padding:16px 12px 12px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06)}
+.ov-head{display:flex;align-items:center;gap:12px;padding:0 4px}
+.ov-ic{width:48px;height:48px;border-radius:12px;background:#F5EDF3;display:grid;place-items:center;flex:none}
+.ov-id{flex:1;min-width:0}
+.ov-name{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;color:#fff;overflow-wrap:anywhere}
+.ov-num{font-size:12px;line-height:16px;color:#E9DCE5}
+.ov-hg{flex:none;width:44px;height:52px;display:block}
+.ov-in{background:#FBF9FC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.ov-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px 12px}
+.ov-c{display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:0}
+.ov-l{font-size:12px;line-height:16px;color:#5F6368}
+.ov-v{font-size:14px;line-height:20px;font-weight:600;display:flex;gap:6px;align-items:center}
+.ov-prem{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:none;padding:0;min-height:44px;cursor:pointer}
+.ov-prem .mid{flex:1;min-width:0;display:flex;flex-direction:column}
+.ov-lab{display:flex;align-items:center;gap:10px}
+.ov-chip{color:#5F6368;font-size:12px;line-height:16px;white-space:nowrap}
+.ov-line{flex:1;height:1px;background:#ECEFED}
+.ov-div{height:1px;background:#ECEFED;flex:none}
+.ov-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:-12px}
+.jumps{display:flex;gap:8px;overflow:hidden;margin:0 -16px;padding:0 16px}
+.jump{flex:none;display:inline-flex;gap:6px;align-items:center;min-height:36px;background:#fff;border:1px solid transparent;border-radius:999px;padding:0 14px;font-size:14px;font-weight:600;color:#5F6368;cursor:pointer}
+.jump span{font-weight:500;color:#5F6368}
+.jump.on{background:#F5EDF3;border-color:#6B4062;color:#6B4062}
+.jump.on span{color:#6B4062}
+.jump{box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06)}
+.jump.ic{padding:0 14px 0 6px}
+.jb{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;font-style:normal}
+.ms{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20;font-size:24px;line-height:1;font-style:normal;font-weight:normal;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+.jb.g{background:#DDF4E6;color:#15803D}
+.jb.r{background:#FDE6E6;color:#B42318}
+.jb.b{background:#E1EEFC;color:#0B62C4}
+.jb.a{background:#FCEFD0;color:#8A5A06}
+.jb.p{background:transparent;color:#EAB308}
+.vc .jb{margin-bottom:6px}
+.jb.p .ms{text-shadow:0 2px 10px rgba(234,179,8,.55)}
+.qm{color:#6B4062;text-shadow:0 2px 10px rgba(107,64,98,.55);flex:none;margin-top:-2px}
+.jb.g .ms{text-shadow:0 2px 10px rgba(21,128,61,.55)}
+.jb.r .ms{text-shadow:0 2px 10px rgba(180,35,24,.55)}
+.jb.b .ms{text-shadow:0 2px 10px rgba(11,98,196,.55)}
+.jb.a .ms{text-shadow:0 2px 10px rgba(138,90,6,.55)}
+.ir.ok::before{text-shadow:0 2px 10px rgba(21,128,61,.55)}
+.sx{display:flex;flex-direction:column;gap:8px}
+.kchips{display:flex;gap:8px}
+.wd{width:7px;height:7px;border-radius:50%;background:#8A5A06;display:block}
+.wd{width:7px;height:7px;border-radius:50%;background:#8A5A06;display:block}
+.sh{display:flex;align-items:center;gap:8px;padding:0 4px;font-size:12px;line-height:16px;font-weight:600;color:#72777C;text-transform:uppercase;letter-spacing:.04em}
+.cnt{background:#F5EDF3;color:#6B4062;font-size:12px;line-height:16px;font-weight:600;border-radius:999px;padding:3px 8px}
+.ir{display:grid;grid-template-columns:minmax(0,1fr) 20px;column-gap:8px;row-gap:4px;width:100%;text-align:left;background:none;border:0;border-top:1px solid #ECEFED;padding:12px 0;min-height:52px;cursor:pointer;align-items:start}
+.ir.ok{position:relative;padding-left:36px}
+.ir.ok::before{content:"";position:absolute;left:0;top:12px;width:20px;height:20px;background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2316A34A%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%2210%22/%3E%3Cpath d=%22m9 12 2 2 4-4%22/%3E%3C/svg%3E") no-repeat center/20px}
+.vscroll{display:flex;gap:10px;overflow-x:auto;margin:0 -16px -6px;padding:2px 16px 14px;scroll-snap-type:x proximity;scrollbar-width:none}
+.vscroll::-webkit-scrollbar{display:none}
+.ir.ok::before{content:"check_circle";font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20;font-size:24px;line-height:24px;text-align:center;font-weight:normal;font-style:normal;letter-spacing:normal;white-space:nowrap;top:10px;width:24px;height:24px;border-radius:50%;background:transparent;color:#15803D;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+.vc{flex:none;width:164px;scroll-snap-align:start;text-align:left;background:#FBF9FC;border:1px solid #fff;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06);cursor:pointer;align-items:flex-start}
+.vt{font-weight:600;font-size:14px;line-height:20px;min-height:40px;color:#111}
+.vv{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;color:#111}
+.vs{font-size:12px;line-height:16px;color:#72777C}
+.ir:first-child{border-top:0}
+.ir>*{grid-column:1/-1}
+.ir>.t{grid-column:1;grid-row:1}
+.ir>.cv{grid-column:2;grid-row:1;align-self:center}
+.t{font-weight:600;font-size:14px;line-height:20px;overflow-wrap:anywhere}
+.v{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.sub{font-size:12px;line-height:16px;color:#5F6368}
+.scope{justify-self:start;display:inline-block;border:1px solid #fff;background:#EFEFF1;border-radius:999px;padding:4px 10px;font-size:12px;line-height:16px;font-weight:600;color:#333A3D}
+.sum{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:#5F6368}
+.fx{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;border-top:1px solid #ECEFED;padding:12px 0;min-height:52px;cursor:pointer}
+.fx:first-child{border-top:0}
+.fx .mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.fx .cv{align-self:center;flex:none}
+.xi{position:relative;width:40px;height:40px;border-radius:12px;background:#F6F6F6;display:grid;place-items:center;flex:none}
+.xb{position:absolute;right:-5px;top:-5px;width:16px;height:16px;border-radius:50%;background:#A63A33;border:2px solid #fff;box-sizing:content-box;display:grid;place-items:center}
+.gh{display:flex;justify-content:space-between;align-items:center;padding:12px 0 4px;font-weight:600}
+.kinds{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:8px}
+.kd{display:inline-flex;align-items:center;gap:6px;border:1px solid #D8DDDB;border-radius:999px;padding:4px 12px 4px 8px;font-weight:600;font-size:14px}
+.mbar{height:6px;border-radius:3px;background:#14B8A6;display:block}
+.miss{display:flex;gap:10px;align-items:flex-start;background:#FFF5DF;border:1px solid #E7C982;border-radius:12px;padding:12px;color:#634106;margin:4px 0 8px}
+.miss .mm{display:flex;flex-direction:column;gap:4px;min-width:0}
+.q{width:22px;height:22px;border-radius:50%;background:#FFF5DF;border:1px solid #E7C982;color:#8A5A06;font-weight:700;font-size:12px;display:grid;place-items:center;flex:none}
+.unk{justify-self:start;display:inline-flex;align-items:center;gap:5px;background:#FFF5DF;border:1px solid #E7C982;color:#634106;border-radius:999px;padding:2px 10px;font-size:12px;line-height:16px;font-weight:600}
+.note{font-size:12px;line-height:16px;color:#5F6368;padding:8px 0 4px}
+.dock{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 18px;background:rgba(255,255,255,.55);backdrop-filter:blur(14px);display:flex;flex-direction:column;gap:10px}
+.dockrow{display:flex;gap:8px;align-items:center}
+.qchips{display:flex;gap:8px;overflow-x:auto;margin:0 -14px;padding:0 14px;scrollbar-width:none}
+.qchips::-webkit-scrollbar{display:none}
+.qc{flex:none;min-height:36px;padding:0 14px;border:1px solid #D8DDDB;border-radius:18px;background:#fff;color:#5F6368;font-weight:500;font-size:12px;line-height:16px;white-space:nowrap;cursor:pointer}
+.dockin{flex:1;min-height:44px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #D8DDDB;border-radius:12px;padding:0 12px;color:#5F6368;text-align:left}
+.dockmic{width:44px;height:44px;border:0;border-radius:12px;background:#6B4062;display:grid;place-items:center}
+.tabs{display:flex;justify-content:center;overflow:hidden;background:#fff;margin:0 -16px}
+.tb{flex:1 1 auto;text-align:center;background:#fff;border:0;border-bottom:3px solid #ECEFED;padding:16px 10px 13px;font-weight:600;font-size:14px;line-height:20px;color:#5F6368;cursor:pointer;white-space:nowrap}
+.tb.on{background:#F5EDF3;color:#6B4062;border-bottom-color:#6B4062}
+
+/* ---- prototype shell + DESIGN.md token overrides ---- */
+:root{--text:#111111;--text2:#333A3D;--text3:#5F6368;--icon-brand:#6B4062;--ok:#0D7D07;--warn:#8A5A06;--danger:#A63A33;--canvas:#F6F6F6;--bsub:#ECEFED;--bdef:#D8DDDB;--overlay:rgba(17,24,23,.58)}
+html,body{height:100%}
+body{background:#E3E3E3;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.ph{height:100vh;max-height:844px;background:var(--canvas)!important;overflow:hidden}
+@media(min-width:500px){.ph{height:844px;border-radius:28px;box-shadow:0 6px 16px rgba(17,17,17,.12)}}
+.scr{position:absolute;inset:0;overflow-y:auto;display:none;flex-direction:column;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.scr.on{display:flex}
+.nav{position:sticky;top:0;z-index:5;background:var(--canvas)}
+.nav button,.ib{cursor:pointer}
+.nav .ttl{font-size:18px;line-height:24px;font-weight:600}
+.body{padding:12px 16px 190px}
+button{cursor:pointer}
+.dock{z-index:8}
+.dockin input{flex:1;border:0;outline:0;background:transparent;font:400 12px/16px Figtree,system-ui;min-width:0;color:#5F6368}
+.dockin input::placeholder{color:var(--text3)}
+.qc:hover,.jump:hover{filter:brightness(.97)}
+.fx:hover,.ir:hover{background:rgba(107,64,98,.04)}
+/* color tokens */
+.jb.g{color:var(--ok)}.jb.g .ms{text-shadow:0 2px 10px rgba(13,125,7,.55)}
+.jb.r{color:var(--danger)}.jb.r .ms{text-shadow:0 2px 10px rgba(166,58,51,.55)}
+.ir.ok::before{color:var(--ok);text-shadow:0 2px 10px rgba(13,125,7,.55)}
+.status{background:#FFEDED;color:var(--danger)}.status i{background:var(--danger)}
+.qm.r{color:var(--danger);text-shadow:0 2px 10px rgba(166,58,51,.55)}
+.qm.w{color:var(--warn);text-shadow:0 2px 10px rgba(138,90,6,.55)}
+.ir.nx,.ir.wx{position:relative;padding-left:36px}
+.ir.nx::before,.ir.wx::before{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20;font-size:24px;line-height:24px;position:absolute;left:0;top:10px;width:24px;text-align:center;font-weight:normal;font-style:normal;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+.ir.nx::before{content:"cancel";color:var(--danger);text-shadow:0 2px 10px rgba(166,58,51,.55)}
+.ir.wx::before{content:"warning";color:var(--warn);text-shadow:0 2px 10px rgba(138,90,6,.55)}
+.ir .sum.full{-webkit-line-clamp:unset;display:block}
+.ir{text-align:left;color:inherit}
+.fx{color:inherit}
+/* sheets (DESIGN.md §10: 12px top corners, overlay shadow, 58% scrim) */
+.scrim{position:absolute;inset:0;background:var(--overlay);z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:88%;overflow-y:auto;background:#fff;border-radius:12px 12px 0 0;z-index:21;transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);padding:8px 16px 24px;box-shadow:0 6px 16px rgba(17,17,17,.12)}
+.sheet.on{transform:none}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--bdef);margin:0 auto 6px}
+.sht{display:flex;align-items:center;justify-content:space-between;min-height:44px;margin-bottom:8px}
+.sht b{font-size:18px;line-height:24px;font-weight:600}
+.sht button{width:44px;height:44px;border:0;background:none;display:grid;place-items:center;border-radius:12px;margin-right:-10px}
+.gbox{background:var(--canvas);border-radius:12px;padding:4px 16px;margin-bottom:12px}
+.gbox .kv{padding:10px 0;border-top:1px solid var(--bsub)}.gbox .kv:first-child{border-top:0}
+.gbox.pad{padding:16px}
+.lbl{font-size:12px;line-height:16px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#72777C;margin:16px 0 8px}
+.srow{display:flex;justify-content:space-between;font-size:14px;line-height:20px;padding:8px 0;border-top:1px solid var(--bsub);color:var(--text3)}
+.srow:first-of-type{border-top:0}
+.srow u{color:#6B4062;font-weight:600}
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:12px;border:1px solid #6B4062;background:transparent;color:#6B4062;border-radius:12px;font-weight:600;font-size:14px}
+.cta:hover{background:#F5EDF3}
+.sbar{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin:12px 0 4px}
+.sbar i{display:block}
+.note.na{font-style:normal}
+/* chat */
+.chat{display:flex;flex-direction:column;gap:12px}
+.bub{max-width:86%;padding:12px 14px;font-size:14px;line-height:20px}
+.bub.u{align-self:flex-end;background:#6B4062;color:#fff;border-radius:16px 16px 4px 16px}
+.bub.a{align-self:flex-start;background:#FBF9FC;border:1px solid #fff;box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06);border-radius:16px 16px 16px 4px}
+.bub small{display:block;margin-top:8px;font-size:12px;line-height:16px;color:var(--text3)}
+.toast{position:absolute;top:72px;left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:14px;padding:10px 16px;border-radius:12px;z-index:50;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.hid{display:none!important}
+
+
+/* DESIGN.md §7 top bar: 44x44 utility actions, 12px radius, background-subtle, icon-default, primary-soft hover, .96 press, plum focus ring */
+.tbu{width:44px;height:44px;border:0;border-radius:12px;background:#F6F6F6;color:#5F6368;display:grid;place-items:center;cursor:pointer;transition:background-color .18s ease,transform .12s ease}
+.tbu:hover{background:#F5EDF3}
+.tbu:active{transform:scale(.96)}
+.tbu:focus-visible,.nav button:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(107,64,98,.24)}
+.nav button[aria-label=Back]{color:#111}
+</style></head><body>
+<div class="ph" id="ph">
+  <div class="scr on" id="s-main"></div>
+  <div class="scr" id="s-all"></div>
+  <div class="scr" id="s-chat"></div>
+  <div class="dock" id="dock">
+    <div class="qchips" id="qchips"></div>
+    <div class="dockrow">
+      <label class="dockin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B4062" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg><input id="dinp" placeholder="Ask Ovie about this policy" autocomplete="off"></label>
+      <button class="dockmic" id="dmic" aria-label="Speak to Ovie"></button>
+    </div>
+  </div>
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const CV=`<svg class="cv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5F6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>`;
+const CVP=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B4062" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>`;
+const BACK=`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>`;
+const MIC=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>`;
+const SEND=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>`;
+const NAVBTN='style="width:44px;height:44px;border:0;background:none;display:grid;place-items:center;border-radius:12px;cursor:pointer"';
+const SEARCH=`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>`;
+const DOCI=`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M8 13h8M8 17h5"></path></svg>`;
+const SPARK=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B4062" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>`;
+const esc=s=>String(s).replace(/'/g,"\\'");
+
+/* ---------- DATA: only what the 1b boards contain ---------- */
+const D={
+ vehicles:[
+  {t:'2012 Ford F250',c:'$35,000',full:1},{t:'2017 Chevrolet 1500',c:'$29,946'},{t:'2016 Ford F150',c:'$27,204'},{t:'2010 Ford F250',c:'$26,295'},
+  {t:'1998 GMC Sierra',c:'$22,000'},{t:'2020 BigTex Utility Trailer',c:'$4,600'},{t:'1997 Hurst Trailer',c:'$2,750'}],
+ inc:[
+  {k:'liab',t:'Covered Autos Liability',v:'$1,000,000',sub:'Each Accident',sc:'Any auto',sum:'Pays bodily injury and property damage losses when using any auto (owned, hired, non-owned, borrowed).'},
+  {k:'pip',t:'Personal Injury Protection',unk:'Not stated',sub:'PIP Endt. minus deductible',sc:'Owned autos subject to no-fault',sum:'Pays no-fault losses as per KY requirements for covered vehicles.'},
+  {k:'um',t:'Uninsured Motorists',v:'$1,000,000',sub:'Each Accident',sc:'Owned autos only',sum:'Covers you if injured by a driver with no insurance, using owned autos.'},
+  {k:'uim',t:'Underinsured Motorists',v:'$1,000,000',sub:'Each Accident',sc:'Owned autos only',sum:'Covers you if injured by a driver with too little insurance, owned autos.'},
+  {k:'comp',t:'Comprehensive',v:'ACV or cost of repair',sub:'minus $500 deductible · Per Auto/Per Loss · +1 more',sc:'Scheduled and hired vehicles',sum:'Pays for non-collision damages (theft, weather, fire, etc.) on scheduled and hired vehicles.'},
+  {k:'coll',t:'Collision',v:'ACV or cost of repair',sub:'minus $500 deductible · Per Auto/Per Loss · +1 more',sc:'Scheduled and hired vehicles',sum:'Pays for collision damages to scheduled and hired vehicles.'}],
+ exc:[
+  ['Expected or Intended Injury','Losses expected or intended from the insured’s standpoint are not covered.'],
+  ['Contractual Liability','Liabilities assumed under contracts, unless specifically allowed, are not covered.'],
+  ['Workers’ Compensation','The policy does not provide workers’ compensation or similar benefits.'],
+  ['Care, Custody, or Control','Damage to property owned by, transported by, or in the care, custody, or control of the insured is not covered.']],
+ excN:9,
+ ded:[
+  {t:'Comprehensive',v:'$500',sub:'per loss per vehicle',sc:'Each Scheduled Vehicle',sum:'Actual cash value valuation, fire/lightning exception'},
+  {t:'Collision',v:'$500',sub:'per loss per vehicle',sc:'Each Scheduled Vehicle',sum:'Actual cash value valuation'},
+  {t:'Comp & Coll',v:'$500',sub:'per loss per auto',sc:'Hired Autos',sum:'$35,000 max per loss. Valuation capped at $35,000'},
+  {t:'All coverages',v:'As above',sub:'Premium $3,013',sc:'Policy-Level (Auto line)',sum:'Per policy year, billed as stated'}],
+ wp:[
+  ['Symbol Mismatch Watchpoint','Different coverages use different symbols (e.g., Liability “1” vs. Physical Damage “7,8” vs. UM/UIM “2”)—each auto may not be covered for every available benefit; review coverage by symbol.'],
+  ['Informational Driver Schedule','No covered drivers are listed; if you have named drivers or driver exclusions, ensure they are endorsed/recorded.'],
+  ['Owned Vehicle Schedule Completeness','All listed vehicles show year, make, model, VIN, comp, and coll deductibles; if a new unit is added, schedule and endorsement are required for coverage.'],
+  ['Hired Auto Physical Damage Cap','$35,000 per-loss sublimit for comprehensive and collision on hired autos; review exposure before renting higher-value vehicles.']],
+ wpN:5,
+ miss:[
+  ['No driver schedule or names','Not supplied.','drv'],
+  ['No vehicle-level premiums','Policy-level only.','miss'],
+  ['No explicit state-specific endorsements shown for auto coverages','','miss'],
+  ['Endorsements Attached','“SEE SCHEDULE OF FORMS AND ENDORSEMENTS” is referenced, but specific auto endorsements are not shown in the supplied excerpts for this period.','miss']],
+ docs:['U-CA-D 600 C(0414)','IL 00 17','IL 00 21']
+};
+const kv=r=>`<div class="gbox">${r.map(x=>`<div class="kv"><span>${x[0]}</span><span>${x[1]}</span></div>`).join('')}</div>`;
+const srcs=a=>`<div class="lbl">Sources</div>${a.map(x=>`<div class="srow"><span>${x[0]}</span><u>${x[1]}</u></div>`).join('')}`;
+
+/* ---------- SHEETS ---------- */
+let lastFocus=null;
+function openSheet(title,body,cta){
+  lastFocus=document.activeElement;
+  $('#sheet').innerHTML=`<div class="grab"></div><div class="sht"><b>${title}</b><button aria-label="Close" onclick="closeSheet()"><i class="ms" style="color:#5F6368">close</i></button></div>${body}${cta?`<button class="cta" onclick="closeSheet();ask('${cta[1]}')">${SPARK}${cta[0]}</button>`:''}`;
+  $('#sheet').scrollTop=0;$('#sheet').classList.add('on');$('#scrim').classList.add('on');
+}
+function closeSheet(){$('#sheet').classList.remove('on');$('#scrim').classList.remove('on');if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+$('#scrim').onclick=closeSheet;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+
+const SH={
+premium(){
+ const parts=[['Commercial auto',3013,'#6B4062'],['Terrorism',287,'#916781'],['Taxes & surcharges',163.31,'#BA94B0'],['Data fee',250,'#CDAFC5'],['Other lines',14884,'#F0E5ED']];
+ const tot=18597.31;
+ openSheet('Premium',`<div class="gbox pad"><div class="cap muted">Commercial auto premium</div><div class="hero">$3,013.00</div><div class="cap muted">per policy year</div>
+ <div class="sbar">${parts.map(p=>`<i style="width:${Math.max(p[1]/tot*100,1.5)}%;background:${p[2]}"></i>`).join('')}</div></div>
+ ${kv([['Commercial auto premium','$3,013.00'],['Terrorism','$287.00'],['Taxes & surcharges','$163.31'],['Data fee','$250.00'],['Other lines (calculated)','$14,884.00'],['Total policy premium, all lines','$18,597.31']])}
+ <div class="note">Total includes all lines, not auto-specific. No vehicle-level premiums: policy-level only.</div>
+ ${srcs([['Business Auto Declarations','p.112'],['Common Policy Declarations','p.1, p.94']])}`,['Ask Ovie about this premium','premium'])},
+details(){openSheet('Policy details',`${kv([['Mailing address','4500 Hwy 455, Sparta, KY 41086'],['Business description','Special District'],['Named-insured entity type','Not specified beyond “Special District”'],['Policy dates','7/1/2021 to 7/1/2022'],['Form','BUSINESS AUTO DECLARATIONS, U-CA-D 600 C(0414)'],['Broker','Allied Public Risk LLC, 4507 North Front Street Suite 200, Harrisburg, PA 17110'],['Producer No.','56139000']])}${srcs([['Common Policy Declarations','p.1'],['Business Auto Declarations','p.111']])}`,['Ask Ovie about this policy','details'])},
+vehicle(i){const v=D.vehicles[i];
+ if(v.full)return openSheet(v.t,`${kv([['Vehicle #','4'],['Year','2012'],['Make','Ford'],['Model','F250'],['VIN','1FT7X2B68CEA12959'],['Cost new','$35,000'],['COMP ded','$500'],['COLL ded','$500'],['Applicable coverages','Liab, UM/UIM, Comp, Coll'],['Valuation','Actual Cash Value (for all autos)']])}${srcs([['Auto Schedule','p.121']])}`,['Ask Ovie about this vehicle','vehicles']);
+ openSheet(v.t,`${kv([['Vehicle',v.t],['Cost new',v.c]])}<div class="note">Further schedule details for this unit aren’t loaded in the prototype.</div>`,['Ask Ovie about this vehicle','vehicles'])},
+liab(){openSheet('Covered Autos Liability',`<div class="gbox pad"><div class="cap muted">Limit</div><div class="hero">$1,000,000</div><div class="cap muted">Each Accident</div></div>${kv([['Covered-auto symbol','1: Any auto'],['Applies to','Owned, hired, leased, borrowed, and non-owned autos'],['Summary','Covers any auto for up to $1,000,000 per accident']])}${srcs([['Business Auto Declarations','p.112'],['Business Auto Policy Form U-CA-D 600 C(0414)','Section I']])}`,['Ask Ovie about liability','liab'])},
+coll(){openSheet('Collision',`<div class="lbl" style="margin-top:0">Collision (autos owned)</div>${kv([['Valuation','ACV or cost of repair'],['Deductible','$500'],['Basis','Per Auto/Per Loss'],['Symbol','7: specifically described autos']])}<div class="lbl">Collision (hired autos)</div>${kv([['Limit','$35,000 each loss'],['Deductible','$500 each auto'],['Symbol','8: hired autos only']])}${srcs([['Business Auto Declarations','p.112, p.116'],['Auto Schedule','p.121']])}`,['Ask Ovie about collision','coll'])},
+inc(k){if(k=='liab')return SH.liab();if(k=='coll')return SH.coll();const r=D.inc.find(x=>x.k==k);
+ openSheet(r.t,`${kv([['Limit / value',r.v||r.unk],['Detail',r.sub],['Applies to',r.sc]])}<div class="gbox pad" style="color:#5F6368">${r.sum}</div>`,['Ask Ovie about '+r.t.toLowerCase(),k])},
+exc(i){const e=D.exc[i];openSheet(e[0],`<div class="gbox pad" style="color:#5F6368">${e[1]}</div><div class="note">See policy form for exhaustive list.</div>`,['Ask Ovie what isn’t covered','exc'])},
+ded(i){const d=D.ded[i];openSheet(d.t,kv([['Deductible',d.v+' '+d.sub],['Applies to',d.sc],['Note',d.sum]]),['Ask Ovie about deductibles','ded'])},
+wp(i){const w=D.wp[i];openSheet(w[0],`<div class="miss"><i class="ms qm w" style="margin:0">warning</i><div class="mm">${w[1]}</div></div>`,['Ask Ovie what to watch for','wp'])},
+miss(i){const m=D.miss[i];
+ const extra=m[2]=='drv'?kv([['Files reviewed','All CPO-0632562-02 commercial auto declarations, schedules, endorsements']])+'<div class="note">Informational: missing or not provided</div>':'';
+ openSheet(m[0],`<div class="gbox pad" style="color:#5F6368">${m[1]||'Not shown in the supplied files.'}</div>${extra}`,m[2]=='drv'?['Ask Ovie about drivers','drv']:['Ask Ovie about this gap','miss'])},
+forms(){openSheet('Documents',`<div class="gbox">${D.docs.map(d=>`<div class="kv"><span>Form</span><span>${d}</span></div>`).join('')}</div><div class="note">Document preview isn’t part of this prototype.</div>`)}
+};
+
+/* ---------- ROW BUILDERS (artifact classes) ---------- */
+const irInc=r=>`<button class="ir ok" onclick="SH.inc('${r.k}')"><span class="t">${r.t}</span>${CV}${r.unk?`<span class="unk">${r.unk}</span>`:`<span class="v">${r.v}</span>`}<span class="sub">${r.sub}</span><span class="scope">${r.sc}</span><span class="sum">${r.sum}</span></button>`;
+const irDed=(r,i)=>`<button class="ir" onclick="SH.ded(${i})"><span class="t">${r.t}</span>${CV}<span class="v">${r.v}</span><span class="sub">${r.sub}</span><span class="scope">${r.sc}</span><span class="sum">${r.sum}</span></button>`;
+const irExc=(e,i)=>`<button class="ir nx" onclick="SH.exc(${i})"><span class="t">${e[0]}</span>${CV}<span class="sum">${e[1]}</span></button>`;
+const irWp=(w,i)=>`<button class="ir wx" onclick="SH.wp(${i})"><span class="t">${w[0]}</span>${CV}<span class="sum">${w[1]}</span></button>`;
+const more=(label,fn)=>`<button class="more" onclick="${fn}"><span>${label}</span>${CVP}</button>`;
+
+/* ---------- MAIN ---------- */
+const st={filter:'inc',insured:'veh'};
+const FILTERS=[['inc','Included'],['exc','Not included'],['ded','Deductibles'],['wp','Watchpoints']];
+function filterSection(){
+ const f=st.filter;
+ const cfg={
+  inc:['Included',6,D.inc.slice(0,4).map(irInc).join('')+more('See all 6',"seeAll('inc')")],
+  exc:['Not included',D.excN,D.exc.map(irExc).join('')+more('See all '+D.excN,"seeAll('exc')")],
+  ded:['Deductibles',D.ded.length,D.ded.map(irDed).join('')],
+  wp:['Watchpoints',D.wpN,D.wp.map(irWp).join('')+more('See all '+D.wpN,"seeAll('wp')")]}[f];
+ return `<div class="sh">${cfg[0]} <span class="cnt">${cfg[1]}</span></div><div class="card rows">${cfg[2]}</div>`+(f=='exc'?'<div class="note" style="padding:0 4px">See policy form for exhaustive list.</div>':'');
+}
+function renderMain(){
+ const keep=$('#s-main').scrollTop;
+ $('#s-main').innerHTML=`
+ <div class="nav" style="justify-content:space-between;padding:0 8px"><button aria-label="Back" ${NAVBTN} onclick="toast('Back isn’t wired in this prototype')">${BACK}</button>
+  <div style="display:flex;gap:8px;padding-right:8px"><button class="tbu" aria-label="Search" onclick="toast('Search isn’t part of this prototype')">${SEARCH}</button><button class="tbu" aria-label="View documents" onclick="SH.forms()">${DOCI}</button></div></div>
+ <div class="body" style="display:flex;flex-direction:column;gap:40px">
+  <div class="ov">
+   <div class="ov-head"><span class="ov-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6B4062" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><path d="M9 17h6"></path><circle cx="17" cy="17" r="2"></circle></svg></span>
+    <div class="ov-id"><div class="ov-name">Gallatin County Water District</div><div class="ov-num">CPO-0632562-02</div></div></div>
+   <div class="ov-in"><div class="ov-grid">
+     <div class="ov-c"><span class="ov-l">Policy type</span><span class="ov-v">Commercial auto</span></div>
+     <div class="ov-c"><span class="ov-l">Status</span><span class="status"><i></i>Expired</span></div>
+     <div class="ov-c"><span class="ov-l">Carrier</span><span class="ov-v" style="display:block">American Zurich Insurance Company</span></div>
+     <div class="ov-c"><span class="ov-l">Expiry</span><span class="ov-v">7/1/2022</span></div></div>
+    <div class="ov-div"></div>
+    <button class="ov-prem" aria-label="Commercial auto premium, $3,013 per policy year. Open breakdown" onclick="SH.premium()"><span class="mid"><span class="cap muted">Commercial auto premium</span><span class="hero">$3,013</span><span class="cap muted">per policy year</span></span>${CVP}</button>
+    <button class="more" onclick="SH.details()"><span>More policy details</span>${CVP}</button></div></div>
+
+  <div class="sx"><div class="sh">Insured</div>
+   <div class="kchips"><button class="jump ${st.insured=='veh'?'on':''}" onclick="st.insured='veh';renderMain()">Vehicles <span>7</span></button><button class="jump ${st.insured=='drv'?'on':''}" onclick="st.insured='drv';renderMain()">Drivers <i class="wd"></i></button></div>
+   ${st.insured=='veh'?`<div class="vscroll">${D.vehicles.map((v,i)=>`<button class="vc" onclick="SH.vehicle(${i})"><i class="jb p" aria-hidden="true"><i class="ms">directions_car</i></i><span class="vt">${v.t}</span><span class="vv">${v.c}</span><span class="vs">Cost new</span></button>`).join('')}</div>`
+   :`<div class="miss" style="margin:0"><i class="ms qm w" style="margin:0" aria-hidden="true">warning</i><span class="mm"><b>Covered Driver Schedule: Not provided in the supplied files.</b><span>No named or scheduled drivers are shown; no driver-restriction endorsements are referenced or attached.</span></span></div>`}
+  </div>
+
+  <div class="sx" style="gap:16px"><div class="kchips" style="overflow-x:auto;scrollbar-width:none;padding:6px 16px;margin:-6px -16px">${FILTERS.map(f=>`<button class="jump ${st.filter==f[0]?'on':''}" onclick="st.filter='${f[0]}';renderMain()">${f[1]}</button>`).join('')}</div>
+   <div class="sx">${filterSection()}</div></div>
+
+  <div class="sx"><div class="sh">Documents<span class="cnt">3</span></div><div class="card rows"><button class="fx" style="align-items:center" onclick="SH.forms()"><span class="mid"><span class="t">3 forms</span><span class="sub">${D.docs.join(' · ')}</span></span>${CV}</button></div></div>
+
+  <div class="sx"><div class="sh">Missing or not provided <span class="cnt">4</span></div><div class="card rows">${D.miss.map((m,i)=>`<button class="fx" onclick="SH.miss(${i})"><i class="ms qm" aria-hidden="true">help</i><span class="mid"><span class="t">${m[0]}</span>${m[1]?`<span class="sum">${m[1]}</span>`:''}</span>${CV}</button>`).join('')}</div></div>
+ </div>`;
+ $('#s-main').scrollTop=keep;
+}
+
+/* ---------- SEE ALL ---------- */
+function seeAll(k){
+ const c={inc:['Included',D.inc.length,D.inc.map(irInc).join(''),''],
+  exc:['Not included',D.excN,D.exc.map(irExc).join(''),`${D.excN-D.exc.length} more exclusions are counted on the policy but aren’t loaded in this prototype. See policy form for exhaustive list.`],
+  wp:['Watchpoints',D.wpN,D.wp.map(irWp).join(''),`${D.wpN-D.wp.length} more watchpoint is counted on the policy but isn’t loaded in this prototype.`]}[k];
+ $('#s-all').innerHTML=`<div class="nav" style="padding:0 8px;gap:4px"><button aria-label="Back" ${NAVBTN} onclick="go('main')">${BACK}</button><span class="ttl">${c[0]}</span></div>
+ <div class="body"><div class="sx"><div class="sh">${c[0]} <span class="cnt">${c[1]}</span></div><div class="card rows">${c[2]}</div>${c[3]?`<div class="note" style="padding:4px 4px 0">${c[3]}</div>`:''}</div></div>`;
+ go('all');$('#s-all').scrollTop=0;
+}
+function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$('#s-'+id).classList.add('on');}
+
+/* ---------- ASK OVIE (canned, from loaded data only) ---------- */
+const li=a=>a.map(x=>'• '+x).join('<br>');
+const A={
+ liab:['Covered Autos Liability pays bodily injury and property damage losses when using any auto (owned, hired, non-owned, borrowed), up to $1,000,000 each accident (Symbol 1: Any auto). Uninsured and Underinsured Motorists are also $1,000,000 each accident, owned autos only.','Business Auto Declarations p.112'],
+ exc:['Not included:<br>'+li(D.exc.map(e=>`${e[0]}: ${e[1]}`)),'See policy form for exhaustive list.'],
+ ded:['Deductibles:<br>'+li(D.ded.map(d=>`${d.t}: ${d.v} ${d.sub} (${d.sc})`)),''],
+ drv:['A covered driver schedule wasn’t provided in the supplied files. No named or scheduled drivers are shown, and no driver-restriction endorsements are referenced or attached.','All CPO-0632562-02 commercial auto declarations, schedules, endorsements'],
+ wp:['Things to watch:<br>'+li(D.wp.map(w=>`${w[0]}: ${w[1]}`)),''],
+ premium:['Commercial auto premium is $3,013.00 per policy year. Terrorism is $287.00, taxes & surcharges $163.31 and the data fee $250.00. Total policy premium across all lines is $18,597.31. There are no vehicle-level premiums; it is policy-level only.','Business Auto Declarations p.112; Common Policy Declarations p.1, p.94'],
+ details:['The policy period is 7/1/2021 to 7/1/2022 on form U-CA-D 600 C(0414). Mailing address is 4500 Hwy 455, Sparta, KY 41086. Broker is Allied Public Risk LLC, Harrisburg, PA (Producer No. 56139000).','Common Policy Declarations p.1; Business Auto Declarations p.111'],
+ coll:['Collision on owned autos pays at ACV or cost of repair minus a $500 deductible, per auto per loss (Symbol 7). For hired autos it is limited to $35,000 each loss with a $500 deductible each auto (Symbol 8).','Business Auto Declarations p.112, p.116; Auto Schedule p.121'],
+ vehicles:['Seven units are scheduled: '+D.vehicles.map(v=>v.t).join(', ')+'. Full detail is loaded for the 2012 Ford F250 (VIN 1FT7X2B68CEA12959, cost new $35,000, $500 comp and collision deductibles).','Auto Schedule p.121'],
+ miss:['Not provided: '+D.miss.map(m=>m[0]).join('; ')+'.',''],
+ pip:['Personal Injury Protection pays no-fault losses as per KY requirements for covered vehicles (owned autos subject to no-fault). The limit is not stated.',''],
+ um:['Uninsured Motorists covers you if injured by a driver with no insurance, using owned autos, up to $1,000,000 each accident.',''],
+ uim:['Underinsured Motorists covers you if injured by a driver with too little insurance, owned autos, up to $1,000,000 each accident.',''],
+ comp:['Comprehensive pays for non-collision damages (theft, weather, fire, etc.) on scheduled and hired vehicles, at ACV or cost of repair minus a $500 deductible.','']
+};
+const LBL={premium:'Tell me about this premium',details:'Tell me about this policy',coll:'Tell me about collision',vehicles:'Tell me about the vehicles',miss:'What is missing?',pip:'Tell me about PIP',um:'Tell me about uninsured motorists',uim:'Tell me about underinsured motorists',comp:'Tell me about comprehensive',liab:'What does my liability cover?',exc:'What isn’t covered?',ded:'What are my deductibles?',drv:'Why are drivers missing?',wp:'What should I watch for?'};
+const QUICK=['liab','exc','ded','drv','wp'];
+let msgs=[];
+function chatView(){
+ $('#s-chat').innerHTML=`<div class="nav" style="padding:0 8px;gap:4px"><button aria-label="Back" ${NAVBTN} onclick="go('main')">${BACK}</button><span class="ttl">Ask Ovie</span></div>
+ <div class="body" style="padding-bottom:170px"><div class="chat">${msgs.map(m=>m.u?`<div class="bub u">${m.t}</div>`:`<div class="bub a">${m.t}${m.s?`<small>Source: ${m.s}</small>`:''}</div>`).join('')}</div></div>
+`;
+ go('chat');const s=$('#s-chat');s.scrollTop=s.scrollHeight;
+}
+function ask(k){const a=A[k];msgs.push({u:1,t:LBL[k]});msgs.push({t:a[0],s:a[1]});chatView()}
+function match(q){q=q.toLowerCase();
+ for(const [re,k] of [[/liab/,'liab'],[/not covered|exclu|isn.?t covered|not included/,'exc'],[/deduct/,'ded'],[/driver/,'drv'],[/watch|risk|careful/,'wp'],[/premium|cost|price/,'premium'],[/detail|broker|address|period|date/,'details'],[/collision/,'coll'],[/comprehensive/,'comp'],[/uninsured/,'um'],[/underinsured/,'uim'],[/pip|no-fault|injury protection/,'pip'],[/vehicle|truck|trailer|\bcar\b/,'vehicles'],[/missing|not provided/,'miss']])if(re.test(q))return k;return null}
+function sendTxt(id){const el=$('#'+id);const v=el.value.trim();if(!v)return;el.value='';const k=match(v);
+ msgs.push({u:1,t:v.replace(/</g,'&lt;')});msgs.push(k?{t:A[k][0],s:A[k][1]}:{t:'This is a prototype, so I can only answer from the loaded policy data. Try one of the suggested questions.'});chatView();}
+$('#qchips').innerHTML=QUICK.map(k=>`<button class="qc" onclick="ask('${k}')">${LBL[k]}</button>`).join('');
+$('#dmic').innerHTML=MIC;
+$('#dmic').onclick=()=>{$('#dinp').value.trim()?(sendTxt('dinp')):toast('Voice input isn’t part of this prototype')};
+$('#dinp').onkeydown=e=>{if(e.key=='Enter')sendTxt('dinp')};
+$('#dinp').oninput=e=>{$('#dmic').innerHTML=e.target.value?SEND:MIC};
+let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),1800)}
+renderMain();
+
+</script></body></html>
