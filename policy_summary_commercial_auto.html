@@ -244,7 +244,7 @@ const SEND=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="
 const NAVBTN='style="width:44px;height:44px;border:0;background:none;display:grid;place-items:center;border-radius:12px;cursor:pointer"';
 const SEARCH=`<svg width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M380-320q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>`;
 const DOCI=`<svg width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240h240q17 0 28.5-11.5T640-280q0-17-11.5-28.5T600-320H360q-17 0-28.5 11.5T320-280q0 17 11.5 28.5T360-240Zm0-160h240q17 0 28.5-11.5T640-440q0-17-11.5-28.5T600-480H360q-17 0-28.5 11.5T320-440q0 17 11.5 28.5T360-400ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v447q0 33-23.5 56.5T720-80H240Zm280-560v-160H240v640h480v-440H560q-17 0-28.5-11.5T520-640ZM240-800v200-200 640-640Z"/></svg>`;
-const SPARK=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B4062" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>`;
+const SPARK=`<svg width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h240v720Zm-80-80v-560H200v560h160Zm160-320v-320h240q33 0 56.5 23.5T840-760v240H520Zm80-80h160v-160H600v160Zm-80 480v-320h320v240q0 33-23.5 56.5T760-120H520Zm80-80h160v-160H600v160ZM360-480Zm240-120Zm0 240Z"/></svg>`;
 const esc=s=>String(s).replace(/'/g,"\\'");
 
 /* ---------- DATA: only what the 1b boards contain ---------- */
@@ -297,6 +297,7 @@ function closeSheet(){$('#sheet').classList.remove('on');$('#scrim').classList.r
 $('#scrim').onclick=closeSheet;
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
 
+const S_DECL=[['Business Auto Declarations','p.112']],S_DED=[['Business Auto Declarations','p.112, p.116'],['Auto Schedule','p.121']],S_FORM=[['Business Auto Policy Form U-CA-D 600 C(0414)','Exclusions']],S_GAP=[['Business Auto Declarations','p.111'],['Common Policy Declarations','p.1']];
 const SH={
 premium(){
  const parts=[['Commercial auto',3013,'#14B8A6'],['Terrorism',287,'#EAB308'],['Taxes & surcharges',163.31,'#5CD3C6'],['Data fee',250,'#F3CF5B'],['Other lines',14884,'#FFFFFF']];
@@ -309,18 +310,18 @@ premium(){
 details(){openSheet('Policy details',`${kv([['Mailing address','4500 Hwy 455, Sparta, KY 41086'],['Business description','Special District'],['Named-insured entity type','Not specified beyond “Special District”'],['Policy dates','7/1/2021 to 7/1/2022'],['Form','BUSINESS AUTO DECLARATIONS, U-CA-D 600 C(0414)'],['Broker','Allied Public Risk LLC, 4507 North Front Street Suite 200, Harrisburg, PA 17110'],['Producer No.','56139000']])}${srcs([['Common Policy Declarations','p.1'],['Business Auto Declarations','p.111']])}`,['Ask Mosey about this policy','details'])},
 vehicle(i){const v=D.vehicles[i];
  if(v.full)return openSheet(v.t,`${kv([['Vehicle #','4'],['Year','2012'],['Make','Ford'],['Model','F250'],['VIN','1FT7X2B68CEA12959'],['Cost new','$35,000'],['COMP ded','$500'],['COLL ded','$500'],['Applicable coverages','Liab, UM/UIM, Comp, Coll'],['Valuation','Actual Cash Value (for all autos)']])}${srcs([['Auto Schedule','p.121']])}`,['Ask Mosey about this vehicle','vehicles']);
- openSheet(v.t,`${kv([['Vehicle',v.t],['Cost new',v.c]])}<div class="note">Further schedule details for this unit aren’t loaded in the prototype.</div>`,['Ask Mosey about this vehicle','vehicles'])},
+ openSheet(v.t,`${kv([['Vehicle',v.t],['Cost new',v.c]])}<div class="note">Further schedule details for this unit aren’t loaded in the prototype.</div>${srcs([['Auto Schedule','p.121']])}`,['Ask Mosey about this vehicle','vehicles'])},
 liab(){openSheet('Covered Autos Liability',`<div class="gbox pad"><div class="cap muted">Limit</div><div class="hero">$1,000,000</div><div class="cap muted">Each Accident</div></div>${kv([['Covered-auto symbol','1: Any auto'],['Applies to','Owned, hired, leased, borrowed, and non-owned autos'],['Summary','Covers any auto for up to $1,000,000 per accident']])}${srcs([['Business Auto Declarations','p.112'],['Business Auto Policy Form U-CA-D 600 C(0414)','Section I']])}`,['Ask Mosey about liability','liab'])},
 coll(){openSheet('Collision',`<div class="lbl" style="margin-top:0">Collision (autos owned)</div>${kv([['Valuation','ACV or cost of repair'],['Deductible','$500'],['Basis','Per Auto/Per Loss'],['Symbol','7: specifically described autos']])}<div class="lbl">Collision (hired autos)</div>${kv([['Limit','$35,000 each loss'],['Deductible','$500 each auto'],['Symbol','8: hired autos only']])}${srcs([['Business Auto Declarations','p.112, p.116'],['Auto Schedule','p.121']])}`,['Ask Mosey about collision','coll'])},
 inc(k){if(k=='liab')return SH.liab();if(k=='coll')return SH.coll();const r=D.inc.find(x=>x.k==k);
- openSheet(r.t,`${kv([['Limit / value',r.v||r.unk],['Detail',r.sub],['Applies to',r.sc]])}<div class="gbox pad" style="color:#5F6368">${r.sum}</div>`,['Ask Mosey about '+r.t.toLowerCase(),k])},
-exc(i){const e=D.exc[i];openSheet(e[0],`<div class="gbox pad" style="color:#5F6368">${e[1]}</div><div class="note">See policy form for exhaustive list.</div>`,['Ask Mosey what isn’t covered','exc'])},
-ded(i){const d=D.ded[i];openSheet(d.t,kv([['Deductible',d.v+' '+d.sub],['Applies to',d.sc],['Note',d.sum]]),['Ask Mosey about deductibles','ded'])},
-wp(i){const w=D.wp[i];openSheet(w[0],`<div class="miss"><i class="ms qm w" style="margin:0">warning</i><div class="mm">${w[1]}</div></div>`,['Ask Mosey what to watch for','wp'])},
+ openSheet(r.t,`${kv([['Limit / value',r.v||r.unk],['Detail',r.sub],['Applies to',r.sc]])}<div class="gbox pad" style="color:#5F6368">${r.sum}</div>${srcs(r.k=='comp'?S_DED:S_DECL)}`,['Ask Mosey about '+r.t.toLowerCase(),k])},
+exc(i){const e=D.exc[i];openSheet(e[0],`<div class="gbox pad" style="color:#5F6368">${e[1]}</div><div class="note">See policy form for exhaustive list.</div>${srcs(S_FORM)}`,['Ask Mosey what isn’t covered','exc'])},
+ded(i){const d=D.ded[i];openSheet(d.t,kv([['Deductible',d.v+' '+d.sub],['Applies to',d.sc],['Note',d.sum]])+srcs(S_DED),['Ask Mosey about deductibles','ded'])},
+wp(i){const w=D.wp[i];openSheet(w[0],`<div class="miss"><i class="ms qm w" style="margin:0">warning</i><div class="mm">${w[1]}</div></div>${srcs(S_DED)}`,['Ask Mosey what to watch for','wp'])},
 miss(i){const m=D.miss[i];
  const extra=m[2]=='drv'?kv([['Files reviewed','All CPO-0632562-02 commercial auto declarations, schedules, endorsements']])+'<div class="note">Informational: missing or not provided</div>':'';
- openSheet(m[0],`<div class="gbox pad" style="color:#5F6368">${m[1]||'Not shown in the supplied files.'}</div>${extra}`,m[2]=='drv'?['Ask Mosey about drivers','drv']:['Ask Mosey about this gap','miss'])},
-forms(){openSheet('Documents',D.docs.map(d=>`<button class="fx" style="align-items:center" onclick="toast('Document preview isn’t part of this prototype')"><span class="mid"><span class="t">${d}</span></span>${CV}</button>`).join(''))}
+ openSheet(m[0],`<div class="gbox pad" style="color:#5F6368">${m[1]||'Not shown in the supplied files.'}</div>${extra}${srcs(S_GAP)}`,m[2]=='drv'?['Ask Mosey about drivers','drv']:['Ask Mosey about this gap','miss'])},
+forms(){openSheet('Documents',D.docs.map(d=>`<button class="fx" style="align-items:center" onclick="toast('Document preview isn’t part of this prototype')"><span class="mid"><span class="t">${d}</span></span>${CV}</button>`).join('')+srcs([['Common Policy Declarations','p.1']]))}
 };
 
 /* ---------- ROW BUILDERS (artifact classes) ---------- */
@@ -356,7 +357,7 @@ function renderMain(){
     <div class="ov-id"><div class="ov-name">Gallatin County Water District</div><div class="ov-num">CPO-0632562-02</div></div></div>
    <div class="ov-in"><div class="ov-grid">
      <div class="ov-c"><span class="ov-l">Policy type</span><span class="ov-v">Commercial auto</span></div>
-     <div class="ov-c"><span class="ov-l">Status</span><span class="status"><i></i>Expired</span></div>
+     <div class="ov-c"><span class="status"><i></i>Expired</span></div>
      <div class="ov-c"><span class="ov-l">Carrier</span><span class="ov-v" style="display:block">American Zurich Insurance Company</span></div>
      <div class="ov-c"><span class="ov-l">Expiry</span><span class="ov-v">7/1/2022</span></div></div>
     <div class="ov-div"></div>
