@@ -148,7 +148,7 @@ body{background:#E3E3E3;display:flex;justify-content:center;align-items:center;m
 .body{padding:12px 16px 190px}
 button{cursor:pointer}
 .dock{z-index:8}
-.dockin input{flex:1;border:0;outline:0;background:transparent;font:400 12px/16px Figtree,system-ui;min-width:0;color:#5F6368}
+.dockin input{flex:1;border:0;outline:0;background:transparent;font:400 14px/20px Figtree,system-ui;min-width:0;color:#5F6368}
 .dockin input::placeholder{color:var(--text3)}
 .qc:hover,.jump:hover{filter:brightness(.97)}
 .fx:hover,.ir:hover{background:rgba(107,64,98,.04)}
@@ -212,6 +212,11 @@ button{cursor:pointer}
 .tbu:active{transform:scale(.96)}
 .tbu:focus-visible,.nav button:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(107,64,98,.24)}
 .nav button[aria-label=Back]{color:#111}
+/* DESIGN.md §motion: top bar slides out on deliberate downward scroll, returns on upward scroll */
+:root{--motion-duration-standard:200ms;--motion-ease-out:cubic-bezier(0.23,1,0.32,1)}
+.nav{transition:transform var(--motion-duration-standard) var(--motion-ease-out)}
+.scr.nh .nav{transform:translateY(-100%)}
+@media (prefers-reduced-motion:reduce){.nav{transition:opacity var(--motion-duration-standard) ease}.scr.nh .nav{transform:none;opacity:0;pointer-events:none}}
 </style></head><body>
 <div class="ph" id="ph">
   <div class="scr on" id="s-main"></div>
@@ -426,6 +431,13 @@ $('#dadd').onclick=()=>toast('Attachments aren’t part of this prototype');
 $('#dmic').onclick=()=>{$('#dinp').value.trim()?(sendTxt('dinp')):toast('Voice input isn’t part of this prototype')};
 $('#dinp').onkeydown=e=>{if(e.key=='Enter')sendTxt('dinp')};
 $('#dinp').oninput=e=>{$('#dmic').innerHTML=e.target.value?SEND:MIC};
+/* hide top bar after deliberate downward scroll; show on any upward scroll, near the top, or while a header control has focus */
+document.querySelectorAll('.scr').forEach(s=>{let last=0,down=0;
+ s.addEventListener('scroll',()=>{const t=s.scrollTop,d=t-last;last=t;
+  if(t<=56){down=0;s.classList.remove('nh');return}
+  if(d>0){down+=d;if(down>24&&!s.contains(document.activeElement.closest('.nav')))s.classList.add('nh')}
+  else if(d<-1){down=0;s.classList.remove('nh')}},{passive:true});
+ s.addEventListener('focusin',e=>{if(e.target.closest('.nav'))s.classList.remove('nh')})});
 let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),1800)}
 renderMain();
 
