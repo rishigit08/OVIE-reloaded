@@ -47,6 +47,34 @@ for (const dialog of document.querySelectorAll('dialog')) {
 }
 $('closeSource').onclick = () => sourceSheet.close();
 $('closeUtility').onclick = () => utilitySheet.close();
+const OVIE_MARK='<svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg>';
+// A suggested Ask Ovie question for each evidence source, seeded when the stat's Ask Ovie button is used.
+const ASK_SUGGESTIONS={identity:'What are my policy term dates?',premium:'What do my coverage premiums add up to?',driver:'Who is the named insured and primary driver?',vehicle:'Which vehicle is covered on this policy?',liability:'What are my liability limits?',medical:'Do I have medical expense benefits?',um:'What uninsured motorist coverage do I have?',physical:'What are my comprehensive and collision deductibles?',rental:'How much rental or transportation coverage do I have?',towing:'What towing and labor coverage do I have?',income:'What income loss benefits do I have?',exclusions:'Does my policy cover rideshare driving?',custom:'Is my custom equipment covered?',newAuto:'How are newly acquired vehicles covered?',nonowned:'How does coverage work for a non-owned auto?',duties:'What are my duties after an accident or loss?',forms:'What forms and endorsements are on my policy?'};
+function describeSource(source){
+  const lines=[];
+  if(source.entries)for(const [label,value] of source.entries)lines.push(`${label}: ${value}`);
+  if(source.excerpt)lines.push(`“${source.excerpt}”`);
+  return lines.join('\n');
+}
+// Open Ask Ovie from a stat's source sheet, seeding the suggested question and loading that source's info as the answer.
+function askAboutSource(id, trigger){
+  const source=EVIDENCE[id]; if(!source)return;
+  const question=ASK_SUGGESTIONS[id]||`What does my policy say about ${source.title.toLowerCase()}?`;
+  const origin=triggers.get(sourceSheet)||trigger;
+  sourceSheet.close();
+  openAsk(origin);
+  $('askOvieQuestion').textContent=question;
+  $('askOvieAnswer').textContent=`Based on your policy — ${source.title}.\n\n${describeSource(source)}`;
+  $('askOvieConversation').hidden=false;
+  askSheet.classList.add('chat-view');
+  const sourceAction=action('Read supporting excerpt',()=>showSource(id,sourceAction),true);
+  $('askSourceActions').replaceChildren(sourceAction);
+  askInput.value='';
+  syncAskAction();
+  askInput.blur();
+  askSheet.classList.remove('show-android-keyboard-preview','keyboard-visible');
+  syncAskViewport();
+}
 function showSource(id, trigger) {
   const source=EVIDENCE[id]; if(!source)return;
   $('sourceTitle').textContent=source.title;
@@ -54,6 +82,7 @@ function showSource(id, trigger) {
   if(source.entries){ const list=node('dl','source-entries'); for(const [label,value] of source.entries) {const row=node('div','source-entry');row.append(node('dt','',label),node('dd','',value));list.append(row);}parts.push(list); }
   if(source.excerpt)parts.push(node('blockquote','source-excerpt',source.excerpt));
   const link=node('a','primary-action document-link','View in document');link.href=POLICY_URL+'#page='+source.page;link.target='_blank';link.rel='noopener';parts.push(link);
+  const ask=node('button','ask-ovie-source-link');ask.type='button';ask.innerHTML=OVIE_MARK+'<span>Ask Ovie</span>';ask.setAttribute('aria-label','Ask Ovie about '+source.title);ask.addEventListener('click',()=>askAboutSource(id,ask));parts.push(ask);
   $('sourceBody').replaceChildren(...parts);openDialog(sourceSheet,trigger);
 }
 document.addEventListener('click', event => { const button=event.target.closest('[data-source]'); if(button) showSource(button.dataset.source,button); });

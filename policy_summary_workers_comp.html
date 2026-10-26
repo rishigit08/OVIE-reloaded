@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mosey Workers Comp Insights Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,500,0..1,0&amp;display=block">
+<style>
+body{margin:0; }
+button{font:inherit;color:inherit}
+.ph{width:390px;height:3300px;background:#FAF6EC;font-family:'Hind Vadodara',system-ui,sans-serif;font-size:14px;line-height:20px;color:#111;position:relative;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column}
+.nav{height:56px;background:transparent;display:flex;align-items:center;padding:0 16px;flex:none}
+.nav b{font-size:18px;line-height:24px;font-weight:600}
+.body{padding:12px 16px 140px;display:flex;flex-direction:column;gap:40px}
+.card{background:#FBF9FC;border:1px solid #fff;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06)}
+.card.rows{padding:4px 16px}
+.name{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em}
+.muted{color:#5F6368}
+.cap{font-size:12px;line-height:16px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.status{display:inline-flex;align-items:center;gap:6px;background:#FFEDED;color:#A63A33;border-radius:999px;padding:4px 10px;font-size:12px;line-height:16px;font-weight:600;white-space:nowrap}
+.status i{width:7px;height:7px;border-radius:50%;background:#A63A33;display:block}
+.tbar{height:6px;border-radius:3px;background:#E3E3E3;position:relative}
+.tfill{position:absolute;left:0;top:0;bottom:0;right:0;border-radius:3px;background:#6B4062}
+.tdot{position:absolute;right:-2px;top:-3px;width:12px;height:12px;border-radius:50%;background:#A63A33;border:2px solid #fff;box-sizing:border-box}
+.tlab{display:flex;justify-content:space-between;font-size:12px;line-height:16px;color:#5F6368;margin-top:6px}
+.prem{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:none;border:0;border-top:1px solid #ECEFED;border-bottom:1px solid #ECEFED;padding:12px 0;cursor:pointer;min-height:44px}
+.prem .mid{flex:1;min-width:0;display:flex;flex-direction:column}
+.hero{font-size:32px;line-height:36px;font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:14px;line-height:20px}
+.kv span:first-child{color:#5F6368;flex:none}
+.kv span:last-child{font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}
+.attn{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px solid #ECEFED;padding-top:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid currentColor;border-radius:999px;padding:3px 9px;font-size:12px;line-height:16px;font-weight:600;white-space:nowrap;background:transparent}
+.pill i{width:7px;height:7px;border-radius:50%;display:block}
+.p-rev{color:#6B4062}.p-rev i{background:#6B4062}
+.p-warn{color:#634106;border-color:#E7C982;background:#FFF5DF}.p-warn i{background:#8A5A06}
+.more{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:0;border-top:1px solid #ECEFED;padding:12px 0 0;color:#6B4062;font-weight:600;cursor:pointer;min-height:44px;text-align:left}
+.ov{background:#6B4062;border-radius:20px;padding:16px 12px 12px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06)}
+.ov-head{display:flex;align-items:center;gap:12px;padding:0 4px}
+.ov-ic{width:48px;height:48px;border-radius:12px;background:#F5EDF3;display:grid;place-items:center;flex:none}
+.ov-id{flex:1;min-width:0}
+.ov-name{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;color:#fff;overflow-wrap:anywhere}
+.ov-num{font-size:12px;line-height:16px;color:#E9DCE5}
+.ov-hg{flex:none;width:44px;height:52px;display:block}
+.ov-in{background:#FBF9FC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.ov-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px 12px}
+.ov-c{display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:0}
+.ov-l{font-size:12px;line-height:16px;color:#5F6368}
+.ov-v{font-size:14px;line-height:20px;font-weight:600;display:flex;gap:6px;align-items:center}
+.ov-prem{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:none;padding:0;min-height:44px;cursor:pointer}
+.ov-prem .mid{flex:1;min-width:0;display:flex;flex-direction:column}
+.ov-lab{display:flex;align-items:center;gap:10px}
+.ov-chip{color:#5F6368;font-size:12px;line-height:16px;white-space:nowrap}
+.ov-line{flex:1;height:1px;background:#ECEFED}
+.ov-div{height:1px;background:#ECEFED;flex:none}
+.ov-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:-12px}
+.jumps{display:flex;gap:8px;overflow:hidden;margin:0 -16px;padding:0 16px}
+.jump{flex:none;display:inline-flex;gap:6px;align-items:center;min-height:36px;background:#fff;border:1px solid transparent;border-radius:999px;padding:0 14px;font-size:14px;font-weight:600;color:#5F6368;cursor:pointer}
+.jump span{font-weight:500;color:#5F6368}
+.jump.on{background:#F5EDF3;border-color:#6B4062;color:#6B4062}
+.jump.on span{color:#6B4062}
+.jump{box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06)}
+.jump.ic{padding:0 14px 0 6px}
+.jb{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;font-style:normal}
+.ms{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20;font-size:24px;line-height:1;font-style:normal;font-weight:normal;letter-spacing:normal;text-transform:none;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+.ms.msl{font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20}
+.jb.g{background:#DDF4E6;color:#15803D}
+.jb.r{background:#FDE6E6;color:#B42318}
+.jb.b{background:#E1EEFC;color:#0B62C4}
+.jb.a{background:#FCEFD0;color:#8A5A06}
+.jb.p{background:transparent;color:#EAB308}
+.vc .jb{margin-bottom:6px}
+.jb.p .ms{text-shadow:0 2px 10px rgba(234,179,8,.55)}
+.qm{color:#6B4062;text-shadow:0 2px 10px rgba(107,64,98,.55);flex:none;margin-top:-2px}
+.jb.g .ms{text-shadow:0 2px 10px rgba(21,128,61,.55)}
+.jb.r .ms{text-shadow:0 2px 10px rgba(180,35,24,.55)}
+.jb.b .ms{text-shadow:0 2px 10px rgba(11,98,196,.55)}
+.jb.a .ms{text-shadow:0 2px 10px rgba(138,90,6,.55)}
+.ir.ok::before{text-shadow:0 2px 10px rgba(21,128,61,.55)}
+.sx{display:flex;flex-direction:column;gap:8px}
+.kchips{display:flex;gap:8px}
+.wd{width:7px;height:7px;border-radius:50%;background:#8A5A06;display:block}
+.wd{width:7px;height:7px;border-radius:50%;background:#8A5A06;display:block}
+.sh{display:flex;align-items:center;gap:8px;padding:0 4px;font-size:12px;line-height:16px;font-weight:600;color:#72777C;text-transform:uppercase;letter-spacing:.04em}
+.cnt{background:#F5EDF3;color:#6B4062;font-size:12px;line-height:16px;font-weight:600;border-radius:999px;padding:3px 8px}
+.ir{display:grid;grid-template-columns:minmax(0,1fr) 20px;column-gap:8px;row-gap:4px;width:100%;text-align:left;background:none;border:0;border-top:1px solid #ECEFED;padding:12px 0;min-height:52px;cursor:pointer;align-items:start}
+.ir.ok{position:relative;padding-left:36px}
+.ir.ok::before{content:"";position:absolute;left:0;top:12px;width:20px;height:20px;background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2316A34A%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%2210%22/%3E%3Cpath d=%22m9 12 2 2 4-4%22/%3E%3C/svg%3E") no-repeat center/20px}
+.vscroll{display:flex;gap:10px;overflow-x:auto;margin:0 -16px -6px;padding:2px 16px 14px;scroll-snap-type:x proximity;scroll-padding:0 16px;scrollbar-width:none}
+.vscroll::-webkit-scrollbar{display:none}
+.ir.ok::before{content:"check_circle";font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20;font-size:24px;line-height:24px;text-align:center;font-weight:normal;font-style:normal;letter-spacing:normal;white-space:nowrap;top:10px;width:24px;height:24px;border-radius:50%;background:transparent;color:#15803D;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+.vc{flex:none;width:164px;scroll-snap-align:start;text-align:left;background:#FBF9FC;border:1px solid #fff;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06);cursor:pointer;align-items:flex-start}
+.vt{font-weight:600;font-size:14px;line-height:20px;min-height:40px;color:#111}
+.vv{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;color:#111}
+.vs{font-size:12px;line-height:16px;color:#72777C}
+.ir:first-child{border-top:0}
+.ir>*{grid-column:1/-1}
+.ir>.t{grid-column:1;grid-row:1}
+.ir>.cv{grid-column:2;grid-row:1;align-self:center}
+.t{font-weight:600;font-size:14px;line-height:20px;overflow-wrap:anywhere}
+.v{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.sub{font-size:12px;line-height:16px;color:#5F6368}
+.scope{justify-self:start;display:inline-block;border:1px solid #fff;background:#EFEFF1;border-radius:999px;padding:4px 10px;font-size:12px;line-height:16px;font-weight:600;color:#333A3D}
+.sum{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:#5F6368}
+.fx{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;border-top:1px solid #ECEFED;padding:12px 0;min-height:52px;cursor:pointer}
+.fx:first-child{border-top:0}
+.fx .mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.fx .cv{align-self:center;flex:none}
+.xi{position:relative;width:40px;height:40px;border-radius:12px;background:#F6F6F6;display:grid;place-items:center;flex:none}
+.xb{position:absolute;right:-5px;top:-5px;width:16px;height:16px;border-radius:50%;background:#A63A33;border:2px solid #fff;box-sizing:content-box;display:grid;place-items:center}
+.gh{display:flex;justify-content:space-between;align-items:center;padding:12px 0 4px;font-weight:600}
+.kinds{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:8px}
+.kd{display:inline-flex;align-items:center;gap:6px;border:1px solid #D8DDDB;border-radius:999px;padding:4px 12px 4px 8px;font-weight:600;font-size:14px}
+.mbar{height:6px;border-radius:3px;background:#14B8A6;display:block}
+.miss{display:flex;gap:10px;align-items:flex-start;background:#FFF5DF;border:1px solid #E7C982;border-radius:12px;padding:12px;color:#634106;margin:4px 0 8px}
+.miss .mm{display:flex;flex-direction:column;gap:4px;min-width:0}
+.q{width:22px;height:22px;border-radius:50%;background:#FFF5DF;border:1px solid #E7C982;color:#8A5A06;font-weight:700;font-size:12px;display:grid;place-items:center;flex:none}
+.unk{justify-self:start;display:inline-flex;align-items:center;gap:5px;background:#FFF5DF;border:1px solid #E7C982;color:#634106;border-radius:999px;padding:2px 10px;font-size:12px;line-height:16px;font-weight:600}
+.note{font-size:12px;line-height:16px;color:#5F6368;padding:8px 0 4px}
+.dock{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 18px;background:rgba(255,255,255,.55);backdrop-filter:blur(14px);display:flex;flex-direction:column;gap:10px}
+.dockrow{display:flex;gap:8px;align-items:center}
+.qchips{display:flex;gap:8px;overflow-x:auto;margin:0 -14px;padding:0 14px;scrollbar-width:none}
+.qchips::-webkit-scrollbar{display:none}
+.qc{flex:none;min-height:36px;padding:0 14px;border:1px solid #D8DDDB;border-radius:18px;background:#fff;color:#5F6368;font-weight:500;font-size:12px;line-height:16px;white-space:nowrap;cursor:pointer}
+.dockin{flex:1;min-height:44px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #D8DDDB;border-radius:12px;padding:0 12px;color:#5F6368;text-align:left}
+.dockadd{width:36px;height:36px;margin-left:-6px;border:0;background:#F6F6F6;border-radius:12px;display:grid;place-items:center;color:#5F6368;flex:none;transition:background-color .18s ease,transform .12s ease}
+.dockadd:hover{background:#F5EDF3}
+.dockadd:active{transform:scale(.96)}
+.dockadd:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(107,64,98,.24)}
+.dockin:focus-within{border-color:#6B4062;box-shadow:0 0 0 3px rgba(107,64,98,.24)}
+.dockmic{width:44px;height:44px;border:0;border-radius:12px;background:#6B4062;display:grid;place-items:center}
+.tabs{display:flex;justify-content:center;overflow:hidden;background:#fff;margin:0 -16px}
+.tb{flex:1 1 auto;text-align:center;background:#fff;border:0;border-bottom:3px solid #ECEFED;padding:16px 10px 13px;font-weight:600;font-size:14px;line-height:20px;color:#5F6368;cursor:pointer;white-space:nowrap}
+.tb.on{background:#F5EDF3;color:#6B4062;border-bottom-color:#6B4062}
+
+/* ---- prototype shell + DESIGN.md token overrides ---- */
+:root{--text:#111111;--text2:#333A3D;--text3:#5F6368;--icon-brand:#6B4062;--ok:#0D7D07;--warn:#8A5A06;--danger:#A63A33;--canvas:#F6F6F6;--bsub:#ECEFED;--bdef:#D8DDDB;--overlay:rgba(17,24,23,.58)}
+html,body{height:100%}
+body{background:#E3E3E3;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.ph{height:100vh;max-height:844px;background:var(--canvas)!important;overflow:hidden}
+@media(min-width:500px){.ph{height:844px;border-radius:28px;box-shadow:0 6px 16px rgba(17,17,17,.12)}}
+.scr{position:absolute;inset:0;overflow-y:auto;display:none;flex-direction:column;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.scr.on{display:flex}
+.nav{position:sticky;top:0;z-index:5;background:var(--canvas)}
+.nav button,.ib{cursor:pointer}
+.nav .ttl{font-size:18px;line-height:24px;font-weight:600}
+.body{padding:12px 16px 190px}
+button{cursor:pointer}
+.dock{z-index:8}
+.dockin input{flex:1;border:0;outline:0;background:transparent;font:400 14px/20px 'Hind Vadodara',system-ui;min-width:0;color:#5F6368}
+.dockin input::placeholder{color:var(--text3)}
+.qc:hover,.jump:hover{filter:brightness(.97)}
+.fx:hover,.ir:hover{background:rgba(107,64,98,.04)}
+/* color tokens */
+.jb.g{color:var(--ok)}.jb.g .ms{text-shadow:0 2px 10px rgba(13,125,7,.55)}
+.jb.r{color:var(--danger)}.jb.r .ms{text-shadow:0 2px 10px rgba(166,58,51,.55)}
+.ir.ok::before{color:var(--ok);text-shadow:0 2px 10px rgba(13,125,7,.55)}
+.status{background:#FFEDED;color:var(--danger)}.status i{background:var(--danger)}
+.qm.r{color:var(--danger);text-shadow:0 2px 10px rgba(166,58,51,.55)}
+.qm.w{color:var(--warn);text-shadow:0 2px 10px rgba(138,90,6,.55)}
+.ir.nx,.ir.wx,.ir.dx,.ir.ex{position:relative;padding-left:36px}.ir.ex::before{content:"description";color:var(--icon-brand)}.p-crit{color:#A63A33;border-color:#E9B3AF;background:#FFEDED}.p-crit i{background:#A63A33}
+.ir.dx::before{content:"tune";color:#EAB308;text-shadow:0 2px 10px rgba(234,179,8,.55)}
+.ir.nx::before,.ir.wx::before,.ir.dx::before,.ir.ex::before{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 20;font-size:24px;line-height:24px;position:absolute;left:0;top:10px;width:24px;text-align:center;font-weight:normal;font-style:normal;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+.ir.nx::before{content:"cancel";color:var(--danger);text-shadow:0 2px 10px rgba(166,58,51,.55)}
+.ir.wx::before{content:"warning";color:var(--warn);text-shadow:0 2px 10px rgba(138,90,6,.55)}
+.ir .sum.full{-webkit-line-clamp:unset;display:block}
+.ir{text-align:left;color:inherit}
+.fx{color:inherit}
+/* sheets (DESIGN.md §10: 12px top corners, overlay shadow, 58% scrim) */
+.scrim{position:absolute;inset:0;background:var(--overlay);z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:88%;overflow-y:auto;background:#fff;border-radius:12px 12px 0 0;z-index:21;transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);padding:8px 16px 24px;box-shadow:0 6px 16px rgba(17,17,17,.12)}
+.sheet.on{transform:none}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--bdef);margin:0 auto 6px}
+.sht{display:flex;align-items:center;justify-content:space-between;min-height:44px;margin-bottom:8px}
+.sht b{font-size:18px;line-height:24px;font-weight:600}
+.sht button{width:44px;height:44px;border:0;background:none;display:grid;place-items:center;border-radius:12px;margin-right:-10px}
+.gbox{background:#F5EDF3;border-radius:12px;padding:4px 16px;margin-bottom:12px}
+.gbox .kv{padding:10px 0;border-top:1px solid rgba(107,64,98,.18)}.gbox .kv:first-child{border-top:0}
+.gbox.pad{padding:16px}
+.lbl{font-size:12px;line-height:16px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#72777C;margin:16px 0 8px}
+.srow{display:flex;justify-content:space-between;font-size:14px;line-height:20px;padding:8px 0;color:var(--text3)}
+.srow+.srow{border-top:1px solid var(--bsub)}
+.srow u{color:#6B4062;font-weight:600}
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:12px;border:1px solid #6B4062;background:transparent;color:#6B4062;border-radius:12px;font-weight:600;font-size:14px}
+.cta:hover{background:#F5EDF3}
+.sbar{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin:12px 0 4px}
+.sbar i{display:block}
+.note.na{font-style:normal}
+/* chat */
+.chat{display:flex;flex-direction:column;gap:12px}
+.bub{max-width:86%;padding:12px 14px;font-size:14px;line-height:20px}
+.bub.u{align-self:flex-end;background:#6B4062;color:#fff;border-radius:16px 16px 4px 16px}
+.bub.a{align-self:flex-start;background:#FBF9FC;border:1px solid #fff;box-shadow:0 1px 2px rgba(107,64,98,.04),0 4px 16px rgba(107,64,98,.06);border-radius:16px 16px 16px 4px}
+.bub small{display:block;margin-top:8px;font-size:12px;line-height:16px;color:var(--text3)}
+.toast{position:absolute;top:72px;left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:14px;padding:10px 16px;border-radius:12px;z-index:50;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.hid{display:none!important}
+.fbk{display:flex;flex-direction:column;gap:16px}
+.fbr{display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:var(--text3)}
+.fbb{display:flex;gap:4px;margin-right:-10px}
+.tbn{width:44px;height:44px;border:0;background:none;border-radius:12px;display:grid;place-items:center;color:#5F6368}
+.tbn:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(107,64,98,.24)}
+.tbn.up{color:#0D7D07}.tbn.down{color:#A63A33}
+.disc{margin:0;padding:0 16px;font-size:11px;line-height:16px;color:#5F6368}
+
+
+/* DESIGN.md §7 top bar: 44x44 utility actions, 12px radius, background-subtle, icon-default, primary-soft hover, .96 press, plum focus ring */
+.tbu{width:44px;height:44px;border:0;border-radius:12px;background:#F6F6F6;color:#5F6368;display:grid;place-items:center;cursor:pointer;transition:background-color .18s ease,transform .12s ease}
+.tbu:hover{background:#F5EDF3}
+.tbu:active{transform:scale(.96)}
+.tbu:focus-visible,.nav button:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(107,64,98,.24)}
+.nav button[aria-label=Back]{color:#111}
+/* DESIGN.md §motion: top bar slides out on deliberate downward scroll, returns on upward scroll */
+:root{--motion-duration-standard:200ms;--motion-ease-out:cubic-bezier(0.23,1,0.32,1)}
+.nav{transition:transform var(--motion-duration-standard) var(--motion-ease-out)}
+.scr.nh .nav{transform:translateY(-100%)}
+@media (prefers-reduced-motion:reduce){.nav{transition:opacity var(--motion-duration-standard) ease}.scr.nh .nav{transform:none;opacity:0;pointer-events:none}}
+</style></head><body>
+<div class="ph" id="ph">
+  <div class="scr on" id="s-main"></div>
+  <div class="scr" id="s-all"></div>
+  <div class="scr" id="s-chat"></div>
+  <div class="dock" id="dock">
+    <div class="qchips" id="qchips"></div>
+    <div class="dockrow">
+      <label class="dockin"><button type="button" class="dockadd" id="dadd" aria-label="Add attachment"><svg width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-440H240q-17 0-28.5-11.5T200-480q0-17 11.5-28.5T240-520h200v-200q0-17 11.5-28.5T480-760q17 0 28.5 11.5T520-720v200h200q17 0 28.5 11.5T760-480q0 17-11.5 28.5T720-440H520v200q0 17-11.5 28.5T480-200q-17 0-28.5-11.5T440-240v-200Z"/></svg></button><input id="dinp" placeholder="Ask Mosey about this policy" autocomplete="off"></label>
+      <button class="dockmic" id="dmic" aria-label="Speak to Mosey"></button>
+    </div>
+  </div>
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const CV=`<svg class="cv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5F6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>`;
+const CVP=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B4062" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>`;
+const BACK=`<i class="ms msl" aria-hidden="true">arrow_back</i>`;
+const MIC=`<svg width="24" height="24" viewBox="0 -960 960 960" fill="#fff" aria-hidden="true"><path d="M395-435q-35-35-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35q-50 0-85-35Zm45 275v-83q-92-13-157.5-78T203-479q-2-17 9-29t28-12q17 0 28.5 11.5T284-480q14 70 69.5 115T480-320q72 0 127-45.5T676-480q4-17 15.5-28.5T720-520q17 0 28 12t9 29q-14 91-79 157t-158 79v83q0 17-11.5 28.5T480-120q-17 0-28.5-11.5T440-160Z"/></svg>`;
+const SEND=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>`;
+const NAVBTN='style="width:44px;height:44px;border:0;background:none;display:grid;place-items:center;border-radius:12px;cursor:pointer"';
+const SEARCH=`<svg width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M380-320q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>`;
+const DOCI=`<svg width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M360-240h240q17 0 28.5-11.5T640-280q0-17-11.5-28.5T600-320H360q-17 0-28.5 11.5T320-280q0 17 11.5 28.5T360-240Zm0-160h240q17 0 28.5-11.5T640-440q0-17-11.5-28.5T600-480H360q-17 0-28.5 11.5T320-440q0 17 11.5 28.5T360-400ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v447q0 33-23.5 56.5T720-80H240Zm280-560v-160H240v640h480v-440H560q-17 0-28.5-11.5T520-640ZM240-800v200-200 640-640Z"/></svg>`;
+const SPARK=`<svg width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h240v720Zm-80-80v-560H200v560h160Zm160-320v-320h240q33 0 56.5 23.5T840-760v240H520Zm80-80h160v-160H600v160Zm-80 480v-320h320v240q0 33-23.5 56.5T760-120H520Zm80-80h160v-160H600v160ZM360-480Zm240-120Zm0 240Z"/></svg>`;
+const esc=s=>String(s).replace(/'/g,"\\'");
+
+
+/* ---------- DATA: from the Workers' Compensation raw insights ---------- */
+const D={
+ locs:[
+  {t:'Evanston, IL',n:'3',st:'IL',a:'1740 N. Ridge Avenue, Suite 305, Evanston, IL 60201'},
+  {t:'Batesville, MS',n:'7',st:'MS',a:'103-8 Woodland Road, Batesville, MS 38606'},
+  {t:'Greenville, NC',n:'9',st:'NC',a:'2025-C Eastgate Dr., Greenville, NC 27858'},
+  {t:'Tampa, FL',n:'13',st:'FL',a:'501 S. Falkenberg, Tampa, FL 33619'},
+  {t:'San Bernardino, CA',n:'15',st:'CA',a:'570 West 4th Street, Suite 104, San Bernardino, CA 92840'},
+  {t:'Minnesota',n:'1',st:'MN',a:'No Specific Location, None, MN 99999'},
+  {t:'Georgia',n:'5',st:'GA',a:'No Specific Location, None, GA 99999'},
+  {t:'Arizona',n:'11',st:'AZ',a:'No Specific Location, None, AZ 99999'}],
+ classes:[
+  {t:'8292 Warehouses, general merchandise',v:'$11,576,317',pay:'$61,121,000',rate:'$18.94'},
+  {t:'2003 Bakeries and cracker mfg.',v:'$5,358,540',pay:'$31,046,000',rate:'$17.26'},
+  {t:'8810 Clerical office employees',v:'$151,228',pay:'$17,185,000',rate:'$0.88'}],
+ inc:[
+  {k:'wc',t:'Workers Compensation Insurance (Part One)',v:'Statutory benefits',sub:'Under each covered state’s law',sc:'39 states in Item 3.A',sum:'Pays benefits required by state law for injuries by accident or disease arising in the course of employment, for the scheduled class codes, payroll and locations.'},
+  {k:'ela',t:'Employers Liability: bodily injury by accident',v:'$1,000,000',sub:'Each Accident',sc:'Part Two',sum:'Pays for legal liability as an employer for employee injuries not covered by workers’ compensation law.'},
+  {k:'eld',t:'Employers Liability: bodily injury by disease',v:'$1,000,000',sub:'Each Employee',sc:'Part Two',sum:'Pays for legal liability as an employer for employee disease not covered by workers’ compensation law.'},
+  {k:'elp',t:'Employers Liability: bodily injury by disease',v:'$1,000,000',sub:'Policy Limit',sc:'Part Two',sum:'Aggregate limit for disease claims across all employees. State overrides may apply.'},
+  {k:'os',t:'Other States Insurance (Part Three)',v:'Conditional',sub:'Work must begin during the policy period',sc:'Item 3.C states',sum:'Applies in all states except ND, OH, WA, WY and the 3.A states, only if you begin work there and notify the carrier. No coverage for work already ongoing at the effective date.'},
+  {k:'def',t:'Defense and supplementary payments',v:'Included',sub:'Legal defense costs',sc:'Part One and Part Two',sum:'Legal defense costs are covered, with supplementary payments as outlined in the policy form.'},
+  {k:'terr',t:'Terrorism, catastrophe and state safety services',v:'Premium charges included',sub:'Mandated terrorism and catastrophe charges',sc:'All scheduled states',sum:'Premium includes mandated terrorism and other catastrophe charges. State loss control and safety information is provided.'}],
+ exc:[
+  ['Intentional injury by employer','Employers Liability does not cover injury intentionally caused by the employer.'],
+  ['Contractual liability','Liability assumed under a contract is not covered (warranty excepted).'],
+  ['Violation of law','Injury to an employee while in violation of law with the employer’s actual knowledge is not covered.'],
+  ['Federal acts and maritime','Claims under the Longshore & Harbor Workers’ Act, FELA, maritime law, aircrew and similar federal acts are not covered.'],
+  ['Employment outside scheduled states','Employment outside the scheduled states is not covered.'],
+  ['Punitive damages and employment practices','Punitive or exemplary damages, and damages for employment practices, are not covered.'],
+  ['Monopolistic fund states','Coverage is not provided in ND, OH, WA and WY.'],
+  ['Officers, partners and members','Not covered except by endorsement or election (for example New Hampshire, New Jersey).'],
+  ['Contractor and subcontractor payroll','Not covered unless the employer can prove the contractor is insured by others.']],
+ lim:[
+  {t:'Scheduled exposures only',v:'Class, payroll, location, state',sub:'Part Five',sc:'All states',sum:'Coverage applies only to the class codes, payroll, locations and states scheduled.'},
+  {t:'Premium audit',v:'End of policy period',sub:'Final premium on audited exposures',sc:'All payroll, contractor payments and job records',sum:'Additional premium may be owed if actual payroll, roles or subcontractor exposures differ from estimates.'},
+  {t:'Minimum and deposit premium',v:'$27,485 / $3,419,312',sub:'Minimum / deposit',sc:'Policy-level',sum:'Final premium is based on audited exposures.'},
+  {t:'Deductible options',v:'State-specific',sub:'See state deductible notices',sc:'AL, AR, GA, MO, NE, NH, NM, NY, OK, SC',sum:'Small-deductible programs are offered in some states. The notices are listed; amounts are not shown here.'},
+  {t:'Employers Liability limits',v:'$1M / $1M / $1M',sub:'Accident / each employee / policy',sc:'All states',sum:'Policy standard; state overrides may apply.'},
+  {t:'Officer, partner and member elections',v:'State-specific rules',sub:'See state endorsement schedules',sc:'e.g. NJ, NH, IA',sum:'Election and exclusion rules for partners, LLC members and corporate officers vary by state.'}],
+ wp:[
+  ['Policy cancelled','Critical','All locations and states','Cancelled effective 8/5/2016 at the insured’s request. There is no coverage for any injury or claim occurring after this date.'],
+  ['Payroll and classification audit','Moderate','All states and class codes','Final premium could increase if actual payroll, job roles or subcontractor exposures differ from the estimates.'],
+  ['Employers Liability limits','Moderate','All states','$1M accident and disease limits may not be sufficient for some court awards. Check for state overrides or special needs.'],
+  ['Experience modification','Low','All states','An experience mod of 0.75 applies. It affects premium and reflects loss history per NCCI/WCIRB.']],
+ end:[
+  ['Experience Rating Modification Factor','WC 00 04 03','Applies a 0.75 factor to premium. It can be updated at audit.','p.76'],
+  ['Premium Discount','WC 00 04 06','Gives state-specific rate discounts for larger total premiums.','p.78'],
+  ['Pending Rate Change','WC 00 04 04','Reserves the right to change rates if mandated by a regulator.','p.77'],
+  ['Employers Liability limit overrides','WC 04 03 60 B','State overrides to the $1M limits apply in California, Oregon, New York and Massachusetts.','p.92'],
+  ['Terrorism and catastrophe premium','WC 00 04 21 D, WC 00 04 22 B','Adds terrorism, catastrophe and foreign terrorism premium charges for all states.','p.82, p.85'],
+  ['State amendatory, cancellation and notice forms','Endorsement Schedule','Modify coverage, notice and cancellation terms in the scheduled states.','p.23'],
+  ['Elective inclusion or exclusion of officers','State endorsements','Lets proprietors, partners and officers be included or excluded in certain states (NJ, NH, IA).','p.72, p.109, p.216']],
+ miss:[
+  ['No named employees','Coverage is by class code and state, not by individual names.'],
+  ['Full location list not shown','Only 8 scheduled locations are listed here. The rest are on pp. 252–297.'],
+  ['Full class-code schedule not shown','Only California examples are listed here. Other states are on pp. 24–63.']],
+ docs:[['WC 99 00 01 C','Information Page'],['WC 00 00 00 A','Policy form'],['WC 00 04 03','Experience rating'],['WC 00 04 04','Pending rate change'],['WC 00 04 06','Premium discount'],['WC 00 04 21 D · 22 B','Terrorism and catastrophe']],
+ stA:'AL, AR, AZ, CA, CT, DE, FL, GA, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, MT, NC, NE, NH, NJ, NM, NY, OK, OR, PA, SC, SD, TN, VA, VT, WI, WV'
+};
+const kv=r=>`<div class="gbox">${r.map(x=>`<div class="kv"><span>${x[0]}</span><span>${x[1]}</span></div>`).join('')}</div>`;
+const srcs=a=>`<div class="lbl">Sources</div>${a.map(x=>`<div class="srow"><span>${x[0]}</span><u>${x[1]}</u></div>`).join('')}`;
+
+/* ---------- SHEETS ---------- */
+let lastFocus=null;
+function openSheet(title,body,cta){
+  lastFocus=document.activeElement;
+  $('#sheet').innerHTML=`<div class="grab"></div><div class="sht"><b>${title}</b><button aria-label="Close" onclick="closeSheet()"><i class="ms" style="color:#5F6368">close</i></button></div>${body}${cta?`<button class="cta" onclick="closeSheet();ask('${cta[1]}')">${SPARK}${cta[0]}</button>`:''}`;
+  $('#sheet').scrollTop=0;$('#sheet').classList.add('on');$('#scrim').classList.add('on');
+}
+function closeSheet(){$('#sheet').classList.remove('on');$('#scrim').classList.remove('on');if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+$('#scrim').onclick=closeSheet;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+
+const S_INFO=[['Information Page WC 99 00 01 C','p.1']],S_FORM=[['Policy form WC 00 00 00 A','Part One, p.65–66']],S_EL=[['Information Page WC 99 00 01 C','p.1'],['Policy form WC 00 00 00 A','Part Two, p.67']],
+ S_OS=[['Policy form WC 00 00 00 A','Part Three, p.68–69']],S_AUD=[['Policy form WC 00 00 00 A','Part Five, p.69–70']],S_CAN=[['Notice of Cancellation','p.340'],['Policy Termination/Cancelation Notice','p.341']],
+ S_LOC=[['Information Page WC 99 00 01 C, Ext. of Item #1','p.252'],['Ext. of Item #1, full listing','p.252–297']],S_DEDN=[['Deductible Notices','p.195, p.197, p.206, p.215, p.243, p.244']];
+const INC_SRC={wc:S_FORM,ela:S_EL,eld:S_EL,elp:S_EL,os:S_OS,def:[['Policy form WC 00 00 00 A','Part One & Two, p.65–69']],terr:[['Endorsements WC 00 04 21 D, WC 00 04 22 B','p.82, p.85']]};
+const LIM_SRC=[S_AUD,S_AUD.concat(S_INFO),S_INFO.concat([['Policy form WC 00 00 00 A','Part Five E, p.70']]),S_DEDN,S_EL,[['State Endorsements','p.72 (NJ), p.216 (NH)']]];
+const SH={
+premium(){
+ const parts=[['Estimated annual premium',33316855,'#14B8A6'],['State assessments',876184,'#EAB308']],tot=34193039;
+ openSheet('Premium',`<div class="gbox pad"><div class="cap muted">Estimated annual premium</div><div class="hero">$33,316,855</div><div class="cap muted">per policy year, guaranteed cost</div>
+ <div class="sbar">${parts.map(p=>`<i style="width:${Math.max(p[1]/tot*100,1.5)}%;background:${p[2]}"></i>`).join('')}</div></div>
+ ${kv([['Estimated annual premium','$33,316,855'],['State assessments and fees','$876,184'],['Total estimated cost','$34,193,039'],['Deposit premium','$3,419,312'],['Minimum premium','$27,485'],['Experience modification','0.75 (75%)']])}
+ <div class="note">Final premium is based on audited payroll and class codes at the end of the policy period and may be higher or lower.</div>
+ ${srcs([['Information Page WC 99 00 01 C','p.1'],['Schedule of Premiums','p.24–63']])}`,['Ask Mosey about this premium','premium'])},
+details(){openSheet('Policy details',`${kv([['Mailing address','1751 Lake Cook Road, Suite 600, Deerfield, IL 60015'],['Business description','Temporary Staffing'],['Policy dates','6/30/2016 to 6/30/2017'],['Cancelled','Effective 8/5/2016, at insured request'],['Governing form','WC 00 00 00 A'],['Program structure','Guaranteed cost'],['Producer','AmWINS Specialty Casualty Solutions, LLC']])}<div class="note">Guaranteed cost: not assigned risk, large-deductible or retrospective.</div>${srcs([['Information Page WC 99 00 01 C','p.1'],['New Policy Welcome Letter','p.2'],['Notice of Cancelation by Carrier','p.346']])}`,['Ask Mosey about this policy','details'])},
+loc(i){const l=D.locs[i];
+ openSheet(l.t,`${kv([['Location #',l.n],['Covered state',l.st],['Declared address',l.a]])}${l.a.startsWith('No Specific')?'<div class="note">Declared as “No Specific Location” for this state.</div>':''}${srcs(S_LOC)}`,['Ask Mosey about locations','loc'])},
+cls(i){const c=D.classes[i];
+ openSheet(c.t,`<div class="gbox pad"><div class="cap muted">California premium</div><div class="hero">${c.v}</div></div>${kv([['Estimated payroll',c.pay],['Rate',c.rate],['State','CA']])}<div class="note">Example of the class schedule. Other states are on pp. 24–63.</div>${srcs([['Info Page Ext. Item #4, CA','p.27'],['Schedule of Premiums','p.24–63']])}`,['Ask Mosey about class codes','cls'])},
+states(){openSheet('States covered',`<div class="lbl" style="margin-top:0">Item 3.A: workers’ compensation law applies (39)</div><div class="gbox pad" style="color:#5F6368">${D.stA}</div>
+ <div class="lbl">Item 3.C: other states insurance</div><div class="gbox pad" style="color:#5F6368">All states except ND, OH, WA, WY and the 3.A states. Applies only if work begins there during the policy period and the carrier is notified.</div>
+ <div class="lbl">Not provided</div><div class="gbox pad" style="color:#5F6368">ND, OH, WA, WY (monopolistic fund states)</div>${srcs([['Information Page WC 99 00 01 C','p.1'],['Policy form WC 00 00 00 A','Part Three, p.68–69']])}`,['Which states are covered?','states'])},
+inc(k){const r=D.inc.find(x=>x.k==k);
+ openSheet(r.t,`${kv([['Limit / value',r.v],['Detail',r.sub],['Applies to',r.sc]])}<div class="gbox pad" style="color:#5F6368">${r.sum}</div>${srcs(INC_SRC[k])}`,['Ask Mosey about this coverage',k=='os'?'os':(k.startsWith('el')?'el':k)])},
+exc(i){const e=D.exc[i];openSheet(e[0],`<div class="gbox pad" style="color:#5F6368">${e[1]}</div><div class="note">See policy form for exhaustive list.</div>${srcs(i==6?S_INFO:S_EL)}`,['Ask Mosey what isn’t covered','exc'])},
+lim(i){const d=D.lim[i];openSheet(d.t,kv([['Value',d.v],['Basis',d.sub],['Applies to',d.sc]])+`<div class="gbox pad" style="color:#5F6368">${d.sum}</div>`+srcs(LIM_SRC[i]),['Ask Mosey about limitations','lim'])},
+wp(i){const w=D.wp[i];openSheet(w[0],`<div class="miss"><i class="ms qm w" style="margin:0">warning</i><div class="mm"><b>${w[1]} · ${w[2]}</b>${w[3]}</div></div>${srcs(i==0?S_CAN:i==1?S_AUD:i==2?S_EL:[['Info Page Ext. Item #4','p.24, p.34']])}`,['Ask Mosey what to watch for','wp'])},
+end(i){const e=D.end[i];openSheet(e[0],`${kv([['Form',e[1]],['Page',e[3]]])}<div class="gbox pad" style="color:#5F6368">${e[2]}</div>${srcs([['Endorsement '+e[1],e[3]]])}`,['Ask Mosey about endorsements','end'])},
+miss(i){const m=D.miss[i];openSheet(m[0],`<div class="gbox pad" style="color:#5F6368">${m[1]}</div>${srcs([['Information Page WC 99 00 01 C','p.1, p.24–63, p.252–297']])}`,['Ask Mosey about this gap','miss'])},
+forms(){openSheet('Documents',D.docs.map(d=>`<button class="fx" style="align-items:center" onclick="toast('Document preview isn’t part of this prototype')"><span class="mid"><span class="t">${d[0]}</span><span class="sub">${d[1]}</span></span>${CV}</button>`).join('')+srcs(S_INFO))}
+};
+
+/* ---------- ROW BUILDERS ---------- */
+const irInc=r=>`<button class="ir ok" onclick="SH.inc('${r.k}')"><span class="t">${r.t}</span>${CV}<span class="v">${r.v}</span><span class="sub">${r.sub}</span><span class="scope">${r.sc}</span><span class="sum">${r.sum}</span></button>`;
+const irLim=(r,i)=>`<button class="ir dx" onclick="SH.lim(${i})"><span class="t">${r.t}</span>${CV}<span class="v">${r.v}</span><span class="sub">${r.sub}</span><span class="scope">${r.sc}</span><span class="sum">${r.sum}</span></button>`;
+const irExc=(e,i)=>`<button class="ir nx" onclick="SH.exc(${i})"><span class="t">${e[0]}</span>${CV}<span class="sum">${e[1]}</span></button>`;
+const PC={Critical:'p-crit',Moderate:'p-warn',Low:'p-rev'};
+const irWp=(w,i)=>`<button class="ir wx" onclick="SH.wp(${i})"><span class="t">${w[0]}</span>${CV}<span class="pill ${PC[w[1]]}" style="justify-self:start"><i></i>${w[1]}</span><span class="sub">${w[2]}</span><span class="sum">${w[3]}</span></button>`;
+const irEnd=(e,i)=>`<button class="ir ex" onclick="SH.end(${i})"><span class="t">${e[0]}</span>${CV}<span class="sub">${e[1]} · ${e[3]}</span><span class="sum">${e[2]}</span></button>`;
+const more=(label,fn)=>`<button class="more" onclick="${fn}"><span>${label}</span>${CVP}</button>`;
+
+/* ---------- MAIN ---------- */
+const THUP=`<svg width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M840-640q32 0 56 24t24 56v80q0 7-2 15t-4 15L794-168q-9 20-30 34t-44 14H280v-520l240-238q15-15 35.5-17.5T595-888q19 10 28 28t4 37l-45 183h258Zm-480 34v406h360l120-280v-80H480l54-220-174 174ZM160-120q-33 0-56.5-23.5T80-200v-360q0-33 23.5-56.5T160-640h120v80H160v360h120v80H160Zm200-80v-406 406Z"/></svg>`;
+const THDN=`<svg width="24" height="24" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M120-320q-32 0-56-24t-24-56v-80q0-7 2-15t4-15l120-282q9-20 30-34t44-14h440v520L440-82q-15 15-35.5 17.5T365-72q-19-10-28-28t-4-37l45-183H120Zm480-34v-406H240L120-480v80h360l-54 220 174-174Zm200-486q33 0 56.5 23.5T880-760v360q0 33-23.5 56.5T800-320H680v-80h120v-360H680v-80h120Zm-200 80v406-406Z"/></svg>`;
+const st={filter:'inc',insured:'loc',fb:null};
+function feedback(v){st.fb=st.fb==v?null:v;renderMain();if(st.fb=='up')toast('Thanks for your feedback')}
+const FILTERS=[['inc','Included'],['exc','Not included'],['lim','Limitations'],['wp','Watchpoints'],['end','Endorsements']];
+function filterSection(){
+ const f=st.filter;
+ const cfg={
+  inc:['Included',D.inc.length,D.inc.slice(0,4).map(irInc).join('')+more('See all '+D.inc.length,"seeAll('inc')")],
+  exc:['Not included',D.exc.length,D.exc.slice(0,4).map(irExc).join('')+more('See all '+D.exc.length,"seeAll('exc')")],
+  lim:['Coverage limitations',D.lim.length,D.lim.slice(0,4).map(irLim).join('')+more('See all '+D.lim.length,"seeAll('lim')")],
+  wp:['Watchpoints',D.wp.length,D.wp.map(irWp).join('')],
+  end:['Endorsements',D.end.length,D.end.slice(0,4).map(irEnd).join('')+more('See all '+D.end.length,"seeAll('end')")]}[f];
+ return `<div class="sh">${cfg[0]} <span class="cnt">${cfg[1]}</span></div><div class="card rows">${cfg[2]}</div>`+(f=='exc'?'<div class="note" style="padding:0 4px">See policy form for exhaustive list.</div>':'');
+}
+function insuredBody(){
+ if(st.insured=='loc')return `<div class="vscroll">${D.locs.map((l,i)=>`<button class="vc" onclick="SH.loc(${i})"><i class="jb p" aria-hidden="true"><i class="ms">location_on</i></i><span class="vt">${l.t}</span><span class="vv">Location ${l.n}</span><span class="vs">${l.a.startsWith('No Specific')?'No specific location':l.st}</span></button>`).join('')}</div>`;
+ if(st.insured=='cls')return `<div class="vscroll">${D.classes.map((c,i)=>`<button class="vc" onclick="SH.cls(${i})"><i class="jb p" aria-hidden="true"><i class="ms">engineering</i></i><span class="vt">${c.t}</span><span class="vv">${c.v}</span><span class="vs">CA premium</span></button>`).join('')}</div>`;
+ return `<div class="card rows"><button class="fx" onclick="SH.states()"><span class="mid"><span class="t">39 states with workers’ compensation law</span><span class="sub">Item 3.A · plus other states insurance (3.C)</span></span>${CV}</button></div><div class="miss" style="margin:0"><i class="ms qm w" style="margin:0" aria-hidden="true">warning</i><span class="mm"><b>Not provided: ND, OH, WA, WY</b><span>Monopolistic fund states. Coverage is not provided.</span></span></div>`;
+}
+function renderMain(){
+ const keep=$('#s-main').scrollTop;
+ $('#s-main').innerHTML=`
+ <div class="nav" style="justify-content:space-between;padding:0 8px"><button aria-label="Back" ${NAVBTN} onclick="toast('Back isn’t wired in this prototype')">${BACK}</button>
+  <div style="display:flex;gap:8px;padding-right:8px"><button class="tbu" aria-label="Search" onclick="toast('Search isn’t part of this prototype')">${SEARCH}</button><button class="tbu" aria-label="View documents" onclick="SH.forms()">${DOCI}</button></div></div>
+ <div class="body" style="display:flex;flex-direction:column;gap:40px">
+  <div class="ov">
+   <div class="ov-head"><span class="ov-ic"><i class="ms" style="color:#6B4062;font-size:28px" aria-hidden="true">health_and_safety</i></span>
+    <div class="ov-id"><div class="ov-name">Personnel Staffing Group, LLC DBA: Barnett Management</div><div class="ov-num">WWC3216474</div></div></div>
+   <div class="ov-in"><div class="ov-grid">
+     <div class="ov-c" style="grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:flex-start;gap:12px"><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="ov-l">Policy type</span><span class="ov-v" style="display:block">Workers’ Compensation and Employers Liability</span></span><span class="status"><i></i>Cancelled</span></div>
+     <div class="ov-c"><span class="ov-l">Carrier</span><span class="ov-v" style="display:block">Wesco Insurance Company</span></div>
+     <div class="ov-c"><span class="ov-l">Policy term</span><span class="ov-v" style="display:block">6/30/2016 – 6/30/2017</span></div>
+     <div class="ov-c"><span class="ov-l">Cancelled effective</span><span class="ov-v">8/5/2016</span></div>
+     <div class="ov-c"><span class="ov-l">Reason</span><span class="ov-v" style="display:block">At insured request</span></div></div>
+    <div class="ov-div"></div>
+    <button class="ov-prem" aria-label="Estimated annual premium, $33,316,855. Open breakdown" onclick="SH.premium()"><span class="mid"><span class="cap muted">Estimated annual premium</span><span class="hero">$33,316,855</span><span class="cap muted">per policy year</span></span>${CVP}</button>
+    <button class="more" onclick="SH.details()"><span>More policy details</span>${CVP}</button></div></div>
+
+  <div class="sx"><div class="sh">Insured</div>
+   <div class="kchips" style="overflow-x:auto;scrollbar-width:none;padding:6px 16px;margin:-6px -16px"><button class="jump ${st.insured=='loc'?'on':''}" onclick="st.insured='loc';renderMain()">Locations <span>${D.locs.length}+</span></button><button class="jump ${st.insured=='cls'?'on':''}" onclick="st.insured='cls';renderMain()">Class codes <span>${D.classes.length}</span></button><button class="jump ${st.insured=='sta'?'on':''}" onclick="st.insured='sta';renderMain()">States <span>39</span></button></div>
+   ${insuredBody()}
+   ${st.insured=='loc'?'<div class="note" style="padding:0 4px">Showing 8 declared locations. Full list on pp. 252–297.</div>':st.insured=='cls'?'<div class="note" style="padding:0 4px">California examples. Coverage is by class code and state, not by named employees.</div>':''}
+  </div>
+
+  <div class="sx" style="gap:16px"><div class="kchips" style="overflow-x:auto;scrollbar-width:none;padding:6px 16px;margin:-6px -16px">${FILTERS.map(f=>`<button class="jump ${st.filter==f[0]?'on':''}" onclick="st.filter='${f[0]}';renderMain()">${f[1]}</button>`).join('')}</div>
+   <div class="sx">${filterSection()}</div></div>
+
+  <div class="sx"><div class="sh">Documents<span class="cnt">${D.docs.length}</span></div><div class="card rows"><button class="fx" style="align-items:center" onclick="SH.forms()"><span class="mid"><span class="t">${D.docs.length} forms</span><span class="sub">${D.docs.map(d=>d[0]).join(' · ')}</span></span>${CV}</button></div></div>
+
+  <div class="sx"><div class="sh">Not shown in this summary <span class="cnt">${D.miss.length}</span></div><div class="card rows">${D.miss.map((m,i)=>`<button class="fx" onclick="SH.miss(${i})"><i class="ms qm" aria-hidden="true">help</i><span class="mid"><span class="t">${m[0]}</span><span class="sum">${m[1]}</span></span>${CV}</button>`).join('')}</div></div>
+
+  <div class="fbk"><div class="fbr"><span>Were these insights helpful?</span><span class="fbb"><button class="tbn ${st.fb=='up'?'up':''}" aria-label="Helpful" aria-pressed="${st.fb=='up'}" onclick="feedback('up')">${THUP}</button><button class="tbn ${st.fb=='down'?'down':''}" aria-label="Not helpful" aria-pressed="${st.fb=='down'}" onclick="feedback('down')">${THDN}</button></span></div>
+   <p class="disc">Insights are based on the documents provided; incomplete or missing documents may result in incomplete or inaccurate insights. MOSEY is not intended to serve as evidence of insurance for third parties, nor does MOSEY provide advice or guidance on the adequacy of coverage. Users should consult their agent or insurance carrier for coverage-related questions or determinations.</p></div>
+ </div>`;
+ $('#s-main').scrollTop=keep;
+}
+
+/* ---------- SEE ALL ---------- */
+function seeAll(k){
+ const c={inc:['Included',D.inc.map(irInc).join('')],exc:['Not included',D.exc.map(irExc).join('')],lim:['Coverage limitations',D.lim.map(irLim).join('')],end:['Endorsements',D.end.map(irEnd).join('')]}[k];
+ $('#s-all').innerHTML=`<div class="nav" style="padding:0 8px;gap:4px"><button aria-label="Back" ${NAVBTN} onclick="go('main')">${BACK}</button><span class="ttl">${c[0]}</span></div>
+ <div class="body"><div class="sx"><div class="card rows">${c[1]}</div>${k=='exc'?'<div class="note" style="padding:4px 4px 0">See policy form for exhaustive list.</div>':''}</div></div>`;
+ go('all');$('#s-all').scrollTop=0;
+}
+function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$('#s-'+id).classList.add('on');}
+
+/* ---------- ASK MOSEY (canned, from loaded data only) ---------- */
+const li=a=>a.map(x=>'• '+x).join('<br>');
+const A={
+ el:['Employers Liability pays for legal liability as an employer for employee injuries not covered by workers’ compensation law: $1,000,000 each accident, $1,000,000 disease each employee and $1,000,000 disease policy limit. State overrides may apply.','Information Page WC 99 00 01 C p.1; Policy form p.67'],
+ exc:['Not included:<br>'+li(D.exc.map(e=>`${e[0]}: ${e[1]}`)),'See policy form for exhaustive list.'],
+ states:['Workers’ compensation law applies in 39 states (Item 3.A): '+D.stA+'. Other states insurance (3.C) applies elsewhere only if work begins there during the policy period and the carrier is notified. ND, OH, WA and WY are not provided.','Information Page WC 99 00 01 C p.1; Policy form Part Three p.68–69'],
+ wp:['Things to watch:<br>'+li(D.wp.map(w=>`${w[0]} (${w[1]}): ${w[3]}`)),''],
+ cancel:['The policy was cancelled effective 8/5/2016 at the insured’s request. There is no coverage for any injury or claim occurring after this date.','Notice of Cancellation p.340; Policy Termination/Cancelation Notice p.341'],
+ premium:['Estimated annual premium is $33,316,855, plus $876,184 in state assessments for a total estimated cost of $34,193,039. Deposit premium is $3,419,312 and minimum premium is $27,485. The experience mod is 0.75. Final premium depends on audit.','Information Page WC 99 00 01 C p.1; Schedule of Premiums p.63'],
+ details:['The policy term is 6/30/2016 to 6/30/2017 on form WC 00 00 00 A, a guaranteed cost program. Mailing address is 1751 Lake Cook Road, Suite 600, Deerfield, IL 60015. Producer is AmWINS Specialty Casualty Solutions, LLC. It was cancelled effective 8/5/2016.','Information Page WC 99 00 01 C p.1; Welcome Letter p.2'],
+ wc:['Part One pays statutory benefits required by each covered state’s law for injuries by accident or disease arising in the course of employment, for the scheduled class codes, payroll and locations.','Policy form WC 00 00 00 A p.65–66'],
+ loc:['Eight declared locations are shown: Evanston IL, Batesville MS, Greenville NC, Tampa FL, San Bernardino CA, and “No Specific Location” entries for MN, GA and AZ. The full list is on pp. 252–297.','Information Page Ext. of Item #1 p.252'],
+ cls:['California examples: 8292 Warehouses ($61,121,000 payroll, $11,576,317 premium), 2003 Bakeries ($31,046,000, $5,358,540) and 8810 Clerical ($17,185,000, $151,228). Coverage is by class code and state, not named employees.','Information Page Ext. of Item #4 p.27'],
+ lim:['Limitations:<br>'+li(D.lim.map(d=>`${d.t}: ${d.sum}`)),''],
+ end:['Material endorsements:<br>'+li(D.end.map(e=>`${e[0]} (${e[1]})`)),'Endorsement pages p.72–109'],
+ miss:['Not shown: '+D.miss.map(m=>m[0]).join('; ')+'.',''],
+ os:['Other states insurance applies only in 3.C states where work begins during the policy period and the carrier is notified.','Policy form Part Three p.68–69'],
+ def:['Legal defense costs are covered, with supplementary payments as outlined in the policy form.','Policy form Part One & Two p.65–69'],
+ terr:['Premium includes mandated terrorism and catastrophe charges. State loss control and safety information is provided.','Endorsements WC 00 04 21 D, 22 B p.82, p.85']
+};
+const LBL={el:'What does employers liability cover?',exc:'What isn’t covered?',states:'Which states are covered?',wp:'What should I watch for?',cancel:'Is this policy still active?',premium:'Tell me about this premium',details:'Tell me about this policy',wc:'Tell me about workers’ comp',loc:'Tell me about the locations',cls:'Tell me about the class codes',lim:'What are the limitations?',end:'Tell me about the endorsements',miss:'What is missing?',os:'Tell me about other states',def:'Tell me about defense costs',terr:'Tell me about terrorism charges'};
+const QUICK=['cancel','el','states','exc','wp'];
+let msgs=[];
+function chatView(){
+ $('#s-chat').innerHTML=`<div class="nav" style="padding:0 8px;gap:4px"><button aria-label="Back" ${NAVBTN} onclick="go('main')">${BACK}</button><span class="ttl">Ask Mosey</span></div>
+ <div class="body" style="padding-bottom:170px"><div class="chat">${msgs.map(m=>m.u?`<div class="bub u">${m.t}</div>`:`<div class="bub a">${m.t}${m.s?`<small>Source: ${m.s}</small>`:''}</div>`).join('')}</div></div>
+`;
+ go('chat');const s=$('#s-chat');s.scrollTop=s.scrollHeight;
+}
+function ask(k){const a=A[k];msgs.push({u:1,t:LBL[k]||k});msgs.push({t:a[0],s:a[1]});chatView()}
+function match(q){q=q.toLowerCase();
+ for(const [re,k] of [[/cancel|active|still|expired/,'cancel'],[/liab/,'el'],[/not covered|exclu|isn.?t covered|not included/,'exc'],[/state/,'states'],[/limit|deduct|audit/,'lim'],[/watch|risk|careful/,'wp'],[/premium|cost|price|mod/,'premium'],[/detail|broker|period|date|carrier/,'details'],[/endorse/,'end'],[/location|address|office/,'loc'],[/class|payroll/,'cls'],[/missing|not provided|employee/,'miss']])if(re.test(q))return k;return null}
+function sendTxt(id){const el=$('#'+id);const v=el.value.trim();if(!v)return;el.value='';const k=match(v);
+ msgs.push({u:1,t:v.replace(/</g,'&lt;')});msgs.push(k?{t:A[k][0],s:A[k][1]}:{t:'This is a prototype, so I can only answer from the loaded policy data. Try one of the suggested questions.'});chatView();}
+$('#qchips').innerHTML=QUICK.map(k=>`<button class="qc" onclick="ask('${k}')">${LBL[k]}</button>`).join('');
+$('#dmic').innerHTML=MIC;
+$('#dadd').onclick=()=>toast('Attachments aren’t part of this prototype');
+$('#dmic').onclick=()=>{$('#dinp').value.trim()?(sendTxt('dinp')):toast('Voice input isn’t part of this prototype')};
+$('#dinp').onkeydown=e=>{if(e.key=='Enter')sendTxt('dinp')};
+$('#dinp').oninput=e=>{$('#dmic').innerHTML=e.target.value?SEND:MIC};
+/* hide top bar after deliberate downward scroll; show on any upward scroll, near the top, or while a header control has focus */
+document.querySelectorAll('.scr').forEach(s=>{let last=0,down=0;
+ s.addEventListener('scroll',()=>{const t=s.scrollTop,d=t-last;last=t;
+  if(t<=56){down=0;s.classList.remove('nh');return}
+  if(d>0){down+=d;if(down>24&&!s.contains(document.activeElement.closest('.nav')))s.classList.add('nh')}
+  else if(d<-1){down=0;s.classList.remove('nh')}},{passive:true});
+ s.addEventListener('focusin',e=>{if(e.target.closest('.nav'))s.classList.remove('nh')})});
+let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),1800)}
+renderMain();
+
+</script></body></html>

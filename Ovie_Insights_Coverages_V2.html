@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ovie Insights Coverages V2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&display=swap">
+<style>
+/* V2: coverages shown as colour-coded 2-column tiles under each group head.
+   Follows root DESIGN.md tokens: Figtree 400/600, plum primary, 12px white cards, soft glow,
+   sticky white top bar, floating nav pill and Ask FAB. Status colour is always paired with a
+   label and icon (never colour alone). No new motion is introduced over V1. */
+:root{
+  --page:#E4E4E7; --canvas:#F6F6F6; --surface:#FFFFFF; --line:#ECEFED; --border:#D8DDDB;
+  --primary:#6B4062; --primary-dark:#54324D; --primary-soft:#F5EDF3;
+  --text:#111111; --text2:#333A3D; --text3:#5F6368;
+  --danger:#A63A33; --danger-soft:#FFEDED; --mod:#C2410C; --mod-soft:#FFF1E7;
+  --warn-bg:#FFF5DF; --warn-line:#E7C982; --warn-ink:#634106; --grey-soft:#ECEFED;
+  --success:#0D7D07; --success-soft:#E7FFF4; --success-line:#BFE6CF;
+  --radius:12px; --glow:0 0 30px rgba(17,17,17,.1);
+  --ease:cubic-bezier(.23,1,.32,1);
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--page);color:var(--text);font:400 14px/20px var(--f-body);-webkit-font-smoothing:antialiased;padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 35%,transparent);outline-offset:2px}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+
+.stage{height:100%;display:flex;justify-content:center}
+.app{position:relative;display:flex;flex-direction:column;width:100%;max-width:390px;height:100%;max-height:844px;background:var(--canvas);border-radius:24px;border:1px solid var(--border);overflow:hidden}
+.screen{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.screen[hidden]{display:none}
+.body{padding:24px 16px 120px}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:4px;min-height:58px;padding:4px 18px 12px 8px;background:#FFFFFFF7;border-bottom:1px solid var(--line)}
+.topbar.plain{padding-left:18px}
+.topbar h1{font-size:18px;line-height:24px;font-weight:600}
+.icon-button{flex:none;width:44px;height:44px;padding:0;border:0;border-radius:var(--radius);display:grid;place-items:center;background:transparent;color:var(--text3);transition:transform .16s var(--ease)}
+.icon-button:active{transform:scale(.97)}
+.lead{margin:0 4px 4px;font-size:16px;line-height:24px;font-weight:600;color:var(--text)}
+.sum{margin:0 4px 14px;font-size:12px;line-height:16px;color:var(--text3);font-variant-numeric:tabular-nums}
+
+/* tabs */
+.files-tabs{min-height:52px;margin:0 0 16px;padding:4px;border-radius:var(--radius);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px;background:rgba(227,227,227,.8)}
+.files-tab{min-height:44px;padding:0 4px;border:0;border-radius:8px;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--text3);font-size:14px;line-height:20px;font-weight:600}
+.files-tab[aria-selected=true]{background:var(--surface);color:var(--primary)}
+.files-tab:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 35%,transparent);outline-offset:1px}
+
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0 4px 16px}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:11px;line-height:16px;font-weight:600;color:var(--text3)}
+.lg .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.lg.g .dot{background:var(--success)}.lg.r .dot{background:var(--danger)}.lg.o .dot{background:var(--mod)}.lg.y .dot{background:var(--warn-line)}
+
+/* group head */
+.cap{display:flex;align-items:center;justify-content:space-between;margin:20px 4px 8px;text-transform:uppercase;color:var(--text3);font-size:11px;line-height:16px;font-weight:600;letter-spacing:.02em}
+.cap:first-of-type{margin-top:0}
+.cnt{min-width:24px;text-align:center;padding:0 8px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:11px;line-height:20px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* coverage tiles */
+.cov-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:4px}
+.ctile{display:flex;flex-direction:column;gap:6px;min-height:120px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);text-align:left;background:var(--surface);color:var(--text)}
+.ctile.g{background:var(--success-soft);border-color:var(--success-line)}
+.ctile.r{background:var(--danger-soft);border-color:#F0C9C6}
+.ctile.o{background:var(--mod-soft);border-color:#F3D4C0}
+.ctile.y{background:var(--warn-bg);border-color:var(--warn-line)}
+.ct-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ct-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;line-height:16px;font-weight:600}
+.ct-status .ic{width:14px;height:14px}
+.ctile.g .ct-status{color:var(--success)}.ctile.r .ct-status{color:var(--danger)}
+.ctile.o .ct-status{color:var(--mod)}.ctile.y .ct-status{color:var(--warn-ink)}
+.ct-name{font-size:13px;line-height:18px;font-weight:600;color:var(--text)}
+.ct-val{font-size:15px;line-height:20px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.ctile.r .ct-val{color:var(--danger)}.ctile.o .ct-val{color:var(--mod)}
+.ct-basis{font-size:11px;line-height:16px;color:var(--text3);margin-top:-2px}
+.ct-asset{display:inline-flex;align-items:center;gap:6px;margin-top:auto;padding-top:4px;font-size:12px;line-height:16px;color:var(--text3);min-width:0}
+.ct-asset .ic{width:14px;height:14px;color:var(--text3)}
+.ct-asset span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ct-wp{display:inline-flex;align-items:center;gap:4px;flex:none;min-height:20px;padding:2px 7px;border-radius:999px;font-size:11px;line-height:16px;font-weight:600}
+.ct-wp .ic{width:13px;height:13px}
+.ct-wp.c{background:var(--danger-soft);color:var(--danger)}
+.ct-wp.m{background:var(--mod-soft);color:var(--mod)}
+.ct-wp.n{background:var(--grey-soft);color:var(--text2)}
+
+/* watchpoint cards (Watchpoints tab, unchanged from V1) */
+.wcard{background:var(--surface);border-radius:var(--radius);box-shadow:var(--glow);margin-bottom:8px;overflow:hidden}
+.wcard.wkc{cursor:pointer;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.wk-top{display:flex;align-items:center;justify-content:space-between}
+.wk-body{display:flex;align-items:flex-start;gap:12px;width:100%;padding:0;border:0;background:none;text-align:left;color:inherit}
+.wk-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.wk-body>.ic{flex:none;width:16px;height:16px;margin-top:2px;color:var(--primary)}
+.ask-m{min-height:32px;margin:-6px -8px -6px 0;padding:0 8px;border:0;background:none;font-size:12px;line-height:16px;font-weight:600;color:var(--primary)}
+.wcard.static{cursor:default}
+.wk-foot{display:flex;flex-direction:column;gap:4px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;line-height:16px;color:var(--primary)}
+.wk-pol{display:flex;align-items:flex-start;gap:6px}
+.wk-pol .ic{width:14px;height:14px;margin-top:1px}
+.wk-text{color:var(--text);font-size:14px;line-height:20px}
+.pill{flex:none;display:inline-flex;align-items:center;min-height:20px;padding:2px 7px;border-radius:999px;background:var(--grey-soft);color:var(--text2);font-size:11px;line-height:16px;font-weight:600;white-space:nowrap}
+.pill.crit{background:var(--danger-soft);color:var(--danger)}
+.pill.mod{background:var(--mod-soft);color:var(--mod)}
+
+/* asset detail (reached from a coverage sheet) */
+.sec{display:flex;align-items:center;justify-content:space-between;margin:20px 0 8px;padding:0 4px;text-transform:uppercase;color:var(--text3);font-size:11px;line-height:16px;font-weight:600;letter-spacing:.02em}
+.sec:first-of-type{margin-top:0}
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--glow);padding:0 16px}
+.cov-pols{display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:12px;line-height:16px;color:var(--primary)}
+.cov{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.cov:first-child{border-top:0}
+.st{display:grid;place-items:center;flex:none;width:20px;height:20px;border-radius:6px;background:var(--surface);border:1px solid var(--text3)}
+.st .ic{width:20px;height:20px;stroke-width:2;color:var(--success)}
+.st.ex{border:0;background:none}.st.ex .ic{color:var(--danger)}
+.st.in{border:0;background:none}
+.st.no{background:repeating-linear-gradient(135deg,#fff 0 4px,#D8DDDB 4px 5px);border-color:var(--border)}
+.cv{flex:none;white-space:nowrap;text-align:right;font-size:14px;line-height:20px;font-weight:600;color:var(--primary);font-variant-numeric:tabular-nums}
+.cv.ex{color:var(--danger)}
+.cov .nm{flex:1;min-width:0}
+.cov .nm b{display:block;font-size:14px;line-height:20px;font-weight:600}
+.cov .nm span{display:block;font-size:12px;line-height:16px;color:var(--text3)}
+.pol{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:none;padding:12px 0;border-top:1px solid var(--line)}
+.pol:first-child{border-top:0}
+.pol .meta{flex:1;min-width:0}
+.pol>.ic{width:18px;height:18px;color:var(--text3)}
+.tile{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--primary-soft);color:var(--primary)}
+.tile .ic{width:22px;height:22px}
+.meta{min-width:0}
+.meta b{display:block;font-size:14px;line-height:20px;font-weight:600}
+.meta .s{display:block;font-size:12px;line-height:16px;color:var(--text3);margin-top:2px;font-variant-numeric:tabular-nums}
+.empty{padding:14px 0;font-size:13px;color:var(--text3)}
+
+/* bottom bar */
+.bottom-bar{position:absolute;z-index:4;left:12px;right:12px;bottom:8px;display:flex;align-items:flex-end;gap:12px;pointer-events:none}
+.bottom-bar>*{pointer-events:auto}
+.nav{flex:1;min-width:0;min-height:72px;padding:6px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;border:1px solid var(--line);border-radius:999px;background:var(--surface);box-shadow:0 4px 8px #1111111A}
+.nav button{min-width:0;min-height:58px;padding:5px 2px;border:0;border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:transparent;color:var(--text3);font-size:11px;line-height:16px;font-weight:600}
+.nav button[aria-current=page]{background:var(--primary-soft);color:var(--primary)}
+.nav-icon{width:32px;height:28px;display:grid;place-items:center;border-radius:999px}
+.nav .ic{width:22px;height:22px}
+.ask-fab{flex:none;width:56px;height:56px;margin-bottom:8px;border:0;border-radius:999px;display:grid;place-items:center;color:#fff;background:linear-gradient(90deg,#BD4BA5 0%,#5C2E8B 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 4px 8px rgba(84,50,77,.28);transition:transform .16s var(--ease)}
+.ask-fab:active{transform:scale(.96)}
+.ask-fab svg{width:28px;height:28px}
+
+/* sheet, toast */
+.scrim{position:absolute;inset:0;background:rgba(17,24,23,.58);z-index:6;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:7;max-height:88%;overflow-y:auto;background:var(--surface);border-radius:12px 12px 0 0;padding:8px 16px 24px;box-shadow:0 6px 16px rgba(17,17,17,.12);transform:translateY(100%);visibility:hidden;transition:transform .25s cubic-bezier(.32,.72,0,1),visibility 0s .25s}
+.sheet.on{transform:none;visibility:visible;transition:transform .25s cubic-bezier(.32,.72,0,1),visibility 0s}
+.sheet.ask{background:var(--canvas)}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 6px}
+.sh{display:flex;justify-content:space-between;align-items:center;min-height:44px;margin-bottom:8px}
+.sh .icon-button{margin-right:-10px}
+.sh h2{font-size:18px;line-height:24px;font-weight:600;display:flex;align-items:center;gap:8px}
+.sh h2 .ic{color:var(--primary)}
+.ctx{background:var(--surface);border-radius:var(--radius);box-shadow:var(--glow);padding:12px 16px;font-size:13px;line-height:18px;margin-bottom:16px;color:var(--text2)}
+.ctx .k{display:block;font-size:12px;line-height:16px;color:var(--text3);margin-bottom:4px}
+.covhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.covhead .cvv{flex:1;min-width:0}
+.covhead .cvv b{display:block;font-size:18px;line-height:24px;font-weight:600}
+.covhead .cvv .b2{display:block;font-size:13px;line-height:18px;color:var(--text3);margin-top:2px}
+.covhead .cvamt{flex:none;text-align:right;font-size:18px;line-height:24px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.stag{display:inline-flex;align-items:center;gap:6px;min-height:24px;padding:3px 10px;border-radius:999px;font-size:12px;line-height:16px;font-weight:600;margin-bottom:12px}
+.stag .ic{width:15px;height:15px}
+.stag.g{background:var(--success-soft);color:var(--success)}
+.stag.r{background:var(--danger-soft);color:var(--danger)}
+.stag.o{background:var(--mod-soft);color:var(--mod)}
+.stag.y{background:var(--warn-bg);color:var(--warn-ink)}
+.lbl{font-size:12px;line-height:16px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#72777C;margin:16px 0 8px}
+.gbox{background:var(--primary-soft);border-radius:12px;padding:4px 16px;margin-bottom:12px}
+.srow{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:10px 0;border:0;border-top:1px solid rgba(107,64,98,.18);background:none;text-align:left}
+.srow:first-child{border-top:0}
+.srow .m{flex:1;min-width:0}
+.srow b{display:block;font-size:14px;line-height:20px;font-weight:600;color:var(--primary)}
+.srow .d{display:block;font-size:12px;line-height:16px;color:var(--text3)}
+.srow>.ic{width:16px;height:16px;color:var(--primary)}
+.wprow{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-top:1px solid var(--line)}
+.wprow:first-child{border-top:0}
+.wprow .wtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.wprow p{margin:0;font-size:14px;line-height:20px;color:var(--text)}
+.wbox{background:var(--surface);border-radius:12px;box-shadow:var(--glow);padding:4px 16px;margin-bottom:12px}
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:4px;border:1px solid var(--primary);background:transparent;color:var(--primary);border-radius:12px;font-weight:600;font-size:14px}
+@media (hover:hover) and (pointer:fine){.cta:hover{background:var(--primary-soft)}}
+.sg{margin:0 4px 8px;text-transform:uppercase;font-size:11px;line-height:16px;font-weight:600;color:var(--text3);letter-spacing:.02em}
+.q{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;min-height:44px;text-align:left;border:0;background:var(--surface);box-shadow:var(--glow);border-radius:var(--radius);padding:10px 16px;margin-bottom:8px;font-size:14px}
+.q .ic{width:16px;height:16px;color:var(--text3)}
+.fine{margin:12px 4px 0;font-size:12px;line-height:16px;color:var(--text3)}
+.toast{position:absolute;left:16px;right:16px;bottom:96px;z-index:9;background:var(--text);color:#fff;border-radius:10px;padding:12px 14px;font-size:13px;line-height:18px}
+.toast[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){*:not(.sheet):not(.scrim){transition:none!important;animation:none!important}.sheet{transform:none;opacity:0;transition:opacity .2s,visibility 0s .2s}.sheet.on{opacity:1;transition:opacity .2s,visibility 0s}}
+</style>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-paw" viewBox="0 0 24 24"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></symbol>
+  <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></symbol>
+  <symbol id="i-bike" viewBox="0 0 24 24"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></symbol>
+  <symbol id="i-xcircle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+</svg>
+
+<div class="stage">
+<main class="app" id="app">
+  <section class="screen" id="list" aria-label="Coverages"></section>
+  <section class="screen" id="asset" aria-label="Asset" hidden></section>
+  <div class="bottom-bar">
+    <nav class="nav" aria-label="Primary navigation">
+      <button type="button" data-toast="Home is outside this prototype"><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg></span><span>Home</span></button>
+      <button type="button" aria-current="page" data-gotolist><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-sparkles"/></svg></span><span>Insights</span></button>
+      <button type="button" data-toast="Files is outside this prototype"><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg></span><span>Files</span></button>
+      <button type="button" data-toast="More is outside this prototype"><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></span><span>More</span></button>
+    </nav>
+    <button type="button" class="ask-fab" id="askFab" data-ask="*" aria-label="Ask Ovie"><svg class="ovie-assistant-mark" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg></button>
+  </div>
+  <div class="scrim" id="scrim" data-close></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Details"></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+</main>
+</div>
+
+<script>
+(function(){
+  // ---- data (illustrative: same sample household as the Assets prototype) ----
+  var POL = {
+    auto:{n:'Personal auto policy'}, umb:{n:'Personal umbrella'}, club:{n:'Auto club membership'}, term2:{n:'Spouse term life policy'}, dp3:{n:'DP-3 dwelling policy'}, moto:{n:'Motorcycle policy'},
+    ho:{n:'HO-3 homeowners policy'}, bop:{n:"Business owner's policy"}, emp:{n:'Employer benefits plan'},
+    term:{n:'Term life policy'}, pet:{n:'Pet insurance policy'}
+  };
+  var ASSETS = [
+    {id:'you',name:'You',d:'Jordan Rivera',icon:'i-user',group:'people',
+      wp:[{sev:'Moderate',kind:'Not included',text:'No policy in your documents includes short-term disability.',q:'gap',p:['emp']},
+          {sev:'Low',kind:'Not included',text:'No policy in your documents includes long-term care.',q:'gap',p:['emp']}],
+      cov:[{n:'Medical',v:'$1,500',t:'Deductible',s:'in',p:['emp']},{n:'Group life',v:'$85,000',t:'1× salary',s:'in',p:['emp']},{n:'Term life',v:'$500,000',t:'Death benefit',s:'in',p:['term']},
+           {n:'Personal liability',v:'$300,000',t:'Liability limit',s:'in',p:['ho']},{n:'Short-term disability',v:'Not included',s:'no',p:[]},{n:'Long-term care',v:'Not included',s:'no',p:[]}]},
+    {id:'spouse',name:'Your spouse',d:'Alex Rivera',icon:'i-user',group:'people',
+      wp:[{sev:'Moderate',kind:'Not included',text:'No policy in your documents includes disability income for your spouse.',q:'gap',p:['emp']}],
+      cov:[{n:'Medical',v:'$1,500',t:'Deductible',s:'in',p:['emp']},{n:'Term life',v:'$250,000',t:'Death benefit',s:'in',p:['term2']},
+           {n:'Disability income',v:'Not included',s:'no',p:[]}]},
+    {id:'child',name:'Your child',d:'Maya Rivera · 8 yrs',icon:'i-user',group:'people',wp:[],
+      cov:[{n:'Medical',v:'$1,500',t:'Deductible',s:'in',p:['emp']},{n:'Dental',v:'$1,500',t:'Annual maximum',s:'in',p:['emp']}]},
+    {id:'pet',name:'Your pet',d:'Biscuit · Labrador, 4 yrs',icon:'i-paw',group:'people',wp:[],
+      cov:[{n:'Accident & illness',v:'$10,000',t:'Annual limit · 80% reimbursed',s:'in',p:['pet']}]},
+    {id:'home',name:'Your home',d:'142 Maple Ridge Dr, Nashville, TN',icon:'i-home',group:'home',
+      wp:[{sev:'Critical',kind:'Excluded',text:'Flood is excluded by the water exclusion in your homeowners policy.',q:'gap',p:['ho']},
+          {sev:'Moderate',kind:'Excluded',text:'Water back-up is excluded by the water exclusion in your homeowners policy.',q:'gap',p:['ho']}],
+      cov:[{n:'Dwelling · A',v:'$420,000',t:'Coverage limit',s:'in',p:['ho']},{n:'Other structures · B',v:'$42,000',t:'Coverage limit',s:'in',p:['ho']},{n:'Personal property · C',v:'$210,000',t:'Coverage limit',s:'in',p:['ho']},
+           {n:'Loss of use · D',v:'$84,000',t:'Coverage limit',s:'in',p:['ho']},{n:'Wind / hail deductible',v:'$8,400',t:'2% of Coverage A · Deductible',s:'in',p:['ho']},
+           {n:'Flood',v:'Excluded',t:'Water exclusion',s:'ex',p:['ho']},{n:'Water back-up',v:'Excluded',t:'Water exclusion',s:'ex',p:['ho']},
+           {n:'Earth movement',v:'Excluded',t:'Earth movement exclusion',s:'ex',p:['ho']}]},
+    {id:'cabin',name:'Vacation cabin',d:'27 Lakeview Ln, Gatlinburg, TN',icon:'i-home',group:'home',
+      wp:[{sev:'Moderate',kind:'Excluded',text:'Flood is excluded by the water exclusion in your dwelling policy.',q:'gap',p:['dp3']}],
+      cov:[{n:'Dwelling',v:'$310,000',t:'Coverage limit',s:'in',p:['dp3']},{n:'Personal property',v:'$31,000',t:'Coverage limit',s:'in',p:['dp3']},
+           {n:'Personal liability',v:'$100,000',t:'Liability limit',s:'in',p:['dp3']},{n:'Flood',v:'Excluded',t:'Water exclusion',s:'ex',p:['dp3']},
+           {n:'Short-term rental',v:'Excluded',t:'Rental use exclusion',s:'ex',p:['dp3']}]},
+    {id:'gems',name:'Scheduled jewelry',d:'3 scheduled items',icon:'i-gem',group:'property',wp:[],
+      cov:[{n:'Scheduled jewelry',v:'$12,500',t:'Scheduled limit',s:'in',p:['ho']}]},
+    {id:'car',name:'Your car',d:'2022 Subaru Outback',icon:'i-car',group:'vehicles',
+      wp:[{sev:'Critical',kind:'Layer seam',text:'Umbrella needs more underlying auto liability than your auto policy lists.',q:'seam',p:['umb','auto']},
+          {sev:'Low',kind:'Overlap',text:'Roadside help comes from two sources: your auto policy and your auto club.',q:'overlap',p:['auto','club']}],
+      cov:[{n:'Auto liability',v:'$100K/$300K/$100K',t:'Split limit',s:'in',p:['auto']},{n:'Collision',v:'$500',t:'Deductible',s:'in',p:['auto']},{n:'Comprehensive',v:'$250',t:'Deductible',s:'in',p:['auto']},
+           {n:'Uninsured motorist',v:'$100K/$300K',t:'Split limit',s:'in',p:['auto']},{n:'Roadside help',v:'25 miles',t:'Towing distance',s:'in',p:['auto','club'],ov:1},
+           {n:'Umbrella liability',v:'$1,000,000',t:'Excess limit',s:'in',p:['umb']},{n:'Rideshare driving',v:'Excluded',t:'Livery use exclusion',s:'ex',p:['auto']},{n:'Rental reimbursement',v:'Not included',s:'no',p:[]}]},
+    {id:'car2',name:'Second car',d:'2019 Honda CR-V',icon:'i-car',group:'vehicles',
+      wp:[{sev:'Low',kind:'Not included',text:'Rental reimbursement is not included in your auto policy.',q:'gap',p:['auto']}],
+      cov:[{n:'Auto liability',v:'$100K/$300K/$100K',t:'Split limit',s:'in',p:['auto']},{n:'Collision',v:'$1,000',t:'Deductible',s:'in',p:['auto']},
+           {n:'Comprehensive',v:'$500',t:'Deductible',s:'in',p:['auto']},{n:'Rental reimbursement',v:'Not included',s:'no',p:[]}]},
+    {id:'moto',name:'Motorcycle',d:'2021 Harley-Davidson Sportster',icon:'i-bike',group:'vehicles',
+      wp:[{sev:'Critical',kind:'Layer seam',text:'Your umbrella does not list your motorcycle policy as underlying coverage.',q:'seam',p:['umb','moto']}],
+      cov:[{n:'Motorcycle liability',v:'$50K/$100K/$50K',t:'Split limit',s:'in',p:['moto']},{n:'Collision',v:'$500',t:'Deductible',s:'in',p:['moto']},
+           {n:'Comprehensive',v:'$500',t:'Deductible',s:'in',p:['moto']},{n:'Racing',v:'Excluded',t:'Racing exclusion',s:'ex',p:['moto']},{n:'Umbrella liability',v:'Not included',s:'no',p:['umb']}]},
+    {id:'biz',name:'Landscaping business',d:'88 Quarry Rd, Gallatin, TN',icon:'i-briefcase',group:'business',
+      wp:[],
+      cov:[{n:'General liability',v:'$1,000,000',t:'Per occurrence',s:'in',p:['bop']},{n:'Business personal property',v:'$75,000',t:'At 88 Quarry Rd',s:'in',p:['bop']},
+           {n:'Additional insured',v:'4',t:'Certificate holders',s:'in',p:['bop']},{n:'Pollution cleanup',v:'Excluded',t:'Pollution exclusion',s:'ex',p:['bop']},{n:'Professional liability',v:'Not included',s:'no',p:[]}]},
+    {id:'equip',name:'Business equipment',d:'Mowers and trimmers',icon:'i-wrench',group:'business',
+      wp:[{sev:'Moderate',kind:'Location seam',text:'Equipment you keep in the garage is limited under your homeowners policy. Your business policy lists the business address only.',q:'loc',p:['ho','bop']}],
+      cov:[{n:'Special limit at home',v:'$2,500',t:'Limit on business equipment',s:'in',p:['ho']},{n:'Special limit away from home',v:'$1,500',t:'Limit on business equipment',s:'in',p:['ho']},{n:'Business property',v:'$40,000',t:'At 88 Quarry Rd only',s:'in',p:['bop']}]}
+  ];
+  var GROUPS = [['people','Self and family'],['home','Home'],['property','Property'],['vehicles','Vehicles'],['business','Business']];
+  var QS = {
+    seam:['What underlying limits does my umbrella require?','Where does my auto policy list its limits?','What happens if the underlying limit is lower?'],
+    overlap:['What does the auto club cover that my policy does not?','Which source pays first?'],
+    loc:['What does my homeowners policy say about business equipment?','Which address does my business policy list?','Is equipment in my garage covered by either policy?'],
+    gap:['Which documents did you check?','What does this coverage usually include?'],
+    cov:['What does this coverage pay for?','Are there sub-limits or conditions?','Which document is this from?'],
+    any:['What are my most important watchpoints?','Which of my coverages overlap?','What do my policies not include?']
+  };
+  var RANK = {Critical:3,Moderate:2,Low:1};
+
+  // ---- derivations ----
+  // Status of a coverage drives its tile colour.
+  //   g green = covered · r red = no coverage (excluded) · o orange = gap (not included) · y yellow = overlap
+  function covStatus(c){ if(c.s==='ex') return 'r'; if(c.s==='no') return 'o'; if(c.ov) return 'y'; return 'g'; }
+  var STLABEL={g:'Covered',r:'No coverage',o:'Gap',y:'Overlap'};
+  var STICON={g:'i-check',r:'i-xcircle',o:'i-alert',y:'i-layers'};
+  // Watch points tied to a coverage: overlap findings for an overlapping coverage, or any finding naming it.
+  function covWps(a,c){ var nm=c.n.toLowerCase(); return a.wp.filter(function(w){ if(c.ov&&w.q==='overlap') return true; return w.text.toLowerCase().indexOf(nm)>=0; }); }
+  function maxSev(ws){ return ws.reduce(function(m,w){return Math.max(m,RANK[w.sev]||0)},0); }
+  function sevCls(r){ return r===3?'c':r===2?'m':'n'; }
+
+  var COVS=[];
+  ASSETS.forEach(function(a){ a.cov.forEach(function(c,ci){ var ws=covWps(a,c); COVS.push({a:a,c:c,ci:ci,st:covStatus(c),ws:ws,r:maxSev(ws)}); }); });
+  var STORDER={r:0,o:1,y:2,g:3};
+
+  // Club coverages that are the same (same name + status) but cover different assets.
+  // Each merged tile carries every asset it applies to; the detail sheet breaks the amounts down per asset.
+  var GICON={people:'i-user',home:'i-home',property:'i-gem',vehicles:'i-car',business:'i-briefcase'};
+  var GNOUN={people:['person','people'],home:['home','homes'],property:['item','items'],vehicles:['vehicle','vehicles'],business:['area','areas']};
+  var mMap={}, MERGED=[];
+  COVS.forEach(function(x){
+    var key=x.a.group+'|'+x.c.n+'|'+x.st, m=mMap[key];
+    if(!m){ m={id:'m'+MERGED.length,group:x.a.group,name:x.c.n,st:x.st,items:[],ws:[]}; mMap[key]=m; MERGED.push(m); }
+    m.items.push({a:x.a,c:x.c,ci:x.ci});
+    x.ws.forEach(function(w){ m.ws.push({a:x.a,w:w}); });
+  });
+  MERGED.forEach(function(m){
+    var vals=m.items.map(function(it){return it.c.v}), bases=m.items.map(function(it){return it.c.t||''});
+    m.uniformVal=vals.every(function(v){return v===vals[0]})?vals[0]:null;
+    m.uniformBasis=bases.every(function(b){return b===bases[0]})?bases[0]:'';
+    m.r=m.ws.reduce(function(mx,o){return Math.max(mx,RANK[o.w.sev]||0)},0);
+  });
+  function assetsLabel(m){ if(m.items.length===1) return m.items[0].a.name; var g=GNOUN[m.group]; return m.items.length+' '+(g?g[1]:'assets'); }
+  function mById(id){ return MERGED.filter(function(m){return m.id===id})[0]; }
+
+  function plural(n,w){ return n+' '+(w==='policy'?(n===1?'policy':'policies'):w+(n===1?'':'s')); }
+  function ic(id){ return '<svg class="ic" aria-hidden="true"><use href="#'+id+'"/></svg>'; }
+  function pill(sev){ var c=sev==='Critical'?'crit':sev==='Moderate'?'mod':''; return '<span class="pill '+c+'">'+sev+'</span>'; }
+  function esc(s){ return String(s).replace(/"/g,'&quot;'); }
+  function byId(id){ return ASSETS.filter(function(a){return a.id===id})[0]; }
+  var $=function(id){return document.getElementById(id)};
+  var tab='coverages', listScroll=0;
+  var SEC=[['Critical','Critical'],['Moderate','Moderate'],['Low','Low']];
+
+  function stats(a){ var inc=a.cov.filter(function(c){return c.s==='in'});
+    var pols=[]; inc.forEach(function(c){c.p.forEach(function(p){if(pols.indexOf(p)<0)pols.push(p)})});
+    return {cov:inc.length,pols:pols}; }
+
+  function covTile(m){
+    var st=m.st;
+    var wp = m.ws.length?'<span class="ct-wp '+sevCls(m.r)+'" title="'+esc(plural(m.ws.length,'watch point'))+'">'+ic('i-alert')+m.ws.length+'</span>':'';
+    var val = (st==='r') ? 'Excluded' : (st==='o') ? 'Not included' : (m.uniformVal||'Varies');
+    var basis='';
+    if(st==='r'||st==='o'){ if(m.uniformBasis) basis='<span class="ct-basis">'+m.uniformBasis+'</span>'; }
+    else if(m.uniformVal){ if(m.uniformBasis) basis='<span class="ct-basis">'+m.uniformBasis+'</span>'; }
+    else basis='<span class="ct-basis">'+(m.uniformBasis||'Amount varies by asset')+'</span>';
+    var multi=m.items.length>1, icon=multi?GICON[m.group]:m.items[0].a.icon;
+    return '<button type="button" class="ctile '+st+'" data-cov="'+m.id+'">'
+      +'<span class="ct-top"><span class="ct-status">'+ic(STICON[st])+STLABEL[st]+'</span>'+wp+'</span>'
+      +'<span class="ct-name">'+m.name+'</span>'
+      +'<span class="ct-val">'+val+'</span>'+basis
+      +'<span class="ct-asset">'+ic(icon)+'<span>'+assetsLabel(m)+'</span></span></button>';
+  }
+
+  function renderList(){
+    var tot=COVS.length, cg=0,cr=0,co=0,cy=0;
+    COVS.forEach(function(x){ if(x.st==='g')cg++;else if(x.st==='r')cr++;else if(x.st==='o')co++;else cy++; });
+    var allWp=[]; ASSETS.forEach(function(a){a.wp.forEach(function(w,i){allWp.push({a:a,w:w,i:i})})});
+    var h='<div class="topbar plain"><h1>Insights</h1></div><div class="body"><div class="files-tabs" role="tablist" aria-label="Insights view">'
+      +[['coverages','Coverages'],['watch','Watchpoints']].map(function(t){return '<button type="button" role="tab" class="files-tab" id="tab-'+t[0]+'" aria-selected="'+(tab===t[0])+'" aria-controls="tabpanel" data-tab="'+t[0]+'">'+t[1]+'</button>'}).join('')+'</div>'
+      +'<div role="tabpanel" id="tabpanel" aria-labelledby="tab-'+tab+'">';
+    if(tab==='coverages'){
+      var parts=[]; if(cg)parts.push(cg+' covered'); if(co)parts.push(plural(co,'gap')); if(cy)parts.push(plural(cy,'overlap')); if(cr)parts.push(cr+' excluded');
+      h+='<h2 class="lead">Your coverages</h2><p class="sum">'+plural(tot,'coverage')+' · '+parts.join(' · ')+'</p>';
+      h+='<div class="legend" aria-hidden="true"><span class="lg g"><span class="dot"></span>Covered</span><span class="lg o"><span class="dot"></span>Gap</span><span class="lg y"><span class="dot"></span>Overlap</span><span class="lg r"><span class="dot"></span>No coverage</span></div>';
+      GROUPS.forEach(function(g){
+        var items=MERGED.filter(function(m){return m.group===g[0]});
+        if(!items.length) return;
+        items=items.slice().sort(function(a,b){ return STORDER[a.st]-STORDER[b.st]; });
+        h+='<h2 class="cap"><span>'+g[1]+'</span><span class="cnt">'+items.length+'</span></h2><div class="cov-grid">';
+        items.forEach(function(m){ h+=covTile(m); });
+        h+='</div>';
+      });
+    } else {
+      var n=allWp.length, aw=ASSETS.filter(function(a){return a.wp.length}).length;
+      h+='<h2 class="lead">Watchpoints across your policies</h2><p class="sum">'+plural(n,'watchpoint')+' across '+plural(aw,'asset')+'</p>';
+      SEC.forEach(function(sc){
+        var items=allWp.filter(function(x){return x.w.sev===sc[0]});
+        if(!items.length) return;
+        h+='<h2 class="cap"><span>'+sc[1]+'</span></h2>';
+        items.forEach(function(x){
+          h+='<div class="wcard wkc" data-detail="'+x.a.id+':'+x.i+'"><div class="wk-top">'+pill(x.w.sev)+'</div>'
+            +'<button type="button" class="wk-body" data-detail="'+x.a.id+':'+x.i+'" aria-label="Details: '+esc(x.w.text)+'"><span class="wk-main"><span class="wk-text">'+x.w.text+'</span></span>'+ic('i-right')+'</button></div>';
+        });
+      });
+    }
+    $('list').innerHTML=h+'</div></div>';
+  }
+
+  function renderAsset(a){
+    var s=stats(a);
+    var h='<div class="topbar"><button type="button" class="icon-button" data-back aria-label="Back to Insights">'+ic('i-left')+'</button><h1>'+a.name+'</h1></div><div class="body"><p class="sum">'+a.d+'</p>';
+    h+='<h2 class="sec"><span>Coverages</span><span class="cnt">'+a.cov.length+'</span></h2><div class="card">';
+    a.cov.slice().sort(function(x,y){var o={in:0,ex:1,no:2};return o[x.s]-o[y.s]}).forEach(function(c){
+      var pols=c.p.length?'<div class="cov-pols">'+c.p.map(function(p){return '<span class="wk-pol">'+ic('i-file')+'<span>'+POL[p].n+'</span></span>'}).join('')+'</div>':'';
+      h+='<div class="cov"><i class="st '+c.s+'">'+(c.s==='in'?ic('i-check'):c.s==='ex'?ic('i-xcircle'):'')+'</i><div class="nm"><b>'+c.n+'</b><span>'+(c.s==='no'?c.v:c.t)+'</span>'+pols+'</div>'+(c.s==='no'?'':'<span class="cv'+(c.s==='ex'?' ex':'')+'">'+c.v+'</span>')+'</div>';
+    });
+    h+='</div><h2 class="sec"><span>Underlying policies</span><span class="cnt">'+s.pols.length+'</span></h2><div class="card">';
+    s.pols.forEach(function(p){
+      var names=a.cov.filter(function(c){return c.s==='in'&&c.p.indexOf(p)>=0}).map(function(c){return c.n});
+      h+='<button type="button" class="pol" data-toast="Opens '+esc(POL[p].n)+' in policy insights"><span class="tile">'+ic('i-file')+'</span><span class="meta"><b>'+POL[p].n+'</b><span class="s">'+plural(names.length,'coverage')+': '+names.slice(0,2).join(', ')+(names.length>2?' +'+(names.length-2):'')+'</span></span>'+ic('i-right')+'</button>';
+    });
+    $('asset').innerHTML=h+'</div></div>';
+  }
+
+  function show(id){
+    if(id){ listScroll=$('list').scrollTop; renderAsset(byId(id)); $('list').hidden=true; $('asset').hidden=false; $('asset').scrollTop=0; $('askFab').setAttribute('data-ask',id+':*'); }
+    else { $('asset').hidden=true; $('list').hidden=false; $('list').scrollTop=listScroll; $('askFab').setAttribute('data-ask','*'); }
+  }
+
+  var lastFocus=null;
+  function openCov(ref){
+    var m=mById(ref), st=m.st, multi=m.items.length>1;
+    var val=(st==='r')?'Excluded':(st==='o')?'Not included':(m.uniformVal||'Varies');
+    var sub=(st==='r'||st==='o')?m.uniformBasis:(m.uniformVal?m.uniformBasis:(m.uniformBasis||'Amount varies by asset'));
+    var h='<div class="grab"></div><div class="sh"><h2>Coverage</h2><button type="button" class="icon-button x" data-close aria-label="Close">'+ic('i-x')+'</button></div>'
+      +'<span class="stag '+st+'">'+ic(STICON[st])+STLABEL[st]+'</span>'
+      +'<div class="covhead"><div class="cvv"><b>'+m.name+'</b>'+(sub?'<span class="b2">'+sub+'</span>':'')+'</div><div class="cvamt">'+val+'</div></div>';
+    h+='<p class="lbl">Applies to '+(multi?plural(m.items.length,'asset'):'')+'</p><div class="gbox">';
+    m.items.forEach(function(it){
+      var iv=(st==='r')?'Excluded':(st==='o')?'Not included':it.c.v;
+      h+='<button type="button" class="srow" data-open="'+it.a.id+'"><span class="m"><b>'+it.a.name+'</b><span class="d">'+iv+(it.c.t?' · '+it.c.t:'')+'</span></span>'+ic('i-right')+'</button>';
+    });
+    h+='</div>';
+    var pols=[]; m.items.forEach(function(it){ it.c.p.forEach(function(p){ if(pols.indexOf(p)<0) pols.push(p); }); });
+    if(pols.length){
+      h+='<p class="lbl">'+(st==='r'?'From '+(pols.length===1?'policy':'policies'):'Underlying '+(pols.length===1?'policy':'policies'))+'</p><div class="gbox">';
+      pols.forEach(function(id){ h+='<button type="button" class="srow" data-toast="Opens '+esc(POL[id].n)+' in policy insights"><span class="m"><b>'+POL[id].n+'</b></span>'+ic('i-right')+'</button>'; });
+      h+='</div>';
+    }
+    h+='<p class="lbl">Watch points</p>';
+    if(m.ws.length){ h+='<div class="wbox">';
+      m.ws.slice().sort(function(x,y){return (RANK[y.w.sev]||0)-(RANK[x.w.sev]||0)}).forEach(function(o){
+        h+='<div class="wprow"><div class="wtop">'+pill(o.w.sev)+'<button type="button" class="ask-m" data-ask="'+o.a.id+':'+o.a.wp.indexOf(o.w)+'">Ask Ovie</button></div><p>'+(multi?'<b>'+o.a.name+':</b> ':'')+o.w.text+'</p></div>';
+      });
+      h+='</div>';
+    } else { h+='<div class="gbox"><div class="srow"><span class="m"><span class="d">Nothing to flag for this coverage.</span></span></div></div>'; }
+    var first=m.items[0];
+    h+='<button type="button" class="cta" data-ask="'+first.a.id+':cov:'+first.ci+'">'+ic('i-spark')+'Ask Ovie about this coverage</button>';
+    $('sheet').classList.remove('ask'); $('sheet').setAttribute('aria-label',m.name);
+    $('sheet').innerHTML=h; $('sheet').classList.add('on'); $('scrim').classList.add('on'); lastFocus=document.activeElement; $('sheet').querySelector('.x').focus({preventScroll:true});
+  }
+
+  function openSheet(ref){
+    var a=null,w=null,qs=QS.any,ctxHtml='';
+    if(ref&&ref!=='*'){ var p=ref.split(':'); a=byId(p[0]);
+      if(p[1]==='cov'){ var c=a.cov[+p[2]]; qs=QS.cov; ctxHtml='<div class="ctx"><span class="k">'+a.name+' · '+c.n+'</span>'+(covStatus(c)==='r'?'Excluded':covStatus(c)==='o'?'Not included':c.v+(c.t?' · '+c.t:''))+'</div>'; }
+      else if(p[1]!=='*'){ w=a.wp[+p[1]]; qs=QS[w.q]||QS.any; ctxHtml='<div class="ctx"><span class="k">'+a.name+' · '+w.sev+'</span>'+w.text+'</div>'; }
+    }
+    var h='<div class="grab"></div><div class="sh"><h2>'+ic('i-spark')+'Ask Ovie</h2><button type="button" class="icon-button x" data-close aria-label="Close">'+ic('i-x')+'</button></div>';
+    h+=ctxHtml+'<p class="sg">Suggested questions</p>';
+    qs.forEach(function(q){ h+='<button type="button" class="q" data-toast="Opens Ask Ovie chat with this question"><span>'+q+'</span>'+ic('i-right')+'</button>'; });
+    h+='<p class="fine">Ovie answers from your documents. Review this with an insurance professional.</p>';
+    $('sheet').classList.add('ask'); $('sheet').setAttribute('aria-label','Ask Ovie');
+    $('sheet').innerHTML=h; $('sheet').classList.add('on'); $('scrim').classList.add('on'); lastFocus=document.activeElement; $('sheet').querySelector('.x').focus({preventScroll:true});
+  }
+  function openDetail(ref){
+    var p=ref.split(':'), a=byId(p[0]), w=a.wp[+p[1]];
+    var h='<div class="grab"></div><div class="sh"><h2>Watchpoint details</h2><button type="button" class="icon-button x" data-close aria-label="Close">'+ic('i-x')+'</button></div>'
+      +'<div class="covhead"><div class="cvv">'+pill(w.sev)+'<span class="b2" style="margin-top:8px">'+w.text+'</span></div></div>'
+      +'<p class="lbl">Policies</p><div class="gbox">';
+    w.p.forEach(function(id){
+      var names=a.cov.filter(function(c){return c.s==='in'&&c.p.indexOf(id)>=0}).map(function(c){return c.n});
+      h+='<button type="button" class="srow" data-toast="Opens '+esc(POL[id].n)+' in policy insights"><span class="m"><b>'+POL[id].n+'</b>'+(names.length?'<span class="d">'+names.slice(0,2).join(', ')+(names.length>2?' +'+(names.length-2):'')+'</span>':'')+'</span>'+ic('i-right')+'</button>';
+    });
+    h+='</div><p class="lbl">Asset</p><div class="gbox"><button type="button" class="srow" data-open="'+a.id+'"><span class="m"><b>'+a.name+'</b><span class="d">'+a.d+'</span></span>'+ic('i-right')+'</button></div>'
+      +'<button type="button" class="cta" data-ask="'+a.id+':'+p[1]+'">'+ic('i-spark')+'Ask Ovie about this watchpoint</button>';
+    $('sheet').classList.remove('ask'); $('sheet').setAttribute('aria-label','Watchpoint details');
+    $('sheet').innerHTML=h; $('sheet').classList.add('on'); $('scrim').classList.add('on'); lastFocus=document.activeElement; $('sheet').querySelector('.x').focus({preventScroll:true});
+  }
+  function closeSheet(){ $('sheet').classList.remove('on'); $('scrim').classList.remove('on'); if(lastFocus&&document.contains(lastFocus)) lastFocus.focus({preventScroll:true}); }
+  var tt;
+  function toast(m){ var t=$('toast'); t.textContent=m; t.hidden=false; clearTimeout(tt); tt=setTimeout(function(){t.hidden=true},1800); }
+
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-tab]');
+    if(t){ tab=t.getAttribute('data-tab'); renderList(); var f=document.getElementById('tab-'+tab); if(f) f.focus(); return; }
+    t=e.target.closest('[data-ask]'); if(t){ openSheet(t.getAttribute('data-ask')); return; }
+    t=e.target.closest('[data-cov]'); if(t){ openCov(t.getAttribute('data-cov')); return; }
+    t=e.target.closest('[data-detail]'); if(t){ openDetail(t.getAttribute('data-detail')); return; }
+    t=e.target.closest('[data-open]'); if(t){ if($('sheet').classList.contains('on')) closeSheet(); show(t.getAttribute('data-open')); return; }
+    t=e.target.closest('[data-back]'); if(t){ show(null); return; }
+    t=e.target.closest('[data-gotolist]'); if(t){ if(!$('list').hidden) $('list').scrollTo({top:0}); else show(null); return; }
+    t=e.target.closest('[data-close]'); if(t){ closeSheet(); return; }
+    t=e.target.closest('[data-toast]'); if(t){ toast(t.getAttribute('data-toast')); }
+  });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&$('sheet').classList.contains('on')) closeSheet(); });
+  renderList();
+})();
+</script>
+</body>
+</html>

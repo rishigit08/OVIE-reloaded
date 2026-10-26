@@ -1,0 +1,1676 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>[hidden]{display:none!important}</style></head><body style="margin:0"><title>Ovie Insights Contract Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: prototype controls left, one phone in the middle rendering the extraction JSON block by block, the editable JSON on the right (stacks below the phone on narrow screens). Ovie insight tokens. */
+:root{
+  --stage:#E7EBEE; --phone:#FFFFFF; --ink:#1B2229; --muted:#66717C; --line:#DCE1E6; --fill:#F2F4F6; --fill2:#E4E8EC;
+  --accent:#0E6B66; --accent-soft:#DCEFEC; --code:#F6F8F9; --scrim:rgba(15,22,28,.42);
+  --crit:#B42318; --crit-soft:#FCE7E4; --warn:#8F560B; --warn-soft:#FAEED6; --ok:#1E7440; --ok-soft:#E2F2E7;
+  --f-display:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--stage);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stage{display:flex;justify-content:center;align-items:flex-start;gap:28px;padding-inline:16px;padding-block:24px}
+.panel{width:290px;flex:none;position:sticky;top:24px;max-height:calc(100dvh - 48px);overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-right:2px}
+.panel.right{width:360px}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.panel h1{font-family:var(--f-display);font-size:22px;line-height:1.15;margin:4px 0 6px;text-wrap:balance}
+.panel>p,.panel .hint{color:var(--muted);font-size:13px}
+.pbox{background:var(--phone);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.pbox h3{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.vc{display:flex;flex-direction:column;gap:5px}
+.vc .nm{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+.vc .nm code{font-family:var(--f-mono);font-size:10.5px;font-weight:500;color:var(--muted)}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{flex:1;border:0;background:none;padding:5px 0;font-size:12.5px;font-weight:600;cursor:pointer;border-left:1px solid var(--line)}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--phone)}
+.seg button:hover:not([aria-pressed="true"]){background:var(--fill)}
+.pbtn{border:1px solid var(--line);background:var(--phone);border-radius:9px;padding:6px 10px;font-size:12.5px;font-weight:600;cursor:pointer}
+.pbtn.pri{background:var(--ink);color:var(--phone);border-color:var(--ink)}
+.pbtn:hover{border-color:var(--accent)}
+.prow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+select{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:9px;padding:6px 8px;background:var(--phone);color:var(--ink);width:100%}
+textarea{width:100%;min-height:420px;font-family:var(--f-mono);font-size:11.5px;line-height:1.5;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--code);color:var(--ink);resize:vertical}
+.err{color:var(--crit);font-size:12.5px}
+.okm{color:var(--ok);font-size:12.5px}
+@media (max-width:1240px){.panel.right{display:none}}
+@media (max-width:900px){
+  .stage{flex-direction:column;align-items:center;padding-inline:0;padding-block:0;gap:0}
+  .panel{position:static;max-height:none;width:100%;padding:20px 16px}
+  .panel.left{order:2}
+  .panel.right{display:flex;order:3;width:100%;padding-top:0}
+}
+
+/* device */
+.device{width:390px;max-width:100%;height:min(844px,calc(100dvh - 48px));min-height:560px;background:var(--phone);border:1px solid var(--line);border-radius:40px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 20px 50px -20px rgba(0,0,0,.25);flex:none}
+@media (max-width:900px){.device{width:100%;height:100dvh;border-radius:0;border:0;min-height:0;box-shadow:none}}
+.sbar{display:flex;justify-content:space-between;padding:12px 26px 4px;font-size:12.5px;font-weight:600;flex:none}
+.screens{flex:1;position:relative;overflow:hidden}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--phone)}
+.anav{display:flex;align-items:center;gap:8px;padding:6px 14px 10px;border-bottom:1px solid var(--line);flex:none}
+.anav .t{flex:1;min-width:0;font-weight:600;font-size:16px}
+.anav .t small{display:block;font-weight:400;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{width:34px;height:34px;border-radius:10px;border:0;background:transparent;cursor:pointer;font-size:22px;line-height:1;color:var(--accent);display:grid;place-items:center;flex:none}
+.iconbtn:hover{background:var(--fill)}
+.body{flex:1;overflow-y:auto;padding:0 14px 18px;display:flex;flex-direction:column;gap:14px;font-size:14.5px}
+.body>*{flex:none}
+.tabbar{display:flex;border-top:1px solid var(--line);flex:none;padding-bottom:10px;background:var(--phone)}
+.tabbar button{flex:1;background:none;border:0;padding:9px 0 4px;font-size:11px;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tabbar button i{width:20px;height:20px;border-radius:6px;background:var(--fill2);display:block}
+.tabbar button.on{color:var(--ink);font-weight:600}
+.tabbar button.on i{background:var(--ink)}
+.jumpbar{position:sticky;top:0;z-index:3;background:var(--phone);display:flex;gap:6px;overflow-x:auto;padding:10px 14px 8px;margin:0 -14px;border-bottom:1px solid var(--line);scrollbar-width:none}
+.jumpbar::-webkit-scrollbar{display:none}
+.jump{flex:none;border:1px solid var(--line);background:var(--phone);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.jump[aria-pressed="true"]{background:var(--ink);color:var(--phone);border-color:var(--ink)}
+.sec{display:flex;flex-direction:column;gap:10px;scroll-margin-top:52px}
+.sh{font-family:var(--f-display);font-size:18px;margin:6px 0 0;display:flex;align-items:baseline;gap:8px}
+.sh span{font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--muted);background:var(--fill);border-radius:999px;padding:1px 8px}
+.card{border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.card.fill{background:var(--fill);border-color:transparent}
+button.src{font-family:var(--f-mono)}
+button.src:hover{border-color:var(--accent);color:var(--accent)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:13px;font-weight:600;padding:5px 11px;border-radius:999px;border:0;background:var(--accent-soft);color:var(--accent);cursor:pointer;text-align:left}
+.fb{border:1px dashed var(--crit);border-radius:12px;padding:10px}
+.fb .xs{color:var(--crit)}
+/* sheet */
+.scrim{position:absolute;inset:0;background:var(--scrim);opacity:0;transition:opacity .2s;z-index:5}
+.scrim.show{opacity:1}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:80%;background:var(--phone);border-radius:22px 22px 0 0;z-index:6;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .25s ease}
+.sheet.show{transform:none}
+.sheet .grab{width:40px;height:5px;border-radius:3px;background:var(--fill2);margin:8px auto 2px;flex:none}
+.shead{display:flex;align-items:flex-start;gap:8px;padding:6px 16px 8px}
+.shead .t{flex:1;min-width:0}
+.shead h2{font-family:var(--f-display);font-size:19px;margin:0;line-height:1.2;text-wrap:balance}
+.sbody{overflow-y:auto;padding:4px 16px 22px;display:flex;flex-direction:column;gap:12px;font-size:14px}
+@media (prefers-reduced-motion:reduce){.sheet,.scrim{transition:none}}
+/* chat */
+.msgs{display:flex;flex-direction:column;gap:14px;padding-top:14px}
+.q{margin-left:auto;max-width:85%;background:var(--ink);color:var(--phone);padding:8px 12px;border-radius:16px 16px 4px 16px;width:fit-content}
+.a{display:flex;flex-direction:column;gap:8px;font-size:14px}
+.akv{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.akv div{display:flex;justify-content:space-between;gap:10px;padding:7px 10px;border-top:1px solid var(--line);font-size:13.5px}
+.akv div:first-child{border-top:0}
+.akv span:first-child{min-width:0}
+.akv span:last-child{font-weight:600;font-variant-numeric:tabular-nums;text-align:right;flex:none;max-width:50%}
+.afoot{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+.composer{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--line);flex:none}
+.composer input{flex:1;min-width:0;border:1px solid var(--line);border-radius:999px;padding:9px 14px;font:inherit;background:var(--phone);color:var(--ink)}
+.composer button{border:0;border-radius:999px;background:var(--ink);color:var(--phone);padding:0 14px;font-weight:600;cursor:pointer}
+.toast{position:absolute;left:16px;right:16px;bottom:84px;background:var(--ink);color:var(--phone);padding:10px 14px;border-radius:12px;font-size:13.5px;z-index:9;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+/* ---------- component building blocks (inside .screen) ---------- */
+.big{font-family:var(--f-display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.05}
+.hero{font-family:var(--f-display);font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.muted{color:var(--muted)} .num{font-variant-numeric:tabular-nums}
+.sm{font-size:12.5px} .xs{font-size:11.5px}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ch>b{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.pill.crit{background:var(--crit-soft);color:var(--crit)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.n{background:var(--fill2);color:var(--muted)} .pill.ok{background:var(--ok-soft);color:var(--ok)}
+.src{display:inline-flex;font-family:var(--f-mono);font-size:10.5px;color:var(--muted);background:var(--fill);border:1px solid var(--line);padding:0 6px;border-radius:6px;white-space:nowrap;cursor:pointer}
+.src::before{content:"↗ "}
+.scope{display:inline-block;font-size:11.5px;font-weight:600;background:var(--fill);border:1px solid var(--line);border-radius:999px;padding:0 8px}
+.srow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.facts2{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.facts2 div{min-width:0;display:flex;flex-direction:column}
+.facts2 span{font-size:11.5px;color:var(--muted)}
+.facts2 b{font-size:13.5px;line-height:1.3;overflow-wrap:anywhere}
+.facts2 small{font-size:12px;color:var(--muted)}
+.hr{height:1px;background:var(--line)}
+.kv{display:flex;flex-direction:column}
+.kv>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.kv>div:first-child{border-top:0}
+.kv>div>span:first-child{color:var(--muted);flex:none}
+.kv>div>span:last-child{text-align:right;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.kv>div>span:last-child small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.lbl{flex:1;min-width:0}
+.lbl>b{display:block;font-size:14px}
+.lbl small{display:block;color:var(--muted);font-size:12.5px}
+.val{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.val small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.val.unk{font-weight:500;color:var(--muted);font-style:italic}
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.split2 div{background:var(--fill);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;min-width:0}
+.split2 span{font-size:11.5px;color:var(--muted)}
+.split2 b{font-size:14.5px;font-variant-numeric:tabular-nums}
+.split2 small{font-size:12px;color:var(--muted);line-height:1.3}
+.note{font-size:13px;background:var(--fill);border-radius:10px;padding:8px 10px}
+.empty{border:1px dashed var(--line);border-radius:12px;padding:9px 12px;color:var(--muted);font-size:13px}
+.grp{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.g{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.g.y{background:var(--ok-soft);color:var(--ok)} .g.w{background:var(--warn-soft);color:var(--warn)} .g.n{background:var(--crit-soft);color:var(--crit)} .g.u{background:var(--phone);color:var(--muted);border:1.5px dashed var(--muted)}
+.cta{display:block;width:100%;text-align:center;font:inherit;font-weight:600;border-radius:12px;padding:10px;background:var(--ink);color:var(--phone);border:0;cursor:pointer}
+
+/* term strip */
+.term{position:relative;height:46px;margin-top:4px}
+.term .ln{position:absolute;left:0;right:0;top:14px;height:6px;border-radius:3px;background:var(--fill2)}
+.term .on{position:absolute;top:14px;height:6px;border-radius:3px;background:var(--muted)}
+.term .tick{position:absolute;top:8px;width:2px;height:18px;background:var(--ink)}
+.term .lab{position:absolute;top:28px;font-size:11px;color:var(--muted);white-space:nowrap}
+.term .today{position:absolute;top:2px;width:12px;height:12px;border-radius:50%;background:var(--crit);transform:translateX(-50%);border:2px solid var(--phone)}
+/* id card */
+.idc{background:var(--accent-soft);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.idc .pn{font-family:var(--f-mono);font-size:18px;font-weight:600;letter-spacing:.02em}
+.idc .r{display:flex;justify-content:space-between;gap:10px;font-size:12.5px}
+.idc .r span{color:var(--muted)} .idc .r b{text-align:right}
+/* vertical timeline */
+.tl{display:grid;grid-template-columns:auto 1fr;gap:0 10px;font-size:13px}
+.tl i{width:12px;display:flex;flex-direction:column;align-items:center}
+.tl i::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--ink);margin-top:4px;flex:none}
+.tl i::after{content:"";flex:1;width:2px;background:var(--line);min-height:14px}
+.tl i.last::after{display:none}
+.tl i.now::before{background:var(--crit)}
+.tl div{padding-bottom:8px}
+/* stacked bar + legend */
+.stack{display:flex;height:12px;border-radius:5px;overflow:hidden;gap:2px}
+.stack i{display:block;min-width:3px}
+.leg{display:grid;gap:6px;font-size:13px}
+.leg div{display:flex;align-items:center;gap:8px}
+.leg i{width:10px;height:10px;border-radius:3px;flex:none}
+.leg span{flex:1;min-width:0}
+.leg b{font-variant-numeric:tabular-nums}
+.receipt>div{display:flex;gap:6px;align-items:baseline;font-size:13.5px;padding:4px 0}
+.receipt>div span:nth-child(2){flex:1;border-bottom:1px dotted var(--line);transform:translateY(-4px)}
+.receipt>div b{font-variant-numeric:tabular-nums}
+.receipt .ind{padding-left:12px;color:var(--muted)}
+.receipt .tot{border-top:1px solid var(--ink);margin-top:4px;padding-top:8px;font-weight:700}
+.waffle{display:grid;grid-template-columns:repeat(20,1fr);gap:2px}
+.waffle i{aspect-ratio:1;border-radius:2px;display:block;max-width:100%}
+/* coverage */
+.cv{display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:1px solid var(--line)}
+.cv:first-child{border-top:0;padding-top:0}
+.cvh{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.cvh b{display:block;font-size:14.5px}
+.cvh small{color:var(--muted);font-size:12px}
+.lb{display:grid;grid-template-columns:1fr;gap:3px;padding:8px 0;border-top:1px solid var(--line)}
+.lb:first-of-type{border-top:0}
+.lb .t{display:flex;justify-content:space-between;gap:8px;font-size:13.5px}
+.lb .t b{font-variant-numeric:tabular-nums}
+.track{position:relative;height:10px;background:var(--fill);border-radius:5px}
+.track i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--accent)}
+.track i.dash{background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 8px);opacity:.6}
+.ticks{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:10px;color:var(--muted)}
+.matrix{width:100%;border-collapse:collapse;font-size:12px}
+.matrix th,.matrix td{padding:7px 3px;border-top:1px solid var(--line);text-align:center;vertical-align:top}
+.matrix th{font-weight:600;color:var(--muted);border-top:0;font-size:11px;line-height:1.2}
+.matrix td:first-child,.matrix th:first-child{text-align:left}
+.matrix td b{display:block}
+.matrix .y{color:var(--ok);font-weight:700}
+.matrix .d{color:var(--muted)}
+/* vehicles */
+.fleet{display:flex;gap:5px;flex-wrap:wrap;align-items:flex-end}
+.iname{font-family:var(--f-display);font-size:22px;font-weight:700;line-height:1.15;text-wrap:balance;overflow-wrap:anywhere}
+.hl{display:flex;flex-direction:column}
+.hl>div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.hl>div>span{color:var(--muted);font-size:12.5px;padding-top:1px}
+.hl b{font-weight:600;overflow-wrap:anywhere}
+.hl small{display:block;color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.kinds{display:flex;gap:8px;flex-wrap:wrap}
+.kd{display:inline-flex;align-items:center;gap:6px;background:var(--fill);border-radius:999px;padding:3px 10px 3px 7px;font-size:13px}
+.kd svg{display:block}
+.kd b{font-variant-numeric:tabular-nums}
+.fleet svg{display:block}
+.vt{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.vt .h{display:flex;justify-content:space-between;padding:6px 10px;font-size:11px;color:var(--muted);font-weight:600;background:var(--fill)}
+.vt .r{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid var(--line);padding:7px 10px;font-size:13.5px}
+.vt .r small{display:block;color:var(--muted);font-size:11px;font-family:var(--f-mono);overflow-wrap:anywhere}
+.vt .r .num{font-weight:600}
+.hb{display:grid;grid-template-columns:1fr;gap:2px;padding:6px 0}
+.hb .t{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.hb .t b{font-variant-numeric:tabular-nums}
+.hb .bar{height:8px;border-radius:4px;background:var(--accent)}
+.hb .bar.tr{background:var(--muted)}
+.hb small{font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+.yax{position:relative;height:92px;margin-top:2px}
+.yax .ln{position:absolute;left:0;right:0;top:58px;height:2px;background:var(--line)}
+.yax .band{position:absolute;top:50px;height:18px;background:var(--warn-soft);border-radius:4px}
+.yax .ic{position:absolute;transform:translateX(-50%);color:var(--ink)}
+.yax .ic.tr{color:var(--muted)}
+.yax .yl{position:absolute;top:70px;transform:translateX(-50%);font-size:10.5px;color:var(--muted);font-family:var(--f-mono)}
+.yax .dt{position:absolute;top:53px;width:10px;height:10px;border-radius:50%;background:var(--ink);transform:translateX(-50%);border:2px solid var(--phone)}
+/* exclusions */
+.xi{position:relative;width:32px;height:32px;border-radius:9px;background:var(--fill);display:grid;place-items:center;color:var(--muted);flex:none}
+.xi::after{content:"✕";position:absolute;right:-3px;top:-4px;font-size:9px;font-weight:800;color:var(--crit);background:var(--phone);border-radius:50%;width:13px;height:13px;display:grid;place-items:center}
+.exc{display:block;font-style:normal;font-size:12px;color:var(--ok);margin-top:2px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{background:var(--fill);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:4px;min-width:0;font-size:12px;color:var(--muted);line-height:1.3}
+.tile b{color:var(--ink);font-size:13px;line-height:1.25}
+.tile svg{color:var(--muted)}
+.tile .top{display:flex;justify-content:space-between;align-items:flex-start}
+.tile .top em{font-style:normal;color:var(--crit);font-weight:800;font-size:11px}
+.xg{display:flex;flex-direction:column;gap:6px}
+.xg .gh{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px}
+.xg ul{margin:0;padding:0 0 0 30px;list-style:none;display:grid;gap:5px;font-size:13px}
+.xg li small{display:block;color:var(--muted);font-size:12px}
+/* watch */
+.wp{border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.wp.serious{background:var(--warn-soft);border-color:transparent}
+.wp.serious .pill.warn,.wp.serious .src{background:var(--phone)}
+.wph{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.wph b{flex:1;min-width:55%}
+.ladder{display:flex;align-items:flex-end;gap:6px}
+.ladder .step{flex:1;border-radius:8px 8px 4px 4px;background:var(--accent-soft);padding:7px 8px;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+.ladder .step.you{background:var(--fill2)}
+.wp.serious .ladder .step{background:var(--phone)}
+.ladder b{font-variant-numeric:tabular-nums;font-size:14px}
+.ladder span{font-size:11px;color:var(--muted);line-height:1.25}
+.sr{display:flex;gap:10px;padding:9px 0 9px 10px;border-top:1px solid var(--line);position:relative}
+.sr:first-child{border-top:0}
+.sr::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:4px;border-radius:2px;background:var(--fill2)}
+.sr.s1::before{background:var(--warn)} .sr.s2::before{background:var(--muted)}
+.sr .lbl small{font-size:12.5px}
+.typ{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);white-space:nowrap}
+.act{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px}
+.act div{background:var(--fill);border-radius:8px;padding:6px 8px;min-width:0}
+.act span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+.wp.serious .act div{background:var(--phone)}
+/* scale */
+.scale{position:relative;height:92px}
+.scale .ax{position:absolute;left:0;right:0;top:56px;height:2px;background:var(--line)}
+.scale .tk{position:absolute;top:52px;width:1px;height:10px;background:var(--muted)}
+.scale .tl2{position:absolute;top:66px;transform:translateX(-50%);font-size:10px;color:var(--muted);font-family:var(--f-mono)}
+.scale .mk{position:absolute;top:49px;width:14px;height:14px;border-radius:50%;transform:translateX(-50%);border:2px solid var(--phone)}
+.scale .ml{position:absolute;top:0;transform:translateX(-50%);text-align:center;font-size:11px;line-height:1.2;white-space:nowrap}
+.scale .ml b{display:block;font-size:13px;font-variant-numeric:tabular-nums}
+.scale .ml::after{content:"";display:block;width:1px;height:10px;background:var(--line);margin:3px auto 0}
+/* evidence */
+.pages{position:relative;height:56px}
+.pages .bar{position:absolute;left:0;right:0;top:20px;height:16px;border-radius:4px;background:repeating-linear-gradient(90deg,var(--fill2) 0 3px,var(--fill) 3px 4px)}
+.pages .pm{position:absolute;top:16px;width:3px;height:24px;background:var(--accent);transform:translateX(-50%);border-radius:1px}
+.pages .pl{position:absolute;top:0;transform:translateX(-50%);font-family:var(--f-mono);font-size:10px;color:var(--ink);white-space:nowrap}
+.pages .pe{position:absolute;top:42px;font-family:var(--f-mono);font-size:10px;color:var(--muted)}
+.fv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fv>div{border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.fv .f{background:var(--ok-soft)} .fv .m{border:1.5px dashed var(--line)}
+.fv ul{margin:0;padding:0;list-style:none;display:grid;gap:5px;font-size:12.5px}
+.fv li{display:flex;gap:6px;align-items:flex-start;line-height:1.3}
+.fv h4{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.forms{display:flex;flex-direction:column}
+.forms>div{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line);font-size:13px}
+.forms>div:first-child{border-top:0}
+.forms code{font-family:var(--f-mono);font-size:11.5px;flex:none;min-width:118px}
+
+/* ===== Ovie design system layer (DESIGN.md) — single light theme by design =====
+   Plum brand, Figtree, flat white cards on #F6F6F6, 12px radius, sentence case.
+   Red / orange / green are semantic only (negative / attention / positive). Turquoise and yellow are the neutral chart accents. Text keeps AA tokens. */
+:root{
+  --stage:#E3E3E3; --phone:#FFFFFF; --canvas:#F6F6F6; --ink:#111111; --text2:#333A3D; --muted:#5F6368;
+  --line:#ECEFED; --border:#D8DDDB; --fill:#F6F6F6; --fill2:#E3E3E3; --code:#F6F6F6; --scrim:rgba(17,24,23,.58);
+  --accent:#6B4062; --accent-dark:#54324D; --accent-soft:#F5EDF3;
+  --crit:#A63A33; --crit-soft:#FFEDED; --warn:#8A5A06; --warn-soft:#FFF5DF; --warn-border:#E7C982; --warn-text:#634106; --ok:#0D7D07; --ok-soft:#E7FFF4;
+  --b-red:#EF4444; --b-green:#16A34A; --b-orange:#EA580C;
+  --a-teal:#14B8A6; --a-teal-soft:#CCFBF1; --a-teal-ink:#0F766E; --a-yellow:#FACC15; --a-yellow-soft:#FEF9C3; --a-yellow-ink:#854D0E; --a-yellow-icon:#EAB308;
+  --plum-2:#A67D9B; --plum-3:#CDAFC5;
+  --focus:0 0 0 3px rgba(107,64,98,.24);
+  --f-display:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+body{font-family:var(--f-body);font-size:14px;line-height:20px;color:var(--ink)}
+:focus-visible{outline:0;box-shadow:var(--focus);border-radius:8px}
+b,strong{font-weight:600}
+
+/* headings and labels: sentence case, no tracking */
+.ch>b,.grp,.vt .h,.map th,.act span,.fv h4,.pbox h3,.eyebrow{text-transform:none;letter-spacing:0}
+.ch>b{font-size:18px;line-height:24px;font-weight:600;color:var(--ink)}
+.ch{align-items:flex-start}
+.grp{font-size:14px;line-height:20px;font-weight:600;color:var(--ink)}
+.muted,.sm.muted,.xs.muted{color:var(--muted)}
+.xs{font-size:12px;line-height:16px}
+.sm{font-size:14px;line-height:20px}
+
+/* pills */
+.pill{gap:6px;font-size:12px;line-height:16px;font-weight:600;padding:4px 10px}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.pill.crit{background:var(--crit-soft);color:var(--crit)} .pill.crit::before{background:var(--b-red)}
+.pill.warn{background:var(--warn-soft);color:var(--warn-text)} .pill.warn::before{background:var(--b-orange)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.ok::before{background:var(--b-green)}
+.pill.n{background:var(--accent-soft);color:var(--accent)} .pill.n::before{background:var(--accent)}
+
+/* source action: info glyph + plum page reference */
+.src{display:inline-flex;align-items:center;gap:4px;min-height:28px;background:transparent;border:0;padding:0 6px 0 2px;border-radius:8px;font-family:var(--f-body);font-size:12px;line-height:16px;font-weight:600;color:var(--accent);cursor:pointer}
+.src::before{content:"";width:16px;height:16px;flex:none;background:var(--muted);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4M12 8h.01'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4M12 8h.01'/%3E%3C/svg%3E") center/contain no-repeat}
+button.src::before{content:""}
+.src:hover,button.src:hover{background:var(--accent-soft);color:var(--accent)}
+.scope{background:var(--fill);border:0;border-radius:999px;font-size:12px;line-height:16px;font-weight:600;padding:4px 10px;color:var(--text2)}
+
+/* rows and values (12.1.2) */
+.row,.cv,.lb,.hb{border-top-color:var(--line)}
+.lbl>b,.cvh b{font-size:14px;line-height:20px;font-weight:600}
+.lbl small,.cvh small,.hl small,.kv small,.vt .r small{color:var(--muted);font-size:14px;line-height:20px}
+.vt .r small,.hb small{font-family:var(--f-body);font-size:12px;line-height:16px;letter-spacing:.02em}
+.val{font-size:18px;line-height:24px;font-weight:600}
+.val small{font-size:12px;line-height:16px;color:var(--muted);font-weight:400}
+.val.unk{font-size:14px;color:var(--text2);font-style:normal;font-weight:600}
+.cv p,.wp p{color:var(--muted)}
+.hl>div{border-top-color:var(--line);font-size:14px;line-height:20px}
+.hl>div>span{color:var(--muted);font-size:14px}
+.kv>div{border-top-color:var(--line)}
+.kv>div>span:first-child{color:var(--muted)}
+.facts2 span{color:var(--muted);font-size:14px}
+
+/* inset neutral note (6) and evidence gaps */
+.note{background:var(--canvas);border-radius:12px;padding:12px;color:var(--muted);font-size:14px;line-height:20px}
+.empty{border:0;background:var(--canvas);border-radius:12px;padding:12px;color:var(--text2);font-size:14px}
+.split2 div{background:var(--canvas);border-radius:12px;padding:12px}
+.split2 b{font-size:18px;line-height:24px;font-weight:600}
+.split2 span,.split2 small{color:var(--muted);font-size:12px;line-height:16px}
+
+/* buttons, chips */
+.cta{background:var(--accent);color:#fff;border-radius:12px;min-height:44px;font-weight:600}
+.cta:hover{background:var(--accent-dark)}
+.chip{background:var(--accent-soft);color:var(--accent);border-radius:12px;min-height:36px;font-size:14px;font-weight:600}
+
+/* subject type counts */
+.kd{background:var(--a-teal-soft);color:var(--a-teal-ink);font-weight:600;padding:4px 12px 4px 8px}
+.kd svg{color:var(--a-teal-ink)!important}
+.kd b{font-weight:700}
+
+/* charts and visual marks */
+.stack{height:12px;border-radius:6px}
+.leg i{border-radius:3px}
+.track{background:var(--canvas);height:10px}
+.track i{background:var(--a-teal)}
+.hb .bar{background:var(--a-teal);height:10px;border-radius:5px}
+.hb .bar.tr{background:var(--a-yellow)}
+.term .on{background:var(--accent)}
+.ladder .step{background:var(--a-teal-soft);border-radius:12px 12px 6px 6px}
+.ladder .step.you{background:var(--a-yellow-soft);border-top:3px solid var(--a-yellow)}
+.ladder b{font-size:14px}
+.matrix th{color:var(--muted);font-size:12px;font-weight:600}
+.matrix th,.matrix td{border-top-color:var(--line)}
+.matrix .y{color:var(--b-green);font-size:15px}
+.matrix .d{color:var(--muted)}
+.yax .band{background:var(--a-yellow-soft);box-shadow:inset 0 -2px 0 var(--a-yellow)}
+.yax .ic{color:var(--a-teal)} .yax .ic.tr{color:var(--a-yellow-icon)}
+.scale .mk{border-color:#fff}
+.pages .pm{background:var(--a-teal)}
+.pages .bar{background:repeating-linear-gradient(90deg,var(--fill2) 0 3px,var(--canvas) 3px 4px)}
+.g.y{background:var(--ok-soft);color:var(--b-green)} .g.n{background:var(--crit-soft);color:var(--b-red)} .g.w{background:var(--warn-soft);color:var(--b-orange)}
+.g.u{background:#fff;color:var(--muted);border-color:var(--muted)}
+
+/* exclusions */
+.xi{background:var(--canvas);border-radius:12px;width:40px;height:40px;color:var(--muted)}
+.xi::after{color:#fff;background:var(--b-red);width:15px;height:15px;font-size:9px;right:-4px;top:-4px}
+.exc{color:var(--ok);font-size:14px}
+.tile{background:var(--canvas);border-radius:12px;color:var(--muted);font-size:12px}
+.tile .top em{color:var(--b-red)}
+.xg .gh{font-size:14px}
+
+/* watch points */
+.wp{border:0;border-radius:12px;background:var(--canvas);padding:12px 14px}
+.wp.serious{background:var(--warn-soft);box-shadow:inset 3px 0 0 var(--b-orange)}
+.wp.serious .pill.warn,.wp.serious .src{background:#fff}
+.wp.crit{background:var(--crit-soft);box-shadow:inset 3px 0 0 var(--b-red)}
+.wph b{font-size:14px}
+.sr::before{background:var(--accent)} .sr.s1::before{background:var(--b-orange)} .sr.s2::before{background:var(--accent)}
+.typ{font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--muted)}
+.act div{background:#fff;border-radius:12px}
+.act span{font-size:12px;color:var(--muted);font-weight:600}
+
+/* evidence */
+.fv .f{background:var(--ok-soft)} .fv .f h4{color:var(--ok)} .fv .f li span{color:var(--b-green);font-weight:700}
+.fv .m{border:0;background:var(--canvas)}
+.fv h4{font-size:14px}
+.forms code{font-family:var(--f-body);font-weight:600;font-size:14px}
+.forms>div{border-top-color:var(--line)}
+.receipt .tot{border-top-color:var(--ink)}
+.idc{background:var(--accent-soft);border-radius:12px}
+.idc .pn{font-family:var(--f-body);font-size:18px;font-weight:600;letter-spacing:.02em}
+.vt{border:0;background:var(--canvas);border-radius:12px}
+.vt .h{background:transparent;color:var(--muted);font-size:12px}
+.vt .r{border-top-color:#fff;border-top-width:2px}
+.waffle i{border-radius:2px}
+.fb{border-color:var(--b-red)}
+/* prototype shell on Ovie DS */
+.stage{background:var(--stage)}
+body{background:var(--stage)}
+.panel h1{font-family:var(--f-body);font-size:18px;line-height:24px;font-weight:600}
+.pbox{border:0;border-radius:12px}
+.pbox h3{font-size:14px;font-weight:600;color:var(--ink)}
+.seg{border-color:var(--border);border-radius:12px}
+.seg button{min-height:36px;border-left-color:var(--border)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.pbtn{border-color:var(--border);border-radius:12px;min-height:36px}
+.pbtn.pri{background:var(--accent);border-color:var(--accent)}
+select,textarea{border-color:var(--border);border-radius:12px}
+.device{background:var(--canvas);border:0;border-radius:36px;box-shadow:0 20px 50px -20px rgba(0,0,0,.25)}
+.sbar{background:#fff;color:var(--ink)}
+.screen{background:var(--canvas)}
+.anav{background:#fff;border-bottom:1px solid var(--line);padding:4px 16px 10px;gap:8px}
+.anav .t{font-size:18px;line-height:24px;font-weight:600}
+.anav .t small{font-size:12px;line-height:16px;font-weight:400;color:var(--muted)}
+.iconbtn{width:44px;height:44px;border-radius:12px;background:var(--canvas);color:var(--muted)}
+.iconbtn.back{background:transparent;color:var(--ink)}
+.iconbtn svg{width:20px;height:20px;display:block}
+.iconbtn:hover{background:var(--accent-soft)}
+.body{background:var(--canvas);padding:0 16px 104px;gap:18px;font-size:14px}
+.jumpbar{background:var(--canvas);margin:0 -16px;padding:12px 16px 8px;border-bottom:0;gap:8px}
+.jump{min-height:36px;border:1px solid transparent;background:#fff;color:var(--text2);border-radius:999px;padding:0 14px;font-size:14px;font-weight:600}
+.jump[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.sec{background:#fff;border-radius:12px;padding:16px;gap:12px;scroll-margin-top:64px}
+.sec>.card,.sec .card{border:0;padding:0;border-radius:0;background:transparent;gap:12px}
+.sec>.card+.card{border-top:1px solid var(--line);padding-top:16px}
+.sh{font-family:var(--f-body);font-size:18px;line-height:24px;font-weight:600;margin:0;align-items:center}
+.sh span{background:var(--accent-soft);color:var(--accent);font-size:12px;line-height:16px;padding:3px 8px}
+.card.fill{background:#fff;border-radius:12px;padding:16px}
+.iname{font-family:var(--f-body);font-size:18px;line-height:24px;font-weight:600;color:var(--ink)}
+.dock{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:10px 14px 14px;background:rgba(255,255,255,.3);-webkit-backdrop-filter:blur(14px) saturate(1.1);backdrop-filter:blur(14px) saturate(1.1);display:flex;gap:8px;align-items:center}
+.dockin{flex:1;min-width:0;min-height:44px;text-align:left;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--muted);padding:0 12px;display:flex;align-items:center;gap:8px;cursor:text}
+.dockin svg{color:var(--accent);flex:none}
+.dockmic{width:44px;height:44px;border:0;border-radius:12px;background:var(--accent);color:#fff;display:grid;place-items:center;cursor:pointer}
+.msgs .q{background:var(--accent);color:#fff;border-radius:12px 12px 4px 12px}
+.a{background:#fff;border-radius:12px;padding:14px}
+.akv{border-color:var(--line);border-radius:12px}
+.akv div{border-top-color:var(--line)}
+.composer{background:#fff;border-top:1px solid var(--line)}
+.composer input{border-color:var(--border);border-radius:12px;min-height:44px}
+.composer input:focus{outline:0;border-color:var(--accent);box-shadow:var(--focus)}
+.composer button{background:var(--accent);border-radius:12px;min-width:44px}
+#cbody .chips{flex-direction:column;align-items:flex-start}
+#cbody .chip{background:#fff;border:1px solid var(--border);color:var(--text2);min-height:44px}
+.sheet{border-radius:12px 12px 0 0;box-shadow:0 6px 16px rgba(17,17,17,.12)}
+.shead h2{font-family:var(--f-body);font-size:18px;line-height:24px;font-weight:600}
+.toast{background:var(--ink);border-radius:12px}
+.sec>.sh~.card .ch>b{font-size:14px;line-height:20px}
+
+/* serious = red (user decision); colored ladder; centered ✕ badge */
+.wp.serious{background:var(--crit-soft);box-shadow:inset 3px 0 0 var(--b-red)}
+.wp.serious .pill{background:#fff}
+.wp.serious .src,.wp .src{background:transparent}
+.wp.serious .src:hover{background:rgba(255,255,255,.6)}
+.wp .ladder .step,.wp.serious .ladder .step{background:var(--a-teal-soft);border-top:3px solid var(--a-teal)}
+.wp .ladder .step.you,.wp.serious .ladder .step.you{background:var(--a-yellow-soft);border-top:3px solid var(--a-yellow)}
+.ladder .step{border-top:3px solid var(--a-teal)}
+.sr.s1::before{background:var(--b-red)}
+.xi::after{content:"";width:16px;height:16px;right:-5px;top:-5px;border:2px solid #fff;border-radius:50%;background:var(--b-red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7 7 17'/%3E%3C/svg%3E") center/9px 9px no-repeat;display:block;font-size:0;box-sizing:content-box}
+
+/* 12 Oct round 6: vertical watch heads, stroke pills, DS warning highlight for serious + missing data */
+.wph{flex-direction:column;align-items:flex-start;gap:6px}
+.wph b{min-width:0;flex:none}
+.wph .pill,.wp .pill,.wp.serious .pill{background:transparent;border:1px solid currentColor;padding:3px 9px}
+.pill.warn{color:var(--warn-text)} .pill.warn::before{background:var(--b-orange)}
+.scope{background:transparent;border:1px solid var(--border);color:var(--text2);padding:3px 9px}
+.wp.serious{background:var(--warn-soft);border:1px solid var(--warn-border);box-shadow:none}
+.wp.serious p{color:var(--warn-text)}
+.sr.s1::before{background:var(--b-orange)}
+/* missing data / no document = DS warning highlight */
+.empty{background:var(--warn-soft);border:1px solid var(--warn-border);color:var(--warn-text);font-weight:600;display:flex;gap:8px;align-items:flex-start}
+.empty::before{content:"";width:18px;height:18px;flex:none;margin-top:1px;background:var(--warn);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E") center/contain no-repeat}
+.val.unk,.unkpill{display:inline-flex;align-items:center;gap:5px;background:var(--warn-soft);border:1px solid var(--warn-border);color:var(--warn-text);border-radius:999px;padding:2px 10px;font-size:12px;line-height:16px;font-weight:600;font-style:normal;white-space:nowrap}
+.val.unk::before,.unkpill::before{content:"";width:12px;height:12px;flex:none;background:var(--warn);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E") center/contain no-repeat}
+.g.u{background:var(--warn-soft);border:1px solid var(--warn-border);color:var(--warn)}
+.fv .m{background:var(--warn-soft);border:1px solid var(--warn-border)}
+.fv .m h4,.fv .m ul,.fv .m li{color:var(--warn-text)}
+.matrix .unkpill{white-space:normal;flex-direction:column;gap:2px;padding:4px 5px;border-radius:8px;font-size:11px;line-height:13px;text-align:center;max-width:52px}
+.matrix th,.matrix td{padding-left:2px;padding-right:2px}
+.matrix td{overflow-wrap:anywhere}
+.matrix{table-layout:fixed}
+.matrix th:first-child{width:24%}
+
+/* round 7: serious card unhighlighted; serious pill orange (text #C2410C for AA, dot #EA580C) */
+:root{--orange-text:#C2410C}
+.wp.serious{background:var(--canvas);border:0;box-shadow:none}
+.wp.serious p{color:var(--muted)}
+.pill.warn{color:var(--orange-text);border-color:var(--orange-text)}
+.pill.warn::before{background:var(--b-orange)}
+</style><style>
+/* ===== v2: upfront rows + drill-down sheets ===== */
+.ir{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:12px 0;min-height:52px;font:inherit;color:inherit}
+button.ir{cursor:pointer}
+.sh+.ir,.sh+.note+.ir{border-top:0}
+.ir-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.ir-t{font-weight:600;font-size:14px;line-height:20px;overflow-wrap:anywhere}
+.ir-s{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ir-sum{color:var(--text2);font-size:14px;line-height:20px}
+.ir-v{text-align:right;font-weight:600;font-size:16px;line-height:22px;white-space:normal;font-variant-numeric:tabular-nums;flex:none;max-width:48%}
+.ir-v small{display:block;font-size:12px;line-height:16px;font-weight:400;color:var(--muted);white-space:normal}
+.ir .chev,.seeall .chev{color:var(--muted);font-size:22px;line-height:1;flex:none;font-weight:400}
+@media (hover:hover) and (pointer:fine){button.ir:hover .ir-t,.seeall:hover{color:var(--accent-dark)}}
+button.ir:active{transform:scale(.99)}
+.ir .xi{flex:none}
+.ir .g.u{flex:none}
+.mbar{display:block;height:6px;border-radius:3px;background:var(--a-teal);margin-top:2px;max-width:100%}
+.mbar.y{background:var(--a-yellow)}
+.seeall{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;border:0;border-top:1px solid var(--line);background:none;color:var(--accent);font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:10px 0 0;text-align:left}
+.sec>.seeall:first-of-type{margin-top:0}
+.tagx{font-size:12px;line-height:16px;font-weight:600;color:var(--ok);border:1px solid #BFE5C8;border-radius:999px;padding:2px 8px}
+.hero-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.hero{font-family:var(--f-body);font-size:32px;line-height:36px;font-weight:600}
+.ink{color:var(--ink);font-weight:600}
+.sg{display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
+.sh+.sg,.sh+.note+.sg{border-top:0;padding-top:0}
+.sg .ir{padding:10px 0;min-height:48px}
+.sg-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sg-h b{font-size:14px}
+.cnt{background:var(--accent-soft);color:var(--accent);font-size:12px;line-height:16px;font-weight:600;border-radius:999px;padding:2px 8px}
+.stchips{display:flex;flex-wrap:wrap;gap:6px}
+.stchips span{font-size:12px;line-height:16px;font-weight:600;border:1px solid var(--a-teal);color:var(--a-teal-ink);background:var(--a-teal-soft);border-radius:8px;padding:3px 0;width:38px;text-align:center}
+.stchips.neg span{background:#fff;border-color:var(--border);color:var(--muted);text-decoration:line-through}
+.stchips .more{border:1px solid var(--border);background:#fff;border-radius:8px;font:inherit;font-size:12px;font-weight:600;padding:3px 8px;color:var(--accent);cursor:pointer}
+.stchips.big span{font-size:13px;padding:5px 0;width:44px}
+.pad{padding-top:8px}
+.crit-t{color:var(--crit);display:block;font-weight:600;font-size:12px;line-height:16px;margin-top:2px}
+.ir-crit .pill{margin-bottom:2px}
+/* sheets */
+.sheet{max-height:84%}
+.shead{align-items:center}
+.shead .t{min-width:0}
+.bigval{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.bigval .big{font-family:var(--f-body);font-size:24px;line-height:30px;font-weight:600}
+.lede2{font-size:14px;line-height:20px;color:var(--text2)}
+.bul{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--text2)}
+.tblwrap{overflow-x:auto;border-radius:12px;background:var(--canvas);padding:4px 8px}
+.tbl{border-collapse:collapse;font-size:12px;line-height:16px;width:100%;min-width:420px}
+.tbl th,.tbl td{text-align:left;padding:7px 6px;border-top:1px solid #fff}
+.tbl th{border-top:0;color:var(--muted);font-weight:600}
+.tbl td:last-child,.tbl th:last-child{text-align:right;font-weight:600}
+.cards{display:flex;flex-direction:column;gap:8px}
+.sc{display:flex;flex-direction:column;gap:4px;text-align:left;width:100%;background:var(--canvas);border:0;border-radius:12px;padding:12px;font:inherit;color:inherit;cursor:pointer}
+.sc-h{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.sc-h b{flex:1;min-width:50%;font-size:14px}
+.sc-v{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.sc-v small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.sc-s{color:var(--muted);font-size:14px;line-height:20px}
+.sc .exc{font-size:13px}
+.search{width:100%;min-height:44px;border:1px solid var(--border);border-radius:12px;padding:0 12px;font:inherit;background:#fff;color:var(--ink)}
+.search:focus{outline:0;border-color:var(--accent);box-shadow:var(--focus)}
+.cta.ghost{background:#fff;color:var(--accent);border:1px solid var(--border)}
+.sbody .grp{margin-top:4px}
+.sbody .chips{gap:8px}
+.sbody .chip{border:1px solid var(--border);background:#fff;color:var(--text2);min-height:36px}
+/* contract check panel */
+.ck{display:flex;justify-content:space-between;gap:10px;font-size:13px;line-height:18px;border-top:1px solid var(--line);padding:7px 0}
+.ck:first-child{border-top:0}
+.ck span{color:var(--muted)}
+.ck b{text-align:right;overflow-wrap:anywhere}
+.okt{color:var(--ok)}
+.qa{border-top:1px solid var(--line);padding-top:8px;font-size:13px}
+.qa ul{margin:4px 0 0;padding-left:16px;font-size:12.5px;line-height:17px;color:var(--text2);display:grid;gap:4px}
+.seg2{display:flex;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.seg2 button{flex:1;border:0;background:#fff;min-height:40px;font:inherit;font-weight:600;font-size:13px;cursor:pointer;border-left:1px solid var(--border);padding:0 6px}
+.seg2 button:first-child{border-left:0}
+.seg2 button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.rules{margin:0;padding-left:16px;font-size:12.5px;line-height:17px;color:var(--text2);display:grid;gap:5px}
+
+
+/* premium upfront stats + sum layout + sheet actions */
+.pstats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pstats>div{display:flex;flex-direction:column;min-width:0}
+.pstats>div+div{border-left:1px solid var(--line);padding-left:12px}
+.pstats span{font-size:14px;line-height:20px;color:var(--muted)}
+.pstats b{font-size:22px;line-height:28px;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.pstats small{font-size:12px;line-height:16px;color:var(--muted)}
+.sum{display:flex;flex-direction:column}
+.sumr{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;border-top:1px solid var(--line);padding:10px 0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.sum>.sumr:first-child{border-top:0}
+.sumr .sg2{width:12px;flex:none;color:var(--muted);font-weight:600;text-align:center}
+.sumr i{width:10px;height:10px;border-radius:3px;flex:none}
+.sumr i.none{background:transparent}
+.sumr .sl{flex:1;min-width:0;font-size:14px;line-height:20px}
+.sumr .sl small{display:block;font-size:12px;line-height:16px;color:var(--muted)}
+.sumr b{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.sumr.tot{border-top:1px solid var(--ink)}
+.sumr.tot .sl,.sumr.tot b{font-weight:600}
+.sumr.tot .sl small{font-weight:400}
+.sactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.sactions .cta{margin:0;min-height:44px}
+.sactions .cta:only-child{grid-column:1 / -1}
+.tt{width:100%;border-collapse:collapse;font-size:12px;line-height:16px}
+.tt th,.tt td{padding:6px 4px;border-top:1px solid var(--line);text-align:right}
+.tt th{border-top:0;color:var(--muted);font-weight:600}
+.tt th:first-child,.tt td:first-child{text-align:left}
+.tt td.err{color:var(--crit);font-weight:600}
+.tt td.okt{color:var(--ok);font-weight:600}
+.seg2{flex-wrap:wrap}
+.seg2 button{min-width:30%}
+/* boxes → dividers */
+.hl b small{font-weight:400}
+.cards{gap:0}
+.sc{background:transparent;border-radius:0;padding:12px 0;border-top:1px solid var(--line)}
+.cards>.sc:first-child{border-top:0;padding-top:4px}
+@media (hover:hover) and (pointer:fine){.sc:hover b{color:var(--accent-dark)}}
+.sbody .split2{display:flex;flex-direction:column;gap:0}
+.sbody .split2>div{background:transparent;border-radius:0;padding:10px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:baseline}
+.sbody .split2>div:first-child{border-top:0;padding-top:0}
+.sbody .split2>div>span{grid-column:1;grid-row:1;font-size:14px;line-height:20px;color:var(--text2)}
+.sbody .split2>div>b{grid-column:2;grid-row:1;text-align:right;font-size:18px;line-height:24px}
+.sbody .split2>div>small{grid-column:1 / -1;grid-row:2;font-size:12px;line-height:16px;color:var(--muted)}
+.tblwrap{background:transparent;border-radius:0;padding:0}
+.tbl th,.tbl td{border-top:1px solid var(--line)}
+.tbl th{border-top:0}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-truck" viewBox="0 0 32 20"><rect x="1" y="4" width="19" height="11" rx="1.5" fill="currentColor"/><path d="M20 7h6l4 4v4H20z" fill="currentColor"/><circle cx="7" cy="16.5" r="2.8" fill="currentColor" style="stroke:var(--phone)" stroke-width="1.5"/><circle cx="25" cy="16.5" r="2.8" fill="currentColor" style="stroke:var(--phone)" stroke-width="1.5"/></symbol>
+<symbol id="i-trailer" viewBox="0 0 32 20"><rect x="5" y="5" width="22" height="9" rx="1.5" fill="currentColor"/><rect x="0" y="11" width="6" height="1.8" fill="currentColor"/><circle cx="17" cy="16.5" r="2.8" fill="currentColor" style="stroke:var(--phone)" stroke-width="1.5"/></symbol>
+<symbol id="x-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></symbol>
+<symbol id="x-med" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M12 11v6M9 14h6"/></symbol>
+<symbol id="x-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6zM15 3v4h4M9 13h6M9 17h4"/></symbol>
+<symbol id="x-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="x-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8l8-4 8 4v10l-8 4-8-4zM4 8l8 4 8-4M12 12v10"/></symbol>
+<symbol id="x-load" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M12 4v11M8 11l4 4 4-4"/></symbol>
+<symbol id="x-drop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/></symbol>
+<symbol id="x-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h12l-2 4 2 4H5"/></symbol>
+<symbol id="x-burst" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/></symbol>
+<symbol id="x-generic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/></symbol>
+<symbol id="i-house" viewBox="0 0 32 20"><path d="M16 1l12 9h-3v9H7v-9H4z" fill="currentColor"/></symbol>
+<symbol id="i-person" viewBox="0 0 32 20"><circle cx="16" cy="6" r="4.5" fill="currentColor"/><path d="M8 20c0-5 3.6-8 8-8s8 3 8 8z" fill="currentColor"/></symbol>
+<symbol id="i-dot" viewBox="0 0 32 20"><circle cx="16" cy="10" r="7" fill="currentColor"/></symbol>
+<symbol id="x-law" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 7h14M7 7l-3 7a3 3 0 0 0 6 0zM17 7l-3 7a3 3 0 0 0 6 0zM8 21h8"/></symbol>
+<symbol id="x-flagus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M19 21V10M9 21v-7M15 21v-7M3 10l9-6 9 6z"/></symbol>
+<symbol id="x-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="x-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.8 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/></symbol>
+<symbol id="i-pin" viewBox="0 0 32 20"><path d="M16 19s6-5 6-10a6 6 0 1 0-12 0c0 5 6 10 6 10z" fill="currentColor"/></symbol>
+<symbol id="i-brief" viewBox="0 0 32 20"><rect x="7" y="5" width="18" height="13" rx="2" fill="currentColor"/><path d="M12 5V3h8v2" stroke="currentColor" stroke-width="2" fill="none"/></symbol>
+</defs>
+</svg>
+<div class="stage">
+  <aside class="panel left" aria-label="Prototype controls">
+    <div><div class="eyebrow">Ovie · contract v2 test</div>
+    <h1>Insights, any policy</h1>
+    <p class="hint">One renderer, any extraction. Switch policy: nothing in the code changes, only the data.</p></div>
+    <div class="pbox">
+      <h3>Policy file</h3>
+      <div class="seg2" id="polSwitch" role="group" aria-label="Policy"></div>
+      <button class="pbtn" id="addUnknown" type="button">Add a section the renderer has never seen</button>
+    </div>
+    <div class="pbox">
+      <h3>Contract check</h3>
+      <div id="check"></div>
+    </div>
+    <div class="pbox">
+      <h3>All policies, same renderer</h3>
+      <div id="testAll"></div>
+    </div>
+    <div class="pbox">
+      <h3>Pretend today is</h3>
+      <select id="todaySel" aria-label="Pretend today is">
+        <option value="real">Real date</option>
+        <option value="mid">30 days into the term</option>
+        <option value="soon">12 days before the end</option>
+        <option value="before">Before the term starts</option>
+      </select>
+    </div>
+    <div class="pbox">
+      <h3>Upfront vs. drill-down</h3>
+      <ul class="rules">
+        <li>Upfront: title, one value with its basis, who it applies to, severity, anything missing.</li>
+        <li>Tap a row: summary, every value, conditions, steps, tables, related facts, source.</li>
+        <li>Lists over the cap show the top items + "See all" with search.</li>
+        <li>Critical watch points keep their sentence upfront.</li>
+      </ul>
+    </div>
+  </aside>
+
+  <div class="device" id="device">
+    <div class="sbar"><span>9:41</span><span>5G ▮▮▮</span></div>
+    <div class="screens">
+      <section class="screen" id="scrInsights">
+        <div class="anav"><button class="iconbtn back" data-toast="Insights list isn't part of this prototype" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><div class="t" id="appTitle">Insights<small></small></div><button class="iconbtn" data-toast="Search isn't part of this prototype" aria-label="Search insights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button><button class="iconbtn" data-toast="Sharing isn't part of this prototype" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/></svg></button></div>
+        <div class="body" id="ibody"></div>
+        <div class="dock"><button type="button" class="dockin" data-tab="chat" aria-label="Ask Ovie about this policy"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c5 0 9 3.4 9 7.8 0 2.3-1.1 4.3-2.9 5.7l1.4 4.2-4.6-2.2c-1 .3-1.9.4-2.9.4-5 0-9-3.4-9-7.9S7 3 12 3z"/><path d="M9.5 9.5v2.5M14.5 9.5v2.5"/></svg><span>Ask about this policy</span></button><button type="button" class="dockmic" data-tab="chat" aria-label="Ask Ovie by voice"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button></div>
+      </section>
+      <section class="screen" id="scrChat" hidden>
+        <div class="anav"><button class="iconbtn back" data-tab="insights" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><div class="t">Ask Ovie<small id="chatSub"></small></div><button class="iconbtn" id="newChat" aria-label="New chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
+        <div class="body" id="cbody"><div class="msgs" id="msgs"></div><div class="chips" id="cchips"></div></div>
+        <form class="composer" id="composer"><input id="cin" placeholder="Ask about this policy…" autocomplete="off" aria-label="Ask about this policy"><button type="submit">Ask</button></form>
+      </section>
+    </div>
+    <div class="scrim" id="scrim" hidden></div>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+      <div class="grab"></div>
+      <div class="shead"><button class="iconbtn back" id="sheetBack" aria-label="Back" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><div class="t"><h2 id="sheetTitle"></h2><small class="muted" id="sheetSub"></small></div><button class="iconbtn back" id="sheetClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="sbody" id="sheetBody"></div>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+  </div>
+
+  <aside class="panel right" aria-label="Extraction JSON">
+    <div class="pbox">
+      <h3>Extraction JSON (contract v2)</h3>
+      <p class="hint">Paste any policy's payload and apply. Unknown section types use the standard list; unknown fields appear under Details.</p>
+      <textarea id="json" spellcheck="false" aria-label="Extraction JSON"></textarea>
+      <div class="prow"><button class="pbtn pri" id="applyJson" type="button">Apply</button><button class="pbtn" id="resetJson" type="button">Reset</button><span id="jsonMsg"></span></div>
+    </div>
+  </aside>
+</div>
+<script>
+/* ===== Extraction payloads in contract ovie-insights/2 ===== */
+var DS_CA = "Business Auto Declarations", DS_CPD = "Common Policy Declarations", DS_SCH = "Auto Schedule", DS_FORM = "Policy form U-CA-D 600 C(0414)";
+var POLICIES = {};
+
+POLICIES.auto = {
+  "contract": "ovie-insights/2",
+  "policy": {
+    "line": "Business auto",
+    "insured": { "name": "Gallatin County Water District", "description": "Special district", "address": "4500 Hwy 455, Sparta, KY 41086" },
+    "carrier": "American Zurich Insurance Company",
+    "policyNumber": "CPO-0632562-02",
+    "term": { "start": "2021-07-01", "end": "2022-07-01" },
+    "events": [],
+    "broker": { "name": "Allied Public Risk LLC", "id": "56139000", "address": "4507 North Front Street Suite 200, Harrisburg, PA 17110" },
+    "form": { "number": "U-CA-D 600 C(0414)", "title": "Business Auto Declarations" },
+    "details": [
+      { "label": "Entity type", "value": "Not specified beyond special district" }
+    ],
+    "sources": [{ "doc": DS_CPD, "page": 1 }, { "doc": DS_CA, "page": 111 }]
+  },
+  "sections": [
+    { "id": "premium", "type": "premium", "title": "Premium",
+      "chart": { "type": "stack", "line": "p-line", "fees": ["p-fees"], "total": "p-total" },
+      "note": "No per-vehicle premium was given.",
+      "items": [
+        { "id": "p-line", "group": "What you pay", "title": "Business auto premium", "value": { "type": "money", "amount": 3013, "qualifier": "per year" }, "sources": [{ "doc": DS_CA, "page": 112 }] },
+        { "id": "p-fees", "group": "What you pay", "title": "Terrorism, taxes and data fee", "value": { "type": "money", "amount": 700.31, "qualifier": "for the whole package" },
+          "detail": { "rows": [ { "label": "Terrorism", "value": { "type": "money", "amount": 287 } }, { "label": "Taxes and surcharges", "value": { "type": "money", "amount": 163.31 } }, { "label": "Data fee", "value": { "type": "money", "amount": 250 } } ] },
+          "sources": [{ "doc": DS_CPD, "page": 1 }, { "doc": DS_CPD, "page": 94 }] },
+        { "id": "p-total", "group": "What you pay", "title": "Package total, all lines", "value": { "type": "money", "amount": 18597.31, "qualifier": "includes other lines" }, "sources": [{ "doc": DS_CPD, "page": 1 }] }
+      ] },
+
+    { "id": "coverage", "type": "coverage", "title": "What's covered",
+      "items": [
+        { "id": "liability", "keywords": ["accident","injury","sued","truck","car"], "title": "Injury and damage you cause", "formal": "Liability", "appliesTo": ["Any auto"],
+          "value": { "type": "money", "amount": 1000000, "qualifier": "each accident" },
+          "summary": "Pays for other people's injuries and property damage when an auto used for the district causes an accident.",
+          "detail": { "rows": [ { "label": "Autos covered", "value": "Owned, hired, leased, borrowed and non-owned" } ] },
+          "sources": [{ "doc": DS_CA, "page": 112 }] },
+        { "id": "uninsured", "title": "Hit by a driver with no insurance", "formal": "Uninsured motorists", "appliesTo": ["Owned autos"],
+          "value": { "type": "money", "amount": 1000000, "qualifier": "each accident" },
+          "summary": "Pays for injuries to people in your autos when the at-fault driver has no insurance.",
+          "sources": [{ "doc": DS_CA, "page": 112 }] },
+        { "id": "underinsured", "title": "Hit by a driver with too little insurance", "formal": "Underinsured motorists", "appliesTo": ["Owned autos"],
+          "value": { "type": "money", "amount": 1000000, "qualifier": "each accident" },
+          "summary": "Pays when the at-fault driver's insurance isn't enough to cover the injuries.",
+          "sources": [{ "doc": DS_CA, "page": 112 }] },
+        { "id": "comprehensive", "keywords": ["theft","stolen","fire","weather","rent","rented","rental","hired","truck","car"], "title": "Theft, fire, weather", "formal": "Comprehensive",
+          "values": [
+            { "label": "7 listed autos", "type": "text", "text": "Actual cash value", "short": "ACV", "note": "or repair cost if less · you pay $500" },
+            { "label": "Hired autos", "type": "money", "amount": 35000, "qualifier": "each loss", "note": "you pay $500" }
+          ],
+          "summary": "Pays for damage to the auto that isn't a crash, such as theft, fire and weather.",
+          "detail": { "ladder": [ { "label": "You pay, each auto", "amount": 500 }, { "label": "Most the policy pays for a hired auto", "amount": 35000 } ] },
+          "related": ["w-hired", "w-acv"],
+          "sources": [{ "doc": DS_CA, "page": 112 }, { "doc": DS_CA, "page": 116 }, { "doc": DS_SCH, "page": 121 }] },
+        { "id": "collision", "keywords": ["crash","accident","rent","rented","rental","hired","truck","car"], "title": "Crash damage", "formal": "Collision",
+          "values": [
+            { "label": "7 listed autos", "type": "text", "text": "Actual cash value", "short": "ACV", "note": "or repair cost if less · you pay $500" },
+            { "label": "Hired autos", "type": "money", "amount": 35000, "qualifier": "each loss", "note": "you pay $500" }
+          ],
+          "summary": "Pays for damage to the auto from a crash.",
+          "detail": { "ladder": [ { "label": "You pay, each auto", "amount": 500 }, { "label": "Most the policy pays for a hired auto", "amount": 35000 } ] },
+          "related": ["w-hired", "w-acv"],
+          "sources": [{ "doc": DS_CA, "page": 112 }, { "doc": DS_CA, "page": 116 }, { "doc": DS_SCH, "page": 121 }] },
+        { "id": "pip", "title": "No-fault medical (KY)", "formal": "Personal injury protection", "appliesTo": ["Owned autos needing no-fault"],
+          "value": { "type": "not_stated", "text": "Limit not stated" },
+          "summary": "Pays Kentucky no-fault benefits. The limit is in a separate endorsement that wasn't in your documents.",
+          "detail": { "rows": [ { "label": "Limit basis", "value": "PIP endorsement, minus deductible" } ] },
+          "sources": [{ "doc": DS_CA, "page": 112 }] }
+      ] },
+
+    { "id": "subjects", "type": "subjects", "title": "What's insured",
+      "note": "All 7 autos: liability, UM/UIM, comprehensive and collision · $500 deductibles · paid at actual cash value.",
+      "groups": [ { "name": "Listed autos" }, { "name": "Drivers" } ],
+      "items": [
+        { "id": "veh-1", "group": "Listed autos", "kind": "trailer", "keywords": ["trailer","vehicle","truck","car","autos"], "title": "1997 Hurst Trailer", "value": { "type": "money", "amount": 2750, "qualifier": "cost new" }, "detail": { "rows": [ { "label": "Vehicle no.", "value": "1" }, { "label": "VIN", "value": "1HT9T41834V1057027" }, { "label": "Deductibles", "value": "Comprehensive $500 · Collision $500" } ] }, "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "veh-2", "group": "Listed autos", "kind": "truck", "keywords": ["truck","vehicle","car","autos"], "title": "1998 GMC Sierra", "value": { "type": "money", "amount": 22000, "qualifier": "cost new" }, "detail": { "rows": [ { "label": "Vehicle no.", "value": "2" }, { "label": "VIN", "value": "1GDJC34R6WF032684" }, { "label": "Deductibles", "value": "Comprehensive $500 · Collision $500" } ] }, "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "veh-3", "group": "Listed autos", "kind": "truck", "keywords": ["truck","vehicle","car","autos"], "title": "2010 Ford F250", "value": { "type": "money", "amount": 26295, "qualifier": "cost new" }, "detail": { "rows": [ { "label": "Vehicle no.", "value": "3" }, { "label": "VIN", "value": "1FTSX2B50AEA08886" }, { "label": "Deductibles", "value": "Comprehensive $500 · Collision $500" } ] }, "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "veh-4", "group": "Listed autos", "kind": "truck", "keywords": ["truck","vehicle","car","autos"], "title": "2012 Ford F250", "value": { "type": "money", "amount": 35000, "qualifier": "cost new" }, "detail": { "rows": [ { "label": "Vehicle no.", "value": "4" }, { "label": "VIN", "value": "1FT7X2B68CEA12959" }, { "label": "Deductibles", "value": "Comprehensive $500 · Collision $500" } ] }, "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "veh-5", "group": "Listed autos", "kind": "truck", "keywords": ["truck","vehicle","car","autos"], "title": "2016 Ford F150", "value": { "type": "money", "amount": 27204, "qualifier": "cost new" }, "detail": { "rows": [ { "label": "Vehicle no.", "value": "5" }, { "label": "VIN", "value": "1FTFX1EF9GFB03420" }, { "label": "Deductibles", "value": "Comprehensive $500 · Collision $500" } ] }, "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "veh-6", "group": "Listed autos", "kind": "truck", "keywords": ["truck","vehicle","car","autos"], "title": "2017 Chevrolet 1500", "value": { "type": "money", "amount": 29946, "qualifier": "cost new" }, "detail": { "rows": [ { "label": "Vehicle no.", "value": "6" }, { "label": "VIN", "value": "1GCUYAEF4KZ310485" }, { "label": "Deductibles", "value": "Comprehensive $500 · Collision $500" } ] }, "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "veh-7", "group": "Listed autos", "kind": "trailer", "keywords": ["trailer","vehicle","truck","car","autos"], "title": "2020 BigTex Utility Trailer", "value": { "type": "money", "amount": 4600, "qualifier": "cost new" }, "detail": { "rows": [ { "label": "Vehicle no.", "value": "7" }, { "label": "VIN", "value": "16VEX2026L2053636" }, { "label": "Deductibles", "value": "Comprehensive $500 · Collision $500" } ] }, "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "drivers", "group": "Drivers", "kind": "person", "title": "No driver list in your documents", "value": { "type": "not_stated", "text": "Not listed" }, "summary": "No named or excluded drivers are shown, and no driver-restriction endorsements are referenced.", "sources": [] }
+      ] },
+
+    { "id": "watch", "type": "watch", "title": "Watch points", "ratedBy": "ovie",
+      "items": [
+        { "id": "w-hired", "keywords": ["rent","rented","rental","hired"], "severity": "serious", "title": "Hired autos capped at $35,000", "summary": "Renting a vehicle worth more than $35,000 could leave you paying the difference.", "detail": { "ladder": [ { "label": "You pay, each auto", "amount": 500 }, { "label": "Most the policy pays, each loss", "amount": 35000 } ] }, "related": ["comprehensive", "collision"], "sources": [{ "doc": DS_CA, "page": 116 }] },
+        { "id": "w-acv", "severity": "serious", "title": "Damage paid at actual cash value", "summary": "Claims pay what an auto is worth today after wear and age, not what it costs to replace. 3 of the 7 autos were over 10 years old at policy start.", "related": ["comprehensive", "collision"], "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "w-scope", "severity": "review", "title": "Each coverage applies to a different group of autos", "summary": "Liability covers any auto. Uninsured and underinsured cover owned autos only. Comprehensive and collision cover listed and hired autos.", "related": ["liability", "uninsured"], "sources": [{ "doc": DS_CA, "page": 112 }] },
+        { "id": "w-new", "severity": "review", "title": "New vehicles must be added to the schedule", "summary": "A newly bought unit needs to be scheduled and endorsed before comprehensive and collision apply.", "sources": [{ "doc": DS_SCH, "page": 121 }] }
+      ] },
+
+    { "id": "exclusions", "type": "exclusions", "title": "Not covered", "complete": false, "completeNote": "From policy form U-CA-D 600 C(0414), Section II. The full form may list more.",
+      "items": [
+        { "id": "x1", "concept": "employee", "title": "Injuries to your employees", "formal": "Employee indemnification and employer's liability", "summary": "Covered by a separate workers' comp policy.", "sources": [{ "doc": DS_FORM, "section": "II" }] },
+        { "id": "x2", "concept": "medical", "title": "Workers' comp benefits", "formal": "Workers' compensation", "summary": "This policy doesn't pay them.", "sources": [{ "doc": DS_FORM, "section": "II" }] },
+        { "id": "x3", "concept": "contract", "title": "Liability you take on in a contract", "formal": "Contractual liability", "exceptions": ["Where the policy specifically allows it"], "sources": [{ "doc": DS_FORM, "section": "II" }] },
+        { "id": "x4", "concept": "intended", "title": "Harm you expected or intended", "formal": "Expected or intended injury", "sources": [{ "doc": DS_FORM, "section": "II" }] },
+        { "id": "x5", "concept": "box", "title": "Property you own, carry or look after", "formal": "Care, custody or control", "summary": "Includes cargo in your autos.", "sources": [{ "doc": DS_FORM, "section": "II" }] },
+        { "id": "x6", "concept": "load", "title": "Handling property", "formal": "Handling of property", "summary": "Before loading or after unloading.", "sources": [{ "doc": DS_FORM, "section": "II" }] },
+        { "id": "x7", "concept": "pollution", "title": "Pollution", "formal": "Pollution", "summary": "Most pollution losses.", "exceptions": ["As endorsed or excepted in the form"], "sources": [{ "doc": DS_FORM, "section": "II" }] },
+        { "id": "x8", "concept": "racing", "title": "Racing", "formal": "Racing", "summary": "Professional or organised racing.", "sources": [{ "doc": DS_FORM, "section": "II" }] },
+        { "id": "x9", "concept": "war", "title": "War and nuclear", "formal": "War and nuclear", "summary": "Acts of war, nuclear incidents.", "sources": [{ "doc": DS_FORM, "section": "II" }] }
+      ] },
+
+    { "id": "conditions", "type": "conditions", "title": "Deductibles & conditions",
+      "items": [
+        { "id": "d1", "title": "Theft, fire, weather deductible", "appliesTo": ["7 listed autos"], "value": { "type": "money", "amount": 500, "qualifier": "each auto, each loss" }, "detail": { "rows": [ { "label": "Note", "value": "Fire/lightning exception mentioned, not detailed" } ] }, "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "d2", "title": "Crash damage deductible", "appliesTo": ["7 listed autos"], "value": { "type": "money", "amount": 500, "qualifier": "each auto, each loss" }, "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "d3", "keywords": ["rent","rented","rental","hired"], "title": "Hired autos deductible", "appliesTo": ["Hired autos"], "value": { "type": "money", "amount": 500, "qualifier": "each auto" }, "summary": "Policy pays up to $35,000 each loss after you pay $500.", "sources": [{ "doc": DS_CA, "page": 116 }] },
+        { "id": "d4", "title": "How damage is valued", "value": { "type": "text", "text": "Actual cash value", "short": "ACV" }, "summary": "Actual cash value or cost of repair, whichever is less.", "sources": [{ "doc": DS_SCH, "page": 121 }] },
+        { "id": "d5", "title": "Liability, UM/UIM, no-fault deductible", "value": { "type": "none_listed", "text": "None listed" }, "sources": [{ "doc": DS_CA, "page": 112 }] }
+      ] },
+
+    { "id": "forms", "type": "forms", "title": "Forms & documents",
+      "items": [
+        { "id": "f1", "title": "Business Auto Declarations", "formal": "U-CA-D 600 C(0414)", "value": { "type": "text", "text": "Found" }, "sources": [{ "doc": DS_CA, "page": 111 }] },
+        { "id": "f2", "title": "Common Policy Conditions", "formal": "IL 00 17", "value": { "type": "text", "text": "Referenced" }, "sources": [{ "doc": DS_CA, "page": 111 }] },
+        { "id": "f3", "title": "Broad Form Nuclear Exclusion", "formal": "IL 00 21", "value": { "type": "text", "text": "Referenced" }, "sources": [{ "doc": DS_CA, "page": 111 }] }
+      ],
+      "documents": [{ "name": "CPO-0632562-02 policy package", "pages": 130, "citedPages": [1, 94, 111, 112, 116, 121] }] },
+
+    { "id": "gaps", "type": "gaps", "title": "Not found in your documents",
+      "items": [
+        { "id": "g1", "title": "Driver list", "summary": "No named or excluded drivers." },
+        { "id": "g2", "title": "Auto endorsements", "summary": "Declarations say \"see schedule of forms and endorsements\"; only IL 00 17 and IL 00 21 are named." },
+        { "id": "g3", "title": "No-fault (PIP) limit", "summary": "Set in a separate PIP endorsement.", "related": ["pip"] },
+        { "id": "g4", "title": "State-specific endorsements", "summary": "None shown for auto." },
+        { "id": "g5", "title": "Premium per vehicle", "summary": "Only the policy-level $3,013." },
+        { "id": "g6", "title": "Coverage territory details", "summary": "Set in policy form Section VII; details weren't extracted." }
+      ] }
+  ],
+  "qa": [
+    "VIN check: 1997 Hurst VIN has 18 characters; 2017 Chevrolet VIN year code reads 2019.",
+    "Fee citation differs: p.1 in §1, p.94 in §10.",
+    "Raw §7 'No coverage for non-scheduled drivers' dropped as misleading; drivers moved to gaps."
+  ]
+};
+
+var DS_INFO = "Information Page WC 99 00 01 C", DS_WCF = "Policy form WC 00 00 00 A", DS_EXT1 = "Ext. of Information Page, Item 1", DS_EXT4 = "Ext. of Information Page, Item 4";
+var ST_A = ["AL","AR","AZ","CA","CT","DE","FL","GA","IA","ID","IL","IN","KS","KY","LA","MA","MD","ME","MI","MN","MO","MS","MT","NC","NE","NH","NJ","NM","NY","OK","OR","PA","SC","SD","TN","VA","VT","WI","WV"];
+
+POLICIES.wc = {
+  "contract": "ovie-insights/2",
+  "policy": {
+    "line": "Workers' comp & employers liability",
+    "insured": { "name": "Personnel Staffing Group, LLC", "description": "DBA Barnett Management", "address": "1751 Lake Cook Road, Suite 600, Deerfield, IL 60015" },
+    "carrier": "Wesco Insurance Company",
+    "policyNumber": "WWC3216474",
+    "term": { "start": "2016-06-30", "end": "2017-06-30" },
+    "events": [ { "date": "2016-08-05", "label": "Cancelled at the insured's request", "effect": "ends_coverage", "sources": [{ "doc": "Notice of Cancellation", "page": 340 }, { "doc": "Policy Termination Notice", "page": 341 }] } ],
+    "broker": { "name": "AmWINS Specialty Casualty Solutions, LLC" },
+    "form": { "number": "WC 00 00 00 A", "title": "Workers Compensation and Employers Liability Insurance Policy" },
+    "details": [
+      { "label": "Program", "value": "Guaranteed cost (not assigned risk, large-deductible or retrospective)", "sources": [{ "doc": "New Policy Welcome Letter", "page": 2 }] },
+      { "label": "Business description", "value": "Temporary staffing", "sources": [{ "doc": "Notice of Cancelation by Carrier", "page": 346 }] }
+    ],
+    "sources": [{ "doc": DS_INFO, "page": 1 }]
+  },
+  "sections": [
+    { "id": "premium", "type": "premium", "title": "Premium",
+      "chart": { "type": "stack", "line": "p-est", "fees": ["p-assess"], "total": "p-total" },
+      "note": "Final premium is set by payroll audit. Earned premium after the cancellation isn't given.",
+      "items": [
+        { "id": "p-est", "group": "What you pay", "title": "Estimated annual premium", "value": { "type": "money", "amount": 33316855, "qualifier": "estimated, per year" },
+          "detail": { "summary": "Premium is payroll × rate for each class code and state. California examples:",
+            "table": { "columns": ["Class", "Description", "Payroll", "Rate", "Premium"], "rows": [
+              ["2003", "Bakeries and cracker mfg.", "$31,046,000", "$17.26", "$5,358,540"],
+              ["8292", "Warehouses, general merchandise", "$61,121,000", "$18.94", "$11,576,317"],
+              ["8810", "Clerical office employees", "$17,185,000", "$0.88", "$151,228"] ] } },
+          "sources": [{ "doc": DS_INFO, "page": 1 }, { "doc": "Schedule of Premiums", "page": 63 }] },
+        { "id": "p-assess", "group": "What you pay", "title": "State assessments and fees", "value": { "type": "money", "amount": 876184 }, "sources": [{ "doc": DS_INFO, "page": 1 }] },
+        { "id": "p-total", "group": "What you pay", "title": "Total estimated cost", "value": { "type": "money", "amount": 34193039 }, "sources": [{ "doc": DS_INFO, "page": 1 }] },
+        { "id": "p-deposit", "group": "Payment terms", "title": "Deposit premium", "value": { "type": "money", "amount": 3419312 }, "sources": [{ "doc": DS_INFO, "page": 1 }] },
+        { "id": "p-min", "group": "Payment terms", "title": "Minimum premium", "value": { "type": "money", "amount": 27485 }, "sources": [{ "doc": DS_INFO, "page": 1 }] },
+        { "id": "p-mod", "group": "How it's calculated", "title": "Experience modification", "value": { "type": "number", "text": "0.75", "qualifier": "75% of standard rates" }, "summary": "Reflects past loss history; can be updated at audit.", "sources": [{ "doc": "Experience Rating Modification Endorsement WC 00 04 03", "page": 76 }] }
+      ] },
+
+    { "id": "coverage", "type": "coverage", "title": "What's covered",
+      "items": [
+        { "id": "wc", "keywords": ["employees","employee","worker","workers","staff","injury","hurt","work"], "title": "Injuries to employees", "formal": "Part One · Workers compensation", "appliesTo": ["39 listed states"],
+          "value": { "type": "text", "text": "Statutory benefits", "short": "Statutory" },
+          "summary": "Pays the benefits each listed state's law requires for work injuries and work-related disease.",
+          "detail": { "rows": [ { "label": "Applies to", "value": "Scheduled payroll, class codes and locations" } ] },
+          "sources": [{ "doc": DS_WCF, "page": "65–66" }] },
+        { "id": "el", "keywords": ["sued","lawsuit","employees","injury"], "title": "Employer's legal liability", "formal": "Part Two · Employers liability", "appliesTo": ["All listed states"],
+          "values": [
+            { "label": "Injury by accident", "type": "money", "amount": 1000000, "qualifier": "each accident" },
+            { "label": "Injury by disease", "type": "money", "amount": 1000000, "qualifier": "each employee" },
+            { "label": "Injury by disease", "type": "money", "amount": 1000000, "qualifier": "policy limit" }
+          ],
+          "summary": "Pays when the business is sued for an employee injury that workers' comp law doesn't cover.",
+          "stateOverrides": "California, Oregon, New York and Massachusetts endorsements may change these limits",
+          "sources": [{ "doc": DS_INFO, "page": 1 }, { "doc": "Endorsement WC 04 03 60 B", "page": 92 }] },
+        { "id": "other", "title": "Work that starts in other states", "formal": "Part Three · Other states insurance", "appliesTo": ["Other states except ND, OH, WA, WY"],
+          "value": { "type": "text", "text": "Conditional" },
+          "summary": "Covers work that begins in an unlisted state during the policy period, if you tell the insurer promptly.",
+          "detail": { "bullets": [ "Only if work begins there during the policy period and there's no other insurance.", "You must notify the insurer promptly.", "No cover for work already under way at the start date in an unlisted state." ] },
+          "sources": [{ "doc": DS_WCF, "page": "68–69" }] },
+        { "id": "defense", "title": "Legal defense costs", "formal": "Defense and supplementary payments", "value": { "type": "text", "text": "Included" }, "summary": "Defense costs are paid in addition to the benefits and limits.", "sources": [{ "doc": DS_WCF, "page": "65–69" }] },
+        { "id": "terror", "title": "Terrorism and catastrophe charges", "formal": "WC 00 04 21 D · WC 00 04 22 B", "value": { "type": "text", "text": "In premium" }, "summary": "State-mandated terrorism and catastrophe premium charges are included.", "sources": [{ "doc": "Endorsements WC 00 04 21 D, WC 00 04 22 B", "page": "82, 85" }] }
+      ] },
+
+    { "id": "subjects", "type": "subjects", "title": "What's insured",
+      "note": "Coverage applies to declared states, class codes and locations, not to named employees.",
+      "groups": [
+        { "name": "States where comp law applies" },
+        { "name": "Not covered: monopolistic fund states", "note": "ND, OH, WA and WY run their own state funds." },
+        { "name": "Locations", "complete": false, "note": "Only 8 locations were extracted. The full list is on pp. 252–297." },
+        { "name": "Job classes", "complete": false, "note": "Only California examples were extracted. All states are on pp. 24–63." }
+      ],
+      "items": [].concat(
+        ST_A.map(function (s) { return { "id": "st-" + s, "group": "States where comp law applies", "kind": "state", "title": s, "sources": [{ "doc": DS_INFO, "page": 1 }] }; }),
+        ["ND", "OH", "WA", "WY"].map(function (s) { return { "id": "mo-" + s, "group": "Not covered: monopolistic fund states", "kind": "state", "status": "excluded", "title": s, "sources": [{ "doc": DS_INFO, "page": 1 }] }; }),
+        [
+          ["1", "No specific location", "MN"], ["3", "1740 N. Ridge Avenue, Suite 305, Evanston, IL 60201", "IL"], ["5", "No specific location", "GA"], ["7", "103-8 Woodland Road, Batesville, MS 38606", "MS"],
+          ["9", "2025-C Eastgate Dr., Greenville, NC 27858", "NC"], ["11", "No specific location", "AZ"], ["13", "501 S. Falkenberg, Tampa, FL 33619", "FL"], ["15", "570 West 4th Street, Suite 104, San Bernardino, CA 92840", "CA"]
+        ].map(function (l) { return { "id": "loc-" + l[0], "group": "Locations", "kind": "location", "title": l[1] === "No specific location" ? "No specific location, " + l[2] : l[1], "value": { "type": "text", "text": l[2] }, "detail": { "rows": [ { "label": "Location no.", "value": l[0] }, { "label": "State", "value": l[2] } ] }, "sources": [{ "doc": DS_EXT1, "page": 252 }] }; }),
+        [
+          ["2003", "Bakeries and cracker mfg.", 5358540, "$31,046,000", "$17.26"], ["8292", "Warehouses, general merchandise", 11576317, "$61,121,000", "$18.94"], ["8810", "Clerical office employees", 151228, "$17,185,000", "$0.88"]
+        ].map(function (c) { return { "id": "cls-" + c[0], "group": "Job classes", "kind": "class", "title": c[0] + " · " + c[1], "value": { "type": "money", "amount": c[2], "qualifier": "premium, CA" }, "detail": { "rows": [ { "label": "State", "value": "California" }, { "label": "Estimated payroll", "value": c[3] }, { "label": "Rate per $100", "value": c[4] } ] }, "sources": [{ "doc": DS_EXT4, "page": 27 }] }; })
+      ) },
+
+    { "id": "watch", "type": "watch", "title": "Watch points", "ratedBy": "extraction",
+      "items": [
+        { "id": "w-cancel", "severity": "critical", "title": "Policy cancelled on 5 Aug 2016", "summary": "Cancelled at the insured's request. Nothing that happens after this date is covered, in any state or location.", "sources": [{ "doc": "Notice of Cancellation", "page": 340 }, { "doc": "Policy Termination Notice", "page": 341 }] },
+        { "id": "w-audit", "severity": "moderate", "title": "Payroll audit can raise the premium", "summary": "Final premium is based on audited payroll, job classes and subcontractor costs. If they differ from the estimates, more premium may be owed.", "related": ["p-est"], "sources": [{ "doc": DS_WCF, "section": "Part Five G", "page": 70 }] },
+        { "id": "w-el", "severity": "moderate", "title": "Employers liability limits are $1M", "summary": "Check whether any state endorsement changes the $1M accident and disease limits.", "related": ["el"], "sources": [{ "doc": DS_INFO, "page": 1 }] },
+        { "id": "w-mod", "severity": "low", "title": "Experience mod of 0.75 applies", "summary": "The 0.75 factor lowers the premium based on past losses and can change at audit.", "related": ["p-mod"], "sources": [{ "doc": DS_EXT4, "page": "24, 34" }] }
+      ] },
+
+    { "id": "exclusions", "type": "exclusions", "title": "Not covered", "complete": false, "completeNote": "Employers liability exclusions from WC 00 00 00 A Part Two and state endorsements. The full form may list more.",
+      "items": [
+        { "id": "e1", "concept": "intended", "title": "Injury the employer intended", "formal": "Intentional injury", "sources": [{ "doc": DS_WCF, "page": 67 }] },
+        { "id": "e2", "concept": "contract", "title": "Liability taken on in a contract", "formal": "Contractual liability", "exceptions": ["A warranty that your work is done properly"], "sources": [{ "doc": DS_WCF, "page": 67 }] },
+        { "id": "e3", "concept": "law", "title": "Employee injured while breaking the law with the employer's knowledge", "formal": "Violation of law", "sources": [{ "doc": DS_WCF, "page": 67 }] },
+        { "id": "e4", "concept": "federal", "title": "Claims under federal and maritime laws", "formal": "Federal acts (Longshore and Harbor, FELA), maritime, aircrew", "sources": [{ "doc": DS_WCF, "page": 67 }] },
+        { "id": "e5", "concept": "place", "title": "Work outside the scheduled states", "formal": "Employment outside scheduled states", "sources": [{ "doc": DS_WCF, "page": 67 }] },
+        { "id": "e6", "concept": "money", "title": "Punitive damages and employment practices", "formal": "Punitive or exemplary damages; employment practices", "sources": [{ "doc": DS_WCF, "page": 67 }, { "doc": "State endorsements", "page": "88, 92" }] },
+        { "id": "e7", "concept": "employee", "title": "Owners, partners and officers", "formal": "Operators, members or officers", "exceptions": ["When they elect in by endorsement (for example NJ, NH)"], "sources": [{ "doc": "Endorsement WC 06 06 01", "page": "72, 97" }] },
+        { "id": "e8", "concept": "contract", "title": "Contractors' and subcontractors' payroll", "formal": "Uninsured contractors", "exceptions": ["When you can prove they're insured by others"], "sources": [{ "doc": DS_WCF, "page": 69 }, { "doc": "Notices", "page": 3 }] }
+      ] },
+
+    { "id": "conditions", "type": "conditions", "title": "Conditions",
+      "items": [
+        { "id": "c1", "title": "Only scheduled work is covered", "value": { "type": "text", "text": "Scheduled only" }, "summary": "Coverage applies only to the class codes, payroll, locations and states scheduled.", "sources": [{ "doc": DS_WCF, "section": "Part Five", "page": "69–70" }] },
+        { "id": "c2", "title": "Deductible options", "value": { "type": "text", "text": "Offered in some states" }, "summary": "Small-deductible programs are offered in some states. The documents don't say whether one was chosen.", "detail": { "rows": [ { "label": "States with notices", "value": "AL, AR, MO, NY, NH, NE, NM, OK, SC, GA and others" } ] }, "sources": [{ "doc": "Deductible notices", "page": "195, 197, 206, 215, 243, 244" }] },
+        { "id": "c3", "title": "Owner and officer elections", "value": { "type": "text", "text": "By state" }, "summary": "Some states let partners, LLC members and corporate officers elect in or out.", "sources": [{ "doc": "State endorsements", "page": "72, 109, 216" }] }
+      ] },
+
+    { "id": "forms", "type": "forms", "title": "Forms & endorsements",
+      "items": [
+        { "id": "fm1", "title": "Experience rating modification", "formal": "WC 00 04 03", "summary": "Applies the 0.75 factor; can be updated at audit.", "sources": [{ "doc": "Endorsement", "page": 76 }] },
+        { "id": "fm2", "title": "Premium discount", "formal": "WC 00 04 06", "summary": "State-specific discounts for larger premiums.", "sources": [{ "doc": "Endorsement", "page": 78 }] },
+        { "id": "fm3", "title": "Pending rate change", "formal": "WC 00 04 04", "summary": "Rates may change if a regulator requires it.", "sources": [{ "doc": "Endorsement", "page": 77 }] },
+        { "id": "fm4", "title": "Terrorism and catastrophe premium", "formal": "WC 00 04 21 D · WC 00 04 22 B", "summary": "Premium charges for all states.", "sources": [{ "doc": "Endorsements", "page": "82, 85" }] },
+        { "id": "fm5", "title": "State amendatory endorsements", "formal": "37 states", "summary": "Cancellation, notice and coverage changes for AR, AZ, CA, CT and 33 more states.", "sources": [{ "doc": "Endorsement schedule", "page": 23 }] },
+        { "id": "fm6", "title": "Policy form", "formal": "WC 00 00 00 A", "summary": "Workers Compensation and Employers Liability Insurance Policy.", "sources": [{ "doc": DS_WCF, "page": "65–70" }] }
+      ],
+      "documents": [{ "name": "WWC3216474 policy package", "pages": 346, "citedPages": [1, 2, 23, 24, 27, 63, 65, 67, 69, 70, 72, 76, 92, 195, 252, 297, 340, 341, 346] }] },
+
+    { "id": "gaps", "type": "gaps", "title": "Not found in your documents",
+      "items": [
+        { "id": "g1", "title": "Full location list", "summary": "Only 8 locations were extracted; the rest are on pp. 252–297." },
+        { "id": "g2", "title": "Class codes outside California", "summary": "Other states' classes and payroll are on pp. 24–63 but weren't extracted." },
+        { "id": "g3", "title": "Earned premium after cancellation", "summary": "The amount owed or refunded after 5 Aug 2016 isn't given." },
+        { "id": "g4", "title": "Whether a deductible was chosen", "summary": "Deductible notices are present, but no election is shown.", "related": ["c2"] },
+        { "id": "g5", "title": "State limits that override $1M", "summary": "Endorsements are referenced, but the amounts weren't extracted.", "related": ["el"] }
+      ] }
+  ],
+  "qa": [
+    "Location 15 ZIP 92840 doesn't match San Bernardino (924xx).",
+    "Watch point 'limits may not be sufficient' is an adequacy judgement; reworded to a factual check.",
+    "Raw §7 limitations repeated §8 and §10 (audit, minimum/deposit premium, EL limits); merged.",
+    "Field 'stateOverrides' on Employer's legal liability is not part of the contract; it renders automatically under Details."
+  ]
+};
+
+
+var DS_DEC = "Declarations ASIC-AF-0030-1224", DS_CG = "Coverage form CG 00 01 04 13", DS_SCHED = "Forms schedule ASIC-AF-0005-0319";
+function E(no, title, impact, summary, page) { return { "id": "fe-" + no.replace(/\W/g, ""), "group": impact, "title": title, "formal": no, "summary": summary, "sources": [{ "doc": no, "page": page }] }; }
+POLICIES.cgl = {
+  "contract": "ovie-insights/2",
+  "label": "General liability",
+  "policy": {
+    "line": "Commercial general liability",
+    "insured": { "name": "Reed Hartman Hospitality LLC", "description": "DBA The Blu Hotel · Hotels and motels", "address": "11349 Reed Hartman Hwy, Blue Ash, OH 45241-2429" },
+    "carrier": "Ategrity Specialty Insurance Company",
+    "policyNumber": "P000004748-00",
+    "term": { "start": "2025-03-09", "end": "2026-03-09" },
+    "events": [],
+    "broker": { "name": "Trevor Puetz Team" },
+    "form": { "number": "CG 00 01 04 13", "title": "Commercial General Liability Coverage Form" },
+    "details": [
+      { "label": "Coverage basis", "value": "Occurrence", "sources": [{ "doc": DS_CG }] },
+      { "label": "Transaction", "value": "New business", "sources": [{ "doc": DS_DEC, "page": 7 }] },
+      { "label": "Additional named insureds", "value": "None listed", "sources": [{ "doc": DS_DEC, "page": "7–8" }] },
+      { "label": "Form set", "value": "Complete: every scheduled form has its full text", "sources": [{ "doc": DS_SCHED, "page": "4–6" }] }
+    ],
+    "sources": [{ "doc": DS_DEC, "page": 7 }, { "doc": DS_SCHED, "page": 4 }]
+  },
+  "sections": [
+    { "id": "premium", "type": "premium", "title": "Premium",
+      "chart": { "type": "stack", "line": "c-prem", "fees": ["c-tax", "c-pfee", "c-insp"], "total": "c-total" },
+      "note": "Final premium is subject to audit.",
+      "items": [
+        { "id": "c-prem", "group": "What you pay", "title": "Policy premium", "value": { "type": "money", "amount": 9105, "qualifier": "per year" },
+          "detail": { "summary": "Advance premiums by classification (Hotels and motels, class 7_4):", "rows": [ { "label": "Premises and operations", "value": { "type": "money", "amount": 6341.75 } }, { "label": "Products and completed operations", "value": { "type": "money", "amount": 275.12 } } ] },
+          "sources": [{ "doc": DS_DEC, "page": "7–8" }] },
+        { "id": "c-tax", "group": "What you pay", "title": "Surplus lines tax", "value": { "type": "money", "amount": 480.25 }, "sources": [{ "doc": DS_DEC, "page": 7 }] },
+        { "id": "c-pfee", "group": "What you pay", "title": "Policy fee", "value": { "type": "money", "amount": 350 }, "sources": [{ "doc": DS_DEC, "page": 7 }] },
+        { "id": "c-insp", "group": "What you pay", "title": "Carrier inspection fee", "value": { "type": "money", "amount": 500 }, "sources": [{ "doc": DS_DEC, "page": 7 }] },
+        { "id": "c-total", "group": "What you pay", "title": "Total with fees and taxes", "value": { "type": "money", "amount": 10435.25 }, "detail": { "rows": [ { "label": "Stamping fee", "value": { "type": "money", "amount": 0 } } ] }, "sources": [{ "doc": DS_DEC, "page": 7 }] },
+        { "id": "c-min", "group": "Payment terms", "title": "Minimum and advance premium", "value": { "type": "percent", "amount": 100 }, "summary": "The advance premium is fully earned; the final premium is set by audit.", "sources": [{ "doc": "Endorsement ASIC-GL-0027-0719", "page": 52 }] },
+        { "id": "c-pen", "group": "Payment terms", "title": "Penalty for not completing the audit", "value": { "type": "text", "text": "Up to 2×", "qualifier": "the minimum or advance premium" }, "sources": [{ "doc": "Endorsement ASIC-GL-0037-0125", "page": 54 }] }
+      ] },
+
+    { "id": "coverage", "type": "coverage", "title": "What's covered",
+      "items": [
+        { "id": "occ", "keywords": ["injury","guest","slip","fall","accident"], "title": "Injury or damage you cause", "formal": "Coverage A · Bodily injury and property damage", "appliesTo": ["Designated premises"],
+          "values": [ { "label": "Each occurrence", "type": "money", "amount": 1000000, "qualifier": "each occurrence" }, { "label": "General aggregate", "type": "money", "amount": 2000000, "qualifier": "per policy term" } ],
+          "summary": "Pays what the business is legally required to pay for injury or property damage caused by an occurrence at the insured premises.",
+          "detail": { "rows": [ { "label": "Deductible", "value": "$5,000 each occurrence, including defense costs" } ] },
+          "related": ["w-ded", "cn-prem"], "sources": [{ "doc": DS_DEC, "page": 7 }, { "doc": DS_CG, "section": "III", "page": 11 }] },
+        { "id": "pai", "title": "Libel, slander and advertising claims", "formal": "Coverage B · Personal and advertising injury", "appliesTo": ["Designated premises"],
+          "value": { "type": "money", "amount": 1000000, "qualifier": "each person or organization" },
+          "summary": "Pays for covered personal and advertising injury offenses connected with the business at the designated premises.",
+          "sources": [{ "doc": DS_DEC, "page": 7 }, { "doc": "Endorsement CG 21 44 04 17", "page": "91–93" }] },
+        { "id": "pco", "title": "Products and completed work", "formal": "Products-completed operations", "value": { "type": "money", "amount": 2000000, "qualifier": "aggregate, per policy term" },
+          "summary": "Covers injury or damage from products or finished work, within its own aggregate.", "sources": [{ "doc": DS_DEC, "page": 7 }, { "doc": DS_CG, "section": "III.3", "page": 11 }] },
+        { "id": "rented", "title": "Damage to premises rented to you", "formal": "Damage to premises rented to you", "value": { "type": "money", "amount": 100000, "qualifier": "any one premises" }, "sources": [{ "doc": DS_DEC, "page": 7 }] },
+        { "id": "med", "title": "Medical payments to guests", "formal": "Medical expense limit", "value": { "type": "removed", "text": "Deleted by endorsement" },
+          "summary": "No-fault medical payments are removed for the whole premises.", "related": ["w-med"], "sources": [{ "doc": "Endorsement CG 21 35 10 01", "page": 90 }] },
+        { "id": "inn", "keywords": ["guest","guests","luggage","belongings"], "title": "Guests' property", "formal": "Innkeepers' liability", "values": [ { "label": "Each occurrence", "type": "money", "amount": 2000, "qualifier": "each occurrence" }, { "label": "Annual aggregate", "type": "money", "amount": 20000, "qualifier": "per year" } ],
+          "summary": "Pays for damage to guests' property at the hotel, up to the sublimits.", "detail": { "rows": [ { "label": "Deductible", "value": "$250 each claim" } ] }, "sources": [{ "doc": "Endorsement ASIC-GL-0075-1224", "page": "69–70" }] },
+        { "id": "keys", "keywords": ["keys","locks","rekey"], "title": "Lost keys", "formal": "Lost key coverage", "values": [ { "label": "Each occurrence", "type": "money", "amount": 25000, "qualifier": "each occurrence" }, { "label": "Aggregate", "type": "money", "amount": 25000, "qualifier": "aggregate" } ],
+          "summary": "Pays to rekey or replace locks when keys in your care are lost. No deductible.", "sources": [{ "doc": "Endorsement ASIC-GL-0078-0818", "page": 71 }] },
+        { "id": "sports", "title": "Injuries to sports participants", "formal": "Participant liability", "values": [ { "label": "Each occurrence", "type": "money", "amount": 25000, "qualifier": "each occurrence" }, { "label": "Aggregate", "type": "money", "amount": 50000, "qualifier": "within the policy aggregate" } ],
+          "summary": "Limited cover for some injuries to sports participants. Brain injuries are excluded.", "sources": [{ "doc": "Endorsement ASIC-GL-0082-0818", "page": "72–74" }] },
+        { "id": "hnoa", "title": "Hired and non-owned autos", "formal": "Hired and non-owned auto liability", "value": { "type": "not_stated", "text": "Limit not stated" },
+          "summary": "Covers injury and damage from hired or non-owned autos used for the business.", "related": ["g-hnoa"], "sources": [{ "doc": "Endorsement ASIC-GL-0110-0918", "page": "95–96" }] },
+        { "id": "stopgap", "keywords": ["employees","employee","worker","workers","staff"], "title": "Employee injury claims in Ohio", "formal": "Stop gap / employers liability (Ohio)", "values": [ { "label": "Bodily injury by accident", "type": "money", "amount": 1000000, "qualifier": "each accident" }, { "label": "Disease", "type": "money", "amount": 1000000, "qualifier": "each employee" }, { "label": "Disease", "type": "money", "amount": 1000000, "qualifier": "policy limit" } ],
+          "summary": "Covers the employer's liability for employee work injuries in Ohio, which has a state workers' comp fund.", "sources": [{ "doc": "Endorsement CG 04 41 12 19", "page": "86–89" }] },
+        { "id": "defense", "title": "Legal defense", "formal": "Defense and supplementary payments", "value": { "type": "text", "text": "Outside limits" },
+          "summary": "The insurer defends covered suits until limits are used up; defense costs count toward the $5,000 deductible.", "sources": [{ "doc": DS_CG, "section": "I.1.a", "page": 1 }, { "doc": "Endorsement ASIC-GL-0109-0918", "page": 59 }] }
+      ] },
+
+    { "id": "subjects", "type": "subjects", "title": "Who and what is insured",
+      "groups": [ { "name": "Premises" }, { "name": "Who is an insured" } ],
+      "items": [
+        { "id": "prem1", "group": "Premises", "kind": "location", "title": "11349 Reed Hartman Hwy, Blue Ash, OH 45241", "value": { "type": "text", "text": "Hotel" }, "detail": { "rows": [ { "label": "Classification", "value": "Hotels and motels, class code 7_4" }, { "label": "Scope", "value": "All premises you own, rent or occupy at this address" }, { "label": "Exposure basis", "value": { "type": "not_stated", "text": "Not stated" } } ] }, "sources": [{ "doc": DS_DEC, "page": 8 }] },
+        { "id": "ins1", "group": "Who is an insured", "kind": "person", "title": "Reed Hartman Hospitality LLC", "value": { "type": "text", "text": "Named insured" }, "sources": [{ "doc": DS_DEC, "page": 7 }] },
+        { "id": "ins2", "group": "Who is an insured", "kind": "person", "title": "Members", "value": { "type": "text", "text": "Business conduct only" }, "sources": [{ "doc": DS_CG, "section": "II.1.c", "page": 10 }] },
+        { "id": "ins3", "group": "Who is an insured", "kind": "person", "title": "Managers", "value": { "type": "text", "text": "Their duties only" }, "sources": [{ "doc": DS_CG, "section": "II.1.c", "page": 10 }] },
+        { "id": "ins4", "group": "Who is an insured", "kind": "person", "title": "Employees and volunteers", "value": { "type": "text", "text": "Within their duties" }, "detail": { "bullets": ["Not for injury to co-workers or themselves.", "Not for providing health care services."] }, "sources": [{ "doc": DS_CG, "section": "II.2.a", "page": "10–11" }] },
+        { "id": "ins5", "group": "Who is an insured", "kind": "person", "title": "Others you contract with", "value": { "type": "text", "text": "If required by contract" },
+          "summary": "Anyone you perform work for, when a written agreement signed before the loss requires it.", "detail": { "bullets": ["Only for liability caused by your ongoing operations.", "Ends when the work is complete; no completed operations."] }, "related": ["w-ai"], "sources": [{ "doc": "Endorsement ASIC-GL-0224-0624", "page": "99–100" }] }
+      ] },
+
+    { "id": "watch", "type": "watch", "title": "Watch points", "ratedBy": "ovie",
+      "items": [
+        { "id": "w-med", "severity": "serious", "title": "Medical payments to guests are removed", "summary": "No-fault medical payments are deleted for the whole premises, so minor guest injuries go through the liability claim process.", "related": ["med"], "sources": [{ "doc": "Endorsement CG 21 35 10 01", "page": 90 }] },
+        { "id": "w-ded", "severity": "serious", "title": "$5,000 deductible includes defense costs", "summary": "The deductible applies to damages and to the cost of defending a claim.", "detail": { "ladder": [ { "label": "You pay first, each occurrence", "amount": 5000 }, { "label": "Most the policy pays, each occurrence", "amount": 1000000 } ] }, "related": ["occ"], "sources": [{ "doc": "Endorsement ASIC-GL-0109-0918", "page": "59–60" }] },
+        { "id": "w-pool", "severity": "serious", "title": "Pool injuries covered only if safety rules are met", "summary": "Injuries related to a swimming pool are covered only when specific enclosure and barrier requirements are met.", "related": ["cn-pool"], "sources": [{ "doc": "Endorsement ASIC-GL-0177-0922", "page": "97–98" }] },
+        { "id": "w-sub", "severity": "review", "title": "Higher deductible for uninsured subcontractors", "summary": "$10,000 or 200% of the deductible, whichever is greater, applies if a contractor's certificate doesn't name you as additional insured.", "sources": [{ "doc": "Endorsement ASIC-GL-0183-0123", "page": 84 }] },
+        { "id": "w-ai", "severity": "review", "title": "Additional insured cover is narrow", "summary": "Applies only to ongoing operations under a written contract; sole-negligence and subcontractor exclusions narrow it further.", "related": ["ins5"], "sources": [{ "doc": "Endorsement ASIC-GL-0224-0624", "page": "99–100" }] },
+        { "id": "w-audit", "severity": "review", "title": "Audit records are required", "summary": "Missing audit records can cost up to twice the minimum or advance premium; subcontractor certificates must be kept.", "related": ["c-pen"], "sources": [{ "doc": "Endorsement ASIC-GL-0037-0125", "page": 54 }] },
+        { "id": "w-poll", "severity": "info", "title": "Pollution exclusion is very broad", "summary": "The expanded definition of pollutants leaves little environmental cover; fungi, lead, asbestos, vermin and communicable disease are also excluded.", "related": ["x-poll"], "sources": [{ "doc": "Endorsement ASIC-GL-0085-0323", "page": "75–76" }] }
+      ] },
+
+    { "id": "exclusions", "type": "exclusions", "title": "Not covered", "complete": false, "completeNote": "Major exclusions only. The forms list more; see Forms & endorsements.",
+      "items": [
+        { "id": "x-poll", "concept": "pollution", "title": "Pollution of any kind", "formal": "Total pollution exclusion", "summary": "Including testing and clean-up costs.", "sources": [{ "doc": "ASIC-GL-0085-0323", "page": "75–76" }] },
+        { "id": "x-sub", "concept": "hazard", "title": "Asbestos, silica, fungi, bacteria and lead", "formal": "Substance exclusions", "sources": [{ "doc": "ASIC-GL-0008-1118 and others", "page": "39–51" }] },
+        { "id": "x-liq", "concept": "liquor", "title": "Alcohol sold, served or consumed", "formal": "Total liquor liability exclusion", "sources": [{ "doc": "ASIC-GL-0079-0818", "page": 94 }] },
+        { "id": "x-dis", "concept": "disease", "title": "Communicable disease", "formal": "Communicable disease exclusion", "sources": [{ "doc": "ASIC-GL-0062-0818", "page": 56 }] },
+        { "id": "x-auto", "concept": "vehicle", "title": "Aircraft, autos and watercraft", "formal": "Absolute auto, aircraft and watercraft exclusion", "exceptions": ["Hired and non-owned autos"], "sources": [{ "doc": "ASIC-GL-0201-0124", "page": 85 }] },
+        { "id": "x-prof", "concept": "professional", "title": "Professional services", "formal": "Professional liability", "sources": [{ "doc": "CG 21 16 04 13", "page": 65 }] },
+        { "id": "x-emp", "concept": "employee", "title": "Employment practices and employee injuries", "formal": "Employment-related practices; employer's liability", "exceptions": ["Ohio stop gap cover"], "sources": [{ "doc": "CG 21 47 12 07", "page": 38 }] },
+        { "id": "x-ccc", "concept": "box", "title": "Property you own, rent or look after", "formal": "Care, custody or control", "exceptions": ["Lost keys and guests' property endorsements"], "sources": [{ "doc": DS_CG, "section": "I.2.j", "page": 5 }] },
+        { "id": "x-earth", "concept": "earth", "title": "Earth movement and subsidence", "formal": "Earth and land movement", "sources": [{ "doc": "ASIC-GL-0004-0524", "page": 48 }] },
+        { "id": "x-fire", "concept": "fire", "title": "Wildfire", "formal": "Wildfire exclusion", "summary": "Including firefighting costs.", "sources": [{ "doc": "ASIC-GL-0136-0119", "page": 61 }] },
+        { "id": "x-snow", "concept": "snow", "title": "Snow and ice removal", "formal": "Snow or ice operations", "sources": [{ "doc": "ASIC-GL-0128-1218", "page": 79 }] },
+        { "id": "x-traf", "concept": "law", "title": "Human trafficking", "formal": "Human trafficking exclusion", "sources": [{ "doc": "ASIC-GL-0149-1221", "page": "80–81" }] },
+        { "id": "x-contract", "concept": "contract", "title": "Breach of contract", "formal": "Breach of contract exclusion", "exceptions": ["Insured contracts"], "sources": [{ "doc": "ASIC-GL-0148-0519", "page": 62 }] },
+        { "id": "x-prior", "concept": "clock", "title": "Injury or damage that began before the policy", "formal": "Continuous or progressive injury", "sources": [{ "doc": "ASIC-GL-0001-1118", "page": 47 }] }
+      ] },
+
+    { "id": "conditions", "type": "conditions", "title": "Deductibles & conditions",
+      "items": [
+        { "id": "cn-ded", "title": "Liability deductible", "value": { "type": "money", "amount": 5000, "qualifier": "each occurrence" }, "summary": "Applies to bodily injury, property damage and personal and advertising injury, including defense costs.", "related": ["w-ded"], "sources": [{ "doc": "Endorsement ASIC-GL-0109-0918", "page": "59–60" }] },
+        { "id": "cn-inn", "title": "Guests' property deductible", "value": { "type": "money", "amount": 250, "qualifier": "each claim" }, "sources": [{ "doc": "Endorsement ASIC-GL-0075-1224", "page": 69 }] },
+        { "id": "cn-prem", "title": "Covered only at the designated premises", "value": { "type": "text", "text": "Blue Ash, OH" }, "summary": "Injury, damage and personal and advertising injury must occur at or arise from the scheduled premises or operations.", "sources": [{ "doc": "Endorsement CG 21 44 04 17", "page": 91 }] },
+        { "id": "cn-agg", "title": "Aggregates are per policy", "value": { "type": "text", "text": "Not per location" }, "summary": "Not increased by additional insureds, locations or projects.", "sources": [{ "doc": DS_CG, "section": "III", "page": "11–12" }] },
+        { "id": "cn-pool", "title": "Swimming pool requirements", "value": { "type": "text", "text": "Required" }, "summary": "Enclosure and barrier requirements must be met for pool-related injuries to be covered.", "sources": [{ "doc": "Endorsement ASIC-GL-0177-0922", "page": "97–98" }] }
+      ] },
+
+    { "id": "forms", "type": "forms", "title": "Forms & endorsements",
+      "items": [
+        E("CG 00 01 04 13", "Commercial general liability coverage form", "Base form", "Core coverages, definitions, exclusions and framework.", "18–33"),
+        E("ASIC-GL-0078-0818", "Lost key coverage", "Adds cover", "Adds cover and a limit for lost keys.", 71),
+        E("ASIC-GL-0075-1224", "Innkeepers liability", "Adds cover", "Adds cover and a limit for guests' property.", "69–70"),
+        E("ASIC-GL-0082-0818", "Sports participation", "Adds cover", "Small sublimit for sports participants; many exclusions apply.", "72–74"),
+        E("ASIC-GL-0224-0624", "Blanket additional insured", "Adds cover", "Additional insureds for your ongoing operations only.", "99–100"),
+        E("ASIC-GL-0109-0918", "Deductible", "Limits cover", "$5,000 each occurrence, including defense.", "59–60"),
+        E("CG 00 62 12 02", "War liability exclusion", "Limits cover", "Expands the war exclusion.", 34),
+        E("CG 21 09 06 15", "Unmanned aircraft exclusion", "Limits cover", "Removes drone exposures.", "35–36"),
+        E("CG 21 36 03 05", "New entities exclusion", "Limits cover", "New entities aren't insured automatically.", 37),
+        E("CG 21 47 12 07", "Employment-related practices exclusion", "Limits cover", "Removes employment-practice injuries.", 38),
+        E("CG 21 67 12 04", "Fungi or bacteria exclusion", "Limits cover", "Removes fungi and bacteria exposures.", 39),
+        E("CG 21 73 01 15", "Certified terrorism exclusion", "Limits cover", "Excludes certified acts of terrorism.", 40),
+        E("CG 21 84 01 15", "Nuclear, biological, chemical, radiological terrorism", "Limits cover", "No cover for NBCR terrorism.", "41–42"),
+        E("CG 21 96 03 05", "Silica exclusion", "Limits cover", "Removes silica and silica dust exposures.", 43),
+        E("IL 00 21 09 08", "Nuclear energy liability", "Limits cover", "Excludes nuclear exposures.", "45–46"),
+        E("ASIC-GL-0001-1118", "Continuous or progressive injury exclusion", "Limits cover", "Excludes damage that began before the policy.", 47),
+        E("ASIC-GL-0004-0524", "Earth movement exclusion", "Limits cover", "Excludes earth and land movement.", 48),
+        E("ASIC-GL-0008-1118", "Asbestos exclusion", "Limits cover", "Excludes asbestos exposures.", 49),
+        E("ASIC-GL-0019-1118", "Lead exclusion", "Limits cover", "Excludes lead exposure and remediation.", 51),
+        E("ASIC-GL-0038-0818", "Nonpayment cancellation", "Limits cover", "Allows cancellation for unpaid prior-term premium.", 55),
+        E("ASIC-GL-0062-0818", "Communicable disease exclusion", "Limits cover", "Excludes communicable disease.", 56),
+        E("ASIC-GL-0136-0119", "Wildfire exclusion", "Limits cover", "Excludes wildfire and firefighting costs.", 61),
+        E("ASIC-GL-0100-0818", "Vermin exclusion", "Limits cover", "Excludes injury or damage from vermin.", 77),
+        E("ASIC-GL-0201-0124", "Absolute auto, aircraft and watercraft exclusion", "Limits cover", "Expands the vehicle exclusion.", 85),
+        E("ASIC-GL-0027-0719", "Minimum and advance premium", "Sets rules", "Earned and minimum premium, audit, refunds and penalties.", 52),
+        E("ASIC-GL-0037-0125", "Premium audit", "Sets rules", "Audit, reporting and dispute procedure.", 54),
+        E("ASIC-GL-0029-0818", "Amendment of conditions", "Sets rules", "Deletes the nonrenewal notice provision.", 53)
+      ],
+      "documents": [{ "name": "P000004748-00 policy package", "pages": 100, "citedPages": [4, 5, 6, 7, 8, 18, 33, 34, 38, 47, 48, 52, 54, 56, 59, 61, 65, 69, 71, 72, 77, 79, 80, 84, 85, 86, 90, 91, 94, 95, 97, 99] }] },
+
+    { "id": "gaps", "type": "gaps", "title": "Not found in your documents",
+      "items": [
+        { "id": "g-hnoa", "title": "Hired and non-owned auto limit", "summary": "The endorsement adds the cover, but no limit was extracted.", "related": ["hnoa"] },
+        { "id": "g-exp", "title": "Exposure basis for audit", "summary": "Class and location are given; the rating basis (sales, receipts, rooms) isn't declared." }
+      ] }
+  ],
+  "qa": [
+    "Class premiums ($6,341.75 + $275.12 = $6,616.87) don't add up to the $9,105 policy premium.",
+    "Raw 'Policy status: New business' is a transaction type, not a status; status is computed from the term.",
+    "Raw 'Exposure basis … typically gross sales' is an inference; dropped and listed as missing.",
+    "Watch point 'multiple absolute exclusions leave significant uninsured exposures' is an adequacy judgement; folded into exclusions.",
+    "Liquor and medical $0 limits are rendered as an exclusion and a removed coverage, not as $0 limits."
+  ]
+};
+POLICIES.auto.label = "Commercial auto";
+POLICIES.wc.label = "Workers' comp";
+
+/* ===== Renderer for contract ovie-insights/2 =====
+   One renderer for every policy type. Sections render by `type`; unknown types use the standard list.
+   Items share one schema; unknown item fields are shown under Details automatically. */
+var KNOWN_ITEM = ["id","title","formal","summary","value","values","appliesTo","severity","group","kind","concept","status","exceptions","detail","related","sources","tag","keywords"];
+var KNOWN_SECTION = ["id","type","title","items","note","chart","groups","complete","completeNote","ratedBy","documents"];
+var CAP = { coverage: 6, exclusions: 5, watch: 5, conditions: 4, gaps: 4, _default: 5 };
+var JUMP = { premium: "Premium", coverage: "Covered", subjects: "Insured", watch: "Watch", exclusions: "Not covered", conditions: "Conditions", forms: "Forms", gaps: "Not found" };
+var SEV = { critical: ["crit", "Critical"], serious: ["warn", "Serious"], high: ["warn", "High"], moderate: ["warn", "Moderate"], review: ["n", "Review"], low: ["n", "Low"], info: ["n", "Info"] };
+var SEV_ORDER = { critical: 0, serious: 1, high: 1, moderate: 2, review: 3, low: 4, info: 5 };
+var ICON = { employee: "x-person", person: "x-person", medical: "x-med", contract: "x-doc", intended: "x-target", box: "x-box", load: "x-load", pollution: "x-drop", racing: "x-flag", war: "x-burst", law: "x-law", federal: "x-flagus", place: "x-pin", money: "x-coin" };
+var KIND_ICON = { truck: "i-truck", trailer: "i-trailer", person: "i-person", location: "i-pin", class: "i-brief", state: "i-pin" };
+var KIND_NAME = { truck: ["Truck", "Trucks"], trailer: ["Trailer", "Trailers"], location: ["Location", "Locations"], class: ["Class", "Classes"], state: ["State", "States"], person: ["Person", "People"] };
+
+var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function arr(x) { return Array.isArray(x) ? x : (x == null ? [] : [x]); }
+function money(n) { var d = n % 1 ? 2 : 0; return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+function compact(n) { if (n >= 1e6) return "$" + (n / 1e6).toFixed(n % 1e6 ? 1 : 0) + "M"; if (n >= 1e3) return "$" + (n / 1e3).toFixed(n % 1e3 ? 1 : 0) + "K"; return "$" + n; }
+function pd(s) { var p = String(s).split("-"); return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); }
+function fd(d) { d = typeof d === "string" ? pd(d) : d; return d.getUTCDate() + " " + MONTHS[d.getUTCMonth()] + " " + d.getUTCFullYear(); }
+function humanKey(k) { return k.replace(/([A-Z])/g, " $1").replace(/^./, function (c) { return c.toUpperCase(); }).replace(/ (\w)/g, function (m, c) { return " " + c.toLowerCase(); }); }
+function isMissing(v) { return v && (v.type === "not_stated" || v.type === "none_listed"); }
+function unk(text) { return '<span class="unkpill">' + esc(text) + "</span>"; }
+
+/* value helpers */
+function valMain(v, opt) {
+  if (!v) return "";
+  if (isMissing(v)) return unk(v.text || (v.type === "none_listed" ? "None listed" : "Not stated"));
+  if (v.type === "removed") return '<span class="scope">' + esc(v.text || "Not included") + "</span>";
+  if (v.type === "money" && v.amount != null) return esc(opt && opt.compact ? compact(v.amount) : money(v.amount));
+  if (v.type === "percent") return esc(v.amount + "%");
+  return esc(opt && opt.compact && v.short ? v.short : (v.text != null ? v.text : (v.amount != null ? v.amount : "")));
+}
+function valText(v) { if (!v) return ""; if (v.type === "money" && v.amount != null) return money(v.amount) + (v.qualifier ? " " + v.qualifier : ""); return (v.text || v.short || (v.amount != null ? String(v.amount) : "")) + (v.qualifier && v.type !== "money" ? " · " + v.qualifier : ""); }
+function upfrontValue(it) {
+  if (it.values && it.values.length) {
+    var vs = it.values, allMoney = vs.every(function (v) { return v.type === "money"; }), same = allMoney && vs.every(function (v) { return v.amount === vs[0].amount; });
+    if (same) return { main: esc(money(vs[0].amount)), sub: vs.length + " limits" };
+    var f0 = vs[0]; return { main: f0.type === "money" ? esc(money(f0.amount)) : valMain(f0, { compact: true }), sub: esc((f0.type === "money" ? (f0.qualifier || f0.label || "") : (f0.label || "")) + " · +" + (vs.length - 1) + " more") };
+  }
+  if (!it.value) return null;
+  return { main: valMain(it.value, { compact: false }), sub: isMissing(it.value) ? "" : esc(it.value.qualifier || ""), unk: isMissing(it.value) };
+}
+function hasMore(it) { return !!(it.summary || it.formal || it.detail || (it.values && it.values.length) || arr(it.exceptions).length || arr(it.related).length || arr(it.sources).length || extraKeys(it).length); }
+function extraKeys(o) { return Object.keys(o).filter(function (k) { return KNOWN_ITEM.indexOf(k) < 0; }); }
+
+/* status */
+function computeStatus(p) {
+  var t = today(), s = pd(p.term.start), e = pd(p.term.end), day = 864e5;
+  var end = arr(p.events).filter(function (x) { return x.effect === "ends_coverage"; }).sort(function (a, b) { return pd(a.date) - pd(b.date); })[0];
+  if (end && t >= pd(end.date)) return { k: "crit", label: "Cancelled", line: "Cancelled " + fd(end.date), event: end };
+  if (t < s) return { k: "n", label: "Not started", line: "Starts " + fd(s) };
+  if (t >= e) return { k: "crit", label: "Expired", line: "Ended " + fd(e) };
+  var left = Math.round(((end ? Math.min(+pd(end.date), +e) : +e) - t) / day);
+  return { k: left <= 30 ? "warn" : "ok", label: left <= 30 ? "Ends soon" : "Active", line: left + " days left" + (end ? " · cancels " + fd(end.date) : "") };
+}
+function today() { if (STATE.todayMode === "real" || !STATE.todayMode) { var n = new Date(); return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate())); }
+  var p = STATE.data.policy, s = pd(p.term.start), e = pd(p.term.end), day = 864e5;
+  if (STATE.todayMode === "mid") return new Date(+s + 30 * day);
+  if (STATE.todayMode === "soon") return new Date(+e - 12 * day);
+  return new Date(+s - 10 * day); }
+
+/* sources registry */
+var SRC = [];
+function srcBtn(sources, title) {
+  sources = arr(sources); if (!sources.length) return "";
+  SRC.push({ s: sources, t: title });
+  var pages = sources.map(function (x) { return x.page != null ? x.page : (x.section ? "§" + x.section : ""); }).filter(function (x) { return x !== ""; });
+  var lbl = pages.length ? "p." + pages.join(", ").replace(/§/g, "") : "Source";
+  if (pages.length && String(pages[0]).charAt(0) === "§") lbl = pages.join(", ");
+  return '<button type="button" class="src" data-src="' + (SRC.length - 1) + '">' + esc(lbl) + "</button>";
+}
+
+/* ---------- upfront ---------- */
+function lead(it, sec) {
+  if (sec.type === "exclusions") return '<span class="xi">' + '<svg width="18" height="18"><use href="#' + (ICON[it.concept] || "x-generic") + '"/></svg></span>';
+  if (sec.type === "gaps") return '<span class="g u">?</span>';
+  return "";
+}
+function row(it, si, ii, sec) {
+  var v = sec.type === "exclusions" || sec.type === "gaps" ? null : upfrontValue(it);
+  var sub = [];
+  if (sec.type === "watch" && it.severity) sub.push("");
+  if (arr(it.appliesTo).length) sub.push('<span class="scope">' + esc(it.appliesTo[0]) + (it.appliesTo.length > 1 ? " +" + (it.appliesTo.length - 1) : "") + "</span>");
+  if (arr(it.exceptions).length) sub.push('<span class="tagx">Has exception</span>');
+  if (sec.type === "forms" && it.formal) sub.push('<span class="xs muted">' + esc(it.formal) + "</span>");
+  if (it.group && sec.type !== "subjects") sub.push('<span class="xs muted">' + esc(it.group) + "</span>");
+  var sev = sec.type === "watch" && it.severity ? sevPill(it.severity) : "";
+  var inlineSummary = it.severity === "critical" && it.summary ? '<span class="ir-sum">' + esc(it.summary) + "</span>" : "";
+  var more = hasMore(it);
+  return '<' + (more ? 'button type="button"' : "div") + ' class="ir' + (it.severity === "critical" ? " ir-crit" : "") + '"' + (more ? ' data-open="item" data-s="' + si + '" data-i="' + ii + '"' : "") + ">" +
+    lead(it, sec) + '<span class="ir-m">' + sev + '<span class="ir-t">' + esc(it.title) + "</span>" + inlineSummary +
+    (sub.filter(Boolean).length ? '<span class="ir-s">' + sub.filter(Boolean).join("") + "</span>" : "") + "</span>" +
+    (v ? '<span class="ir-v">' + v.main + (v.sub ? "<small>" + v.sub + "</small>" : "") + "</span>" : "") +
+    (more ? '<span class="chev" aria-hidden="true">›</span>' : "") + "</" + (more ? "button" : "div") + ">";
+}
+function sevPill(s) { var m = SEV[s] || ["n", s.charAt(0).toUpperCase() + s.slice(1)]; return '<span class="pill ' + m[0] + '">' + esc(m[1]) + "</span>"; }
+function seeAll(si, n, label) { return '<button type="button" class="seeall" data-open="section" data-s="' + si + '">' + esc(label || ("See all " + n)) + '<span class="chev" aria-hidden="true">›</span></button>'; }
+function sortedItems(sec) { var it = arr(sec.items).map(function (x, i) { return { x: x, i: i }; }); if (sec.type === "watch") { var so = function (k) { return k in SEV_ORDER ? SEV_ORDER[k] : 9; }; it.sort(function (a, b) { return so(a.x.severity) - so(b.x.severity) || a.i - b.i; }); } return it; }
+
+var UP = {};
+UP.list = function (sec, si) {
+  var items = sortedItems(sec), cap = CAP[sec.type] || CAP._default, shown = items.slice(0, cap), rest = items.length - shown.length;
+  var h = shown.map(function (o) { return row(o.x, si, o.i, sec); }).join("");
+  if (rest > 0) h += seeAll(si, items.length, "See all " + items.length);
+  else if (sec.complete === false) h += '<p class="xs muted pad">' + esc(sec.completeNote || "The documents may list more.") + "</p>";
+  if (sec.type === "watch" && sec.ratedBy === "ovie") h += '<p class="xs muted pad">Severity is rated by Ovie, not your insurer.</p>';
+  return h;
+};
+UP.premium = function (sec, si) {
+  var line = premiumHeadline(sec);
+  if (!line) return UP.list(sec, si);
+  var q = (line.value.qualifier || ""), annual = /year|annual/i.test(q + " " + line.title);
+  var h = '<div class="pstats"><div><span>' + (annual ? "Yearly" : esc(line.title)) + '</span><b>' + valMain(line.value) + "</b><small>" + esc(annual ? line.title : q) + "</small></div>";
+  if (annual && line.value.type === "money") h += "<div><span>Monthly</span><b>" + money(Math.round(line.value.amount / 12)) + "</b><small>Yearly ÷ 12</small></div>";
+  h += "</div>";
+  var c = sec.chart || {}, byId = {}; arr(sec.items).forEach(function (x) { byId[x.id] = x; });
+  var total = byId[c.total];
+  if (c.type === "stack" && total && line.value.type === "money" && total.value.type === "money") {
+    var fees = arr(c.fees).map(function (id) { return byId[id]; }).filter(Boolean).reduce(function (a, f) { return a + f.value.amount; }, 0);
+    var other = Math.max(0, total.value.amount - line.value.amount - fees);
+    h += '<div class="stack" role="img" aria-label="' + esc(line.title + " " + money(line.value.amount) + ", fees " + money(fees) + (other ? ", other lines " + money(other) : "")) + '"><i style="flex:' + line.value.amount + ';background:var(--a-teal)"></i>' + (fees ? '<i style="flex:' + fees + ';background:var(--a-yellow)"></i>' : "") + (other ? '<i style="flex:' + other + ';background:var(--fill2)"></i>' : "") + "</div>";
+    if (other > 0.005) h += '<p class="sm muted">' + esc(line.title.replace(/ premium$/i, "")) + " is " + Math.round(line.value.amount / total.value.amount * 100) + "% of the " + money(total.value.amount) + " package</p>";
+    else h += '<p class="sm muted">' + (fees ? "+ " + money(fees) + " " + esc(feeLabel(c, byId)) + " = " : "") + '<b class="ink">' + money(total.value.amount) + "</b> " + esc(total.title.toLowerCase()) + "</p>";
+  }
+  h += seeAll(si, 0, "Premium details");
+  return h;
+};
+function feeLabel(c, byId) { var f = arr(c.fees).map(function (id) { return byId[id]; }).filter(Boolean); return f.length === 1 ? f[0].title.toLowerCase() : "fees"; }
+function premiumHeadline(sec) { var c = sec.chart || {}, byId = {}; arr(sec.items).forEach(function (x) { byId[x.id] = x; }); return byId[c.line] || arr(sec.items).filter(function (x) { return x.value && x.value.type === "money"; })[0]; }
+UP.subjects = function (sec, si) {
+  var groups = groupsOf(sec), h = sec.note ? '<p class="note">' + esc(sec.note) + "</p>" : "";
+  groups.forEach(function (g, gi) {
+    var items = g.items;
+    h += '<div class="sg">';
+    var money_ = items.filter(function (x) { return x.value && x.value.type === "money"; }), tot = money_.reduce(function (a, x) { return a + x.value.amount; }, 0);
+    var allMissing = items.length === 1 && isMissing(items[0].value);
+    h += '<div class="sg-h"><b>' + esc(g.name) + "</b>" + (!allMissing ? '<span class="cnt">' + items.length + "</span>" : "") + (g.complete === false ? '<span class="unkpill">Partial list</span>' : "") + "</div>";
+    if (allMissing) { h += '<div class="empty">' + esc(items[0].title) + "</div>"; h += "</div>"; return; }
+    var kinds = kindCounts(items);
+    if (kinds) h += kinds;
+    if (items.every(isCode)) {
+      var neg = items.every(function (x) { return x.status === "excluded"; });
+      h += '<div class="stchips' + (neg ? " neg" : "") + '">' + items.slice(0, 14).map(function (x) { return "<span>" + esc(x.title) + "</span>"; }).join("") + (items.length > 14 ? '<button type="button" class="more" data-open="section" data-s="' + si + '">+' + (items.length - 14) + "</button>" : "") + "</div>";
+    } else {
+      var sorted = money_.length === items.length ? items.slice().sort(function (a, b) { return b.value.amount - a.value.amount; }) : items;
+      var max = money_.length ? Math.max.apply(null, money_.map(function (x) { return x.value.amount; })) : 0;
+      sorted.slice(0, 3).forEach(function (it) { var ii = sec.items.indexOf(it); h += row(it, si, ii, sec).replace('</span><span class="ir-v">', (max && it.value && it.value.type === "money" ? '<i class="mbar' + (it.kind && it.kind !== mainKind(items) ? " y" : "") + '" style="width:' + (it.value.amount / max * 100).toFixed(1) + '%"></i>' : "") + '</span><span class="ir-v">'); });
+      if (items.length > 3) h += seeAll(si, items.length, "See all " + items.length + (tot ? " · " + money(tot) : ""));
+    }
+    h += "</div>";
+  });
+  return h;
+};
+UP.forms = function (sec, si) { return seeAll(si, 0, arr(sec.items).length + " forms and endorsements"); };
+function groupsOf(sec) {
+  var order = arr(sec.groups).map(function (g) { return g.name; }), map = {};
+  arr(sec.items).forEach(function (it) { var g = it.group || "Other"; if (!map[g]) { map[g] = []; if (order.indexOf(g) < 0) order.push(g); } map[g].push(it); });
+  return order.filter(function (n) { return map[n]; }).map(function (n) { var meta = arr(sec.groups).filter(function (g) { return g.name === n; })[0] || {}; return { name: n, items: map[n], note: meta.note, complete: meta.complete }; });
+}
+function mainKind(items) { var m = {}, best = null; items.forEach(function (x) { if (!x.kind) return; m[x.kind] = (m[x.kind] || 0) + 1; if (!best || m[x.kind] > m[best]) best = x.kind; }); return best; }
+function isCode(x) { return !x.value && String(x.title).length <= 4; }
+function kindCounts(items) {
+  var order = [], m = {};
+  items.forEach(function (x) { var k = x.kind; if (!k || isCode(x)) return; if (!m[k]) { m[k] = 0; order.push(k); } m[k]++; });
+  if (order.length < 2) return "";
+  return '<div class="kinds">' + order.map(function (k) { var nm = KIND_NAME[k] || [k.charAt(0).toUpperCase() + k.slice(1), k.charAt(0).toUpperCase() + k.slice(1) + "s"]; return '<span class="kd"><svg width="22" height="14"><use href="#' + (KIND_ICON[k] || "i-dot") + '"/></svg>' + (m[k] > 1 ? "<b>×" + m[k] + "</b>" : "") + "<span>" + esc(m[k] > 1 ? nm[1] : nm[0]) + "</span></span>"; }).join("") + "</div>";
+}
+
+/* ---------- page ---------- */
+function headerCard(p) {
+  var st = computeStatus(p);
+  var rows = [["Policyholder", esc(p.insured.name)], ["Insurer", esc(p.carrier)], ["Policy no.", esc(p.policyNumber)], ["Term", fd(p.term.start) + " – " + fd(p.term.end) + (st.event ? '<small class="crit-t">' + fd(st.event.date) + " · " + esc(st.event.label) + "</small>" : "")]];
+  return '<section class="sec" id="sec-h"><div class="ch"><h2 class="iname" style="margin:0">' + esc(p.line) + '</h2><span class="pill ' + st.k + '">' + st.label + "</span></div>" +
+    '<div class="hl">' + rows.map(function (r) { return "<div><span>" + r[0] + "</span><div><b>" + r[1] + "</b></div></div>"; }).join("") + "</div>" +
+    (policyExtraRows(p).length ? '<button type="button" class="seeall" data-open="policy">Policy details<span class="chev" aria-hidden="true">›</span></button>' : "") + "</section>";
+}
+/* everything the header card does NOT show upfront */
+function policyExtraRows(p) {
+  var rows = [], st = computeStatus(p);
+  if (p.insured.address) rows.push(["Address", esc(p.insured.address)]);
+  if (p.insured.description) rows.push(["Description", esc(p.insured.description)]);
+  arr(p.events).filter(function (e) { return e !== st.event; }).forEach(function (e) { rows.push([fd(e.date), esc(e.label)]); });
+  if (p.broker) rows.push(["Broker", esc(p.broker.name) + (p.broker.id || p.broker.address ? "<small>" + esc([p.broker.id ? "Producer no. " + p.broker.id : "", p.broker.address].filter(Boolean).join(" · ")) + "</small>" : "")]);
+  if (p.form) rows.push(["Policy form", esc(p.form.number) + (p.form.title ? "<small>" + esc(p.form.title) + "</small>" : "")]);
+  arr(p.details).forEach(function (r) { rows.push([esc(r.label), esc(r.value)]); });
+  return rows;
+}
+function render() {
+  SRC = [];
+  var d = STATE.data, h = "", jump = '<div class="jumpbar" role="navigation" aria-label="Jump to section"><button type="button" class="jump" data-jump="sec-h" aria-pressed="true">Policy</button>';
+  h += headerCard(d.policy);
+  arr(d.sections).forEach(function (sec, si) {
+    var fn = UP[sec.type] || UP.list, body;
+    try { body = fn(sec, si); } catch (e) { body = UP.list(sec, si); }
+    var n = sec.type === "subjects" ? arr(sec.items).filter(function (x) { return !isCode(x) && !isMissing(x.value); }).length : arr(sec.items).length;
+    var showCount = ["premium", "forms"].indexOf(sec.type) < 0 && n;
+    h += '<section class="sec" id="sec-' + si + '"><h2 class="sh">' + esc(sec.title || humanKey(sec.type || "Details")) + (showCount ? " <span>" + n + "</span>" : "") + "</h2>" + body + "</section>";
+    jump += '<button type="button" class="jump" data-jump="sec-' + si + '" aria-pressed="false">' + esc((JUMP[sec.type] || sec.title || sec.type) + (showCount ? " " + n : "")) + "</button>";
+  });
+  jump += "</div>";
+  var body = $("ibody"), top = body.scrollTop;
+  body.innerHTML = jump + h;
+  body.scrollTop = top;
+  $("appTitle").innerHTML = "Insights<small>" + esc(d.policy.line + " · " + d.policy.insured.name) + "</small>";
+  $("chatSub").textContent = d.policy.line + " · " + d.policy.policyNumber;
+  onScroll(); renderCheck(); chatChips();
+  var ta = $("json"); if (document.activeElement !== ta) ta.value = JSON.stringify(d, null, 2);
+}
+
+/* ---------- sheets ---------- */
+var STACK = [];
+function openSheet(fn, reset) { if (reset) STACK = []; STACK.push(fn); drawSheet(); }
+function drawSheet() {
+  var top = STACK[STACK.length - 1]; if (!top) return closeSheet();
+  var r = top();
+  $("sheetTitle").textContent = r.title; $("sheetSub").textContent = r.sub || "";
+  $("sheetBack").hidden = STACK.length < 2;
+  $("sheetBody").innerHTML = r.body; $("sheetBody").scrollTop = 0;
+  var sh = $("sheet"), sc = $("scrim");
+  if (sh.hidden) { sh.hidden = false; sc.hidden = false; requestAnimationFrame(function () { sh.classList.add("show"); sc.classList.add("show"); }); setTimeout(function () { $("sheetClose").focus(); }, 30); }
+  var q = $("sheetBody").querySelector("#sheetSearch"); if (q) q.addEventListener("input", function () { var v = q.value.toLowerCase(); $("sheetBody").querySelectorAll("[data-find]").forEach(function (el) { el.hidden = v && el.getAttribute("data-find").indexOf(v) < 0; }); });
+}
+function closeSheet() { STACK = []; var sh = $("sheet"), sc = $("scrim"); sh.classList.remove("show"); sc.classList.remove("show"); setTimeout(function () { sh.hidden = true; sc.hidden = true; }, reduce() ? 0 : 250); }
+function reduce() { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; }
+
+function itemSheet(si, ii) {
+  return function () {
+    var sec = STATE.data.sections[si], it = sec.items[ii], d = it.detail || {}, b = "";
+    if (it.severity) b += "<div>" + sevPill(it.severity) + "</div>";
+    if (it.values && it.values.length) {
+      b += '<div class="split2">' + it.values.map(function (v) { return "<div><span>" + esc(v.label || "") + "</span><b>" + (v.type === "money" ? esc(money(v.amount)) : valMain(v)) + "</b><small>" + esc([v.type === "money" ? v.qualifier : "", v.note].filter(Boolean).join(" · ")) + "</small></div>"; }).join("") + "</div>";
+    } else if (it.value && sec.type !== "gaps") {
+      b += '<div class="bigval">' + (isMissing(it.value) ? valMain(it.value) : '<span class="big">' + valMain(it.value) + "</span>") + (it.value.qualifier ? '<span class="muted">' + esc(it.value.qualifier) + "</span>" : "") + "</div>";
+    }
+    if (arr(it.appliesTo).length) b += '<div class="srow">' + it.appliesTo.map(function (a) { return '<span class="scope">' + esc(a) + "</span>"; }).join("") + "</div>";
+    if (it.summary) b += '<p class="lede2">' + esc(it.summary) + "</p>";
+    if (d.summary) b += '<p class="muted">' + esc(d.summary) + "</p>";
+    if (arr(it.exceptions).length) b += it.exceptions.map(function (e) { return '<em class="exc">↳ Except ' + esc(e.charAt(0).toLowerCase() + e.slice(1)) + "</em>"; }).join("");
+    if (arr(d.ladder).length) b += ladder(d.ladder);
+    if (arr(d.bullets).length) b += '<ul class="bul">' + d.bullets.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
+    if (d.table) b += '<div class="tblwrap"><table class="tbl"><thead><tr>' + d.table.columns.map(function (c) { return "<th>" + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>" + d.table.rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div>";
+    var rows = arr(d.rows).slice(); extraKeys(it).forEach(function (k) { rows.push({ label: humanKey(k), value: typeof it[k] === "object" ? JSON.stringify(it[k]) : it[k] }); });
+    if (rows.length) b += '<div class="kv">' + rows.map(function (r) { return "<div><span>" + esc(r.label) + "</span><span>" + (typeof r.value === "object" ? valMain(r.value) : esc(r.value)) + (r.note ? "<small>" + esc(r.note) + "</small>" : "") + "</span></div>"; }).join("") + "</div>";
+    var rel = arr(it.related).map(findItem).filter(Boolean);
+    if (rel.length) b += '<div class="grp">Related</div><div class="chips">' + rel.map(function (r) { return '<button type="button" class="chip" data-open="item" data-push="1" data-s="' + r.si + '" data-i="' + r.ii + '">' + esc(r.it.title) + "</button>"; }).join("") + "</div>";
+    if (sec.type === "gaps") b += '<p class="note">Missing doesn\'t mean not covered. It may be in a document you haven\'t uploaded.</p><button class="cta" type="button" data-toast="Upload isn\'t part of this prototype">Upload a document</button>';
+    if (arr(it.sources).length) b += '<div class="grp">Source</div>' + sourceList(it.sources);
+    b += actions(it.sources, "Tell me about " + it.title.toLowerCase());
+    return { title: it.title, sub: it.formal || sec.title, body: b };
+  };
+}
+function sourceList(s) { return '<div class="kv">' + arr(s).map(function (x) { return "<div><span>" + esc(x.doc || "Document") + "</span><span>" + esc([x.section ? "Section " + x.section : "", x.page != null ? "Page " + x.page : ""].filter(Boolean).join(" · ")) + "</span></div>"; }).join("") + "</div>"; }
+function ladder(steps) { var hs = [42, 62, 78]; return '<div class="ladder" aria-label="' + esc(steps.map(function (s) { return s.label + " " + (s.amount != null ? money(s.amount) : s.text); }).join(", ")) + '. Not to scale">' + steps.map(function (s, i) { return '<div class="step' + (i === 0 ? " you" : "") + '" style="height:' + (hs[i] || 78) + 'px"><b>' + esc(s.amount != null ? money(s.amount) : s.text) + "</b><span>" + esc(s.label) + "</span></div>"; }).join("") + "</div>"; }
+function findItem(id) { var r = null; arr(STATE.data.sections).forEach(function (s, si) { arr(s.items).forEach(function (it, ii) { if (it.id === id) r = { si: si, ii: ii, it: it }; }); }); return r; }
+
+function sectionSheet(si) {
+  return function () {
+    var sec = STATE.data.sections[si], b = "", items = sortedItems(sec);
+    if (sec.type === "subjects") return subjectsSheet(sec, si);
+    if (items.length > 8) b += '<input id="sheetSearch" class="search" type="search" placeholder="Search ' + esc((sec.title || "").toLowerCase()) + '" aria-label="Search this list">';
+    var grouped = items.some(function (o) { return o.x.group; });
+    if (grouped) {
+      groupsOf(sec).forEach(function (g) {
+        b += '<div class="grp">' + esc(g.name) + "</div>";
+        var sum = sumGroup(sec, g);
+        b += sum ? sum : '<div class="cards">' + g.items.map(function (it) { return summaryCard(it, si, sec.items.indexOf(it), sec); }).join("") + "</div>";
+      });
+    } else {
+      b += '<div class="cards">' + items.map(function (o) { return summaryCard(o.x, si, o.i, sec); }).join("") + "</div>";
+    }
+    if (sec.complete === false) b += '<p class="xs muted">' + esc(sec.completeNote || "") + "</p>";
+    if (sec.note) b += '<p class="note">' + esc(sec.note) + "</p>";
+    if (sec.type === "gaps") b += '<p class="note">Missing doesn\'t mean not covered. It may be in a document you haven\'t uploaded.</p>';
+    arr(sec.documents).forEach(function (doc) { b += '<div class="grp">Documents used</div><p class="sm">' + esc(doc.name) + " · " + doc.pages + " pages · facts from " + doc.citedPages.length + " pages</p>" + pageStrip(doc); });
+    var srcs = []; arr(sec.items).forEach(function (it) { arr(it.sources).forEach(function (x) { srcs.push(x); }); });
+    b += actions(srcs, "Explain " + (sec.title || "this section").toLowerCase() + " for this policy");
+    return { title: sec.title, sub: arr(sec.items).length + " items", body: b };
+  };
+}
+function subjectsSheet(sec, si) {
+  var b = arr(sec.items).length > 8 ? '<input id="sheetSearch" class="search" type="search" placeholder="Search ' + esc((sec.title || "").toLowerCase()) + '" aria-label="Search this list">' : "";
+  if (sec.note) b += '<p class="note">' + esc(sec.note) + "</p>";
+  groupsOf(sec).forEach(function (g) {
+    b += '<div class="grp">' + esc(g.name) + " · " + g.items.length + "</div>";
+    if (g.note) b += '<p class="' + (g.complete === false ? "empty" : "note") + '">' + esc(g.note) + "</p>";
+    if (g.items.every(isCode)) b += '<div class="stchips big' + (g.items.every(function (x) { return x.status === "excluded"; }) ? " neg" : "") + '">' + g.items.map(function (x) { return '<span data-find="' + esc(x.title.toLowerCase()) + '">' + esc(x.title) + "</span>"; }).join("") + "</div>";
+    else b += '<div class="cards">' + g.items.map(function (it) { return summaryCard(it, si, sec.items.indexOf(it), sec); }).join("") + "</div>";
+  });
+  var srcs = []; arr(sec.items).forEach(function (it) { arr(it.sources).forEach(function (x) { srcs.push(x); }); });
+  b += actions(srcs, "Explain what's insured on this policy");
+  return { title: sec.title, sub: arr(sec.items).length + " items", body: b };
+}
+/* a group that contains the chart's line + total renders as a sum: bar, line, + fees, = total (each amount once) */
+function sumGroup(sec, g) {
+  var c = sec.chart; if (!c || c.type !== "stack") return "";
+  var ids = g.items.map(function (x) { return x.id; }); if (ids.indexOf(c.line) < 0 || ids.indexOf(c.total) < 0) return "";
+  var byId = {}; arr(sec.items).forEach(function (x) { byId[x.id] = x; });
+  var line = byId[c.line], total = byId[c.total], fees = arr(c.fees).map(function (id) { return byId[id]; }).filter(Boolean);
+  var fsum = fees.reduce(function (a, f) { return a + f.value.amount; }, 0), other = Math.max(0, +(total.value.amount - line.value.amount - fsum).toFixed(2));
+  var si = STATE.data.sections.indexOf(sec);
+  var r = function (it, sign, color, cls) { return '<button type="button" class="sumr' + (cls ? " " + cls : "") + '" data-open="item" data-push="1" data-s="' + si + '" data-i="' + sec.items.indexOf(it) + '"><span class="sg2">' + sign + "</span>" + (color ? '<i style="background:' + color + '"></i>' : '<i class="none"></i>') + '<span class="sl">' + esc(it.title) + (it.value.qualifier ? "<small>" + esc(it.value.qualifier) + "</small>" : "") + '</span><b>' + money(it.value.amount) + "</b></button>"; };
+  var h = '<div class="stack" style="height:12px;margin-top:4px" role="img" aria-label="' + esc(line.title + " " + money(line.value.amount) + (fsum ? ", fees " + money(fsum) : "") + (other ? ", other lines " + money(other) : "")) + '"><i style="flex:' + line.value.amount + ';background:var(--a-teal)"></i>' + (fsum ? '<i style="flex:' + fsum + ';background:var(--a-yellow)"></i>' : "") + (other ? '<i style="flex:' + other + ';background:var(--fill2)"></i>' : "") + "</div>";
+  h += '<div class="sum">' + r(line, "", "var(--a-teal)") + fees.map(function (f) { return r(f, "+", "var(--a-yellow)"); }).join("") +
+    (other ? '<div class="sumr"><span class="sg2">+</span><i style="background:var(--fill2)"></i><span class="sl">Other lines in the package<small>total minus the amounts above</small></span><b>' + money(other) + "</b></div>" : "") +
+    r(total, "=", "", "tot") + "</div>";
+  g.items.filter(function (x) { return x !== line && x !== total && fees.indexOf(x) < 0; }).forEach(function (x) { h += summaryCard(x, si, sec.items.indexOf(x), sec); });
+  return h;
+}
+function actions(sources, q) {
+  var s = arr(sources)[0], label = s ? esc((s.doc || "document") + (s.page != null ? ", page " + s.page : "")) : "";
+  return '<div class="sactions">' + (s ? '<button type="button" class="cta" data-toast="Would open ' + label + '. Documents aren\'t part of this prototype.">View in document</button>' : "") + '<button type="button" class="cta ghost" data-ask="' + esc(q) + '">Ask Ovie</button></div>';
+}
+function summaryCard(it, si, ii, sec) {
+  var v = upfrontValue(it);
+  return '<button type="button" class="sc" data-open="item" data-push="1" data-s="' + si + '" data-i="' + ii + '" data-find="' + esc((it.title + " " + (it.formal || "") + " " + (it.summary || "")).toLowerCase()) + '">' +
+    '<span class="sc-h">' + (it.severity ? sevPill(it.severity) : "") + "<b>" + esc(it.title) + "</b>" + (v && sec.type !== "gaps" ? '<span class="sc-v">' + v.main + (v.sub ? "<small>" + v.sub + "</small>" : "") + "</span>" : "") + "</span>" +
+    (it.summary ? '<span class="sc-s">' + esc(it.summary) + "</span>" : (it.formal ? '<span class="sc-s">' + esc(it.formal) + "</span>" : "")) +
+    (arr(it.exceptions).length ? '<em class="exc">↳ Except ' + esc(it.exceptions[0].charAt(0).toLowerCase() + it.exceptions[0].slice(1)) + "</em>" : "") + "</button>";
+}
+function premiumChart(sec) {
+  var byId = {}; arr(sec.items).forEach(function (x) { byId[x.id] = x; }); var c = sec.chart || {}, line = byId[c.line], total = byId[c.total];
+  if (!line || !total) return "";
+  var fees = arr(c.fees).map(function (id) { return byId[id]; }).filter(Boolean), fsum = fees.reduce(function (a, f) { return a + f.value.amount; }, 0), other = Math.max(0, +(total.value.amount - line.value.amount - fsum).toFixed(2));
+  return '<div class="stack" style="height:14px"><i style="flex:' + line.value.amount + ';background:var(--a-teal)"></i>' + (fsum ? '<i style="flex:' + fsum + ';background:var(--a-yellow)"></i>' : "") + (other ? '<i style="flex:' + other + ';background:var(--fill2)"></i>' : "") + "</div>" +
+    '<div class="leg"><div><i style="background:var(--a-teal)"></i><span>' + esc(line.title) + "</span><b>" + money(line.value.amount) + "</b></div>" + fees.map(function (f) { return '<div><i style="background:var(--a-yellow)"></i><span>' + esc(f.title) + "</span><b>" + money(f.value.amount) + "</b></div>"; }).join("") + (other ? '<div><i style="background:var(--fill2)"></i><span>Other lines in the package</span><b>' + money(other) + "</b></div>" : "") + '<div style="border-top:1px solid var(--line);padding-top:6px"><i style="background:transparent"></i><span><b>' + esc(total.title) + "</b></span><b>" + money(total.value.amount) + "</b></div></div>";
+}
+function pageStrip(doc) {
+  var N = doc.pages, marks = arr(doc.citedPages).map(function (p) { return '<span class="pm" style="left:' + (p / N * 100).toFixed(1) + '%"></span>'; }).join("");
+  return '<div class="pages" role="img" aria-label="Facts cited from ' + doc.citedPages.length + " of " + N + ' pages"><div class="bar"></div>' + marks + '<span class="pe" style="left:0">1</span><span class="pe" style="right:0">' + N + "</span></div>";
+}
+function policySheet() {
+  return function () {
+    var p = STATE.data.policy, rows = policyExtraRows(p);
+    var src = arr(p.sources).concat.apply(arr(p.sources), arr(p.events).map(function (e) { return arr(e.sources); }).concat(arr(p.details).map(function (d) { return arr(d.sources); })));
+    return { title: "Policy details", sub: "More from your documents", body: '<div class="hl">' + rows.map(function (r) { return "<div><span>" + r[0] + "</span><div><b>" + r[1] + "</b></div></div>"; }).join("") + '</div><div class="grp">Source</div>' + sourceList(src) };
+  };
+}
+function sourceSheet(o) { return function () { return { title: o.t, sub: "Where this comes from", body: sourceList(o.s) + '<p class="note">The clause text isn\'t in this extraction yet. When it is, it shows here with "View in document".</p>' }; }; }
+
+/* ---------- contract check ---------- */
+function renderCheck() {
+  var d = STATE.data, items = 0, up = 0, extra = [], unknownTypes = [], details = 0;
+  arr(d.sections).forEach(function (sec) {
+    var n = arr(sec.items).length; items += n;
+    if (!UP[sec.type] && ["coverage","watch","exclusions","conditions","gaps"].indexOf(sec.type) < 0) unknownTypes.push(sec.type);
+    Object.keys(sec).forEach(function (k) { if (KNOWN_SECTION.indexOf(k) < 0) extra.push(sec.type + "." + k); });
+    arr(sec.items).forEach(function (it) { extraKeys(it).forEach(function (k) { extra.push(k); }); if (hasMore(it)) details++; });
+  });
+  up = $("ibody").querySelectorAll(".ir").length + $("ibody").querySelectorAll(".stchips span").length;
+  $("check").innerHTML =
+    '<div class="ck"><span>Contract</span><b>' + esc(d.contract || "—") + "</b></div>" +
+    '<div class="ck"><span>Renderer changes for this policy</span><b class="okt">None</b></div>' +
+    '<div class="ck"><span>Sections</span><b>' + arr(d.sections).length + "</b></div>" +
+    '<div class="ck"><span>Facts extracted</span><b>' + items + "</b></div>" +
+    '<div class="ck"><span>Rows shown upfront</span><b>' + up + "</b></div>" +
+    '<div class="ck"><span>Facts with a details sheet</span><b>' + details + "</b></div>" +
+    '<div class="ck"><span>Unknown section types</span><b>' + (unknownTypes.length ? esc(unknownTypes.join(", ")) + " → standard list" : "0") + "</b></div>" +
+    '<div class="ck"><span>Unknown fields</span><b>' + (extra.length ? esc(extra.join(", ")) + " → Details" : "0") + "</b></div>" +
+    (arr(d.qa).length ? '<div class="qa"><b>Data notes</b><ul>' + d.qa.map(function (q) { return "<li>" + esc(q) + "</li>"; }).join("") + "</ul></div>" : "");
+}
+
+var $ = function (id) { return document.getElementById(id); };
+var STATE = { key: "auto", todayMode: "real", data: JSON.parse(JSON.stringify(POLICIES.auto)) };
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+(function () { var k = store("ovieV2Policy"); if (k && POLICIES[k]) { STATE.key = k; STATE.data = JSON.parse(JSON.stringify(POLICIES[k])); } })();
+
+function setPolicy(k) { STATE.key = k; STATE.data = JSON.parse(JSON.stringify(POLICIES[k])); store("ovieV2Policy", k); $("ibody").scrollTop = 0; $("msgs").innerHTML = ""; closeSheetNow(); render(); syncControls(); }
+function closeSheetNow() { STACK = []; $("sheet").classList.remove("show"); $("scrim").classList.remove("show"); $("sheet").hidden = true; $("scrim").hidden = true; }
+function syncControls() {
+  $("polSwitch").innerHTML = Object.keys(POLICIES).map(function (k) { return '<button type="button" data-policy="' + k + '" aria-pressed="' + (k === STATE.key) + '">' + esc(POLICIES[k].label || k) + "</button>"; }).join("");
+}
+/* render every payload with the same code and report */
+function testAll() {
+  var keep = STATE.data, keepSrc = SRC.slice(), rows = [];
+  Object.keys(POLICIES).forEach(function (k) {
+    var d = JSON.parse(JSON.stringify(POLICIES[k])), err = 0, facts = 0, up = 0, extra = 0, sheets = 0;
+    STATE.data = d;
+    try {
+      var html = headerCard(d.policy);
+      d.sections.forEach(function (sec, si) { try { html += (UP[sec.type] || UP.list)(sec, si); } catch (e) { err++; }
+        facts += arr(sec.items).length;
+        arr(sec.items).forEach(function (it, ii) { extra += extraKeys(it).length; try { itemSheet(si, ii)(); sheets++; } catch (e) { err++; } });
+        try { sectionSheet(si)(); sheets++; } catch (e) { err++; } });
+      try { policySheet()(); sheets++; } catch (e) { err++; }
+      up = (html.match(/class="ir[ "]/g) || []).length + (html.match(/<span>[A-Z]{2}<\/span>/g) || []).length;
+    } catch (e) { err++; }
+    rows.push([POLICIES[k].label || k, facts, up, sheets, extra, err]);
+  });
+  STATE.data = keep; SRC = keepSrc;
+  $("testAll").innerHTML = '<table class="tt"><thead><tr><th>Policy</th><th>Facts</th><th>Upfront</th><th>Sheets</th><th>Extra fields</th><th>Errors</th></tr></thead><tbody>' +
+    rows.map(function (r) { return "<tr><td>" + esc(r[0]) + "</td><td>" + r[1] + "</td><td>" + r[2] + "</td><td>" + r[3] + "</td><td>" + r[4] + '</td><td class="' + (r[5] ? "err" : "okt") + '">' + r[5] + "</td></tr>"; }).join("") + "</tbody></table>" +
+    '<p class="hint" style="margin-top:6px">Every payload renders with the same code. Extra fields show under Details.</p>';
+}
+
+document.addEventListener("click", function (e) {
+  var t = e.target.closest("[data-open],[data-jump],[data-src],[data-ask],[data-tab],[data-toast],[data-policy]"); if (!t) return;
+  if (t.dataset.policy) { setPolicy(t.dataset.policy); return; }
+  if (t.dataset.open === "item") { openSheet(itemSheet(+t.dataset.s, +t.dataset.i), !t.dataset.push || $("sheet").hidden); return; }
+  if (t.dataset.open === "section") { openSheet(sectionSheet(+t.dataset.s), true); return; }
+  if (t.dataset.open === "policy") { openSheet(policySheet(), true); return; }
+  if (t.dataset.jump) { var sec = $(t.dataset.jump); $("ibody").scrollTo({ top: sec.offsetTop - 56, behavior: reduce() ? "auto" : "smooth" }); return; }
+  if (t.dataset.src) { openSheet(sourceSheet(SRC[+t.dataset.src]), $("sheet").hidden); return; }
+  if (t.dataset.ask) { closeSheetNow(); tab("chat"); ask(t.dataset.ask); return; }
+  if (t.dataset.tab) { tab(t.dataset.tab); return; }
+  if (t.dataset.toast) flash(t.dataset.toast);
+});
+$("sheetClose").onclick = closeSheet; $("scrim").onclick = closeSheet;
+$("sheetBack").onclick = function () { STACK.pop(); drawSheet(); };
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("sheet").hidden) closeSheet(); });
+$("todaySel").onchange = function () { STATE.todayMode = this.value; render(); };
+$("addUnknown").onclick = function () {
+  STATE.data.sections.splice(STATE.data.sections.length - 1, 0, { id: "x-new", type: "loss_history", title: "Loss history", lossRatio: "Not given",
+    items: [ { id: "lh1", title: "Claims in the last 3 years", value: { type: "number", text: "2" }, summary: "Example of a section type the renderer has never seen.", claimTypes: "Collision, glass", sources: [{ doc: "Example loss run", page: 1 }] },
+             { id: "lh2", title: "Largest claim", value: { type: "money", amount: 18400, qualifier: "paid" }, sources: [{ doc: "Example loss run", page: 2 }] } ] });
+  render(); flash("Added a section with an unknown type and fields");
+};
+$("applyJson").onclick = function () { var m = $("jsonMsg"); try { var j = JSON.parse($("json").value); if (!j.policy || !Array.isArray(j.sections)) throw new Error('Needs "policy" and "sections"'); STATE.data = j; render(); m.className = "okm"; m.textContent = "Applied"; } catch (er) { m.className = "err"; m.textContent = "Couldn't read the JSON: " + er.message; } };
+$("resetJson").onclick = function () { setPolicy(STATE.key); $("jsonMsg").className = "okm"; $("jsonMsg").textContent = "Reset"; };
+
+function onScroll() {
+  var body = $("ibody"), secs = body.querySelectorAll(".sec"), cur = 0;
+  secs.forEach(function (s, i) { if (s.offsetTop - 70 <= body.scrollTop) cur = i; });
+  if (body.scrollTop + body.clientHeight >= body.scrollHeight - 4) cur = secs.length - 1;
+  body.querySelectorAll(".jump").forEach(function (j, i) { var on = i === cur; if ((j.getAttribute("aria-pressed") === "true") !== on) { j.setAttribute("aria-pressed", on); if (on) j.scrollIntoView({ block: "nearest", inline: "nearest" }); } });
+}
+$("ibody").addEventListener("scroll", onScroll, { passive: true });
+function tab(n) { $("scrInsights").hidden = n !== "insights"; $("scrChat").hidden = n !== "chat"; if (n === "chat") chatChips(); }
+var tt; function flash(m) { var t = $("toast"); t.textContent = m; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(function () { t.classList.remove("show"); }, 1900); }
+
+/* Ask Ovie: answers only from the payload */
+var SYN = { /* everyday language only; policy words come from item.keywords in the payload */
+  hurt: "injury", injured: "injury", injuries: "injury", injure: "injury", harm: "injury",
+  sued: "liability", lawsuit: "liability", sue: "liability",
+  cancelled: "cancel", canceled: "cancel", cancellation: "cancel", active: "cancel", expired: "cancel",
+  missing: "found", cost: "premium", price: "premium", pay: "premium", deductibles: "deductible", excess: "deductible", where: "applies" };
+var STOP = "a an the is are am my our we i do does did what whats which who how much many if any for to of in on at by with this that it be covered cover coverage policy about me tell there documents from your you can get has have was will still not isn aren doesn don isnt arent work".split(" ");
+function toks(s) { return String(s).toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(function (w) { return w.length > 1 && STOP.indexOf(w) < 0; }).map(function (w) { return SYN[w] || w; }); }
+function facts() {
+  var F = [], p = STATE.data.policy, st = computeStatus(p);
+  F.push({ k: "term cancel expired insurer carrier broker number dates status", lead: "Status: " + st.label + " (" + st.line + "). Term " + fd(p.term.start) + " – " + fd(p.term.end) + ".", open: "policy" });
+  arr(STATE.data.sections).forEach(function (sec, si) { arr(sec.items).forEach(function (it, ii) {
+    var txt = [it.title, it.formal, it.summary, arr(it.keywords).join(" "), arr(it.appliesTo).join(" "), it.group, sec.type === "exclusions" ? "not excluded exclusion" : "", sec.type === "gaps" ? "found not in documents" : "", sec.type === "conditions" ? "deductible condition" : "", arr((it.detail || {}).rows).map(function (r) { return r.label + " " + (typeof r.value === "string" ? r.value : ""); }).join(" ")].join(" ");
+    var v = it.values ? it.values.map(function (x) { return (x.label ? x.label + ": " : "") + valText(x); }).join("; ") : valText(it.value);
+    F.push({ k: txt, lead: (sec.type === "exclusions" ? "Not covered: " : sec.type === "gaps" ? "Not in your documents: " : "") + it.title + (v ? " — " + v : "") + ".", sum: it.summary, si: si, ii: ii, src: it.sources });
+  }); });
+  return F;
+}
+function ask(q) {
+  var m = $("msgs"); m.insertAdjacentHTML("beforeend", '<div class="q">' + esc(q) + "</div>");
+  var qt = toks(q); if (/not covered|isn.?t covered|aren.?t covered|exclu/i.test(q)) qt.push("excluded"); var scored = facts().map(function (f) { var kt = toks(f.k), s = 0; qt.forEach(function (w) { if (kt.indexOf(w) > -1) s += 2; else if (w.length > 3 && kt.some(function (k) { return k.length > 3 && (k.indexOf(w) === 0 || w.indexOf(k) === 0); })) s += 1; }); return { f: f, s: s }; }).filter(function (x) { return x.s >= 2; }).sort(function (a, b) { return b.s - a.s; });
+  var h = '<div class="a">';
+  if (!scored.length) h += "<p>I couldn't find that in this policy's documents. Try asking about coverage, limits, exclusions or what's missing.</p>";
+  else { var top = scored[0].s, picks = scored.filter(function (x) { return x.s >= top - (top >= 4 ? 1 : 0); }).slice(0, 4).map(function (x) { return x.f; });
+    h += "<p>" + esc(picks[0].lead) + (picks[0].sum ? " " + esc(picks[0].sum) : "") + "</p>";
+    if (picks.length > 1) h += '<div class="akv">' + picks.slice(1).map(function (p) { return "<div><span>" + esc(p.lead) + "</span></div>"; }).join("") + "</div>";
+    h += '<div class="srow">' + picks.filter(function (p) { return p.si != null; }).map(function (p) { return '<button type="button" class="chip" data-open="item" data-s="' + p.si + '" data-i="' + p.ii + '">Open ' + esc(STATE.data.sections[p.si].items[p.ii].title.slice(0, 28)) + "</button>"; }).join("") + "</div>";
+  }
+  h += '<div class="afoot">Answered only from this policy\'s documents.</div></div>';
+  m.insertAdjacentHTML("beforeend", h); $("cbody").scrollTop = $("cbody").scrollHeight;
+}
+function chatChips() {
+  var d = STATE.data, qs = ["Is this policy still active?"];
+  var cov = arr(d.sections).filter(function (x) { return x.type === "coverage"; })[0];
+  if (cov && cov.items[0]) qs.push("What's the limit for " + cov.items[0].title.toLowerCase() + "?");
+  if (arr(d.sections).some(function (x) { return x.type === "exclusions"; })) qs.push("What isn't covered?");
+  if (arr(d.sections).some(function (x) { return x.type === "gaps"; })) qs.push("What's missing from my documents?");
+  $("cchips").innerHTML = qs.map(function (q) { return '<button type="button" class="chip" data-ask="' + esc(q) + '">' + esc(q) + "</button>"; }).join("");
+}
+$("composer").onsubmit = function (e) { e.preventDefault(); var v = $("cin").value.trim(); if (!v) return; $("cin").value = ""; ask(v); };
+$("newChat").onclick = function () { $("msgs").innerHTML = ""; chatChips(); };
+
+syncControls(); render(); testAll();
+
+</script>
+</body></html>

@@ -1,0 +1,1330 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body style="margin:0"><title>Insights Component Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: catalog page. Each data chunk = one section; its 2–3 component options sit side by side as phone-width cards, rendered with the real extraction, followed by the shared data contract. Tokens match the Ovie insights prototype. */
+:root{
+  --stage:#E9EDF0; --phone:#FFFFFF; --ink:#1B2229; --muted:#66717C; --line:#DCE1E6; --fill:#F2F4F6; --fill2:#E4E8EC;
+  --accent:#0E6B66; --accent-soft:#DCEFEC; --code:#F6F8F9;
+  --crit:#B42318; --crit-soft:#FCE7E4; --warn:#8F560B; --warn-soft:#FAEED6; --ok:#1E7440; --ok-soft:#E2F2E7;
+  --f-display:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--stage);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45}
+p{margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:28px 60px}
+@media (max-width:520px){.wrap{padding-inline:16px}}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;color:var(--accent);letter-spacing:.05em;text-transform:uppercase}
+h1{font-family:var(--f-display);font-size:clamp(28px,4vw,40px);line-height:1.05;margin:6px 0 10px;text-wrap:balance}
+.lede{max-width:70ch;color:var(--muted);font-size:15px}
+.lede b{color:var(--ink)}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:22px 0 8px}
+.rule{background:var(--phone);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13.5px}
+.rule b{display:block;font-size:14px;margin-bottom:2px}
+.rule code,.mono{font-family:var(--f-mono);font-size:12px}
+.map{width:100%;border-collapse:collapse;font-size:13px;background:var(--phone);border-radius:14px;overflow:hidden}
+.mapwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-top:14px}
+.map th,.map td{text-align:left;padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+.map th{border-top:0;background:var(--fill);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.map td:first-child{white-space:nowrap;font-weight:600}
+.map a{color:var(--accent)}
+.map code{font-family:var(--f-mono);font-size:11.5px;white-space:nowrap}
+
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--stage);display:flex;gap:6px;overflow-x:auto;padding:10px 0;margin-top:26px;border-bottom:1px solid var(--line);scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex:none;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--phone);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600}
+.nav a:hover{border-color:var(--accent);color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.chunk{padding-top:36px;scroll-margin-top:60px}
+.chead{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.chead .n{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:600}
+.chead h2{font-family:var(--f-display);font-size:26px;margin:0;line-height:1.1}
+.cmeta{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px;font-size:12.5px;color:var(--muted);align-items:center}
+.field{font-family:var(--f-mono);font-size:11px;background:var(--phone);border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--ink)}
+.why{max-width:80ch;font-size:13.5px;color:var(--muted);margin-top:6px}
+.why b{color:var(--ink)}
+
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:18px;margin-top:16px;align-items:start}
+.opt{display:flex;flex-direction:column;gap:10px;min-width:0}
+.otag{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.otag .l{width:24px;height:24px;border-radius:7px;background:var(--ink);color:var(--phone);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.otag code{font-family:var(--f-mono);font-size:12.5px;font-weight:600;overflow-wrap:anywhere}
+.rec{font-size:11px;font-weight:700;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:1px 8px}
+.was{font-size:11px;color:var(--muted);font-family:var(--f-mono)}
+.screen{background:var(--phone);border:1px solid var(--line);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px;max-width:390px;width:100%;box-shadow:0 10px 30px -18px rgba(0,0,0,.25)}
+.notes{font-size:12.5px;display:grid;gap:3px;max-width:390px}
+.notes span{color:var(--muted)}
+.notes b{font-weight:600}
+
+pre.contract{margin:16px 0 0;background:var(--code);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-family:var(--f-mono);font-size:12px;line-height:1.55;overflow-x:auto;max-height:340px;color:var(--ink)}
+.chdr{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:18px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.chdr b{color:var(--ink);font-size:13px}
+.copy{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--phone);color:var(--accent);border-radius:8px;padding:3px 10px;cursor:pointer}
+.k{color:var(--accent)} .s{color:var(--warn)}
+
+/* ---------- component building blocks (inside .screen) ---------- */
+.big{font-family:var(--f-display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.05}
+.hero{font-family:var(--f-display);font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.muted{color:var(--muted)} .num{font-variant-numeric:tabular-nums}
+.sm{font-size:12.5px} .xs{font-size:11.5px}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ch>b{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.pill.crit{background:var(--crit-soft);color:var(--crit)} .pill.warn{background:var(--warn-soft);color:var(--warn)} .pill.n{background:var(--fill2);color:var(--muted)} .pill.ok{background:var(--ok-soft);color:var(--ok)}
+.src{display:inline-flex;font-family:var(--f-mono);font-size:10.5px;color:var(--muted);background:var(--fill);border:1px solid var(--line);padding:0 6px;border-radius:6px;white-space:nowrap;cursor:pointer}
+.src::before{content:"↗ "}
+.scope{display:inline-block;font-size:11.5px;font-weight:600;background:var(--fill);border:1px solid var(--line);border-radius:999px;padding:0 8px}
+.srow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.facts2{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.facts2 div{min-width:0;display:flex;flex-direction:column}
+.facts2 span{font-size:11.5px;color:var(--muted)}
+.facts2 b{font-size:13.5px;line-height:1.3;overflow-wrap:anywhere}
+.facts2 small{font-size:12px;color:var(--muted)}
+.hr{height:1px;background:var(--line)}
+.kv{display:flex;flex-direction:column}
+.kv>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.kv>div:first-child{border-top:0}
+.kv>div>span:first-child{color:var(--muted);flex:none}
+.kv>div>span:last-child{text-align:right;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.kv>div>span:last-child small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.lbl{flex:1;min-width:0}
+.lbl>b{display:block;font-size:14px}
+.lbl small{display:block;color:var(--muted);font-size:12.5px}
+.val{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.val small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.val.unk{font-weight:500;color:var(--muted);font-style:italic}
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.split2 div{background:var(--fill);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;min-width:0}
+.split2 span{font-size:11.5px;color:var(--muted)}
+.split2 b{font-size:14.5px;font-variant-numeric:tabular-nums}
+.split2 small{font-size:12px;color:var(--muted);line-height:1.3}
+.note{font-size:13px;background:var(--fill);border-radius:10px;padding:8px 10px}
+.empty{border:1px dashed var(--line);border-radius:12px;padding:9px 12px;color:var(--muted);font-size:13px}
+.grp{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.g{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.g.y{background:var(--ok-soft);color:var(--ok)} .g.w{background:var(--warn-soft);color:var(--warn)} .g.n{background:var(--crit-soft);color:var(--crit)} .g.u{background:var(--phone);color:var(--muted);border:1.5px dashed var(--muted)}
+.cta{display:block;width:100%;text-align:center;font:inherit;font-weight:600;border-radius:12px;padding:10px;background:var(--ink);color:var(--phone);border:0;cursor:pointer}
+
+/* term strip */
+.term{position:relative;height:46px;margin-top:4px}
+.term .ln{position:absolute;left:0;right:0;top:14px;height:6px;border-radius:3px;background:var(--fill2)}
+.term .on{position:absolute;top:14px;height:6px;border-radius:3px;background:var(--muted)}
+.term .tick{position:absolute;top:8px;width:2px;height:18px;background:var(--ink)}
+.term .lab{position:absolute;top:28px;font-size:11px;color:var(--muted);white-space:nowrap}
+.term .today{position:absolute;top:2px;width:12px;height:12px;border-radius:50%;background:var(--crit);transform:translateX(-50%);border:2px solid var(--phone)}
+/* id card */
+.idc{background:var(--accent-soft);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.idc .pn{font-family:var(--f-mono);font-size:18px;font-weight:600;letter-spacing:.02em}
+.idc .r{display:flex;justify-content:space-between;gap:10px;font-size:12.5px}
+.idc .r span{color:var(--muted)} .idc .r b{text-align:right}
+/* vertical timeline */
+.tl{display:grid;grid-template-columns:auto 1fr;gap:0 10px;font-size:13px}
+.tl i{width:12px;display:flex;flex-direction:column;align-items:center}
+.tl i::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--ink);margin-top:4px;flex:none}
+.tl i::after{content:"";flex:1;width:2px;background:var(--line);min-height:14px}
+.tl i.last::after{display:none}
+.tl i.now::before{background:var(--crit)}
+.tl div{padding-bottom:8px}
+/* stacked bar + legend */
+.stack{display:flex;height:12px;border-radius:5px;overflow:hidden;gap:2px}
+.stack i{display:block;min-width:3px}
+.leg{display:grid;gap:6px;font-size:13px}
+.leg div{display:flex;align-items:center;gap:8px}
+.leg i{width:10px;height:10px;border-radius:3px;flex:none}
+.leg span{flex:1;min-width:0}
+.leg b{font-variant-numeric:tabular-nums}
+.receipt>div{display:flex;gap:6px;align-items:baseline;font-size:13.5px;padding:4px 0}
+.receipt>div span:nth-child(2){flex:1;border-bottom:1px dotted var(--line);transform:translateY(-4px)}
+.receipt>div b{font-variant-numeric:tabular-nums}
+.receipt .ind{padding-left:12px;color:var(--muted)}
+.receipt .tot{border-top:1px solid var(--ink);margin-top:4px;padding-top:8px;font-weight:700}
+.waffle{display:grid;grid-template-columns:repeat(20,1fr);gap:2px}
+.waffle i{aspect-ratio:1;border-radius:2px;display:block;max-width:100%}
+/* coverage */
+.cv{display:flex;flex-direction:column;gap:6px;padding-top:10px;border-top:1px solid var(--line)}
+.cv:first-child{border-top:0;padding-top:0}
+.cvh{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.cvh b{display:block;font-size:14.5px}
+.cvh small{color:var(--muted);font-size:12px}
+.lb{display:grid;grid-template-columns:1fr;gap:3px;padding:8px 0;border-top:1px solid var(--line)}
+.lb:first-of-type{border-top:0}
+.lb .t{display:flex;justify-content:space-between;gap:8px;font-size:13.5px}
+.lb .t b{font-variant-numeric:tabular-nums}
+.track{position:relative;height:10px;background:var(--fill);border-radius:5px}
+.track i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--accent)}
+.track i.dash{background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 8px);opacity:.6}
+.ticks{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:10px;color:var(--muted)}
+.matrix{width:100%;border-collapse:collapse;font-size:12px}
+.matrix th,.matrix td{padding:7px 3px;border-top:1px solid var(--line);text-align:center;vertical-align:top}
+.matrix th{font-weight:600;color:var(--muted);border-top:0;font-size:11px;line-height:1.2}
+.matrix td:first-child,.matrix th:first-child{text-align:left}
+.matrix td b{display:block}
+.matrix .y{color:var(--ok);font-weight:700}
+.matrix .d{color:var(--muted)}
+/* vehicles */
+.fleet{display:flex;gap:5px;flex-wrap:wrap;align-items:flex-end}
+.iname{font-family:var(--f-display);font-size:22px;font-weight:700;line-height:1.15;text-wrap:balance;overflow-wrap:anywhere}
+.hl{display:flex;flex-direction:column}
+.hl>div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}
+.hl>div>span{color:var(--muted);font-size:12.5px;padding-top:1px}
+.hl b{font-weight:600;overflow-wrap:anywhere}
+.hl small{display:block;color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.kinds{display:flex;gap:8px;flex-wrap:wrap}
+.kd{display:inline-flex;align-items:center;gap:6px;background:var(--fill);border-radius:999px;padding:3px 10px 3px 7px;font-size:13px}
+.kd svg{display:block}
+.fleet svg{display:block}
+.vt{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.vt .h{display:flex;justify-content:space-between;padding:6px 10px;font-size:11px;color:var(--muted);font-weight:600;background:var(--fill)}
+.vt .r{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid var(--line);padding:7px 10px;font-size:13.5px}
+.vt .r small{display:block;color:var(--muted);font-size:11px;font-family:var(--f-mono);overflow-wrap:anywhere}
+.vt .r .num{font-weight:600}
+.hb{display:grid;grid-template-columns:1fr;gap:2px;padding:6px 0}
+.hb .t{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.hb .t b{font-variant-numeric:tabular-nums}
+.hb .bar{height:8px;border-radius:4px;background:var(--accent)}
+.hb .bar.tr{background:var(--muted)}
+.hb small{font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+.yax{position:relative;height:92px;margin-top:2px}
+.yax .ln{position:absolute;left:0;right:0;top:58px;height:2px;background:var(--line)}
+.yax .band{position:absolute;top:50px;height:18px;background:var(--warn-soft);border-radius:4px}
+.yax .ic{position:absolute;transform:translateX(-50%);color:var(--ink)}
+.yax .ic.tr{color:var(--muted)}
+.yax .yl{position:absolute;top:70px;transform:translateX(-50%);font-size:10.5px;color:var(--muted);font-family:var(--f-mono)}
+.yax .dt{position:absolute;top:53px;width:10px;height:10px;border-radius:50%;background:var(--ink);transform:translateX(-50%);border:2px solid var(--phone)}
+/* exclusions */
+.xi{position:relative;width:32px;height:32px;border-radius:9px;background:var(--fill);display:grid;place-items:center;color:var(--muted);flex:none}
+.xi::after{content:"✕";position:absolute;right:-3px;top:-4px;font-size:9px;font-weight:800;color:var(--crit);background:var(--phone);border-radius:50%;width:13px;height:13px;display:grid;place-items:center}
+.exc{display:block;font-style:normal;font-size:12px;color:var(--ok);margin-top:2px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{background:var(--fill);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:4px;min-width:0;font-size:12px;color:var(--muted);line-height:1.3}
+.tile b{color:var(--ink);font-size:13px;line-height:1.25}
+.tile svg{color:var(--muted)}
+.tile .top{display:flex;justify-content:space-between;align-items:flex-start}
+.tile .top em{font-style:normal;color:var(--crit);font-weight:800;font-size:11px}
+.xg{display:flex;flex-direction:column;gap:6px}
+.xg .gh{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px}
+.xg ul{margin:0;padding:0 0 0 30px;list-style:none;display:grid;gap:5px;font-size:13px}
+.xg li small{display:block;color:var(--muted);font-size:12px}
+/* watch */
+.wp{border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.wp.serious{background:var(--warn-soft);border-color:transparent}
+.wp.serious .pill.warn,.wp.serious .src{background:var(--phone)}
+.wph{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.wph b{flex:1;min-width:55%}
+.ladder{display:flex;align-items:flex-end;gap:6px}
+.ladder .step{flex:1;border-radius:8px 8px 4px 4px;background:var(--accent-soft);padding:7px 8px;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+.ladder .step.you{background:var(--fill2)}
+.wp.serious .ladder .step{background:var(--phone)}
+.ladder b{font-variant-numeric:tabular-nums;font-size:14px}
+.ladder span{font-size:11px;color:var(--muted);line-height:1.25}
+.sr{display:flex;gap:10px;padding:9px 0 9px 10px;border-top:1px solid var(--line);position:relative}
+.sr:first-child{border-top:0}
+.sr::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:4px;border-radius:2px;background:var(--fill2)}
+.sr.s1::before{background:var(--warn)} .sr.s2::before{background:var(--muted)}
+.sr .lbl small{font-size:12.5px}
+.typ{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);white-space:nowrap}
+.act{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px}
+.act div{background:var(--fill);border-radius:8px;padding:6px 8px;min-width:0}
+.act span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+.wp.serious .act div{background:var(--phone)}
+/* scale */
+.scale{position:relative;height:92px}
+.scale .ax{position:absolute;left:0;right:0;top:56px;height:2px;background:var(--line)}
+.scale .tk{position:absolute;top:52px;width:1px;height:10px;background:var(--muted)}
+.scale .tl2{position:absolute;top:66px;transform:translateX(-50%);font-size:10px;color:var(--muted);font-family:var(--f-mono)}
+.scale .mk{position:absolute;top:49px;width:14px;height:14px;border-radius:50%;transform:translateX(-50%);border:2px solid var(--phone)}
+.scale .ml{position:absolute;top:0;transform:translateX(-50%);text-align:center;font-size:11px;line-height:1.2;white-space:nowrap}
+.scale .ml b{display:block;font-size:13px;font-variant-numeric:tabular-nums}
+.scale .ml::after{content:"";display:block;width:1px;height:10px;background:var(--line);margin:3px auto 0}
+/* evidence */
+.pages{position:relative;height:56px}
+.pages .bar{position:absolute;left:0;right:0;top:20px;height:16px;border-radius:4px;background:repeating-linear-gradient(90deg,var(--fill2) 0 3px,var(--fill) 3px 4px)}
+.pages .pm{position:absolute;top:16px;width:3px;height:24px;background:var(--accent);transform:translateX(-50%);border-radius:1px}
+.pages .pl{position:absolute;top:0;transform:translateX(-50%);font-family:var(--f-mono);font-size:10px;color:var(--ink);white-space:nowrap}
+.pages .pe{position:absolute;top:42px;font-family:var(--f-mono);font-size:10px;color:var(--muted)}
+.fv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fv>div{border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.fv .f{background:var(--ok-soft)} .fv .m{border:1.5px dashed var(--line)}
+.fv ul{margin:0;padding:0;list-style:none;display:grid;gap:5px;font-size:12.5px}
+.fv li{display:flex;gap:6px;align-items:flex-start;line-height:1.3}
+.fv h4{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.forms{display:flex;flex-direction:column}
+.forms>div{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line);font-size:13px}
+.forms>div:first-child{border-top:0}
+.forms code{font-family:var(--f-mono);font-size:11.5px;flex:none;min-width:118px}
+footer{margin-top:44px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+
+/* ===== Ovie design system layer (DESIGN.md) — single light theme by design =====
+   Plum brand, Figtree, flat white cards on #F6F6F6, 12px radius, sentence case.
+   Red / orange / green are semantic only (negative / attention / positive). Turquoise and yellow are the neutral chart accents. Text keeps AA tokens. */
+:root{
+  --stage:#E3E3E3; --phone:#FFFFFF; --canvas:#F6F6F6; --ink:#111111; --text2:#333A3D; --muted:#5F6368;
+  --line:#ECEFED; --border:#D8DDDB; --fill:#F6F6F6; --fill2:#E3E3E3; --code:#F6F6F6; --scrim:rgba(17,24,23,.58);
+  --accent:#6B4062; --accent-dark:#54324D; --accent-soft:#F5EDF3;
+  --crit:#A63A33; --crit-soft:#FFEDED; --warn:#8A5A06; --warn-soft:#FFF5DF; --warn-border:#E7C982; --warn-text:#634106; --ok:#0D7D07; --ok-soft:#E7FFF4;
+  --b-red:#EF4444; --b-green:#16A34A; --b-orange:#EA580C;
+  --a-teal:#14B8A6; --a-teal-soft:#CCFBF1; --a-teal-ink:#0F766E; --a-yellow:#FACC15; --a-yellow-soft:#FEF9C3; --a-yellow-ink:#854D0E; --a-yellow-icon:#EAB308;
+  --plum-2:#A67D9B; --plum-3:#CDAFC5;
+  --focus:0 0 0 3px rgba(107,64,98,.24);
+  --f-display:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+body{font-family:var(--f-body);font-size:14px;line-height:20px;color:var(--ink)}
+:focus-visible{outline:0;box-shadow:var(--focus);border-radius:8px}
+b,strong{font-weight:600}
+
+/* headings and labels: sentence case, no tracking */
+.ch>b,.grp,.vt .h,.map th,.act span,.fv h4,.pbox h3,.eyebrow{text-transform:none;letter-spacing:0}
+.ch>b{font-size:18px;line-height:24px;font-weight:600;color:var(--ink)}
+.ch{align-items:flex-start}
+.grp{font-size:14px;line-height:20px;font-weight:600;color:var(--ink)}
+.muted,.sm.muted,.xs.muted{color:var(--muted)}
+.xs{font-size:12px;line-height:16px}
+.sm{font-size:14px;line-height:20px}
+
+/* pills */
+.pill{gap:6px;font-size:12px;line-height:16px;font-weight:600;padding:4px 10px}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.pill.crit{background:var(--crit-soft);color:var(--crit)} .pill.crit::before{background:var(--b-red)}
+.pill.warn{background:var(--warn-soft);color:var(--warn-text)} .pill.warn::before{background:var(--b-orange)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.ok::before{background:var(--b-green)}
+.pill.n{background:var(--accent-soft);color:var(--accent)} .pill.n::before{background:var(--accent)}
+
+/* source action: info glyph + plum page reference */
+.src{display:inline-flex;align-items:center;gap:4px;min-height:28px;background:transparent;border:0;padding:0 6px 0 2px;border-radius:8px;font-family:var(--f-body);font-size:12px;line-height:16px;font-weight:600;color:var(--accent);cursor:pointer}
+.src::before{content:"";width:16px;height:16px;flex:none;background:var(--muted);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4M12 8h.01'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4M12 8h.01'/%3E%3C/svg%3E") center/contain no-repeat}
+button.src::before{content:""}
+.src:hover,button.src:hover{background:var(--accent-soft);color:var(--accent)}
+.scope{background:var(--fill);border:0;border-radius:999px;font-size:12px;line-height:16px;font-weight:600;padding:4px 10px;color:var(--text2)}
+
+/* rows and values (12.1.2) */
+.row,.cv,.lb,.hb{border-top-color:var(--line)}
+.lbl>b,.cvh b{font-size:14px;line-height:20px;font-weight:600}
+.lbl small,.cvh small,.hl small,.kv small,.vt .r small{color:var(--muted);font-size:14px;line-height:20px}
+.vt .r small,.hb small{font-family:var(--f-body);font-size:12px;line-height:16px;letter-spacing:.02em}
+.val{font-size:18px;line-height:24px;font-weight:600}
+.val small{font-size:12px;line-height:16px;color:var(--muted);font-weight:400}
+.val.unk{font-size:14px;color:var(--text2);font-style:normal;font-weight:600}
+.cv p,.wp p{color:var(--muted)}
+.hl>div{border-top-color:var(--line);font-size:14px;line-height:20px}
+.hl>div>span{color:var(--muted);font-size:14px}
+.kv>div{border-top-color:var(--line)}
+.kv>div>span:first-child{color:var(--muted)}
+.facts2 span{color:var(--muted);font-size:14px}
+
+/* inset neutral note (6) and evidence gaps */
+.note{background:var(--canvas);border-radius:12px;padding:12px;color:var(--muted);font-size:14px;line-height:20px}
+.empty{border:0;background:var(--canvas);border-radius:12px;padding:12px;color:var(--text2);font-size:14px}
+.split2 div{background:var(--canvas);border-radius:12px;padding:12px}
+.split2 b{font-size:18px;line-height:24px;font-weight:600}
+.split2 span,.split2 small{color:var(--muted);font-size:12px;line-height:16px}
+
+/* buttons, chips */
+.cta{background:var(--accent);color:#fff;border-radius:12px;min-height:44px;font-weight:600}
+.cta:hover{background:var(--accent-dark)}
+.chip{background:var(--accent-soft);color:var(--accent);border-radius:12px;min-height:36px;font-size:14px;font-weight:600}
+
+/* subject type counts */
+.kd{background:var(--a-teal-soft);color:var(--a-teal-ink);font-weight:600;padding:4px 12px 4px 8px}
+.kd svg{color:var(--a-teal-ink)!important}
+.kd b{font-weight:700}
+
+/* charts and visual marks */
+.stack{height:12px;border-radius:6px}
+.leg i{border-radius:3px}
+.track{background:var(--canvas);height:10px}
+.track i{background:var(--a-teal)}
+.hb .bar{background:var(--a-teal);height:10px;border-radius:5px}
+.hb .bar.tr{background:var(--a-yellow)}
+.term .on{background:var(--accent)}
+.ladder .step{background:var(--a-teal-soft);border-radius:12px 12px 6px 6px}
+.ladder .step.you{background:var(--a-yellow-soft);border-top:3px solid var(--a-yellow)}
+.ladder b{font-size:14px}
+.matrix th{color:var(--muted);font-size:12px;font-weight:600}
+.matrix th,.matrix td{border-top-color:var(--line)}
+.matrix .y{color:var(--b-green);font-size:15px}
+.matrix .d{color:var(--muted)}
+.yax .band{background:var(--a-yellow-soft);box-shadow:inset 0 -2px 0 var(--a-yellow)}
+.yax .ic{color:var(--a-teal)} .yax .ic.tr{color:var(--a-yellow-icon)}
+.scale .mk{border-color:#fff}
+.pages .pm{background:var(--a-teal)}
+.pages .bar{background:repeating-linear-gradient(90deg,var(--fill2) 0 3px,var(--canvas) 3px 4px)}
+.g.y{background:var(--ok-soft);color:var(--b-green)} .g.n{background:var(--crit-soft);color:var(--b-red)} .g.w{background:var(--warn-soft);color:var(--b-orange)}
+.g.u{background:#fff;color:var(--muted);border-color:var(--muted)}
+
+/* exclusions */
+.xi{background:var(--canvas);border-radius:12px;width:40px;height:40px;color:var(--muted)}
+.xi::after{color:#fff;background:var(--b-red);width:15px;height:15px;font-size:9px;right:-4px;top:-4px}
+.exc{color:var(--ok);font-size:14px}
+.tile{background:var(--canvas);border-radius:12px;color:var(--muted);font-size:12px}
+.tile .top em{color:var(--b-red)}
+.xg .gh{font-size:14px}
+
+/* watch points */
+.wp{border:0;border-radius:12px;background:var(--canvas);padding:12px 14px}
+.wp.serious{background:var(--warn-soft);box-shadow:inset 3px 0 0 var(--b-orange)}
+.wp.serious .pill.warn,.wp.serious .src{background:#fff}
+.wp.crit{background:var(--crit-soft);box-shadow:inset 3px 0 0 var(--b-red)}
+.wph b{font-size:14px}
+.sr::before{background:var(--accent)} .sr.s1::before{background:var(--b-orange)} .sr.s2::before{background:var(--accent)}
+.typ{font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--muted)}
+.act div{background:#fff;border-radius:12px}
+.act span{font-size:12px;color:var(--muted);font-weight:600}
+
+/* evidence */
+.fv .f{background:var(--ok-soft)} .fv .f h4{color:var(--ok)} .fv .f li span{color:var(--b-green);font-weight:700}
+.fv .m{border:0;background:var(--canvas)}
+.fv h4{font-size:14px}
+.forms code{font-family:var(--f-body);font-weight:600;font-size:14px}
+.forms>div{border-top-color:var(--line)}
+.receipt .tot{border-top-color:var(--ink)}
+.idc{background:var(--accent-soft);border-radius:12px}
+.idc .pn{font-family:var(--f-body);font-size:18px;font-weight:600;letter-spacing:.02em}
+.vt{border:0;background:var(--canvas);border-radius:12px}
+.vt .h{background:transparent;color:var(--muted);font-size:12px}
+.vt .r{border-top-color:#fff;border-top-width:2px}
+.waffle i{border-radius:2px}
+.fb{border-color:var(--b-red)}
+
+/* catalog page on Ovie DS */
+body{background:var(--canvas)}
+h1{font-size:32px;line-height:36px;font-weight:600}
+.lede{color:var(--muted);font-size:14px;line-height:20px}
+.rule,.mapwrap{border:0;border-radius:12px}
+.rule code,.mono,.map code,.otag code,.field,pre.contract{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.map th{background:#fff;color:var(--muted);font-size:12px;font-weight:600}
+.map th,.map td{border-top-color:var(--line)}
+.map a{color:var(--accent);font-weight:600}
+.nav{background:var(--canvas);border-bottom-color:var(--line)}
+.nav a{border:0;min-height:36px;display:inline-flex;align-items:center;font-size:14px;color:var(--text2)}
+.nav a:hover{background:var(--accent-soft);color:var(--accent)}
+.chead .n{color:var(--accent);font-family:var(--f-body)}
+.chead h2{font-size:18px;line-height:24px;font-weight:600}
+.field{background:#fff;border:0;border-radius:6px}
+.why{color:var(--muted)}
+.otag .l{background:var(--accent);border-radius:8px}
+.rec{background:var(--accent-soft);color:var(--accent)}
+.screen{border:0;border-radius:12px;box-shadow:none;padding:16px;gap:12px}
+pre.contract{border:0;border-radius:12px;background:#fff}
+.copy{border-color:var(--border);border-radius:12px;color:var(--accent);min-height:36px}
+.screen .ch>b{font-size:18px}
+
+/* serious = red (user decision); colored ladder; centered ✕ badge */
+.wp.serious{background:var(--crit-soft);box-shadow:inset 3px 0 0 var(--b-red)}
+.wp.serious .pill{background:#fff}
+.wp.serious .src,.wp .src{background:transparent}
+.wp.serious .src:hover{background:rgba(255,255,255,.6)}
+.wp .ladder .step,.wp.serious .ladder .step{background:var(--a-teal-soft);border-top:3px solid var(--a-teal)}
+.wp .ladder .step.you,.wp.serious .ladder .step.you{background:var(--a-yellow-soft);border-top:3px solid var(--a-yellow)}
+.ladder .step{border-top:3px solid var(--a-teal)}
+.sr.s1::before{background:var(--b-red)}
+.xi::after{content:"";width:16px;height:16px;right:-5px;top:-5px;border:2px solid #fff;border-radius:50%;background:var(--b-red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7 7 17'/%3E%3C/svg%3E") center/9px 9px no-repeat;display:block;font-size:0;box-sizing:content-box}
+
+/* 12 Oct round 6: vertical watch heads, stroke pills, DS warning highlight for serious + missing data */
+.wph{flex-direction:column;align-items:flex-start;gap:6px}
+.wph b{min-width:0;flex:none}
+.wph .pill,.wp .pill,.wp.serious .pill{background:transparent;border:1px solid currentColor;padding:3px 9px}
+.pill.warn{color:var(--warn-text)} .pill.warn::before{background:var(--b-orange)}
+.scope{background:transparent;border:1px solid var(--border);color:var(--text2);padding:3px 9px}
+.wp.serious{background:var(--warn-soft);border:1px solid var(--warn-border);box-shadow:none}
+.wp.serious p{color:var(--warn-text)}
+.sr.s1::before{background:var(--b-orange)}
+/* missing data / no document = DS warning highlight */
+.empty{background:var(--warn-soft);border:1px solid var(--warn-border);color:var(--warn-text);font-weight:600;display:flex;gap:8px;align-items:flex-start}
+.empty::before{content:"";width:18px;height:18px;flex:none;margin-top:1px;background:var(--warn);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E") center/contain no-repeat}
+.val.unk,.unkpill{display:inline-flex;align-items:center;gap:5px;background:var(--warn-soft);border:1px solid var(--warn-border);color:var(--warn-text);border-radius:999px;padding:2px 10px;font-size:12px;line-height:16px;font-weight:600;font-style:normal;white-space:nowrap}
+.val.unk::before,.unkpill::before{content:"";width:12px;height:12px;flex:none;background:var(--warn);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E") center/contain no-repeat}
+.g.u{background:var(--warn-soft);border:1px solid var(--warn-border);color:var(--warn)}
+.fv .m{background:var(--warn-soft);border:1px solid var(--warn-border)}
+.fv .m h4,.fv .m ul,.fv .m li{color:var(--warn-text)}
+.matrix .unkpill{white-space:normal;flex-direction:column;gap:2px;padding:4px 5px;border-radius:8px;font-size:11px;line-height:13px;text-align:center;max-width:52px}
+.matrix th,.matrix td{padding-left:2px;padding-right:2px}
+.matrix td{overflow-wrap:anywhere}
+.matrix{table-layout:fixed}
+.matrix th:first-child{width:24%}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-truck" viewBox="0 0 32 20"><rect x="1" y="4" width="19" height="11" rx="1.5" fill="currentColor"/><path d="M20 7h6l4 4v4H20z" fill="currentColor"/><circle cx="7" cy="16.5" r="2.8" fill="currentColor" style="stroke:var(--phone)" stroke-width="1.5"/><circle cx="25" cy="16.5" r="2.8" fill="currentColor" style="stroke:var(--phone)" stroke-width="1.5"/></symbol>
+<symbol id="i-trailer" viewBox="0 0 32 20"><rect x="5" y="5" width="22" height="9" rx="1.5" fill="currentColor"/><rect x="0" y="11" width="6" height="1.8" fill="currentColor"/><circle cx="17" cy="16.5" r="2.8" fill="currentColor" style="stroke:var(--phone)" stroke-width="1.5"/></symbol>
+<symbol id="x-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></symbol>
+<symbol id="x-med" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M12 11v6M9 14h6"/></symbol>
+<symbol id="x-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6zM15 3v4h4M9 13h6M9 17h4"/></symbol>
+<symbol id="x-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="x-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8l8-4 8 4v10l-8 4-8-4zM4 8l8 4 8-4M12 12v10"/></symbol>
+<symbol id="x-load" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M12 4v11M8 11l4 4 4-4"/></symbol>
+<symbol id="x-drop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/></symbol>
+<symbol id="x-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h12l-2 4 2 4H5"/></symbol>
+<symbol id="x-burst" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/></symbol>
+</defs>
+</svg>
+
+<div class="wrap">
+<div class="eyebrow">Ovie · Insights · for the extraction &amp; front-end devs</div>
+<h1>Insights Component Kit</h1>
+<p class="lede">Styled with the Ovie design system (DESIGN.md): Figtree, plum brand, flat white cards, 12px radius, sentence case. Red, orange and green are semantic only (not covered or expired, needs attention, covered). Turquoise and yellow are the neutral accents for charts and counts. Text keeps the accessible semantic colors. The commercial auto extraction for <b>Gallatin County Water District (CPO-0632562-02)</b>, split into <b>8 chunks</b> of data that belong together. Each chunk has 2–3 component options, drawn here with the real values. The LLM returns one block per chunk with a <b>component name</b> and the chunk's data; the front end looks up the name and renders it. Nothing about the layout depends on the policy type.</p>
+
+<div class="rules">
+  <div class="rule"><b>One schema per chunk</b>All options in a chunk read the same <code>data</code>. Switching from option A to C is a front-end change, not a new extraction.</div>
+  <div class="rule"><b>Everything visible</b>Values, qualifiers, who it applies to and a plain sentence show by default. Taps are only for the source page and Ask Ovie.</div>
+  <div class="rule"><b>Visual + the numbers</b>Every visual sits next to the actual values, so nobody has to read a chart to get an amount.</div>
+  <div class="rule"><b>Not found ≠ not covered</b>Missing data goes to the Gaps chunk, never into Exclusions or a ✕.</div>
+</div>
+
+<div class="mapwrap"><table class="map">
+<thead><tr><th>#</th><th>Chunk</th><th>From the extraction</th><th>Options (★ = suggested)</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><a href="#c-header">Policy at a glance</a></td><td>§1 Policy overview (minus premium)</td><td><code>★ policy_header.summary_card</code> · <code>policy_header.timeline_list</code> · <code>policy_header.id_card</code></td></tr>
+<tr><td>2</td><td><a href="#c-premium">Premium &amp; fees</a></td><td>§1 premium lines, §10 fees row</td><td><code>★ premium.breakdown_bar</code> · <code>premium.receipt</code> · <code>premium.waffle</code></td></tr>
+<tr><td>3</td><td><a href="#c-coverage">Coverages &amp; limits</a></td><td>§2.1 symbols, §2.2 limits, §5 what's included</td><td><code>★ coverage.limit_rows</code> · <code>coverage.limit_bars</code> · <code>coverage.matrix</code></td></tr>
+<tr><td>4</td><td><a href="#c-subjects">What's insured</a></td><td>§3 scheduled vehicles, §4 drivers</td><td><code>★ subjects.value_bars</code> · <code>subjects.table</code> · <code>subjects.age_axis</code></td></tr>
+<tr><td>5</td><td><a href="#c-excl">Not covered</a></td><td>§6 exclusions</td><td><code>★ exclusion.icon_list</code> · <code>exclusion.tile_grid</code> · <code>exclusion.grouped</code></td></tr>
+<tr><td>6</td><td><a href="#c-watch">Watch points</a></td><td>§7 limitations + §8 watchpoints, merged and de-duplicated</td><td><code>★ watch.severity_cards</code> · <code>watch.stripe_rows</code> · <code>watch.action_cards</code></td></tr>
+<tr><td>7</td><td><a href="#c-ded">Deductibles &amp; claim payment</a></td><td>§10 deductibles, valuation from §3 / §7</td><td><code>★ deductible.rows</code> · <code>deductible.ladder</code> · <code>deductible.scale</code></td></tr>
+<tr><td>8</td><td><a href="#c-gaps">Gaps &amp; documents</a></td><td>§9 specifications, "Missing or not provided", §4 driver note</td><td><code>★ evidence.gap_list</code> · <code>evidence.page_strip</code> · <code>evidence.found_missing</code></td></tr>
+</tbody></table></div>
+
+<nav class="nav" aria-label="Chunks">
+<a href="#c-header">1 Policy</a><a href="#c-premium">2 Premium</a><a href="#c-coverage">3 Coverages</a><a href="#c-subjects">4 What's insured</a><a href="#c-excl">5 Not covered</a><a href="#c-watch">6 Watch points</a><a href="#c-ded">7 Deductibles</a><a href="#c-gaps">8 Gaps</a><a href="#c-contract">Contract</a>
+</nav>
+
+<!-- ============ 1 HEADER ============ -->
+<section class="chunk" id="c-header">
+<div class="chead"><span class="n">Chunk 1 · type: header</span><h2>Policy at a glance</h2></div>
+<div class="cmeta">Fields: <span class="field">insured.name</span><span class="field">insured.address</span><span class="field">insured.description</span><span class="field">policy.number</span><span class="field">carrier</span><span class="field">term.start / end</span><span class="field">form</span><span class="field">broker</span><span class="field">status (computed)</span></div>
+<p class="why">Always first on the page. <b>Status is computed by the front end</b> from the term and today's date, so the LLM never says "active" for a policy that ended in 2022.</p>
+<div class="opts">
+
+<div class="opt">
+<div class="otag"><span class="l">A</span><code>policy_header.summary_card</code><span class="rec">Suggested</span><span class="was">was summary card</span></div>
+<div class="screen">
+  <div class="ch"><div><div class="iname" style="font-size:18px;line-height:24px;font-weight:600">Gallatin County Water District</div><div class="muted">Business auto · Special district</div></div><span class="pill crit">Expired</span></div>
+  <div class="hl">
+    <div><span>Address</span><div><b>4500 Hwy 455, Sparta, KY 41086</b></div></div>
+    <div><span>Insurer</span><div><b>American Zurich Insurance Company</b></div></div>
+    <div><span>Policy no.</span><div><b class="num">CPO-0632562-02</b></div></div>
+    <div><span>Term</span><div><b>1 Jul 2021 – 1 Jul 2022</b></div></div>
+    <div><span>Broker</span><div><b>Allied Public Risk LLC</b><small>Producer no. 56139000 · 4507 North Front Street Suite 200, Harrisburg, PA 17110</small></div></div>
+    <div><span>Policy form</span><div><b>U-CA-D 600 C(0414)</b><small>Business Auto Declarations</small></div></div>
+  </div>
+  <div class="srow"><span class="src">Common Decs p.1</span><span class="src">Auto Decs p.111</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>default. The policyholder's name leads; every field gets a full-width row so long names and addresses wrap instead of squeezing into two columns.</span></div><div><b>Status</b> <span>a pill only, computed from the term. No timeline.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">B</span><code>policy_header.timeline_list</code></div>
+<div class="screen">
+  <div class="ch"><b>Policy</b><span class="pill crit">Expired 4 years ago</span></div>
+  <div class="tl">
+    <i></i><div><b>1 Jul 2021</b> <span class="muted">Policy started</span></div>
+    <i></i><div><b>1 Jul 2022</b> <span class="muted">Policy ended</span></div>
+    <i class="now last"></i><div><b>Today, 12 Oct 2026</b> <span class="muted">No renewal uploaded</span></div>
+  </div>
+  <div class="kv">
+    <div><span>Policyholder</span><span>Gallatin County Water District<small>Special district</small></span></div>
+    <div><span>Address</span><span>4500 Hwy 455, Sparta, KY 41086</span></div>
+    <div><span>Insurer</span><span>American Zurich Insurance Co.</span></div>
+    <div><span>Policy no.</span><span class="num">CPO-0632562-02</span></div>
+    <div><span>Form</span><span>U-CA-D 600 C(0414)</span></div>
+    <div><span>Broker</span><span>Allied Public Risk LLC<small>No. 56139000 · Harrisburg, PA</small></span></div>
+  </div>
+  <div class="srow"><span class="src">Common Decs p.1</span><span class="src">Auto Decs p.111</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>the policy has dated events beyond the term (cancellation, reinstatement, endorsements with dates). The timeline grows to fit them.</span></div><div><b>Trade-off</b> <span>taller; label/value list is easy to scan but plainer.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">C</span><code>policy_header.id_card</code></div>
+<div class="screen">
+  <div class="idc">
+    <div class="ch"><span class="sm" style="font-weight:600">American Zurich Insurance Co.</span><span class="pill crit">Expired</span></div>
+    <div><div class="xs muted">Policy number</div><div class="pn">CPO-0632562-02</div></div>
+    <div><div class="xs muted">Insured</div><b>Gallatin County Water District</b><div class="sm muted">Special district · Sparta, KY 41086</div></div>
+    <div class="r"><span>Valid</span><b>1 Jul 2021 → 1 Jul 2022</b></div>
+  </div>
+  <div class="kv">
+    <div><span>Line</span><span>Business auto<small>U-CA-D 600 C(0414)</small></span></div>
+    <div><span>Broker</span><span>Allied Public Risk LLC<small>4507 N Front St, Ste 200, Harrisburg, PA 17110</small></span></div>
+  </div>
+  <div class="srow"><span class="src">Common Decs p.1</span><span class="src">Auto Decs p.111</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>users pull the policy up to show someone (a rental counter, a police stop). Looks like the card they know.</span></div><div><b>Trade-off</b> <span>no time visual; status is just a pill.</span></div></div>
+</div>
+</div>
+
+<div class="chdr"><b>Data contract · chunk "header"</b><button class="copy" data-copy="j1">Copy JSON</button></div>
+<pre class="contract" id="j1">{
+  "chunk": "header",
+  "component": "policy_header.summary_card",
+  "data": {
+    "line": "Business auto",
+    "insured": { "name": "Gallatin County Water District", "description": "Special district",
+                 "address": "4500 Hwy 455, Sparta, KY 41086" },
+    "carrier": "American Zurich Insurance Company",
+    "policyNumber": "CPO-0632562-02",
+    "term": { "start": "2021-07-01", "end": "2022-07-01" },
+    "form": { "number": "U-CA-D 600 C(0414)", "title": "Business Auto Declarations" },
+    "broker": { "name": "Allied Public Risk LLC", "id": "56139000",
+                "address": "4507 North Front Street Suite 200, Harrisburg, PA 17110" },
+    "events": []            // optional dated events: cancellation, reinstatement…
+  },
+  "sources": [{ "doc": "Common Policy Declarations", "page": 1 }, { "doc": "Business Auto Declarations", "page": 111 }]
+}
+// status is NOT extracted: front end computes Active / Ends soon / Expired / Cancelled</pre>
+</section>
+
+<!-- ============ 2 PREMIUM ============ -->
+<section class="chunk" id="c-premium">
+<div class="chead"><span class="n">Chunk 2 · type: premium</span><h2>Premium &amp; fees</h2></div>
+<div class="cmeta">Fields: <span class="field">linePremium</span><span class="field">fees[]</span><span class="field">packageTotal</span><span class="field">term</span><span class="field">perItem (optional)</span></div>
+<p class="why">The extraction mixes the <b>auto line ($3,013)</b> with the <b>package total ($18,597.31, all lines)</b>. Splitting them into labelled parts stops users reading $18.6K as their auto cost. "Other lines" is computed by the front end: total − line − fees.</p>
+<div class="opts">
+
+<div class="opt">
+<div class="otag"><span class="l">A</span><code>premium.breakdown_bar</code><span class="rec">Suggested</span><span class="was">was V4</span></div>
+<div class="screen">
+  <div class="ch"><b>Premium</b><span class="xs muted">per year</span></div>
+  <div><span class="hero" style="font-size:32px;line-height:36px;font-weight:600">$3,013</span> <span class="muted">for business auto</span></div>
+  <div class="stack" role="img" aria-label="Business auto 3,013 dollars, fees and taxes 700.31 dollars, other lines 14,884 dollars"><i style="flex:3013;background:var(--a-teal)"></i><i style="flex:700.31;background:var(--a-yellow)"></i><i style="flex:14884;background:var(--fill2)"></i></div>
+  <div class="leg">
+    <div><i style="background:var(--a-teal)"></i><span>Business auto</span><b>$3,013.00</b></div>
+    <div><i style="background:var(--a-yellow)"></i><span>Terrorism $287 · taxes $163.31 · data fee $250</span><b>$700.31</b></div>
+    <div><i style="background:var(--fill2);border:1px solid var(--line)"></i><span>Other lines in the package</span><b>$14,884.00</b></div>
+    <div style="border-top:1px solid var(--line);padding-top:6px"><i style="background:transparent"></i><span><b>Package total</b></span><b>$18,597.31</b></div>
+  </div>
+  <div class="srow"><span class="src">Common Decs p.1</span><span class="src">Auto Decs p.112</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>the policy is part of a package. With a standalone policy the bar collapses to line + fees.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">B</span><code>premium.receipt</code></div>
+<div class="screen">
+  <div class="ch"><b>What you pay · 1 Jul 2021 – 1 Jul 2022</b></div>
+  <div class="receipt">
+    <div><span>Business auto</span><span></span><b>$3,013.00</b></div>
+    <div><span>Fees for the whole package</span><span></span><b>$700.31</b></div>
+    <div class="ind"><span>Terrorism</span><span></span><b>$287.00</b></div>
+    <div class="ind"><span>Taxes &amp; surcharges</span><span></span><b>$163.31</b></div>
+    <div class="ind"><span>Data fee</span><span></span><b>$250.00</b></div>
+    <div><span>Other lines in the package</span><span></span><b>$14,884.00</b></div>
+    <div class="tot"><span>Package total</span><span></span><b>$18,597.31</b></div>
+  </div>
+  <p class="note">Auto is <b>16%</b> of the package. No per-vehicle premium was given.</p>
+  <div class="srow"><span class="src">Common Decs p.1</span><span class="src">Auto Decs p.112</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>there are many fees or per-item premiums (per vehicle, per location). Rows scale; bars don't.</span></div><div><b>Trade-off</b> <span>no visual beyond the share line.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">C</span><code>premium.waffle</code></div>
+<div class="screen">
+  <div class="ch"><b>Where each $100 of the package goes</b></div>
+  <div class="waffle" role="img" aria-label="Out of 100 squares: 16 business auto, 4 fees and taxes, 80 other lines" id="waffle"></div>
+  <div class="leg">
+    <div><i style="background:var(--a-teal)"></i><span>Business auto · 16%</span><b>$3,013.00</b></div>
+    <div><i style="background:var(--a-yellow)"></i><span>Fees &amp; taxes · 4%</span><b>$700.31</b></div>
+    <div><i style="background:var(--fill2);border:1px solid var(--line)"></i><span>Other lines · 80%</span><b>$14,884.00</b></div>
+    <div style="border-top:1px solid var(--line);padding-top:6px"><i style="background:transparent"></i><span><b>Package total</b></span><b>$18,597.31</b></div>
+  </div>
+  <div class="srow"><span class="src">Common Decs p.1</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>the share matters more than the amount (family floaters, multi-line packages).</span></div><div><b>Trade-off</b> <span>takes more height than a bar for the same message.</span></div></div>
+</div>
+</div>
+
+<div class="chdr"><b>Data contract · chunk "premium"</b><button class="copy" data-copy="j2">Copy JSON</button></div>
+<pre class="contract" id="j2">{
+  "chunk": "premium",
+  "component": "premium.breakdown_bar",
+  "data": {
+    "currency": "USD",
+    "period": { "start": "2021-07-01", "end": "2022-07-01" },
+    "linePremium": { "label": "Business auto", "amount": 3013 },
+    "fees": [
+      { "label": "Terrorism",            "amount": 287,    "scope": "package" },
+      { "label": "Taxes and surcharges", "amount": 163.31, "scope": "package" },
+      { "label": "Data fee",             "amount": 250,    "scope": "package" }
+    ],
+    "packageTotal": { "amount": 18597.31, "includesOtherLines": true },
+    "perItem": []           // e.g. [{ "subjectId": "veh-3", "amount": 412 }] when given
+  },
+  "sources": [{ "doc": "Common Policy Declarations", "page": 1 }, { "doc": "Business Auto Declarations", "page": 112 }]
+}</pre>
+</section>
+
+<!-- ============ 3 COVERAGE ============ -->
+<section class="chunk" id="c-coverage">
+<div class="chead"><span class="n">Chunk 3 · type: coverage</span><h2>Coverages &amp; limits</h2></div>
+<div class="cmeta">Fields per coverage: <span class="field">title</span><span class="field">plainTitle</span><span class="field">summary</span><span class="field">values[] {appliesTo, amount | valuation, qualifier, deductible}</span><span class="field">symbol</span><span class="field">status</span></div>
+<p class="why">§2.1 (symbols), §2.2 (limits) and §5 (what's included) describe the <b>same six coverages three times</b>. They become one list. Symbols turn into <b>appliesTo</b> ("Any auto", "Your 7 listed autos") so the user never has to learn what "Symbol 7" means. A coverage with different values per group (Comp/Coll: listed vs rented) carries several <code class="mono">values</code>.</p>
+<div class="opts">
+
+<div class="opt">
+<div class="otag"><span class="l">A</span><code>coverage.limit_rows</code><span class="rec">Suggested</span><span class="was">was E1 + E8</span></div>
+<div class="screen">
+  <div class="cv">
+    <div class="cvh"><div><b>Injury and damage you cause</b><small>Liability</small></div><div class="val">$1,000,000<small>each accident</small></div></div>
+    <p class="sm">Pays for other people's injuries and property damage when an auto used for the district causes an accident.</p>
+    <div class="srow"><span class="scope">Any auto</span><span class="src">p.112</span></div>
+  </div>
+  <div class="cv">
+    <div class="cvh"><div><b>Hit by a driver with no insurance</b><small>Uninsured motorists</small></div><div class="val">$1,000,000<small>each accident</small></div></div>
+    <div class="srow"><span class="scope">Owned autos only</span><span class="src">p.112</span></div>
+  </div>
+  <div class="cv">
+    <div class="cvh"><div><b>Hit by a driver with too little insurance</b><small>Underinsured motorists</small></div><div class="val">$1,000,000<small>each accident</small></div></div>
+    <div class="srow"><span class="scope">Owned autos only</span><span class="src">p.112</span></div>
+  </div>
+  <div class="cv">
+    <div class="cvh"><div><b>Theft, fire, weather</b><small>Comprehensive</small></div></div>
+    <div class="split2"><div><span>7 listed autos</span><b>Actual cash value</b><small>or repair cost if less · you pay $500</small></div><div><span>Hired autos</span><b>Up to $35,000</b><small>each loss · you pay $500</small></div></div>
+    <div class="srow"><span class="src">p.112, 116, 121</span></div>
+  </div>
+  <div class="cv">
+    <div class="cvh"><div><b>Crash damage</b><small>Collision</small></div></div>
+    <div class="split2"><div><span>7 listed autos</span><b>Actual cash value</b><small>or repair cost if less · you pay $500</small></div><div><span>Hired autos</span><b>Up to $35,000</b><small>each loss · you pay $500</small></div></div>
+    <div class="srow"><span class="src">p.112, 116, 121</span></div>
+  </div>
+  <div class="cv">
+    <div class="cvh"><div><b>No-fault medical (KY)</b><small>Personal injury protection</small></div><div class="val unk">Limit not stated</div></div>
+    <div class="srow"><span class="scope">Owned autos subject to no-fault</span><span class="src">p.112</span></div>
+  </div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>default for any policy type. Works for 1 coverage or 30.</span></div><div><b>Visual</b> <span>none beyond the split cards; pair it with option C's matrix when there are 2+ groups.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">B</span><code>coverage.limit_bars</code><span class="was">was V3, per row</span></div>
+<div class="screen">
+  <div class="ch"><b>How much each coverage pays</b></div>
+  <div class="ticks"><span>$100</span><span>$1K</span><span>$10K</span><span>$100K</span><span>$1M</span><span>$10M</span></div>
+  <div>
+  <div class="lb"><div class="t"><span>Liability <span class="muted xs">· any auto</span></span><b>$1M <span class="muted xs">/accident</span></b></div><div class="track"><i style="width:80%"></i></div></div>
+  <div class="lb"><div class="t"><span>Uninsured <span class="muted xs">· owned</span></span><b>$1M <span class="muted xs">/accident</span></b></div><div class="track"><i style="width:80%"></i></div></div>
+  <div class="lb"><div class="t"><span>Underinsured <span class="muted xs">· owned</span></span><b>$1M <span class="muted xs">/accident</span></b></div><div class="track"><i style="width:80%"></i></div></div>
+  <div class="lb"><div class="t"><span>Comp &amp; collision <span class="muted xs">· hired</span></span><b>$35K <span class="muted xs">/loss</span></b></div><div class="track"><i style="width:50.9%;background:var(--a-teal)"></i></div></div>
+  <div class="lb"><div class="t"><span>Comp &amp; collision <span class="muted xs">· 7 listed</span></span><b>ACV <span class="muted xs">/loss</span></b></div><div class="track"><i class="dash" style="left:27.9%;width:33%"></i></div><span class="xs muted">Actual cash value of each auto: no fixed limit. Cost new $2,750–$35,000.</span></div>
+  <div class="lb"><div class="t"><span>No-fault (PIP) <span class="muted xs">· owned</span></span><span class="unkpill">Not stated</span></div><div class="track"></div></div>
+  </div>
+  <p class="xs muted">Each step on the scale is 10× bigger. All six coverages: $500 deductible on comp &amp; collision only.</p>
+  <div class="srow"><span class="src">p.112</span><span class="src">p.116</span><span class="src">p.121</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>limits span very different sizes and you want the gap ($35K vs $1M) to be felt.</span></div><div><b>Trade-off</b> <span>loses the plain-language sentence per coverage; log scale needs the caption.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">C</span><code>coverage.matrix</code><span class="was">was coverage matrix</span></div>
+<div class="screen">
+  <div class="ch"><b>Which autos get what</b></div>
+  <div style="overflow-x:auto">
+  <table class="matrix">
+    <thead><tr><th></th><th>Liability</th><th>Uninsured / under­insured</th><th>Comp &amp; collision</th><th>No-fault</th></tr></thead>
+    <tbody>
+      <tr><td><b>7 listed autos</b></td><td><span class="y">✓</span><b>$1M</b></td><td><span class="y">✓</span><b>$1M</b></td><td><span class="y">✓</span><b>ACV</b><span class="xs muted">−$500</span></td><td><span class="unkpill">Not stated</span></td></tr>
+      <tr><td><b>Hired autos</b></td><td><span class="y">✓</span><b>$1M</b></td><td class="d">—</td><td><span class="y">✓</span><b>$35K</b><span class="xs muted">−$500</span></td><td class="d">—</td></tr>
+      <tr><td><b>Non-owned, borrowed</b></td><td><span class="y">✓</span><b>$1M</b></td><td class="d">—</td><td class="d">—</td><td class="d">—</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="xs muted">✓ covered · — not for this group · Not stated = limit not in your documents. Limits are per accident (liability, UM/UIM) or per loss (damage).</p>
+  <div class="leg sm">
+    <div><span><b>Liability</b> · injury and damage you cause</span></div>
+    <div><span><b>Uninsured / underinsured</b> · you're hit by a driver with no or too little insurance</span></div>
+    <div><span><b>Comp &amp; collision</b> · theft, fire, weather and crash damage to the auto</span></div>
+  </div>
+  <div class="srow"><span class="src">p.112</span><span class="src">p.116</span><span class="src">p.121</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>2+ groups of insured things get different cover (fleets, multi-location property, family members on health).</span></div><div><b>Trade-off</b> <span>hide when every group gets the same cover; then it's noise.</span></div></div>
+</div>
+</div>
+
+<div class="chdr"><b>Data contract · chunk "coverage"</b><button class="copy" data-copy="j3">Copy JSON</button></div>
+<pre class="contract" id="j3">{
+  "chunk": "coverage",
+  "component": "coverage.limit_rows",
+  "data": {
+    "groups": [   // who/what the values apply to; reused by chunk 4 and the matrix
+      { "id": "listed", "label": "7 listed autos", "symbol": "7" },
+      { "id": "hired",  "label": "Hired autos",    "symbol": "8" },
+      { "id": "owned",  "label": "Owned autos only", "symbol": "2" },
+      { "id": "any",    "label": "Any auto",       "symbol": "1" }
+    ],
+    "items": [
+      { "id": "liability", "title": "Liability", "plainTitle": "Injury and damage you cause",
+        "summary": "Pays for other people's injuries and property damage when a covered auto causes an accident.",
+        "status": "covered",
+        "values": [{ "appliesTo": ["any"], "valueType": "money", "amount": 1000000, "qualifier": "each_accident" }],
+        "sources": [{ "page": 112 }] },
+      { "id": "comprehensive", "title": "Comprehensive", "plainTitle": "Theft, fire, weather",
+        "status": "covered",
+        "values": [
+          { "appliesTo": ["listed"], "valueType": "valuation", "valuation": "ACV_or_repair_lesser",
+            "deductible": { "amount": 500, "qualifier": "each_auto_each_loss" } },
+          { "appliesTo": ["hired"], "valueType": "money", "amount": 35000, "qualifier": "each_loss",
+            "deductible": { "amount": 500, "qualifier": "each_auto" } } ],
+        "sources": [{ "page": 112 }, { "page": 116 }, { "page": 121 }] },
+      { "id": "pip", "title": "Personal Injury Protection", "plainTitle": "No-fault medical (KY)",
+        "status": "covered_limit_unknown",
+        "values": [{ "appliesTo": ["owned"], "valueType": "not_stated", "note": "Per separate PIP endorsement" }],
+        "sources": [{ "page": 112 }] }
+      // …uninsured, underinsured, collision follow the same shape
+    ]
+  }
+}
+// qualifier enum: each_accident | each_loss | each_claim | each_person | aggregate | each_auto | each_auto_each_loss
+// status enum:    covered | covered_limit_unknown | not_purchased</pre>
+</section>
+
+<!-- ============ 4 SUBJECTS ============ -->
+<section class="chunk" id="c-subjects">
+<div class="chead"><span class="n">Chunk 4 · type: subjects</span><h2>What's insured</h2></div>
+<div class="cmeta">Fields: <span class="field">groups[] {kind, label, items[]}</span><span class="field">item.title</span><span class="field">item.id (VIN)</span><span class="field">item.attrs</span><span class="field">shared {coverages, deductibles, valuation}</span><span class="field">emptyGroups[]</span></div>
+<p class="why"><b>kind</b> and <b>subtype</b> drive the type counts (icon ×count) and the column labels: vehicle → VIN and cost new, property → address and building value, person → relation and age. When all items share the same cover the shared line is printed once, not 7 times. The empty <b>drivers</b> group is shown as a dashed note, never hidden.</p>
+<div class="opts">
+
+<div class="opt">
+<div class="otag"><span class="l">A</span><code>subjects.value_bars</code><span class="rec">Suggested</span></div>
+<div class="screen">
+  <div class="ch"><b>Listed autos by cost new</b><span class="xs muted">7 · $147,795</span></div>
+  <div class="kinds" aria-label="5 trucks, 2 trailers"><span class="kd"><svg width="26" height="16"><use href="#i-truck"/></svg><b>×5</b><span>Trucks</span></span><span class="kd"><svg width="26" height="16" style="color:var(--muted)"><use href="#i-trailer"/></svg><b>×2</b><span>Trailers</span></span></div>
+  <div>
+    <div class="hb"><div class="t"><span>2012 Ford F250</span><b>$35,000</b></div><div class="bar" style="width:100%"></div><small>1FT7X2B68CEA12959</small></div>
+    <div class="hb"><div class="t"><span>2017 Chevrolet 1500</span><b>$29,946</b></div><div class="bar" style="width:85.6%"></div><small>1GCUYAEF4KZ310485</small></div>
+    <div class="hb"><div class="t"><span>2016 Ford F150</span><b>$27,204</b></div><div class="bar" style="width:77.7%"></div><small>1FTFX1EF9GFB03420</small></div>
+    <div class="hb"><div class="t"><span>2010 Ford F250</span><b>$26,295</b></div><div class="bar" style="width:75.1%"></div><small>1FTSX2B50AEA08886</small></div>
+    <div class="hb"><div class="t"><span>1998 GMC Sierra</span><b>$22,000</b></div><div class="bar" style="width:62.9%"></div><small>1GDJC34R6WF032684</small></div>
+    <div class="hb"><div class="t"><span>2020 BigTex Utility Trailer</span><b>$4,600</b></div><div class="bar tr" style="width:13.1%"></div><small>16VEX2026L2053636</small></div>
+    <div class="hb"><div class="t"><span>1997 Hurst Trailer</span><b>$2,750</b></div><div class="bar tr" style="width:7.9%"></div><small>1HT9T41834V1057027</small></div>
+  </div>
+  <p class="note">Same cover for all 7. $500 comp and collision deductible. Claims pay actual cash value, which is usually below cost new.</p>
+  <div class="grp">Drivers</div>
+  <div class="empty">No driver list in your documents.</div>
+  <div class="srow"><span class="src">Auto Schedule p.121</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>default. Value bars show at a glance which items carry the most exposure; works for property schedules, floaters and equipment too.</span></div><div><b>Type counts</b> <span>one icon per type with ×count, instead of one icon per item.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">B</span><code>subjects.table</code><span class="was">was V5 + table</span></div>
+<div class="screen">
+  <div class="ch"><b>Listed autos · 7</b><span class="xs muted">$147,795 cost new</span></div>
+  <div class="kinds" aria-label="5 trucks, 2 trailers"><span class="kd"><svg width="26" height="16"><use href="#i-truck"/></svg><b>×5</b><span>Trucks</span></span><span class="kd"><svg width="26" height="16" style="color:var(--muted)"><use href="#i-trailer"/></svg><b>×2</b><span>Trailers</span></span></div>
+  <p class="note">All 7: liability, UM/UIM, comp &amp; collision. Comp $500 · Coll $500 · paid at actual cash value.</p>
+  <div class="vt">
+    <div class="h"><span>Auto · VIN</span><span>Cost new</span></div>
+    <div class="r"><div>1997 Hurst Trailer<small>1HT9T41834V1057027</small></div><span class="num">$2,750</span></div>
+    <div class="r"><div>1998 GMC Sierra<small>1GDJC34R6WF032684</small></div><span class="num">$22,000</span></div>
+    <div class="r"><div>2010 Ford F250<small>1FTSX2B50AEA08886</small></div><span class="num">$26,295</span></div>
+    <div class="r"><div>2012 Ford F250<small>1FT7X2B68CEA12959</small></div><span class="num">$35,000</span></div>
+    <div class="r"><div>2016 Ford F150<small>1FTFX1EF9GFB03420</small></div><span class="num">$27,204</span></div>
+    <div class="r"><div>2017 Chevrolet 1500<small>1GCUYAEF4KZ310485</small></div><span class="num">$29,946</span></div>
+    <div class="r"><div>2020 BigTex Utility Trailer<small>16VEX2026L2053636</small></div><span class="num">$4,600</span></div>
+  </div>
+  <div class="grp">Drivers</div>
+  <div class="empty">No driver list in your documents.</div>
+  <div class="srow"><span class="src">Auto Schedule p.121</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>the schedule order matters (brokers refer to vehicle numbers). Compact rows, VIN in mono.</span></div><div><b>Trade-off</b> <span>no visual beyond the type counts.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">C</span><code>subjects.age_axis</code></div>
+<div class="screen">
+  <div class="ch"><b>Listed autos by model year</b><span class="xs muted">7</span></div>
+  <div class="yax" role="img" aria-label="Model years 1997, 1998, 2010, 2012, 2016, 2017, 2020; three were over 10 years old when the policy started">
+    <div class="band" style="left:0;width:61.1%"></div><div class="ln"></div>
+    <svg class="ic tr" width="26" height="16" style="left:7.4%;top:30px"><use href="#i-trailer"/></svg>
+    <svg class="ic" width="26" height="16" style="left:11.1%;top:6px"><use href="#i-truck"/></svg>
+    <svg class="ic" width="26" height="16" style="left:55.6%;top:30px"><use href="#i-truck"/></svg>
+    <svg class="ic" width="26" height="16" style="left:63%;top:6px"><use href="#i-truck"/></svg>
+    <svg class="ic" width="26" height="16" style="left:77.8%;top:30px"><use href="#i-truck"/></svg>
+    <svg class="ic" width="26" height="16" style="left:81.5%;top:6px"><use href="#i-truck"/></svg>
+    <svg class="ic tr" width="26" height="16" style="left:92.6%;top:30px"><use href="#i-trailer"/></svg>
+    <span class="dt" style="left:7.4%"></span><span class="dt" style="left:11.1%"></span><span class="dt" style="left:55.6%"></span><span class="dt" style="left:63%"></span><span class="dt" style="left:77.8%"></span><span class="dt" style="left:81.5%"></span><span class="dt" style="left:92.6%"></span>
+    <span class="yl" style="left:7.4%">1997</span><span class="yl" style="left:55.6%">2010</span><span class="yl" style="left:79.6%">2016–17</span><span class="yl" style="left:94%">2020</span>
+  </div>
+  <div class="sm" style="display:flex;gap:6px;align-items:center"><i style="width:10px;height:10px;border-radius:3px;background:var(--warn-soft);display:inline-block;flex:none"></i>3 over 10 years old at policy start</div>
+  <div class="vt">
+    <div class="r"><div>1997 Hurst Trailer<small>1HT9T41834V1057027</small></div><span class="num">$2,750</span></div>
+    <div class="r"><div>1998 GMC Sierra<small>1GDJC34R6WF032684</small></div><span class="num">$22,000</span></div>
+    <div class="r"><div>2010 Ford F250<small>1FTSX2B50AEA08886</small></div><span class="num">$26,295</span></div>
+    <div class="r"><div>2012 Ford F250<small>1FT7X2B68CEA12959</small></div><span class="num">$35,000</span></div>
+    <div class="r"><div>2016 Ford F150<small>1FTFX1EF9GFB03420</small></div><span class="num">$27,204</span></div>
+    <div class="r"><div>2017 Chevrolet 1500<small>1GCUYAEF4KZ310485</small></div><span class="num">$29,946</span></div>
+    <div class="r"><div>2020 BigTex Utility Trailer<small>16VEX2026L2053636</small></div><span class="num">$4,600</span></div>
+  </div>
+  <div class="grp">Drivers</div>
+  <div class="empty">No driver list in your documents.</div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>age changes the payout (ACV on vehicles, depreciation on contents, age bands in health).</span></div><div><b>Trade-off</b> <span>needs a year/date on each item; falls back to the table (B) without it.</span></div></div>
+</div>
+</div>
+
+<div class="chdr"><b>Data contract · chunk "subjects"</b><button class="copy" data-copy="j4">Copy JSON</button></div>
+<pre class="contract" id="j4">{
+  "chunk": "subjects",
+  "component": "subjects.value_bars",
+  "data": {
+    "groups": [
+      { "kind": "vehicle", "label": "Listed autos", "coverageGroupId": "listed",
+        "shared": { "coverages": ["liability", "uninsured", "underinsured", "comprehensive", "collision"],
+                    "deductibles": [{ "coverage": "comprehensive", "amount": 500 }, { "coverage": "collision", "amount": 500 }],
+                    "valuation": "ACV" },
+        "items": [
+          { "id": "veh-1", "title": "1997 Hurst Trailer", "subtype": "trailer", "year": 1997,
+            "identifier": { "type": "VIN", "value": "1HT9T41834V1057027" },
+            "attrs": [{ "label": "Cost new", "valueType": "money", "amount": 2750 }] },
+          { "id": "veh-2", "title": "1998 GMC Sierra", "subtype": "truck", "year": 1998,
+            "identifier": { "type": "VIN", "value": "1GDJC34R6WF032684" },
+            "attrs": [{ "label": "Cost new", "valueType": "money", "amount": 22000 }] }
+          // …veh-3 to veh-7
+        ] },
+      { "kind": "person", "label": "Drivers", "items": [], "emptyReason": "not_in_documents" }
+    ]
+  },
+  "sources": [{ "doc": "Auto Schedule", "page": 121 }]
+}
+// kind enum: vehicle | property | person | insured_class | jurisdiction | other  →  icon + column set</pre>
+</section>
+
+<!-- ============ 5 EXCLUSIONS ============ -->
+<section class="chunk" id="c-excl">
+<div class="chead"><span class="n">Chunk 5 · type: exclusion</span><h2>Not covered</h2></div>
+<div class="cmeta">Fields per item: <span class="field">title</span><span class="field">plainTitle</span><span class="field">summary</span><span class="field">exceptions[]</span><span class="field">concept → icon</span><span class="field">group</span><span class="field">listComplete</span></div>
+<p class="why">The extraction says "see policy form for exhaustive list", so <b>listComplete: false</b> adds a footer line instead of pretending the list is final. <b>concept</b> picks the icon from a fixed map (employee, contract, pollution…); unknown concepts get a generic icon. Carve-backs ("unless specifically allowed") go in <b>exceptions</b> and show in green.</p>
+<div class="opts">
+
+<div class="opt">
+<div class="otag"><span class="l">A</span><code>exclusion.icon_list</code><span class="rec">Suggested</span><span class="was">was E7 + V7</span></div>
+<div class="screen">
+  <div class="ch"><b>Not covered · 9</b></div>
+  <div>
+  <div class="row"><span class="xi"><svg width="18" height="18"><use href="#x-person"/></svg></span><div class="lbl"><b>Injuries to your employees</b><small>Covered by a separate workers' comp policy</small></div></div>
+  <div class="row"><span class="xi"><svg width="18" height="18"><use href="#x-med"/></svg></span><div class="lbl"><b>Workers' comp benefits</b><small>This policy doesn't pay them</small></div></div>
+  <div class="row"><span class="xi"><svg width="18" height="18"><use href="#x-doc"/></svg></span><div class="lbl"><b>Liability you take on in a contract</b><em class="exc">↳ Except where the policy specifically allows it</em></div></div>
+  <div class="row"><span class="xi"><svg width="18" height="18"><use href="#x-target"/></svg></span><div class="lbl"><b>Harm you expected or intended</b></div></div>
+  <div class="row"><span class="xi"><svg width="18" height="18"><use href="#x-box"/></svg></span><div class="lbl"><b>Property you own, carry or look after</b><small>Includes cargo in your autos</small></div></div>
+  <div class="row"><span class="xi"><svg width="18" height="18"><use href="#x-load"/></svg></span><div class="lbl"><b>Handling property</b><small>Before loading or after unloading</small></div></div>
+  <div class="row"><span class="xi"><svg width="18" height="18"><use href="#x-drop"/></svg></span><div class="lbl"><b>Pollution</b><small>Most pollution losses</small><em class="exc">↳ Except as endorsed or excepted in the form</em></div></div>
+  <div class="row"><span class="xi"><svg width="18" height="18"><use href="#x-flag"/></svg></span><div class="lbl"><b>Racing</b><small>Professional or organised racing</small></div></div>
+  <div class="row"><span class="xi"><svg width="18" height="18"><use href="#x-burst"/></svg></span><div class="lbl"><b>War and nuclear</b></div></div>
+  </div>
+  <p class="xs muted">From U-CA-D 600 C(0414), Section II. The full form may list more.</p>
+  <div class="srow"><span class="src">Policy form §II</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>default. Every summary and exception readable in one scroll.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">B</span><code>exclusion.tile_grid</code></div>
+<div class="screen">
+  <div class="ch"><b>Not covered · 9</b></div>
+  <div class="tiles">
+    <div class="tile"><div class="top"><svg width="20" height="20"><use href="#x-person"/></svg><em>✕</em></div><b>Employee injuries</b>Use your workers' comp policy</div>
+    <div class="tile"><div class="top"><svg width="20" height="20"><use href="#x-med"/></svg><em>✕</em></div><b>Workers' comp benefits</b>Not paid by this policy</div>
+    <div class="tile"><div class="top"><svg width="20" height="20"><use href="#x-doc"/></svg><em>✕</em></div><b>Contract liability</b><span style="color:var(--ok)">Except where the policy allows</span></div>
+    <div class="tile"><div class="top"><svg width="20" height="20"><use href="#x-target"/></svg><em>✕</em></div><b>Intended harm</b>Expected or intended by you</div>
+    <div class="tile"><div class="top"><svg width="20" height="20"><use href="#x-box"/></svg><em>✕</em></div><b>Property in your care</b>Owned, carried or looked after</div>
+    <div class="tile"><div class="top"><svg width="20" height="20"><use href="#x-load"/></svg><em>✕</em></div><b>Handling property</b>Before or after transport</div>
+    <div class="tile"><div class="top"><svg width="20" height="20"><use href="#x-drop"/></svg><em>✕</em></div><b>Pollution</b><span style="color:var(--ok)">Except as endorsed</span></div>
+    <div class="tile"><div class="top"><svg width="20" height="20"><use href="#x-flag"/></svg><em>✕</em></div><b>Racing</b>Professional or organised</div>
+    <div class="tile"><div class="top"><svg width="20" height="20"><use href="#x-burst"/></svg><em>✕</em></div><b>War and nuclear</b>Acts of war, nuclear incidents</div>
+  </div>
+  <p class="xs muted">From U-CA-D 600 C(0414), Section II. The full form may list more.</p>
+</div>
+<div class="notes"><div><b>Best when</b> <span>6–12 short exclusions; reads like a "no" sign board.</span></div><div><b>Trade-off</b> <span>summaries must fit ~30 characters; long ones (CGL, health) don't fit.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">C</span><code>exclusion.grouped</code></div>
+<div class="screen">
+  <div class="ch"><b>Not covered · 9 in 4 groups</b></div>
+  <div class="xg"><div class="gh"><span class="xi"><svg width="18" height="18"><use href="#x-person"/></svg></span>Your own people · 2</div>
+    <ul><li>Injuries to employees<small>Workers' comp covers them instead</small></li><li>Workers' comp benefits</li></ul></div>
+  <div class="hr"></div>
+  <div class="xg"><div class="gh"><span class="xi"><svg width="18" height="18"><use href="#x-box"/></svg></span>Property &amp; cargo · 2</div>
+    <ul><li>Property you own, carry or look after</li><li>Handling before loading or after unloading</li></ul></div>
+  <div class="hr"></div>
+  <div class="xg"><div class="gh"><span class="xi"><svg width="18" height="18"><use href="#x-doc"/></svg></span>Conduct &amp; contracts · 3</div>
+    <ul><li>Harm you expected or intended</li><li>Liability taken on in a contract<em class="exc">↳ Except where the policy allows it</em></li><li>Professional or organised racing</li></ul></div>
+  <div class="hr"></div>
+  <div class="xg"><div class="gh"><span class="xi"><svg width="18" height="18"><use href="#x-burst"/></svg></span>Pollution, war &amp; nuclear · 2</div>
+    <ul><li>Pollution<em class="exc">↳ Except as endorsed or excepted</em></li><li>Acts of war, nuclear incidents</li></ul></div>
+  <p class="xs muted">The full policy form may list more.</p>
+</div>
+<div class="notes"><div><b>Best when</b> <span>long lists (CGL had 21). Groups keep the page scannable without collapsing anything.</span></div><div><b>Trade-off</b> <span>needs a <code class="mono">group</code> per item from the LLM or the policy profile.</span></div></div>
+</div>
+</div>
+
+<div class="chdr"><b>Data contract · chunk "exclusion"</b><button class="copy" data-copy="j5">Copy JSON</button></div>
+<pre class="contract" id="j5">{
+  "chunk": "exclusion",
+  "component": "exclusion.icon_list",
+  "data": {
+    "listComplete": false,
+    "listNote": "From U-CA-D 600 C(0414), Section II. The full form may list more.",
+    "items": [
+      { "id": "ex-contract", "title": "Contractual Liability", "plainTitle": "Liability you take on in a contract",
+        "summary": null, "concept": "contract", "group": "conduct",
+        "exceptions": ["Where the policy specifically allows it"],
+        "sources": [{ "doc": "U-CA-D 600 C(0414)", "section": "II" }] },
+      { "id": "ex-employee", "title": "Employee Indemnification and Employer's Liability",
+        "plainTitle": "Injuries to your employees", "summary": "Covered by a separate workers' comp policy",
+        "concept": "employee", "group": "people", "exceptions": [] }
+      // …7 more
+    ]
+  }
+}
+// concept → icon map lives in the front end: employee, workers_comp, contract, intended, care_custody,
+// handling, pollution, racing, war_nuclear, … ; unknown → generic icon
+// group enum: people | property | conduct | catastrophe | other</pre>
+</section>
+
+<!-- ============ 6 WATCH ============ -->
+<section class="chunk" id="c-watch">
+<div class="chead"><span class="n">Chunk 6 · type: watch</span><h2>Watch points</h2></div>
+<div class="cmeta">Fields per item: <span class="field">title</span><span class="field">explanation</span><span class="field">severity</span><span class="field">watchType</span><span class="field">relatedIds[]</span><span class="field">visual (optional)</span><span class="field">action (optional)</span></div>
+<p class="why">§7 Limitations and §8 Watchpoints overlap: <b>11 raw items become 4 watch points</b>. The $500 per-auto deductible moves to chunk 7; "no driver schedule" (said twice) and territory move to Gaps. The extraction has <b>no severity</b>; the ratings below are placeholders until the prompt asks for it. "No coverage for non-scheduled drivers" was dropped: it's misleading, liability still covers permitted drivers.</p>
+<div class="opts">
+
+<div class="opt">
+<div class="otag"><span class="l">A</span><code>watch.severity_cards</code><span class="rec">Suggested</span><span class="was">was E2 + ladder</span></div>
+<div class="screen">
+  <div class="wp serious">
+    <div class="wph"><span class="pill warn">Serious</span><b>Hired autos capped at $35,000</b></div>
+    <div class="ladder" aria-label="You pay 500 dollars; policy pays at most 35,000 dollars per loss. Not to scale"><div class="step you" style="height:42px"><b>$500</b><span>You pay, each auto</span></div><div class="step" style="height:62px"><b>$35,000</b><span>Most the policy pays, each loss</span></div></div>
+    <p>Renting a vehicle worth more than $35,000 could leave you paying the difference.</p>
+    <div class="srow"><span class="src">Auto Decs p.116</span></div>
+  </div>
+  <div class="wp serious">
+    <div class="wph"><span class="pill warn">Serious</span><b>Damage paid at actual cash value</b></div>
+    <p>Claims pay what an auto is worth today after wear and age, not what it costs to replace. 3 of the 7 autos were over 10 years old at policy start.</p>
+    <div class="srow"><span class="src">Auto Schedule p.121</span></div>
+  </div>
+  <div class="wp">
+    <div class="wph"><span class="pill n">Review</span><b>Each coverage applies to a different group of autos</b></div>
+    <p>Liability covers any auto. UM/UIM cover owned autos only. Comp &amp; collision cover listed and hired autos.</p>
+    <div class="srow"><span class="src">Auto Decs p.112</span></div>
+  </div>
+  <div class="wp">
+    <div class="wph"><span class="pill n">Review</span><b>New vehicles must be added to the schedule</b></div>
+    <p>A newly bought unit needs to be scheduled and endorsed before comp &amp; collision apply.</p>
+    <div class="srow"><span class="src">Auto Schedule p.121</span></div>
+  </div>
+  <p class="xs muted">Severity is rated by Ovie, not your insurer.</p>
+</div>
+<div class="notes"><div><b>Best when</b> <span>default. Money-type watch points get the mini ladder automatically.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">B</span><code>watch.stripe_rows</code></div>
+<div class="screen">
+  <div class="ch"><b>Watch points · 4</b><span class="xs muted"><span style="color:var(--b-orange)">■</span> serious <span style="color:var(--muted)">■</span> review</span></div>
+  <div>
+  <div class="sr s1"><div class="lbl"><b>Hired autos capped at $35,000</b><small>Rentals worth more could leave you paying the difference. You pay $500 per auto.</small></div><span class="typ">Limit</span></div>
+  <div class="sr s1"><div class="lbl"><b>Damage paid at actual cash value</b><small>Today's value after wear, not replacement cost. 3 of 7 autos over 10 years old.</small></div><span class="typ">Valuation</span></div>
+  <div class="sr s2"><div class="lbl"><b>Coverage differs by group of autos</b><small>Liability: any auto · UM/UIM: owned · Comp/Coll: listed + hired.</small></div><span class="typ">Scope</span></div>
+  <div class="sr s2"><div class="lbl"><b>New vehicles must be scheduled</b><small>Comp &amp; collision apply only after the unit is added by endorsement.</small></div><span class="typ">Paperwork</span></div>
+  </div>
+  <div class="srow"><span class="src">p.112</span><span class="src">p.116</span><span class="src">p.121</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>many watch points (8+) or a home-screen preview. Dense and still fully readable.</span></div><div><b>Trade-off</b> <span>no inline visual; severity relies on stripe + legend.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">C</span><code>watch.action_cards</code></div>
+<div class="screen">
+  <div class="wp serious">
+    <div class="wph"><span class="pill warn">Serious</span><b>Hired autos capped at $35,000</b></div>
+    <div class="act"><div><span>What it means</span>A rental worth more than $35K isn't fully covered for damage.</div><div><span>What you can do</span>Check rental values, or ask your broker about a higher hired-auto limit.</div></div>
+  </div>
+  <div class="wp serious">
+    <div class="wph"><span class="pill warn">Serious</span><b>Damage paid at actual cash value</b></div>
+    <div class="act"><div><span>What it means</span>Older autos pay out far below replacement cost.</div><div><span>What you can do</span>Ask your broker what the 2016–2020 units would pay today.</div></div>
+  </div>
+  <div class="wp">
+    <div class="wph"><span class="pill n">Review</span><b>Coverage differs by group of autos</b></div>
+    <div class="act"><div><span>What it means</span>Hired and borrowed autos get less cover than listed ones.</div><div><span>What you can do</span>See the matrix under Coverages.</div></div>
+  </div>
+  <div class="wp">
+    <div class="wph"><span class="pill n">Review</span><b>New vehicles must be scheduled</b></div>
+    <div class="act"><div><span>What it means</span>No damage cover on a new unit until it's added.</div><div><span>What you can do</span>Tell your broker when you buy a vehicle.</div></div>
+  </div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>product wants Ovie to suggest a next step.</span></div><div><b>Trade-off</b> <span>needs an <code class="mono">action</code> field and SME/legal review so actions stay factual, not advice.</span></div></div>
+</div>
+</div>
+
+<div class="chdr"><b>Data contract · chunk "watch"</b><button class="copy" data-copy="j6">Copy JSON</button></div>
+<pre class="contract" id="j6">{
+  "chunk": "watch",
+  "component": "watch.severity_cards",
+  "data": {
+    "severityRatedBy": "ovie",
+    "items": [
+      { "id": "w-hired-cap", "title": "Hired autos capped at $35,000",
+        "explanation": "Renting a vehicle worth more than $35,000 could leave you paying the difference.",
+        "severity": "serious",              // serious | review | info
+        "watchType": "limit",               // limit | valuation | scope | paperwork | deadline | other
+        "relatedIds": ["comprehensive", "collision"],
+        "visual": { "type": "ladder", "steps": [
+            { "label": "You pay, each auto", "amount": 500 },
+            { "label": "Most the policy pays, each loss", "amount": 35000 } ] },
+        "action": "Check rental values, or ask your broker about a higher hired-auto limit.",
+        "sources": [{ "page": 116 }] }
+      // …w-acv, w-scope, w-new-vehicle
+    ]
+  }
+}
+// Rule: one fact = one watch point. Merge limitation + watchpoint about the same concept.</pre>
+</section>
+
+<!-- ============ 7 DEDUCTIBLES ============ -->
+<section class="chunk" id="c-ded">
+<div class="chead"><span class="n">Chunk 7 · type: deductible</span><h2>Deductibles &amp; how claims are paid</h2></div>
+<div class="cmeta">Fields per item: <span class="field">coverage</span><span class="field">appliesTo</span><span class="field">amount</span><span class="field">qualifier</span><span class="field">cap</span><span class="field">valuation</span><span class="field">note</span></div>
+<p class="why">What the user pays first and how the insurer values a loss. Coverages with <b>no deductible listed</b> are shown as such, so "none" is a stated fact and not a blank.</p>
+<div class="opts">
+
+<div class="opt">
+<div class="otag"><span class="l">A</span><code>deductible.rows</code><span class="rec">Suggested</span><span class="was">was E1</span></div>
+<div class="screen">
+  <div>
+  <div class="row"><div class="lbl"><b>Theft, fire, weather</b><small>Each listed auto, each loss · fire/lightning exception mentioned, not detailed</small></div><div class="val">$500</div></div>
+  <div class="row"><div class="lbl"><b>Crash damage</b><small>Each listed auto, each loss</small></div><div class="val">$500</div></div>
+  <div class="row"><div class="lbl"><b>Hired autos, comp &amp; collision</b><small>Each auto · policy pays up to $35,000 each loss</small></div><div class="val">$500</div></div>
+  <div class="row"><div class="lbl"><b>How damage is valued</b><small>Actual cash value or cost of repair, whichever is less</small></div><div class="val">ACV</div></div>
+  <div class="row"><div class="lbl"><b>Liability, UM/UIM, no-fault</b></div><div class="val unk">None listed</div></div>
+  </div>
+  <div class="srow"><span class="src">Auto Decs p.112</span><span class="src">p.116</span><span class="src">Schedule p.121</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>default; handles per-claim, per-auto, aggregate and percentage deductibles in the same row shape.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">B</span><code>deductible.ladder</code><span class="was">was E4</span></div>
+<div class="screen">
+  <div class="grp">Damage to a listed auto</div>
+  <div class="ladder" aria-label="You pay 500 dollars, policy pays the rest up to actual cash value. Not to scale"><div class="step you" style="height:42px"><b>$500</b><span>You pay first</span></div><div class="step" style="height:66px"><b>Rest, up to ACV</b><span>Policy pays · or repair cost if less</span></div></div>
+  <div class="grp" style="margin-top:6px">Damage to a hired auto</div>
+  <div class="ladder" aria-label="You pay 500 dollars, policy pays up to 35,000 dollars. Not to scale"><div class="step you" style="height:42px"><b>$500</b><span>You pay first</span></div><div class="step" style="height:66px"><b>Up to $35,000</b><span>Policy pays, each loss</span></div></div>
+  <p class="note">Liability, UM/UIM and no-fault: no deductible listed. Comprehensive mentions a fire/lightning exception without details.</p>
+  <div class="xs muted">Bars are not to scale.</div>
+  <div class="srow"><span class="src">p.112</span><span class="src">p.116</span><span class="src">p.121</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>users ask "what do I pay vs what do they pay". Strong for health (deductible → co-pay → out-of-pocket max).</span></div><div><b>Trade-off</b> <span>one ladder per scenario; more than 3 gets long.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">C</span><code>deductible.scale</code><span class="was">was V3</span></div>
+<div class="screen">
+  <div class="ch"><b>Every amount on one scale</b></div>
+  <div class="scale" role="img" aria-label="Deductible 500 dollars, hired auto cap 35,000 dollars, liability and UM 1 million dollars; each step ten times bigger">
+    <div class="ax"></div>
+    <span class="tk" style="left:0"></span><span class="tl2" style="left:4%">$100</span>
+    <span class="tk" style="left:20%"></span><span class="tl2" style="left:20%">$1K</span>
+    <span class="tk" style="left:40%"></span><span class="tl2" style="left:40%">$10K</span>
+    <span class="tk" style="left:60%"></span><span class="tl2" style="left:60%">$100K</span>
+    <span class="tk" style="left:80%"></span><span class="tl2" style="left:80%">$1M</span>
+    <span class="ml" style="left:14%"><b>$500</b>You pay</span><span class="mk" style="left:14%;background:var(--a-yellow)"></span>
+    <span class="ml" style="left:50.9%"><b>$35K</b>Hired cap</span><span class="mk" style="left:50.9%;background:var(--a-teal)"></span>
+    <span class="ml" style="left:82%"><b>$1M</b>Liability, UM</span><span class="mk" style="left:80%;background:var(--a-teal)"></span>
+  </div>
+  <div class="xs muted">Each step is 10× bigger</div>
+  <div class="kv">
+    <div><span>Comp &amp; collision, listed autos</span><span>$500<small>each auto, each loss</small></span></div>
+    <div><span>Comp &amp; collision, hired</span><span>$500<small>up to $35,000 each loss</small></span></div>
+    <div><span>Valuation</span><span>ACV or repair, if less</span></div>
+    <div><span>Liability, UM/UIM, no-fault</span><span><span class="unkpill">None listed</span></span></div>
+  </div>
+  <div class="srow"><span class="src">p.112</span><span class="src">p.116</span><span class="src">p.121</span></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>you want deductibles read against limits in one look.</span></div><div><b>Trade-off</b> <span>max ~4 markers before labels collide; log scale needs the caption.</span></div></div>
+</div>
+</div>
+
+<div class="chdr"><b>Data contract · chunk "deductible"</b><button class="copy" data-copy="j7">Copy JSON</button></div>
+<pre class="contract" id="j7">{
+  "chunk": "deductible",
+  "component": "deductible.rows",
+  "data": {
+    "items": [
+      { "coverage": "comprehensive", "plainLabel": "Theft, fire, weather", "appliesTo": ["listed"],
+        "valueType": "money", "amount": 500, "qualifier": "each_auto_each_loss",
+        "note": "Fire/lightning exception mentioned, not detailed", "sources": [{ "page": 121 }] },
+      { "coverage": "collision", "appliesTo": ["listed"], "amount": 500, "qualifier": "each_auto_each_loss" },
+      { "coverage": ["comprehensive", "collision"], "appliesTo": ["hired"], "amount": 500,
+        "qualifier": "each_auto", "cap": { "amount": 35000, "qualifier": "each_loss" }, "sources": [{ "page": 116 }] },
+      { "coverage": ["liability", "uninsured", "underinsured", "pip"], "valueType": "none_listed" }
+    ],
+    "valuation": { "basis": "ACV_or_repair_lesser", "plain": "Actual cash value or cost of repair, whichever is less" }
+  }
+}
+// valueType: money | percent | none_listed | not_stated</pre>
+</section>
+
+<!-- ============ 8 GAPS ============ -->
+<section class="chunk" id="c-gaps">
+<div class="chead"><span class="n">Chunk 8 · type: evidence</span><h2>Gaps &amp; documents</h2></div>
+<div class="cmeta">Fields: <span class="field">missing[] {item, reason, expectedIn}</span><span class="field">forms[] {number, title, status}</span><span class="field">documents[] {name, pages, citedPages[]}</span></div>
+<p class="why">Everything the extraction says it could not find, plus the forms and pages it read. This is where "not provided" lives, so it never shows up as "not covered" elsewhere. The visual measures <b>the documents</b>, not the policy.</p>
+<div class="opts">
+
+<div class="opt">
+<div class="otag"><span class="l">A</span><code>evidence.gap_list</code><span class="rec">Suggested</span><span class="was">was V9 list</span></div>
+<div class="screen">
+  <div class="ch"><b>Not found in your documents · 6</b></div>
+  <div>
+  <div class="row"><span class="g u">?</span><div class="lbl"><b>Driver list</b><small>No named or excluded drivers</small></div></div>
+  <div class="row"><span class="g u">?</span><div class="lbl"><b>Auto endorsements</b><small>Decs say "see schedule of forms and endorsements"</small></div></div>
+  <div class="row"><span class="g u">?</span><div class="lbl"><b>No-fault (PIP) limit</b><small>In a separate PIP endorsement</small></div></div>
+  <div class="row"><span class="g u">?</span><div class="lbl"><b>State-specific endorsements</b><small>None shown for auto</small></div></div>
+  <div class="row"><span class="g u">?</span><div class="lbl"><b>Premium per vehicle</b><small>Only the policy-level $3,013</small></div></div>
+  <div class="row"><span class="g u">?</span><div class="lbl"><b>Coverage territory</b><small>Not stated in the declarations</small></div></div>
+  </div>
+  <p class="note">Missing doesn't mean not covered. It may be in a document you haven't uploaded.</p>
+  <div class="grp">Forms found</div>
+  <div class="forms"><div><code>U-CA-D 600 C(0414)</code>Business auto declarations</div><div><code>IL 00 17</code>Common policy conditions</div><div><code>IL 00 21</code>Broad form nuclear exclusion</div></div>
+  <button class="cta" type="button">Upload a document</button>
+</div>
+<div class="notes"><div><b>Best when</b> <span>default. Clear next step (upload).</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">B</span><code>evidence.page_strip</code></div>
+<div class="screen">
+  <div class="ch"><b>Where the facts came from</b><span class="xs muted">130 pages</span></div>
+  <div class="pages" role="img" aria-label="Facts cited from pages 1, 94, 111, 112, 116 and 121 of 130">
+    <div class="bar"></div>
+    <span class="pm" style="left:0.8%"></span><span class="pm" style="left:72.3%"></span><span class="pm" style="left:85.4%"></span><span class="pm" style="left:86.2%"></span><span class="pm" style="left:89.2%"></span><span class="pm" style="left:93.1%"></span>
+    <span class="pl" style="left:2%">p.1</span><span class="pl" style="left:72.3%">p.94</span><span class="pl" style="left:89%">p.111–121</span>
+    <span class="pe" style="left:0">1</span><span class="pe" style="right:0">130</span>
+  </div>
+  <div class="kv">
+    <div><span>p.1</span><span>Common declarations<small>insured, carrier, term, premium, broker</small></span></div>
+    <div><span>p.94</span><span>Fees<small>terrorism, taxes, data fee</small></span></div>
+    <div><span>p.111–112</span><span>Auto declarations<small>form, symbols, limits, auto premium</small></span></div>
+    <div><span>p.116</span><span>Hired auto limits</span></div>
+    <div><span>p.121</span><span>Auto schedule<small>7 vehicles, deductibles, valuation</small></span></div>
+  </div>
+  <div class="grp">Not found · 6</div>
+  <p class="sm">Driver list · auto endorsements · PIP limit · state endorsements · premium per vehicle · coverage territory</p>
+</div>
+<div class="notes"><div><b>Best when</b> <span>users or agents want to verify. Shows that 124 of 130 pages weren't cited, which hints at what may be missed.</span></div><div><b>Trade-off</b> <span>missing items get less room.</span></div></div>
+</div>
+
+<div class="opt">
+<div class="otag"><span class="l">C</span><code>evidence.found_missing</code></div>
+<div class="screen">
+  <div class="fv">
+    <div class="f"><h4 style="color:var(--ok)">Found · 6</h4><ul>
+      <li><span>✓</span>Policy details</li><li><span>✓</span>Premium &amp; fees</li><li><span>✓</span>6 coverages &amp; limits</li><li><span>✓</span>7 vehicles</li><li><span>✓</span>9 exclusions</li><li><span>✓</span>Deductibles &amp; valuation</li></ul></div>
+    <div class="m"><h4 class="muted">Not found · 6</h4><ul class="muted">
+      <li><span>?</span>Driver list</li><li><span>?</span>Auto endorsements</li><li><span>?</span>PIP limit</li><li><span>?</span>State endorsements</li><li><span>?</span>Premium per vehicle</li><li><span>?</span>Coverage territory</li></ul></div>
+  </div>
+  <p class="note">Missing doesn't mean not covered. It may be in a document you haven't uploaded.</p>
+  <div class="grp">Forms found</div>
+  <div class="forms"><div><code>U-CA-D 600 C(0414)</code>Business auto declarations</div><div><code>IL 00 17</code>Common policy conditions</div><div><code>IL 00 21</code>Broad form nuclear exclusion</div></div>
+</div>
+<div class="notes"><div><b>Best when</b> <span>a policy profile defines the expected checklist, so both columns are meaningful for any type.</span></div><div><b>Trade-off</b> <span>reasons for each gap drop out.</span></div></div>
+</div>
+</div>
+
+<div class="chdr"><b>Data contract · chunk "evidence"</b><button class="copy" data-copy="j8">Copy JSON</button></div>
+<pre class="contract" id="j8">{
+  "chunk": "evidence",
+  "component": "evidence.gap_list",
+  "data": {
+    "missing": [
+      { "item": "Driver list", "reason": "No named or excluded drivers", "expectedIn": "Driver schedule" },
+      { "item": "No-fault (PIP) limit", "reason": "In a separate PIP endorsement", "relatedIds": ["pip"] },
+      { "item": "Coverage territory", "reason": "Not stated in the declarations" }
+      // …3 more
+    ],
+    "forms": [
+      { "number": "U-CA-D 600 C(0414)", "title": "Business Auto Declarations", "status": "found" },
+      { "number": "IL 00 17", "title": "Common Policy Conditions", "status": "referenced" },
+      { "number": "IL 00 21", "title": "Broad Form Nuclear Exclusion", "status": "referenced" }
+    ],
+    "documents": [{ "name": "CPO-0632562-02 policy package", "pages": 130, "citedPages": [1, 94, 111, 112, 116, 121] }]
+  }
+}</pre>
+</section>
+
+<!-- ============ CONTRACT ============ -->
+<section class="chunk" id="c-contract">
+<div class="chead"><span class="n">For the LLM dev</span><h2>How the extraction plugs in</h2></div>
+<p class="why" style="max-width:90ch">The LLM returns <b>one JSON object with an ordered list of blocks</b>. The front end has one renderer per component name and a fallback. Values are typed, never pre-formatted strings like "$1,000,000 per accident", so the UI can format currency, draw bars and compare amounts.</p>
+<div class="rules">
+  <div class="rule"><b>Block envelope</b><code>{ chunk, component, title?, data, sources[] }</code>. <code>component</code> must be a name registered for that <code>chunk</code>.</div>
+  <div class="rule"><b>Fallback</b>Unknown or invalid component → front end renders <code>generic.kv_list</code> from the same data. Nothing is dropped.</div>
+  <div class="rule"><b>No citation, no render</b>Every item carries <code>sources</code> (doc + page/section). Uncited items go to Gaps.</div>
+  <div class="rule"><b>One fact, one place</b>The same concept (e.g. hired-auto cap) appears once as a fact and once at most as a watch point, linked by <code>relatedIds</code>.</div>
+</div>
+
+<div class="chdr"><b>Prompt snippet for the extraction</b><button class="copy" data-copy="jp">Copy</button></div>
+<pre class="contract" id="jp">Return JSON: { "policyType": "...", "jurisdiction": "...", "blocks": [ ... ] }.
+Emit blocks in this order when data exists: header, premium, coverage, subjects, exclusion, watch, deductible, evidence.
+For each block set "component" to one of:
+  header      → policy_header.summary_card | policy_header.timeline_list | policy_header.id_card
+  premium     → premium.breakdown_bar | premium.receipt | premium.waffle
+  coverage    → coverage.limit_rows | coverage.limit_bars | coverage.matrix
+  subjects    → subjects.value_bars | subjects.table | subjects.age_axis
+  exclusion   → exclusion.icon_list | exclusion.tile_grid | exclusion.grouped
+  watch       → watch.severity_cards | watch.stripe_rows | watch.action_cards
+  deductible  → deductible.rows | deductible.ladder | deductible.scale
+  evidence    → evidence.gap_list | evidence.page_strip | evidence.found_missing
+Default to the first option in each line unless told otherwise.
+Rules:
+- Money as numbers with "qualifier" from the enum; never "$1,000,000 per accident" as a string.
+- Translate coverage symbols into "appliesTo" group ids; keep the symbol in "symbol".
+- Give every coverage a plainTitle and a one-sentence plain summary.
+- Put anything not found in evidence.missing, never in exclusion.
+- Rate every watch item: severity = serious | review | info.
+- Do not compute status, totals or "other lines"; the front end does.
+- Do not hedge ("usually", "see master policy"). If unknown, put it in evidence.missing.</pre>
+
+<div class="chdr"><b>Things to fix in this extraction</b></div>
+<div class="mapwrap"><table class="map">
+<thead><tr><th>Issue</th><th>Where</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td>Same coverages 3 times</td><td>§2.1, §2.2, §5</td><td>One coverage list; symbols → appliesTo</td></tr>
+<tr><td>Limitations repeat watchpoints</td><td>§7, §8</td><td>Merge by concept; deductible → chunk 7; drivers, territory → Gaps</td></tr>
+<tr><td>No severity on watchpoints</td><td>§8</td><td>Require severity enum</td></tr>
+<tr><td>"No coverage for non-scheduled drivers"</td><td>§7</td><td>Remove; it states a gap as a limitation</td></tr>
+<tr><td>Territory hedged ("usually US/Canada")</td><td>§7</td><td>No inference; send to evidence.missing</td></tr>
+<tr><td>Fee citation p.1 in §1, p.94 in §10</td><td>§1, §10</td><td>One source per fact; check which page</td></tr>
+<tr><td>VIN checks</td><td>§3</td><td>1997 Hurst VIN has 18 characters; 2017 Chevrolet VIN year code reads 2019. Flag, don't fix silently</td></tr>
+<tr><td>Package total mixed with auto premium</td><td>§1</td><td>linePremium and packageTotal as separate fields</td></tr>
+</tbody></table></div>
+</section>
+
+<footer>Data: LLM extraction for CPO-0632562-02 (American Zurich, 1 Jul 2021 – 1 Jul 2022). Components follow the Ovie insights prototype (single scroll, nothing essential behind a tap). Next: run the same contract on another policy type and check every chunk still fills.</footer>
+</div>
+
+<script>
+(function(){
+  var w=document.getElementById('waffle');
+  if(w){var h='';for(var i=0;i<100;i++){var c=i<16?'var(--a-teal)':(i<20?'var(--a-yellow)':'var(--fill2)');h+='<i style="background:'+c+'"></i>';}w.innerHTML=h;}
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      var el=document.getElementById(b.getAttribute('data-copy'));var t=el.textContent;
+      var done=function(){b.textContent='Copied';setTimeout(function(){b.textContent=b.getAttribute('data-copy')==='jp'?'Copy':'Copy JSON';},1400);};
+      try{navigator.clipboard.writeText(t).then(done,function(){sel(el);});}catch(e){sel(el);}
+    });
+  });
+  function sel(el){var r=document.createRange();r.selectNodeContents(el);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}
+})();
+</script>
+</body></html>

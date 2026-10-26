@@ -1,0 +1,1551 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ovie Insights Render Kit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>/* Layout: a reference manual. Sticky contents rail on the left, one reading column of specimens on the right; specimens sit on the app's own light canvas. */
+:root{
+  --bg:#FAF8F9; --surface:#FFFFFF; --sunk:#F3F0F2; --ink:#1B1619; --muted:#675E65; --line:#E6E0E4; --accent:#6B4062; --accent-ink:#6B4062; --accent-soft:#F3EAF1; --code-bg:#F4F1F3; --ok:#0D7D07; --warn:#8A5A06; --warn-soft:#FFF5DF;
+  --f-ui:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif; --f-code:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151214;--surface:#1E1A1D;--sunk:#252024;--ink:#F2EDF0;--muted:#ABA0A8;--line:#332C31;--accent:#C9A3BF;--accent-ink:#DDBFD4;--accent-soft:#33272F;--code-bg:#1A1619;--ok:#6FD36A;--warn:#E7C982;--warn-soft:#2E2618;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151214;--surface:#1E1A1D;--sunk:#252024;--ink:#F2EDF0;--muted:#ABA0A8;--line:#332C31;--accent:#C9A3BF;--accent-ink:#DDBFD4;--accent-soft:#33272F;--code-bg:#1A1619;--ok:#6FD36A;--warn:#E7C982;--warn-soft:#2E2618;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:24px 64px}}
+a{color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code,kbd,pre{font-family:var(--f-code)}
+:not(pre)>code{font-size:.86em;background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:0 5px;overflow-wrap:anywhere}
+
+/* rail */
+.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;display:flex;flex-direction:column;gap:2px;font-size:13.5px;max-height:calc(100dvh - 48px);overflow-y:auto}
+.rail .brand{font-weight:700;font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.rail .brand i{width:18px;height:18px;border-radius:6px;background:var(--accent);display:block}
+.rail a{color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:6px}
+.rail a:hover{color:var(--ink);background:var(--sunk)}
+.rail a.sub{padding-left:20px;font-size:12.5px}
+@media (max-width:900px){.rail{position:static;max-height:none;flex-direction:row;flex-wrap:wrap;gap:4px}.rail .brand{width:100%;margin-bottom:4px}.rail a.sub{display:none}.rail a{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 10px}}
+
+main{min-width:0;display:flex;flex-direction:column;gap:72px}
+.eyebrow{font-family:var(--f-code);font-size:12px;color:var(--accent-ink);letter-spacing:.02em}
+h1{font-size:40px;line-height:1.05;letter-spacing:-.03em;margin:8px 0 14px;font-weight:700;text-wrap:balance}
+h2{font-size:26px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;font-weight:700;text-wrap:balance}
+h3{font-size:17px;line-height:1.3;margin:0;font-weight:700;letter-spacing:-.01em}
+.lede{font-size:17px;line-height:1.55;color:var(--muted);max-width:66ch}
+.intro{color:var(--muted);max-width:68ch;margin:0 0 20px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:13px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+section.part{scroll-margin-top:24px}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.pipe>div{padding:16px;display:flex;flex-direction:column;gap:6px;position:relative;min-width:0}
+.pipe>div+div{border-left:1px solid var(--line)}
+.pipe>div+div::before{content:"→";position:absolute;left:-11px;top:16px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-size:12px;color:var(--muted)}
+.pipe small{font-family:var(--f-code);font-size:11.5px;color:var(--accent-ink)}
+.pipe b{font-size:15px}
+.pipe p{margin:0;font-size:13.5px;color:var(--muted)}
+@media (max-width:760px){.pipe{grid-template-columns:minmax(0,1fr)}.pipe>div+div{border-left:0;border-top:1px solid var(--line)}.pipe>div+div::before{content:"↓";left:16px;top:-11px}}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.facts>div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:14px;color:var(--muted);min-width:0}
+.facts b{display:block;color:var(--ink);margin-bottom:4px;font-size:14.5px}
+@media (max-width:760px){.facts{grid-template-columns:minmax(0,1fr)}}
+
+.rules{margin:0;padding-left:20px;display:grid;gap:8px;max-width:72ch}
+.rules li::marker{color:var(--accent-ink);font-weight:700}
+
+/* component entries */
+.grp-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:40px 0 4px;padding-top:20px;border-top:1px solid var(--line)}
+.grp-h:first-of-type{margin-top:8px}
+.grp-h h3{font-size:20px}
+.grp-h span{color:var(--muted);font-size:14px}
+.comp{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:24px;padding:24px 0;border-top:1px dashed var(--line);scroll-margin-top:16px}
+.grp-h+.comp{border-top:0}
+@media (max-width:1060px){.comp{grid-template-columns:minmax(0,1fr)}}
+.spec-m{min-width:0;display:flex;flex-direction:column;gap:10px}
+.comp-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.comp-h h4{margin:0;font-family:var(--f-code);font-size:16px;font-weight:600}
+.badge{font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 8px;background:var(--sunk);color:var(--muted);border:1px solid var(--line)}
+.badge.kids{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
+.badge.pending{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.comp p.d{margin:0;color:var(--muted);font-size:14px}
+.stage{background:#F6F6F6;border-radius:14px;padding:16px;border:1px solid var(--line);min-width:0;align-self:start;overflow:hidden}
+.stage.on-card .ov-card{box-shadow:none}
+.stage .ov-sheet{box-shadow:0 -2px 14px -6px rgba(17,17,17,.2)}
+
+table.props{width:100%;border-collapse:collapse;font-size:13px;line-height:1.45}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table.props th,table.props td{text-align:left;vertical-align:top;padding:7px 10px;border-top:1px solid var(--line)}
+table.props th{border-top:0;color:var(--muted);font-weight:600;font-size:12px;background:var(--sunk)}
+table.props td:first-child{font-family:var(--f-code);font-size:12.5px;white-space:nowrap}
+table.props td:nth-child(2){font-family:var(--f-code);font-size:12px;color:var(--accent-ink);min-width:140px}
+table.props td.req{font-size:12px;color:var(--muted);white-space:nowrap}
+table.props td:last-child{color:var(--muted);min-width:160px}
+details.js{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.js summary{cursor:pointer;padding:8px 12px;font-size:13px;font-weight:600;color:var(--muted);list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.js summary::-webkit-details-marker{display:none}
+details.js summary::after{content:"+";font-family:var(--f-code)}
+details.js[open] summary::after{content:"−"}
+.codebox{position:relative}
+pre{margin:0;background:var(--code-bg);border-top:1px solid var(--line);padding:12px 14px;font-size:12px;line-height:1.55;overflow:auto;max-height:440px;tab-size:2;color:var(--ink)}
+.codebox>pre{border:1px solid var(--line);border-radius:10px;max-height:560px}
+.copy{position:absolute;top:8px;right:8px;font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:3px 10px;cursor:pointer;z-index:1}
+details.js .copy{top:44px}
+.copy:hover{border-color:var(--accent)}
+
+/* mapping */
+table.map{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
+table.map th,table.map td{text-align:left;vertical-align:top;padding:9px 12px;border-top:1px solid var(--line)}
+table.map th{border-top:0;background:var(--sunk);font-size:12px;color:var(--muted);font-weight:600}
+table.map td:first-child{font-family:var(--f-code);font-size:12.5px;white-space:nowrap}
+table.map code{white-space:nowrap}
+
+/* live example */
+.live{display:grid;grid-template-columns:390px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:1060px){.live{grid-template-columns:minmax(0,1fr)}}
+.phone{width:100%;max-width:390px;height:780px;border-radius:36px;border:1px solid var(--line);background:#F6F6F6;overflow:hidden;position:relative;box-shadow:0 24px 50px -28px rgba(27,22,25,.45)}
+.phone .scroll{position:absolute;inset:0;overflow-y:auto;padding-top:18px}
+.phone .scrim{position:absolute;inset:0;background:rgba(17,24,23,.5);opacity:0;transition:opacity .2s}
+.phone .sheethost{position:absolute;left:0;right:0;bottom:0;max-height:86%;overflow-y:auto;transform:translateY(100%);transition:transform .25s ease;border-radius:22px 22px 0 0}
+.phone.open .scrim{opacity:1}.phone.open .sheethost{transform:none}
+@media (prefers-reduced-motion:reduce){.phone .scrim,.phone .sheethost{transition:none}}
+.phone .back{position:absolute;left:12px;top:14px;z-index:2;border:0;background:transparent;color:#6B4062;font:inherit;font-weight:600;font-size:13px;cursor:pointer}
+.toast{position:absolute;left:16px;right:16px;bottom:16px;background:#111;color:#fff;border-radius:12px;padding:10px 14px;font-size:13px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:5}
+.toast.show{opacity:1;transform:none}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:12px;flex-wrap:wrap}
+.tabs button{font:inherit;font-size:13.5px;font-weight:600;border:0;background:none;color:var(--muted);padding:8px 12px;border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+textarea{width:100%;min-height:420px;font-family:var(--f-code);font-size:12px;line-height:1.5;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--code-bg);color:var(--ink);resize:vertical}
+.btnrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:13px}
+.btn{font:inherit;font-size:13.5px;font-weight:600;border-radius:9px;padding:7px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.msg-ok{color:var(--ok)} .msg-err{color:#C2410C}
+.stat{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:10px}
+.stat b{color:var(--ink);font-variant-numeric:tabular-nums}
+.open-list{display:grid;gap:10px;max-width:76ch;margin:0;padding-left:20px}
+.open-list b{font-weight:600}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:20px}
+
+/* ===== Ovie Insights components (app surface, light only by design) ===== */
+.ov{--o-canvas:#F6F6F6;--o-card:#FFFFFF;--o-ink:#111111;--o-text2:#333A3D;--o-muted:#5F6368;--o-tertiary:#72777C;--o-line:#ECEFED;--o-border:#D8DDDB;--o-fill2:#E3E3E3;
+  --o-plum:#6B4062;--o-plum-dark:#54324D;--o-plum-soft:#F5EDF3;
+  --o-danger:#A63A33;--o-danger-soft:#FFEDED;--o-red:#EF4444;--o-orange:#EA580C;--o-orange-text:#C2410C;--o-green:#16A34A;--o-success:#0D7D07;--o-success-soft:#E7FFF4;
+  --o-warn-bg:#FFF5DF;--o-warn-border:#E7C982;--o-warn-text:#634106;--o-warn-icon:#8A5A06;
+  --o-teal:#14B8A6;--o-teal-soft:#CCFBF1;--o-yellow:#FACC15;--o-yellow-soft:#FEF9C3;
+  font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:20px;color:var(--o-ink);color-scheme:light;-webkit-font-smoothing:antialiased}
+.ov *{box-sizing:border-box}
+.ov p{margin:0}
+.ov button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+.ov :focus-visible{outline:2px solid var(--o-plum);outline-offset:2px}
+.ov .num{font-variant-numeric:tabular-nums}
+
+/* screen */
+.ov-screen{background:var(--o-canvas);display:flex;flex-direction:column;gap:20px;padding:0 16px 24px}
+.ov-appbar{display:flex;flex-direction:column;padding:12px 0 0}
+.ov-appbar b{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em}
+.ov-appbar small{font-size:12px;line-height:16px;color:var(--o-muted)}
+.ov-jump{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.ov-jump::-webkit-scrollbar{display:none}
+.ov-jump button{flex:none;border:1px solid var(--o-border);background:var(--o-card);border-radius:999px;padding:6px 12px;font-size:12px;line-height:16px;font-weight:600;color:var(--o-text2);cursor:pointer;white-space:nowrap}
+.ov-jump button[aria-pressed="true"]{background:var(--o-plum);border-color:var(--o-plum);color:#fff}
+
+/* section: heading outside, card below */
+.ov-sx{display:flex;flex-direction:column;gap:8px}
+.ov-sh{margin:0;padding:0 4px;font-size:14px;line-height:20px;font-weight:600;display:flex;align-items:center;gap:8px}
+.ov-card{background:var(--o-card);border-radius:12px;padding:16px;display:flex;flex-direction:column}
+.ov-card>*+*{margin-top:0}
+
+/* policy header */
+.ov-ph{display:flex;flex-direction:column;gap:12px}
+.ov-ph-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.ov-ph-top h2{margin:0;font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;text-wrap:balance}
+.ov-hl>div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid var(--o-line)}
+.ov-hl>div:first-child{border-top:0;padding-top:0}
+.ov-hl span{color:var(--o-muted)}
+.ov-hl b{font-weight:600;overflow-wrap:anywhere}
+.ov-hl small{display:block;font-size:12px;line-height:16px;color:var(--o-muted);font-weight:400}
+.ov-hl small.alert{color:var(--o-danger);font-weight:600}
+
+/* pills and chips */
+.ov-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:16px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap;flex:none}
+.ov-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.ov-pill.success{background:var(--o-success-soft);color:var(--o-success)}.ov-pill.success::before{background:var(--o-green)}
+.ov-pill.danger{background:var(--o-danger-soft);color:var(--o-danger)}.ov-pill.danger::before{background:var(--o-red)}
+.ov-pill.warning{background:var(--o-warn-bg);color:var(--o-warn-text)}.ov-pill.warning::before{background:var(--o-orange)}
+.ov-pill.brand{background:var(--o-plum-soft);color:var(--o-plum)}
+.ov-sev{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:16px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid currentColor;background:transparent;white-space:nowrap;align-self:flex-start}
+.ov-sev::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.ov-sev.critical{color:var(--o-danger)}.ov-sev.critical::before{background:var(--o-red)}
+.ov-sev.serious,.ov-sev.high,.ov-sev.moderate{color:var(--o-orange-text)}.ov-sev.serious::before,.ov-sev.high::before,.ov-sev.moderate::before{background:var(--o-orange)}
+.ov-sev.review,.ov-sev.low,.ov-sev.info,.ov-sev.other{color:var(--o-plum)}
+.ov-scope{display:inline-block;font-size:12px;line-height:16px;font-weight:600;color:var(--o-text2);border:1px solid var(--o-border);border-radius:999px;padding:3px 9px;justify-self:start;align-self:flex-start}
+.ov-cnt{background:var(--o-plum-soft);color:var(--o-plum);font-size:12px;line-height:16px;font-weight:600;border-radius:999px;padding:2px 8px}
+.ov-tagx{font-size:12px;line-height:16px;font-weight:600;color:var(--o-success);border:1px solid #BFE5C8;border-radius:999px;padding:2px 8px}
+.ov-partial{font-size:12px;line-height:16px;font-weight:600;color:var(--o-warn-text);background:var(--o-warn-bg);border:1px solid var(--o-warn-border);border-radius:999px;padding:1px 8px}
+.ov-missing{color:var(--o-warn-text);background:var(--o-warn-bg);border:1px solid var(--o-warn-border);border-radius:6px;padding:0 6px;font-weight:600;font-size:14px}
+.ov .ov-cite{width:24px;height:24px;border:0;background:transparent;color:var(--o-muted);display:inline-grid;place-items:center;cursor:pointer;border-radius:6px;padding:0;flex:none}
+
+/* rows */
+.ov-ir{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--o-line);padding:12px 0;min-height:52px}
+.ov-card>.ov-ir:first-child,.ov-gh+.ov-ir,.ov-kinds+.ov-ir{border-top:0;padding-top:0}
+button.ov-ir{cursor:pointer}
+button.ov-ir:active{transform:scale(.99)}
+.ov-ir-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.ov-ir-t{font-weight:600;overflow-wrap:anywhere}
+.ov-ir-s{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ov-ir-v{text-align:right;font-weight:600;font-size:16px;line-height:22px;font-variant-numeric:tabular-nums;flex:none;max-width:48%}
+.ov-ir-v small{display:block;font-size:12px;line-height:16px;font-weight:400;color:var(--o-muted)}
+.ov-chev{color:var(--o-muted);font-size:22px;line-height:1;flex:none}
+.ov-crit-sum{color:var(--o-text2)}
+/* coverage stack */
+.ov-cov{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;row-gap:4px;align-items:start}
+.ov-cov .ov-ir-t{grid-column:1;grid-row:1}
+.ov-cov .ov-chev{grid-column:2;grid-row:1}
+.ov-cov>*:not(.ov-ir-t):not(.ov-chev){grid-column:1/-1}
+.ov-hero{font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.ov-hero small{display:block;font-weight:400;font-size:12px;line-height:16px;letter-spacing:normal;color:var(--o-muted)}
+.ov-cov>.ov-scope{margin-top:4px}
+.ov-desc{color:var(--o-muted)}
+.ov-wv{display:grid;grid-template-columns:minmax(0,1fr) fit-content(48%) auto;column-gap:10px;row-gap:4px;align-items:center}
+.ov-wv>.ov-ir-m{grid-column:1;grid-row:1}.ov-wv>.ov-ir-v{grid-column:2;grid-row:1;max-width:none;justify-self:end}.ov-wv>.ov-chev{grid-column:3;grid-row:1}.ov-wv>.ov-desc{grid-column:1/-1;grid-row:2}
+.ov-mbar{display:block;height:6px;border-radius:3px;background:var(--o-teal);margin-top:2px;max-width:100%}
+.ov-mbar.secondary{background:var(--o-yellow)}
+/* exclusion & gap leads */
+.ov-xi{position:relative;width:40px;height:40px;border-radius:12px;background:var(--o-canvas);display:grid;place-items:center;color:var(--o-muted);flex:none}
+.ov-xi::after{content:"";position:absolute;right:-5px;top:-5px;width:16px;height:16px;border:2px solid #fff;border-radius:50%;background:var(--o-red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7 7 17'/%3E%3C/svg%3E") center/9px 9px no-repeat;box-sizing:content-box}
+.ov-gq{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none;background:var(--o-warn-bg);border:1px solid var(--o-warn-border);color:var(--o-warn-icon)}
+
+/* group header */
+.ov-grp{display:flex;flex-direction:column;padding-top:12px;border-top:1px solid var(--o-line)}
+.ov-card>.ov-grp:first-child{border-top:0;padding-top:0}
+.ov-gh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-bottom:8px}
+.ov-gh b{font-weight:600}
+.ov-gh .ov-cnt{margin-left:auto}
+.ov-kinds{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:8px}
+.ov-kd{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--o-border);border-radius:999px;padding:3px 10px 3px 8px;font-size:12px;line-height:16px;color:var(--o-ink)}
+.ov-kd svg{color:var(--o-muted)}
+.ov-kd b{font-weight:600}
+.ov-codes{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:8px}
+.ov-codes span,.ov-codes button{font-size:12px;line-height:16px;font-weight:600;border:1px solid var(--o-border);color:var(--o-ink);background:transparent;border-radius:8px;padding:4px 6px;min-width:38px;text-align:center}
+.ov-codes.large span{font-size:13px;padding:5px 6px;min-width:44px}
+.ov-codes.struck span{color:var(--o-muted);text-decoration:line-through}
+.ov-codes button{color:var(--o-plum);cursor:pointer}
+
+/* see all / notes */
+.ov-seeall{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;border:0;border-top:1px solid var(--o-line);background:none;color:var(--o-plum)!important;font-weight:600;cursor:pointer;padding:12px 0 0;text-align:left}
+.ov-card>.ov-seeall:first-child{border-top:0;padding-top:0;min-height:24px}
+.ov-seeall .ov-chev{color:var(--o-muted)}
+.ov-foot{font-size:12px;line-height:16px;color:var(--o-muted);padding-top:8px}
+.ov-callout{background:var(--o-warn-bg);border:1px solid var(--o-warn-border);color:var(--o-warn-text);display:flex;gap:8px;align-items:flex-start;border-radius:12px;padding:12px;font-weight:600}
+.ov-callout.soft{font-weight:400}
+.ov-callout svg{flex:none;margin-top:1px;color:var(--o-warn-icon)}
+
+/* premium */
+.ov-prem{display:flex;flex-direction:column;gap:12px}
+.ov-prem-l{color:var(--o-muted)}
+.ov-prem-v{display:block;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.ov-prem-s{font-size:12px;line-height:16px;color:var(--o-muted)}
+.ov-prem-s b{color:var(--o-ink);font-weight:600;font-variant-numeric:tabular-nums}
+.ov-prem-s .dot{margin:0 6px 0 2px}
+.ov-stack{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px}
+.ov-stack i{display:block;min-width:3px}
+.ov-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;line-height:16px;color:var(--o-muted)}
+.ov-legend span{display:inline-flex;align-items:center;gap:6px}
+.ov-legend i{width:8px;height:8px;border-radius:3px;flex:none}
+.ov-legend b{color:var(--o-ink);font-weight:600;font-variant-numeric:tabular-nums}
+.s-primary{background:var(--o-teal)}.s-secondary{background:var(--o-yellow)}.s-other{background:var(--o-fill2)}
+
+/* bottom sheet */
+.ov-sheet{background:var(--o-card);border-radius:22px 22px 0 0;display:flex;flex-direction:column;box-shadow:0 -8px 30px -12px rgba(17,17,17,.25)}
+.ov-grab{width:40px;height:5px;border-radius:3px;background:var(--o-fill2);margin:8px auto 2px}
+.ov-shead{display:flex;align-items:center;gap:8px;padding:6px 16px 8px}
+.ov-shead div{flex:1;min-width:0}
+.ov-shead h3{margin:0;font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;text-wrap:balance}
+.ov-shead small{display:block;font-size:12px;line-height:16px;color:var(--o-muted)}
+.ov .ov-x{width:32px;height:32px;border:0;border-radius:10px;background:transparent;color:var(--o-plum);display:grid;place-items:center;cursor:pointer;flex:none}
+.ov-sbody{padding:4px 16px 22px;display:flex;flex-direction:column;gap:12px}
+.ov-sg{display:flex;flex-direction:column;gap:8px}
+.ov-sg-h{color:var(--o-muted);font-weight:400}
+.ov-box{background:var(--o-canvas);border-radius:12px;padding:0 12px;display:flex;flex-direction:column}
+.ov .ov-box>*{border-top:1px solid var(--o-border)}
+.ov .ov-box>*:first-child{border-top:0}
+.ov-search{width:100%;min-height:44px;border:1px solid var(--o-border);border-radius:12px;padding:0 12px;font:inherit;background:#fff;color:var(--o-ink)}
+.ov-kv{display:flex;justify-content:space-between;gap:12px;padding:12px 0}
+.ov-kv>span{color:var(--o-muted);flex:none;max-width:50%}
+.ov-kv>b{text-align:right;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.ov-kv>b small{display:block;font-weight:400;color:var(--o-muted);font-size:12px;line-height:16px}
+.ov-vb{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:baseline;padding:12px 0}
+.ov-vb>span{color:var(--o-text2)}
+.ov-vb>b{text-align:right;font-size:18px;line-height:24px;font-weight:600;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.ov-vb>small{grid-column:1/-1;font-size:12px;line-height:16px;color:var(--o-muted)}
+.ov-rc{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;padding:12px 0;text-align:left}
+button.ov-rc{cursor:pointer}
+.ov-rc .l{flex:1;min-width:0;font-weight:600}
+.ov-rc .l small{display:block;font-size:12px;line-height:16px;color:var(--o-muted);font-weight:400}
+.ov-rc>b{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ov .ov-box>.ov-rc.total{border-top-color:var(--o-ink)}
+.ov-sc{display:flex;flex-direction:column;gap:4px;width:100%;background:none;border:0;padding:12px 0;text-align:left;cursor:pointer}
+.ov-sc-h{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:4px;align-items:start}
+.ov-sc-h>.ov-sev{grid-column:1/-1;justify-self:start}
+.ov-sc-h>b{grid-column:1;font-weight:600}
+.ov-sc-h>b:only-child{grid-column:1/-1}
+.ov-sc-v{grid-column:2;text-align:right;font-weight:600;max-width:150px;font-variant-numeric:tabular-nums}
+.ov-sc-v small{display:block;font-size:12px;line-height:16px;color:var(--o-muted);font-weight:400}
+.ov-sc-s{color:var(--o-muted)}
+.ov-exc{display:block;font-style:normal;font-size:13px;line-height:18px;color:var(--o-success)}
+.ov-rel{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;padding:12px 0;text-align:left;cursor:pointer}
+.ov-rel span.t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ov-rel b{font-weight:600}
+.ov-rel span.t span{color:var(--o-muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ov-text{color:var(--o-text2)}
+.ov-text.muted{color:var(--o-muted)}
+.ov-scopes{display:flex;gap:6px;flex-wrap:wrap}
+.ov-bul{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--o-text2)}
+.ov-tblw{overflow-x:auto}
+.ov-tbl{border-collapse:collapse;font-size:12px;line-height:16px;width:100%;min-width:320px}
+.ov-tbl th,.ov-tbl td{text-align:left;padding:7px 6px;border-top:1px solid var(--o-line)}
+.ov-tbl th{border-top:0;color:var(--o-muted);font-weight:600}
+.ov-tbl td:last-child,.ov-tbl th:last-child{text-align:right;font-weight:600}
+.ov-ladder{display:flex;align-items:flex-end;gap:6px}
+.ov-step{flex:1;min-width:0;border-radius:12px 12px 6px 6px;padding:7px 8px;display:flex;flex-direction:column;justify-content:flex-end;background:var(--o-teal-soft);border-top:3px solid var(--o-teal)}
+.ov-step.you{background:var(--o-yellow-soft);border-top-color:var(--o-yellow)}
+.ov-step b{font-size:14px;font-variant-numeric:tabular-nums}
+.ov-step span{font-size:11px;line-height:14px;color:var(--o-muted)}
+.ov-pgref{font-size:11px;line-height:16px;color:var(--o-tertiary)}
+.ov-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ov-btn{display:block;width:100%;min-height:44px;text-align:center;font-weight:600;border-radius:12px;padding:10px;background:var(--o-plum);color:#fff!important;border:1px solid var(--o-plum);cursor:pointer}
+.ov-btn.secondary{background:#fff;color:var(--o-plum)!important;border-color:var(--o-border)}
+.ov-actions .ov-btn:only-child{grid-column:1/-1}
+.ov-pages{position:relative;height:56px}
+.ov-pages .bar{position:absolute;left:0;right:0;top:20px;height:16px;border-radius:4px;background:repeating-linear-gradient(90deg,var(--o-fill2) 0 3px,var(--o-canvas) 3px 4px)}
+.ov-pages .pm{position:absolute;top:16px;width:3px;height:24px;background:var(--o-teal);transform:translateX(-50%);border-radius:1px}
+.ov-pages .pe{position:absolute;top:42px;font-size:11px;color:var(--o-muted)}
+</style>
+
+<div class="wrap">
+  <nav class="rail" aria-label="Contents">
+    <div class="brand"><i aria-hidden="true"></i>Render kit</div>
+    <a href="#how">How it works</a>
+    <a href="#rules">Rules</a>
+    <a href="#components">Components</a>
+    <a class="sub" href="#g-layout">Screen and layout</a>
+    <a class="sub" href="#g-rows">Card content</a>
+    <a class="sub" href="#g-atoms">Atoms</a>
+    <a class="sub" href="#g-sheet">Bottom sheet</a>
+    <a href="#mapping">Payload mapping</a>
+    <a href="#live">Live example</a>
+    <a href="#code">Code</a>
+    <a href="#open">Open decisions</a>
+  </nav>
+
+  <main>
+    <header>
+      <div class="eyebrow">ovie-insights/2 → ovie-insights-ui/1</div>
+      <h1>Ovie Insights render kit</h1>
+      <p class="lede">Every component on the policy summary screen, with its props, and the adapter that turns any extracted policy into a json-render spec. The screen code never knows the policy type: a new policy brings new data, not new UI.</p>
+      <div class="meta"><span>Owner <b>Rishi Verma</b>, design</span><span>Updated <b>14 Oct 2026</b></span><span>Matches <b>components.md v2.2</b></span><span><b id="m-count"></b> components</span></div>
+    </header>
+
+    <section class="part" id="how">
+      <h2>How it works</h2>
+      <p class="intro">Four steps, one direction. The extraction is the only thing that changes between policies.</p>
+      <div class="pipe">
+        <div><small>payload</small><b>Extraction JSON</b><p>The AI extraction in contract <code>ovie-insights/2</code>: policy, sections, items. Same item shape in every section.</p></div>
+        <div><small>toSpec(payload)</small><b>Adapter</b><p>Deterministic code. Picks a component per section type, formats values, computes status and monthly, decides what's upfront.</p></div>
+        <div><small>{ root, elements }</small><b>json-render spec</b><p>A flat element map. The screen tree hangs off <code>root</code>; sheets sit beside it, keyed <code>sheet/…</code>.</p></div>
+        <div><small>Renderer + catalog</small><b>Screen</b><p>json-render maps each <code>type</code> to an Ovie component. The host implements four actions.</p></div>
+      </div>
+      <div class="facts">
+        <div><b>No model at render time</b>The adapter is plain code, so the same payload always renders the same screen. The catalog still constrains a model if you ever let one compose layouts.</div>
+        <div><b>Sheets live in the spec</b>Each bottom sheet is an element that isn't a child of <code>root</code>. <code>openSheet</code> renders <code>elements[sheet]</code> in a native sheet; a second tap inside pushes.</div>
+        <div><b>Props are display-ready</b>Money, dates, missing values and counts arrive formatted. Components only lay out strings, so web and SwiftUI render identically.</div>
+      </div>
+    </section>
+
+    <section class="part" id="rules">
+      <h2>Rules</h2>
+      <p class="intro">These keep the screen policy-agnostic. A change that breaks one of them needs a design review.</p>
+      <ol class="rules">
+        <li>Branch only on <code>section.type</code>, <code>value.type</code>, <code>severity</code>, <code>status</code>, <code>effect</code> and whether a field is present. Never on policy line, label, item id, title or a specific kind or concept value.</li>
+        <li>Unknown section types render with the standard list (<code>ItemRow</code>). Unknown item fields become <code>KeyValueRow</code>s in the item's sheet. Unknown icon keys fall back to a generic icon or a dot.</li>
+        <li>A row is complete on its own. Never move a limit, status, severity or missing flag into a sheet. Only rows whose sheet has more get <code>onPress</code> and a chevron.</li>
+        <li>Any item drawn as a card row shows its summary there, in full. A sheet shows only what the card didn't: no repeated value, first scope chip, summary or severity.</li>
+        <li>Lists stop at the cap (coverage 6, watch 5, exclusions 5, conditions 4, gaps 4, others 5) and end with <code>SeeAll</code>. Sheets with more than 8 items get <code>SheetSearch</code>.</li>
+        <li>Missing data is amber and never shown as ✕ or under "not covered".</li>
+        <li>Every sheet ends with <code>PageRefs</code> (when sourced) and <code>SheetActions</code>.</li>
+        <li>Only Figtree, the seven type steps, and the colour roles in components.md §7. Chips and pills carry no colour except status and severity.</li>
+      </ol>
+    </section>
+
+    <section class="part" id="components">
+      <h2>Components</h2>
+      <p class="intro">Each entry shows the component rendered from its example element, the props it accepts, and that element as spec JSON. Previews sit on the app's light canvas because Ovie's app surface is light only.</p>
+      <div id="catalogue"></div>
+    </section>
+
+    <section class="part" id="mapping">
+      <h2>Payload mapping</h2>
+      <p class="intro">What the adapter emits for each section type. The renderer never sees the payload, only these components.</p>
+      <div class="tw"><table class="map">
+        <thead><tr><th>section.type</th><th>On the card</th><th>Section sheet</th><th>Item sheet</th></tr></thead>
+        <tbody>
+          <tr><td>policy</td><td><code>PolicyHeader</code> with status computed from term and events</td><td><code>KeyValueRow</code>s titled "Other details": addresses, other events, broker, more ids, <code>details[]</code>, unknown fields</td><td>–</td></tr>
+          <tr><td>premium</td><td><code>PremiumSummary</code>, then <code>SeeAll</code> "Premium details"</td><td>Group holding line and total: <code>ReceiptRow</code>s. Other groups: <code>SummaryRow</code>s</td><td>Standard item sheet</td></tr>
+          <tr><td>coverage</td><td><code>CoverageRow</code> when the item has a value, else <code>ItemRow</code></td><td><code>SummaryRow</code>s, by <code>group</code> when present</td><td><code>ValueBreakdownRow</code>s, <code>ScopeList</code>, <code>Ladder</code>, <code>BulletList</code>, <code>DataTable</code>, <code>KeyValueRow</code>s, <code>RelatedRow</code>s</td></tr>
+          <tr><td>subjects</td><td>Per group: <code>GroupHeader</code> → <code>KindCounts</code>, then <code>CodeChips</code> or top 3 <code>CoverageRow</code>s with bars, then <code>SeeAll</code>. A single missing item becomes <code>MissingCallout</code></td><td>Per group: heading with count, <code>CodeChips</code> (large) or <code>SummaryRow</code>s</td><td>Standard item sheet</td></tr>
+          <tr><td>watch</td><td><code>WatchRow</code>s sorted by severity; <code>FooterNote</code> when <code>ratedBy: "ovie"</code></td><td><code>SummaryRow</code>s with severity</td><td><code>SheetText</code>, <code>Ladder</code>, <code>RelatedRow</code>s</td></tr>
+          <tr><td>exclusions</td><td><code>ExclusionRow</code>s, icon from <code>concept</code></td><td><code>SummaryRow</code>s with first exception</td><td><code>SheetText</code>, <code>ExceptionLine</code>s</td></tr>
+          <tr><td>conditions</td><td><code>ItemRow</code>s</td><td><code>SummaryRow</code>s</td><td>Standard item sheet</td></tr>
+          <tr><td>forms</td><td>One <code>SeeAll</code> "{n} forms and endorsements"</td><td><code>SummaryRow</code>s by group, <code>DocumentStrip</code></td><td>Standard item sheet</td></tr>
+          <tr><td>gaps</td><td><code>GapRow</code>s</td><td><code>SummaryRow</code>s and the missing-data note</td><td><code>SheetText</code>, <code>MissingCallout</code>, <code>Button</code> "Upload a document"</td></tr>
+          <tr><td>anything else</td><td><code>ItemRow</code>s</td><td><code>SummaryRow</code>s</td><td>Everything, unknown fields as <code>KeyValueRow</code>s</td></tr>
+        </tbody>
+      </table></div>
+      <p class="intro" style="margin-top:16px">Item fields to props: <code>title</code> → title · <code>value</code>/<code>values[0]</code> → value (formatted, <code>sub</code> from the qualifier) · <code>appliesTo[0]</code> → scope ("+n" for the rest) · <code>summary</code> → summary on every card row (only premium and forms items keep it in the sheet) · <code>severity</code> → severity · <code>concept</code> → icon · <code>exceptions</code> → hasException · <code>formal</code> → sheet subtitle · <code>sources</code> → PageRefs and View in document.</p>
+    </section>
+
+    <section class="part" id="live">
+      <h2>Live example</h2>
+      <p class="intro">A fictional business auto payload run through the adapter and rendered by the reference web renderer on this page. Tap rows to open sheets. Paste any <code>ovie-insights/2</code> payload in the Payload tab to try your own.</p>
+      <div class="live">
+        <div class="phone" id="phone">
+          <div class="scroll" id="phoneScroll"></div>
+          <div class="scrim" id="scrim" hidden></div>
+          <div class="sheethost" id="sheetHost" hidden></div>
+          <div class="toast" id="toast" role="status"></div>
+        </div>
+        <div style="min-width:0">
+          <div class="stat" id="liveStat"></div>
+          <div class="tabs" role="tablist" aria-label="Example data">
+            <button type="button" role="tab" id="tab-spec" aria-selected="true" data-tab="spec">Spec</button>
+            <button type="button" role="tab" id="tab-sheet" aria-selected="false" data-tab="sheet">Open sheet</button>
+            <button type="button" role="tab" id="tab-payload" aria-selected="false" data-tab="payload">Payload</button>
+          </div>
+          <div id="pane-spec" class="codebox"><button type="button" class="copy" data-copy="specOut">Copy</button><pre id="specOut"></pre></div>
+          <div id="pane-sheet" class="codebox" hidden><button type="button" class="copy" data-copy="sheetOut">Copy</button><pre id="sheetOut">Open a sheet in the phone to see its element subtree here.</pre></div>
+          <div id="pane-payload" hidden>
+            <textarea id="payloadIn" spellcheck="false" aria-label="Payload JSON"></textarea>
+            <div class="btnrow"><button type="button" class="btn pri" id="applyPayload">Render payload</button><button type="button" class="btn" id="resetPayload">Reset to sample</button><span id="payloadMsg" role="status"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="part" id="code">
+      <h2>Code</h2>
+      <p class="intro">Everything below is generated from the same definitions as the component entries, so it can't drift from them. json-render's API has changed between releases; check import and field names against the version you install.</p>
+      <div class="tabs" role="tablist" aria-label="Code files">
+        <button type="button" role="tab" aria-selected="true" data-code="ts">catalog.ts</button>
+        <button type="button" role="tab" aria-selected="false" data-code="json">catalog.schema.json</button>
+        <button type="button" role="tab" aria-selected="false" data-code="adapter">toSpec.js</button>
+        <button type="button" role="tab" aria-selected="false" data-code="registry">registry.tsx</button>
+        <button type="button" role="tab" aria-selected="false" data-code="swift">InsightsView.swift</button>
+      </div>
+      <div class="codebox"><button type="button" class="copy" data-copy="codeOut">Copy</button><pre id="codeOut"></pre></div>
+    </section>
+
+    <section class="part" id="open">
+      <h2>Open decisions</h2>
+      <p class="intro">Built as currently designed; these may change. Nothing here changes the payload contract yet.</p>
+      <ol class="open-list">
+        <li><b>RelatedRow</b> may be removed until the payload carries a reason (<code>related: [{id, why}]</code>, proposed).</li>
+        <li><b>Sheet subtitle</b> repeats the title when <code>formal</code> is close to it. Proposed: show it only when it adds words, and drop the section-name fallback.</li>
+        <li><b>Premium hero</b> is 22px, off the type scale. Heading 18 or Display 32 are the options.</li>
+        <li><b>Sheet notes</b> use the amber missing-data callout. A neutral variant with the same icon is an option.</li>
+        <li><b>Subjects sort</b>: money groups sort by value; text groups keep payload order.</li>
+        <li><b>Chart colours</b> (teal and yellow) and the plum count pill are deviations from DESIGN.md awaiting approval.</li>
+      </ol>
+    </section>
+
+    <footer>Ovie Insights render kit · components.md v2.2 · reference renderer and adapter on this page are plain JavaScript you can lift as-is.</footer>
+  </main>
+</div>
+
+<script type="text/plain" id="src-adapter">/* ===== toSpec(payload, options) → json-render spec =====
+   Deterministic. Branches only on section.type, value.type, severity, status, effect and field presence.
+   Never on policy line, label, id, title or a specific kind/concept value. */
+var OvieAdapter = (function () {
+  var CAP = { coverage: 6, exclusions: 5, watch: 5, conditions: 4, gaps: 4, _default: 5 };
+  var JUMP = { premium: "Premium", coverage: "Covered", subjects: "Insured", watch: "Watch", exclusions: "Not covered", conditions: "Conditions", forms: "Forms", gaps: "Not found" };
+  var SEV = { critical: "Critical", serious: "Serious", high: "High", moderate: "Moderate", review: "Review", low: "Low", info: "Info" };
+  var SEV_ORDER = { critical: 0, serious: 1, high: 1, moderate: 2, review: 3, low: 4, info: 5 };
+  var KIND_NAME = { truck: ["Truck", "Trucks"], trailer: ["Trailer", "Trailers"], location: ["Location", "Locations"], class: ["Class", "Classes"], state: ["State", "States"], person: ["Person", "People"], building: ["Building", "Buildings"] };
+  var KNOWN_ITEM = ["id", "title", "formal", "summary", "value", "values", "appliesTo", "severity", "group", "kind", "concept", "status", "exceptions", "detail", "related", "sources", "tag", "keywords", "code"];
+  var KNOWN_POLICY = ["line", "insured", "carrier", "policyNumber", "term", "events", "broker", "form", "details", "sources", "parties", "ids"];
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var GAP_NOTE = "Missing doesn't mean not covered. It may be in a document you haven't uploaded.";
+
+  function arr(x) { return Array.isArray(x) ? x : (x == null ? [] : [x]); }
+  function cap1(s) { s = String(s || ""); return s.charAt(0).toUpperCase() + s.slice(1); }
+  function humanKey(k) { return k.replace(/([A-Z])/g, " $1").replace(/^./, function (c) { return c.toUpperCase(); }).replace(/ (\w)/g, function (m, c) { return " " + c.toLowerCase(); }); }
+  function pd(s) { var p = String(s).split("-"); return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); }
+  function fd(d) { d = typeof d === "string" ? pd(d) : d; return d.getUTCDate() + " " + MONTHS[d.getUTCMonth()] + " " + d.getUTCFullYear(); }
+
+  return function toSpec(payload, options) {
+    options = options || {};
+    var CUR = { currency: payload.currency || "USD", locale: payload.locale || "en-US" };
+    function money(n, cur) { var d = n % 1 ? 2 : 0; try { return Number(n).toLocaleString(CUR.locale, { style: "currency", currency: cur || CUR.currency, minimumFractionDigits: d, maximumFractionDigits: d }); } catch (e) { return (cur || CUR.currency) + " " + n; } }
+    function isMissing(v) { return !!v && (v.type === "not_stated" || v.type === "none_listed"); }
+    function vmain(v) {
+      if (isMissing(v)) return { main: v.text || (v.type === "none_listed" ? "None listed" : "Not stated"), missing: true };
+      if (v.type === "removed") return { main: v.text || "Not included" };
+      if (v.type === "money" && v.amount != null) return { main: money(v.amount, v.currency) };
+      if (v.type === "percent" && v.amount != null) return { main: v.amount + "%" };
+      if (v.type === "date" && v.text == null && v.date) return { main: fd(v.date) };
+      if (v.type === "number" && v.amount != null && v.text == null) return { main: Number(v.amount).toLocaleString(CUR.locale) };
+      return { main: String(v.text != null ? v.text : (v.amount != null ? v.amount : "")) };
+    }
+    function upfront(it) {
+      if (arr(it.values).length) {
+        var vs = it.values, same = vs.every(function (v) { return v.type === "money" && v.amount === vs[0].amount; });
+        if (same) return { main: vmain(vs[0]).main, sub: vs.length + " limits" };
+        var f = vs[0], m = vmain(f); return { main: f.type === "text" && f.short ? f.short : m.main, sub: (f.type === "text" ? (f.label || "") : (f.qualifier || f.label || "")) + " · +" + (vs.length - 1) + " more", missing: m.missing || undefined };
+      }
+      if (!it.value) return null;
+      var r = vmain(it.value); if (!r.missing && it.value.qualifier) r.sub = it.value.qualifier; return r;
+    }
+    function extraKeys(o) { return Object.keys(o).filter(function (k) { return KNOWN_ITEM.indexOf(k) < 0; }); }
+    function summaryUpfront(it, sec) { return !!(it.summary && sec.type !== "premium" && sec.type !== "forms"); } /* every card row shows its summary */
+    function hasMore(it, sec) { return !!((it.summary && !summaryUpfront(it, sec)) || it.formal || it.detail || arr(it.values).length || arr(it.exceptions).length || arr(it.related).length || arr(it.sources).length || extraKeys(it).length); }
+    function isCode(x) { return x.code != null ? !!x.code : (!x.value && String(x.title).length <= 4); }
+    function sev(s) { return { level: SEV[s] ? s : "other", label: SEV[s] || cap1(s) }; }
+    function scope(it) { var a = arr(it.appliesTo); return a.length ? a[0] + (a.length > 1 ? " +" + (a.length - 1) : "") : undefined; }
+    function open(sheet) { return { action: "openSheet", params: { sheet: sheet } }; }
+    function pages(s) { var seen = {}, out = []; arr(s).forEach(function (x) { var r = x.page != null ? "p." + String(x.page).replace(/-/g, "–") : x.section ? "§" + x.section : ""; if (r && !seen[r]) { seen[r] = 1; out.push(r); } }); return out; }
+
+    var data = payload, P = data.policy || {}, S = arr(data.sections), E = {};
+    function add(key, type, props, children) { var p = {}; Object.keys(props || {}).forEach(function (k) { if (props[k] !== undefined && props[k] !== "" && props[k] !== null) p[k] = props[k]; }); E[key] = { type: type, props: p }; if (children && children.length) E[key].children = children; return key; }
+    function actions(key, sources, q) { var s = arr(sources)[0]; return add(key, "SheetActions", { viewDocument: s ? { action: "viewDocument", params: { doc: s.doc || "Document", page: s.page != null ? String(s.page) : undefined } } : undefined, askOvie: { action: "askOvie", params: { question: q } } }); }
+    function findItem(id) { var r = null; S.forEach(function (s, si) { arr(s.items).forEach(function (it, ii) { if (it.id === id) r = { si: si, ii: ii, it: it, sec: s }; }); }); return r; }
+    function groupsOf(sec) {
+      var order = arr(sec.groups).map(function (g) { return g.name; }), map = {};
+      arr(sec.items).forEach(function (it) { var g = it.group || "Other"; if (!map[g]) { map[g] = []; if (order.indexOf(g) < 0) order.push(g); } map[g].push(it); });
+      return order.filter(function (n) { return map[n]; }).map(function (n) { var meta = arr(sec.groups).filter(function (g) { return g.name === n; })[0] || {}; return { name: n, items: map[n], note: meta.note, complete: meta.complete }; });
+    }
+    function sorted(sec) { var it = arr(sec.items).map(function (x, i) { return { x: x, i: i }; }); if (sec.type === "watch") { var so = function (k) { return k in SEV_ORDER ? SEV_ORDER[k] : 9; }; it.sort(function (a, b) { return so(a.x.severity) - so(b.x.severity) || a.i - b.i; }); } return it; }
+    function periodOf(it) { var v = it.value || {}; if (v.period) return v.period; var t = (v.qualifier || "") + " " + it.title; return /\b(year|yearly|annual|annually)\b/i.test(t) ? "year" : /\b(month|monthly)\b/i.test(t) ? "month" : ""; }
+    function premiumParts(sec) {
+      var c = sec.chart || {}, by = {}; arr(sec.items).forEach(function (x) { by[x.id] = x; });
+      var line = by[c.line] || arr(sec.items).filter(function (x) { return x.value && x.value.type === "money"; })[0];
+      var total = by[c.total], fees = arr(c.fees).map(function (id) { return by[id]; }).filter(Boolean);
+      var fsum = fees.reduce(function (a, f) { return a + f.value.amount; }, 0);
+      var other = line && total ? Math.max(0, +(total.value.amount - line.value.amount - fsum).toFixed(2)) : 0;
+      return { c: c, line: line, total: total, fees: fees, fsum: fsum, other: other, otherLabel: c.otherLabel || "Other charges" };
+    }
+
+    /* ---------- status ---------- */
+    function today() { if (options.today) return pd(options.today); var n = new Date(); return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate())); }
+    function status(p) {
+      var term = p.term || {}, t = today(), s = term.start ? pd(term.start) : null, e = term.end ? pd(term.end) : null;
+      var end = arr(p.events).filter(function (x) { return x.effect === "ends_coverage"; }).sort(function (a, b) { return pd(a.date) - pd(b.date); })[0];
+      if (end && t >= pd(end.date)) return { label: "Cancelled", tone: "danger", event: end };
+      if (s && t < s) return { label: "Not started", tone: "brand" };
+      if (!s && !e) return { label: "Dates not stated", tone: "brand" };
+      if (!e) return { label: "Active", tone: "success", event: end };
+      if (t >= e) return { label: "Expired", tone: "danger" };
+      var left = Math.round(((end ? Math.min(+pd(end.date), +e) : +e) - t) / 864e5);
+      return { label: left <= 30 ? "Ends soon" : "Active", tone: left <= 30 ? "warning" : "success", event: end };
+    }
+    function parties(p) { if (arr(p.parties).length) return p.parties; var r = []; if (p.insured) r.push({ role: "Policyholder", name: p.insured.name, note: p.insured.description, address: p.insured.address }); if (p.carrier) r.push({ role: "Insurer", name: p.carrier }); if (p.broker) r.push({ role: "Broker", name: p.broker.name, note: p.broker.id ? "Producer no. " + p.broker.id : "", address: p.broker.address }); return r; }
+    function ids(p) { if (arr(p.ids).length) return p.ids; var r = []; if (p.policyNumber) r.push({ label: "Policy no.", value: p.policyNumber }); if (p.form) r.push({ label: "Policy form", value: p.form.number, note: p.form.title }); return r; }
+
+    /* ---------- policy header + its sheet ---------- */
+    var st = status(P), PA = parties(P), ID = ids(P), term = P.term || {};
+    var hrows = PA.slice(0, 2).map(function (x) { return { label: x.role, value: x.name }; }).concat(ID.slice(0, 1).map(function (x) { return { label: x.label, value: x.value } }));
+    hrows.push({ label: "Term", value: !term.start && !term.end ? "Not stated" : (term.start ? fd(term.start) : "?") + (term.end ? " – " + fd(term.end) : " onwards"), note: term.note, alert: st.event ? fd(st.event.date) + " · " + st.event.label : undefined });
+    var extra = [];
+    PA.slice(0, 2).forEach(function (x, i) { if (x.address) extra.push({ label: "Address", value: x.address, note: i ? x.role : undefined }); if (x.note) extra.push({ label: "Description", value: x.note, note: i ? x.role : undefined }); });
+    arr(P.events).filter(function (e) { return e !== st.event; }).forEach(function (e) { extra.push({ label: fd(e.date), value: e.label }); });
+    PA.slice(2).forEach(function (x) { extra.push({ label: x.role, value: x.name, note: [x.note, x.address].filter(Boolean).join(" · ") }); });
+    ID.slice(1).forEach(function (x) { extra.push({ label: x.label, value: x.value, note: x.note }); });
+    arr(P.details).forEach(function (r) { extra.push({ label: r.label, value: typeof r.value === "object" ? vmain(r.value).main : String(r.value) }); });
+    Object.keys(P).filter(function (k) { return KNOWN_POLICY.indexOf(k) < 0; }).forEach(function (k) { extra.push({ label: humanKey(k), value: typeof P[k] === "object" ? JSON.stringify(P[k]) : String(P[k]) }); });
+    if (extra.length) add("sheet/policy", "BottomSheet", { title: "Other details", subtitle: "More from your documents" }, [add("sheet/policy/g", "SheetGroup", {}, extra.map(function (r, i) { return add("sheet/policy/r" + i, "KeyValueRow", r); }))]);
+    var screenKids = [], jump = [{ label: "Policy", target: "sec-h" }];
+    screenKids.push(add("sec-h", "Section", { id: "sec-h" }, [add("sec-h/header", "PolicyHeader", { line: P.line, status: { label: st.label, tone: st.tone }, rows: hrows, detailsAction: extra.length ? open("sheet/policy") : undefined })]));
+
+    /* ---------- item sheet ---------- */
+    function itemSheet(sec, si, it, ii) {
+      var key = "sheet/item/" + si + "/" + ii, k = [], d = it.detail || {}, n = 0;
+      function c(type, props, kids) { return add(key + "/" + (n++), type, props, kids); }
+      if (arr(it.values).length) k.push(c("SheetGroup", {}, it.values.map(function (v) { var m = vmain(v); return c("ValueBreakdownRow", { label: v.label || "", value: { main: m.main, missing: m.missing }, note: [v.type !== "text" ? v.qualifier : "", v.note].filter(Boolean).join(" · ") }); })));
+      if (arr(it.appliesTo).length > 1) k.push(c("ScopeList", { labels: it.appliesTo }));
+      if (it.summary && !summaryUpfront(it, sec)) k.push(c("SheetText", { text: it.summary }));
+      if (d.summary) k.push(c("SheetText", { text: d.summary, tone: "muted" }));
+      arr(it.exceptions).forEach(function (e) { k.push(c("ExceptionLine", { text: e.charAt(0).toLowerCase() + e.slice(1) })); });
+      if (arr(d.ladder).length) k.push(c("Ladder", { steps: d.ladder.map(function (s, i) { return { label: s.label, amount: s.amount != null ? money(s.amount) : s.text, payer: i === 0 ? "you" : "policy" }; }) }));
+      if (arr(d.bullets).length) k.push(c("BulletList", { items: d.bullets }));
+      if (d.table) k.push(c("DataTable", { columns: d.table.columns, rows: d.table.rows }));
+      var rows = arr(d.rows).slice(); extraKeys(it).forEach(function (x) { rows.push({ label: humanKey(x), value: typeof it[x] === "object" ? JSON.stringify(it[x]) : it[x] }); });
+      if (rows.length) k.push(c("SheetGroup", {}, rows.map(function (r) { return c("KeyValueRow", { label: r.label, value: typeof r.value === "object" ? vmain(r.value).main : String(r.value), note: r.note }); })));
+      var rel = arr(it.related).map(findItem).filter(Boolean);
+      if (rel.length) k.push(c("SheetGroup", { heading: "Related" }, rel.map(function (r) { var v = upfront(r.it); return c("RelatedRow", { title: r.it.title, summary: r.it.summary || (v && !v.missing ? v.main + (v.sub ? " " + v.sub : "") : r.it.formal), onPress: open("sheet/item/" + r.si + "/" + r.ii) }); })));
+      if (sec.type === "gaps") { k.push(c("MissingCallout", { text: GAP_NOTE, tone: "soft" })); k.push(c("Button", { label: "Upload a document", onPress: { action: "uploadDocument" } })); }
+      var pg = pages(it.sources); if (pg.length) k.push(c("PageRefs", { pages: pg }));
+      k.push(actions(key + "/actions", it.sources, "Tell me about " + it.title.toLowerCase()));
+      add(key, "BottomSheet", { title: it.title, subtitle: it.formal || sec.title }, k);
+      return open(key);
+    }
+    function summaryRow(key, it, si, sec) {
+      var v = upfront(it);
+      return add(key, "SummaryRow", { title: it.title, severity: it.severity ? sev(it.severity) : undefined, value: v && sec.type !== "gaps" ? v : undefined, summary: it.summary || it.formal, exception: arr(it.exceptions).length ? "Except " + it.exceptions[0].charAt(0).toLowerCase() + it.exceptions[0].slice(1) : undefined, onPress: hasMore(it, sec) ? open("sheet/item/" + si + "/" + arr(sec.items).indexOf(it)) : undefined });
+    }
+
+    /* ---------- section sheet ---------- */
+    function sectionSheet(sec, si) {
+      var key = "sheet/section/" + si, k = [], n = 0, items = sorted(sec);
+      function c(type, props, kids) { return add(key + "/" + (n++), type, props, kids); }
+      if (arr(sec.items).length > 8) k.push(c("SheetSearch", { placeholder: "Search " + String(sec.title || "").toLowerCase() }));
+      if (sec.note) k.push(c("MissingCallout", { text: sec.note, tone: "soft" }));
+      if (sec.type === "subjects") {
+        groupsOf(sec).forEach(function (g) {
+          var kids = [];
+          if (g.note) kids.push(c("MissingCallout", { text: g.note, tone: g.complete === false ? "strong" : "soft" }));
+          if (g.items.every(isCode)) kids.push(c("CodeChips", { codes: g.items.map(function (x) { return x.title; }), size: "large", struck: g.items.every(function (x) { return x.status === "excluded"; }) || undefined }));
+          else kids.push(c("SheetGroup", {}, g.items.map(function (it) { return summaryRow(key + "/" + (n++), it, si, sec); })));
+          k.push(c("SheetGroup", { heading: g.name + " · " + g.items.length, boxed: false }, kids));
+        });
+      } else if (items.some(function (o) { return o.x.group; })) {
+        var pp = sec.type === "premium" ? premiumParts(sec) : null;
+        groupsOf(sec).forEach(function (g) {
+          var idsIn = g.items.map(function (x) { return x.id; });
+          if (pp && pp.line && pp.total && idsIn.indexOf(pp.line.id) > -1 && idsIn.indexOf(pp.total.id) > -1) {
+            var r = function (it, tot) { return c("ReceiptRow", { label: it.title, note: it.value.qualifier, amount: money(it.value.amount), total: tot || undefined, onPress: open("sheet/item/" + si + "/" + arr(sec.items).indexOf(it)) }); };
+            var rows = [r(pp.line)].concat(pp.fees.map(function (f) { return r(f); }));
+            if (pp.other) rows.push(c("ReceiptRow", { label: pp.otherLabel, note: "total minus the amounts above", amount: money(pp.other) }));
+            rows.push(r(pp.total, true));
+            g.items.filter(function (x) { return x !== pp.line && x !== pp.total && pp.fees.indexOf(x) < 0; }).forEach(function (x) { rows.push(summaryRow(key + "/" + (n++), x, si, sec)); });
+            k.push(c("SheetGroup", { heading: g.name }, rows));
+          } else k.push(c("SheetGroup", { heading: g.name }, g.items.map(function (it) { return summaryRow(key + "/" + (n++), it, si, sec); })));
+        });
+      } else k.push(c("SheetGroup", {}, items.map(function (o) { return summaryRow(key + "/" + (n++), o.x, si, sec); })));
+      if (sec.complete === false && sec.completeNote) k.push(c("FooterNote", { text: sec.completeNote }));
+      if (sec.type === "gaps") k.push(c("MissingCallout", { text: GAP_NOTE, tone: "soft" }));
+      arr(sec.documents).forEach(function (doc) { k.push(c("SheetGroup", { heading: "Documents used", boxed: false }, [c("DocumentStrip", { name: doc.name, pages: doc.pages, cited: arr(doc.citedPages) })])); });
+      var srcs = []; arr(sec.items).forEach(function (it) { arr(it.sources).forEach(function (x) { srcs.push(x); }); });
+      k.push(actions(key + "/actions", srcs, "Explain " + String(sec.title || "this section").toLowerCase() + " for this policy"));
+      add(key, "BottomSheet", { title: sec.title, subtitle: arr(sec.items).length + " items" }, k);
+      return open(key);
+    }
+
+    /* ---------- upfront per section type ---------- */
+    function rowFor(base, it, ii, sec, si, bar) {
+      var more = hasMore(it, sec), onPress = more ? itemSheet(sec, si, it, ii) : undefined, v = upfront(it);
+      if (sec.type === "exclusions") return add(base, "ExclusionRow", { title: it.title, icon: it.concept || "_generic", summary: it.summary, hasException: arr(it.exceptions).length ? true : undefined, onPress: onPress });
+      if (sec.type === "gaps") return add(base, "GapRow", { title: it.title, summary: it.summary, onPress: onPress });
+      if (sec.type === "watch") return add(base, "WatchRow", { title: it.title, severity: sev(it.severity || "info"), summary: it.summary, scope: scope(it), onPress: onPress });
+      if ((sec.type === "coverage" || sec.type === "subjects") && v) return add(base, "CoverageRow", { title: it.title, value: v, scope: scope(it), summary: it.summary, bar: bar, onPress: onPress });
+      return add(base, "ItemRow", { title: it.title, value: v || undefined, scope: scope(it), summary: it.summary, hasException: arr(it.exceptions).length ? true : undefined, meta: sec.type === "forms" ? it.formal : it.group, onPress: onPress });
+    }
+    var UP = {
+      list: function (sec, si, b) {
+        var items = sorted(sec), cap = CAP[sec.type] || CAP._default, shown = items.slice(0, cap), k = [];
+        shown.forEach(function (o) { k.push(rowFor(b + "/row" + o.i, o.x, o.i, sec, si)); });
+        arr(sec.items).forEach(function (it, ii) { if (!E["sheet/item/" + si + "/" + ii] && hasMore(it, sec)) itemSheet(sec, si, it, ii); });
+        if (items.length > shown.length) k.push(add(b + "/all", "SeeAll", { label: "See all " + items.length, onPress: sectionSheet(sec, si) }));
+        else if (sec.complete === false) k.push(add(b + "/foot", "FooterNote", { text: sec.completeNote || "The documents may list more." }));
+        if (sec.type === "watch" && sec.ratedBy === "ovie") k.push(add(b + "/rated", "FooterNote", { text: "Severity is rated by Ovie, not your insurer." }));
+        return k;
+      },
+      premium: function (sec, si, b) {
+        var pp = premiumParts(sec); if (!pp.line) return UP.list(sec, si, b);
+        arr(sec.items).forEach(function (it, ii) { if (hasMore(it, sec)) itemSheet(sec, si, it, ii); });
+        var per = periodOf(pp.line), lv = pp.line.value, segs;
+        if (pp.c.type === "stack" && pp.total) {
+          segs = [{ label: pp.line.title, amount: money(lv.amount), weight: lv.amount, series: "primary" }];
+          if (pp.fsum) segs.push({ label: pp.fees.length === 1 ? pp.fees[0].title : "Fees", amount: money(+pp.fsum.toFixed(2)), weight: pp.fsum, series: "secondary" });
+          if (pp.other > 0.005) segs.push({ label: pp.otherLabel, amount: money(pp.other), weight: pp.other, series: "other" });
+        }
+        return [add(b + "/sum", "PremiumSummary", { label: per === "year" ? "Yearly" : per === "month" ? "Monthly" : pp.line.title, amount: vmain(lv).main, caption: per ? pp.line.title : (lv.qualifier || ""), monthly: per === "year" && lv.type === "money" ? money(Math.round(lv.amount / 12)) : undefined, segments: segs }),
+          add(b + "/all", "SeeAll", { label: "Premium details", onPress: sectionSheet(sec, si) })];
+      },
+      forms: function (sec, si, b) { arr(sec.items).forEach(function (it, ii) { if (hasMore(it, sec)) itemSheet(sec, si, it, ii); }); return [add(b + "/all", "SeeAll", { label: arr(sec.items).length + " forms and endorsements", onPress: sectionSheet(sec, si) })]; },
+      subjects: function (sec, si, b) {
+        var k = [], groups = groupsOf(sec), sheet = sectionSheet(sec, si);
+        arr(sec.items).forEach(function (it, ii) { if (hasMore(it, sec)) itemSheet(sec, si, it, ii); });
+        if (sec.note) k.push(add(b + "/note", "FooterNote", { text: sec.note }));
+        groups.forEach(function (g, gi) {
+          var gb = b + "/g" + gi, kids = [], items = g.items, allMissing = items.length === 1 && isMissing(items[0].value);
+          if (allMissing) kids.push(add(gb + "/miss", "MissingCallout", { text: items[0].title }));
+          else {
+            var order = [], m = {}; items.forEach(function (x) { if (!x.kind || isCode(x)) return; if (!m[x.kind]) { m[x.kind] = 0; order.push(x.kind); } m[x.kind]++; });
+            if (order.length > 1) kids.push(add(gb + "/kinds", "KindCounts", { items: order.map(function (kd) { var nm = KIND_NAME[kd] || [cap1(kd), cap1(kd) + "s"]; return { kind: kd, label: m[kd] > 1 ? nm[1] : nm[0], count: m[kd] }; }) }));
+            if (items.every(isCode)) kids.push(add(gb + "/codes", "CodeChips", { codes: items.slice(0, 14).map(function (x) { return x.title; }), struck: items.every(function (x) { return x.status === "excluded"; }) || undefined, more: items.length > 14 ? { label: "+" + (items.length - 14), onPress: sheet } : undefined }));
+            else {
+              var mon = items.filter(function (x) { return x.value && x.value.type === "money"; }), tot = mon.reduce(function (a, x) { return a + x.value.amount; }, 0);
+              var srt = mon.length === items.length ? items.slice().sort(function (a, b2) { return b2.value.amount - a.value.amount; }) : items;
+              var max = mon.length ? Math.max.apply(null, mon.map(function (x) { return x.value.amount; })) : 0;
+              var main = order.slice().sort(function (a, b2) { return m[b2] - m[a]; })[0];
+              srt.slice(0, 3).forEach(function (it) { var ii = sec.items.indexOf(it); var bar = max && it.value && it.value.type === "money" ? { pct: +(it.value.amount / max * 100).toFixed(1), series: it.kind && it.kind !== main ? "secondary" : "primary" } : undefined; kids.push(rowFor(gb + "/row" + ii, it, ii, sec, si, bar)); });
+              if (items.length > 3) kids.push(add(gb + "/all", "SeeAll", { label: "See all " + items.length + (tot ? " · " + money(tot) : ""), onPress: sheet }));
+            }
+          }
+          k.push(add(gb, "GroupHeader", { label: groups.length === 1 && !items[0].group ? "All" : g.name, count: allMissing ? undefined : items.length, partial: g.complete === false || undefined }, kids));
+        });
+        return k;
+      }
+    };
+
+    S.forEach(function (sec, si) {
+      var b = "sec-" + si, fn = UP[sec.type] || UP.list, kids;
+      try { kids = fn(sec, si, b); } catch (e) { kids = UP.list(sec, si, b); }
+      var n = sec.type === "subjects" ? arr(sec.items).filter(function (x) { return !isCode(x) && !isMissing(x.value); }).length : arr(sec.items).length;
+      var showCount = ["premium", "forms"].indexOf(sec.type) < 0 && n;
+      screenKids.push(add(b, "Section", { id: b, heading: sec.title || humanKey(sec.type || "Details") }, kids));
+      jump.push({ label: (JUMP[sec.type] || sec.title || sec.type) + (showCount ? " " + n : ""), target: b });
+    });
+    var jb = add("jump", "JumpBar", { items: jump });
+    add("screen", "Screen", { title: "Insights", subtitle: [P.line, (PA[0] || {}).name].filter(Boolean).join(" · ") }, [jb].concat(screenKids));
+    /* order: the screen tree depth-first, then each sheet's subtree, so the spec reads top to bottom */
+    var out = {};
+    function walk(k) { if (out[k] || !E[k]) return; out[k] = E[k]; arr(E[k].children).forEach(walk); }
+    walk("screen");
+    Object.keys(E).filter(function (k) { return E[k].type === "BottomSheet"; }).sort(function (a, b) { return a.localeCompare(b, "en", { numeric: true }); }).forEach(walk);
+    Object.keys(E).forEach(function (k) { if (!out[k]) out[k] = E[k]; });
+    return { root: "screen", elements: out };
+  };
+})();
+</script>
+<script>
+/* ===== Ovie Insights catalog: one source of truth for the props table, the zod catalog and the JSON Schema ===== */
+var T = (function () {
+  var S = { k: "string" }, N = { k: "number" }, B = { k: "boolean" };
+  function E() { return { k: "enum", v: [].slice.call(arguments) }; }
+  function A(t) { return { k: "array", t: t }; }
+  function O(f) { return { k: "object", f: f }; }
+  function opt(t) { var c = {}; for (var k in t) c[k] = t[k]; c.opt = true; return c; }
+  function R(n) { return { k: "ref", name: n }; }
+  return { S: S, N: N, B: B, E: E, A: A, O: O, opt: opt, R: R };
+})();
+
+/* shared types, referenced by name */
+var DEFS = {
+  Value: { desc: "A display-ready value. The adapter formats money, dates and units; the renderer never formats.", type: T.O({ main: T.S, sub: T.opt(T.S), missing: T.opt(T.B) }) },
+  Action: { desc: "What a tap does. The host app implements these four handlers.", type: T.O({ action: T.E("openSheet", "viewDocument", "askOvie", "uploadDocument"), params: T.opt(T.O({ sheet: T.opt(T.S), doc: T.opt(T.S), page: T.opt(T.S), question: T.opt(T.S) })) }) },
+  Severity: { desc: "Level drives colour; label is the text shown. Unknown levels use \"other\" (neutral plum).", type: T.O({ level: T.E("critical", "serious", "high", "moderate", "review", "low", "info", "other"), label: T.S }) },
+  Segment: { desc: "One part of the premium bar. series picks the colour: primary teal, secondary yellow, other grey.", type: T.O({ label: T.S, amount: T.S, weight: T.N, series: T.E("primary", "secondary", "other") }) }
+};
+
+var GROUPS = [
+  ["layout", "Screen and layout", "The page frame. Sections stack in payload order."],
+  ["rows", "Card content", "What sits inside a section card. Every row is complete on its own; a chevron means a sheet has more."],
+  ["atoms", "Atoms", "Drawn by the components above from their props. Registered too, so a custom layout can use them."],
+  ["sheet", "Bottom sheet", "Sheets show only what the card couldn't. Sheet elements live in the same spec, outside the root tree."]
+];
+
+var CATALOG = [
+  /* ---------- layout ---------- */
+  { name: "Screen", group: "layout", children: true, desc: "The Insights page. Holds the jump bar and the sections in order.",
+    props: [["title", T.S, "App bar title, e.g. \"Insights\"."], ["subtitle", T.opt(T.S), "Line and insured name."]],
+    ex: { type: "Screen", props: { title: "Insights", subtitle: "Business Auto · Sample Freight LLC" }, children: [
+      { type: "JumpBar", props: { items: [{ label: "Policy", target: "sec-h" }, { label: "Premium", target: "sec-0" }, { label: "Covered 4", target: "sec-1" }] } }] } },
+  { name: "JumpBar", group: "layout", desc: "Horizontal chips that scroll the page to a section. The first chip is selected by default; scroll position updates the selection.",
+    props: [["items", T.A(T.O({ label: T.S, target: T.S })), "One per section. target is the Section id."]],
+    ex: { type: "JumpBar", props: { items: [{ label: "Policy", target: "sec-h" }, { label: "Premium", target: "sec-0" }, { label: "Covered 4", target: "sec-1" }, { label: "Watch 3", target: "sec-3" }, { label: "Not covered 4", target: "sec-4" }] } } },
+  { name: "Section", group: "layout", children: true, desc: "Heading on the canvas, white card below. Rows inside the card separate with 1px dividers; the first row has none.",
+    props: [["id", T.S, "Anchor for the jump bar."], ["heading", T.opt(T.S), "Body emphasis 14/20, outside the card. Omit for the policy header card."]],
+    ex: { type: "Section", props: { id: "sec-4", heading: "What's not covered" }, children: [
+      { type: "ExclusionRow", props: { title: "Injury to your own employees", icon: "employee" } },
+      { type: "ExclusionRow", props: { title: "Pollution", icon: "pollution", hasException: true } }] } },
+  { name: "PolicyHeader", group: "layout", desc: "First card. Line of business, computed status, the key parties, policy number and term. An ends-coverage event shows in red under the term.",
+    props: [["line", T.S, "Line of business, Heading 18/24."], ["status", T.O({ label: T.S, tone: T.E("success", "danger", "warning", "brand") }), "Computed by the adapter from term and events."], ["rows", T.A(T.O({ label: T.S, value: T.S, note: T.opt(T.S), alert: T.opt(T.S) })), "Upfront facts. note is muted, alert is red."], ["detailsAction", T.opt(T.R("Action")), "Shows the \"Other details\" link when present."]],
+    ex: { type: "PolicyHeader", props: { line: "Business Auto", status: { label: "Active", tone: "success" }, rows: [{ label: "Policyholder", value: "Sample Freight LLC" }, { label: "Insurer", value: "Example Mutual Insurance Co." }, { label: "Policy no.", value: "BA-000123" }, { label: "Term", value: "1 Jan 2026 – 1 Jan 2027" }], detailsAction: { action: "openSheet", params: { sheet: "sheet/policy" } } } } },
+  { name: "SeeAll", group: "layout", desc: "Last line of a card when there's more than the cap, or a section's only link (\"Premium details\", \"12 forms and endorsements\").",
+    props: [["label", T.S, "\"See all 9\", \"See all 6 · $185,000\", \"Premium details\"."], ["onPress", T.R("Action"), "Opens the section sheet."]],
+    ex: { type: "SeeAll", props: { label: "See all 9", onPress: { action: "openSheet", params: { sheet: "sheet/section/1" } } } } },
+  { name: "FooterNote", group: "layout", desc: "One muted caption line at the end of a card.",
+    props: [["text", T.S, "e.g. \"Severity is rated by Ovie, not your insurer.\""]],
+    ex: { type: "FooterNote", props: { text: "Severity is rated by Ovie, not your insurer." } } },
+
+  /* ---------- rows ---------- */
+  { name: "PremiumSummary", group: "rows", desc: "Premium card body. Yearly hero, its line name with the monthly figure beside it, the stack bar and its legend. No \"+ fees = total\" here; that's in the sheet.",
+    props: [["label", T.S, "\"Yearly\" or \"Monthly\" (from the billing period)."], ["amount", T.S, "Formatted headline amount."], ["caption", T.S, "The line item's title."], ["monthly", T.opt(T.S), "Computed only when the headline is yearly."], ["segments", T.opt(T.A(T.R("Segment"))), "Bar and legend. weight is the raw number used for widths."]],
+    ex: { type: "PremiumSummary", props: { label: "Yearly", amount: "$18,420", caption: "Business auto premium", monthly: "$1,535", segments: [{ label: "Business auto premium", amount: "$18,420", weight: 18420, series: "primary" }, { label: "Fees", amount: "$640", weight: 640, series: "secondary" }] } } },
+  { name: "CoverageRow", group: "rows", desc: "Coverage and subjects rows that have a value. Stack: title, value, sub-line (never wraps into a narrow column), optional mini bar, first scope chip, full summary.",
+    props: [["title", T.S, "Plain-language name."], ["value", T.R("Value"), "Hero 18/24. sub is the basis, e.g. \"each accident\"."], ["scope", T.opt(T.S), "First applies-to label, \"+n\" appended when there are more."], ["summary", T.opt(T.S), "Full sentence, never truncated. Not repeated in the sheet."], ["bar", T.opt(T.O({ pct: T.N, series: T.E("primary", "secondary") })), "Subjects only: share of the group's largest value."], ["onPress", T.opt(T.R("Action")), "Present only when the sheet has more; draws the chevron."]],
+    ex: { type: "CoverageRow", props: { title: "Liability for injury and damage", value: { main: "$1,000,000", sub: "each accident" }, scope: "All owned autos", summary: "Pays others when your driver hurts someone or damages their property.", onPress: { action: "openSheet", params: { sheet: "sheet/item/1/0" } } } } },
+  { name: "ItemRow", group: "rows", desc: "The standard row: title left, value right, summary below across the full width. Conditions and any section type the renderer doesn't know use it.",
+    props: [["title", T.S, ""], ["value", T.opt(T.R("Value")), "Right aligned. missing: true shows the amber missing chip."], ["summary", T.opt(T.S), "Full sentence, never truncated. Not repeated in the sheet."], ["scope", T.opt(T.S), "First applies-to label."], ["hasException", T.opt(T.B), "Green \"Has exception\" tag."], ["meta", T.opt(T.S), "Muted caption (group name, form number)."], ["onPress", T.opt(T.R("Action")), ""]],
+    ex: { type: "ItemRow", props: { title: "Deductible for physical damage", value: { main: "$1,000", sub: "each vehicle" }, summary: "You pay this much of each repair before the policy pays.", onPress: { action: "openSheet", params: { sheet: "sheet/item/5/0" } } } } },
+  { name: "WatchRow", group: "rows", desc: "Watch points, sorted by severity. Severity pill above the title, then the summary (body colour for critical, muted otherwise).",
+    props: [["title", T.S, ""], ["severity", T.R("Severity"), "Stroke-only pill."], ["summary", T.opt(T.S), "Shown on every watch row that has one."], ["scope", T.opt(T.S), ""], ["onPress", T.opt(T.R("Action")), ""]],
+    ex: { type: "WatchRow", props: { title: "Drivers must be listed before they drive", severity: { level: "critical", label: "Critical" }, summary: "A driver missing from the schedule can void cover for that accident.", onPress: { action: "openSheet", params: { sheet: "sheet/item/3/0" } } } } },
+  { name: "ExclusionRow", group: "rows", desc: "What's not covered. Concept icon with the red ✕ badge.",
+    props: [["title", T.S, ""], ["icon", T.S, "Concept key from the icon registry; unknown keys use the generic icon."], ["summary", T.opt(T.S), ""], ["hasException", T.opt(T.B), ""], ["onPress", T.opt(T.R("Action")), ""]],
+    ex: { type: "ExclusionRow", props: { title: "Pollution", icon: "pollution", summary: "Spills and leaks from what you carry aren't covered.", hasException: true, onPress: { action: "openSheet", params: { sheet: "sheet/item/4/1" } } } } },
+  { name: "GapRow", group: "rows", desc: "Something the documents don't establish. Amber \"?\" lead; never shown as ✕.",
+    props: [["title", T.S, ""], ["summary", T.opt(T.S), "Why it's missing."], ["onPress", T.opt(T.R("Action")), ""]],
+    ex: { type: "GapRow", props: { title: "Hired and non-owned autos", summary: "The declarations don't say whether rented or employee vehicles are covered.", onPress: { action: "openSheet", params: { sheet: "sheet/item/7/0" } } } } },
+  { name: "GroupHeader", group: "rows", children: true, desc: "Groups inside a subjects card. Name left, count right, no divider under it. Children are the group's rows.",
+    props: [["label", T.S, ""], ["count", T.opt(T.N), "Plum count pill, right aligned."], ["partial", T.opt(T.B), "Amber \"Partial list\" tag."]],
+    ex: { type: "GroupHeader", props: { label: "Vehicles", count: 6 }, children: [
+      { type: "CoverageRow", props: { title: "2022 Freightliner Cascadia", value: { main: "$142,000", sub: "stated value" }, bar: { pct: 100, series: "primary" } } },
+      { type: "CoverageRow", props: { title: "2019 Utility reefer trailer", value: { main: "$48,000", sub: "stated value" }, bar: { pct: 33.8, series: "secondary" } } }] } },
+  { name: "KindCounts", group: "rows", desc: "Counts by kind inside a subjects group (only when a group mixes 2+ kinds).",
+    props: [["items", T.A(T.O({ kind: T.S, label: T.S, count: T.N })), "kind picks the icon; unknown kinds use a dot."]],
+    ex: { type: "KindCounts", props: { items: [{ kind: "truck", label: "Trucks", count: 4 }, { kind: "trailer", label: "Trailers", count: 2 }] } } },
+  { name: "CodeChips", group: "rows", desc: "Items that are codes (states, class codes). Neutral outline chips, first 14 then \"+n\".",
+    props: [["codes", T.A(T.S), ""], ["struck", T.opt(T.B), "Excluded codes, struck through."], ["size", T.opt(T.E("regular", "large")), "large in sheets."], ["more", T.opt(T.O({ label: T.S, onPress: T.R("Action") })), ""]],
+    ex: { type: "CodeChips", props: { codes: ["TX", "OK", "LA", "AR", "NM", "KS"], more: { label: "+12", onPress: { action: "openSheet", params: { sheet: "sheet/section/2" } } } } } },
+  { name: "MissingCallout", group: "rows", desc: "Amber callout with the warning icon. On cards it marks missing data; in sheets it is also used for notes.",
+    props: [["text", T.S, ""], ["tone", T.opt(T.E("strong", "soft")), "strong (semibold) on cards, soft (regular) for sheet notes."]],
+    ex: { type: "MissingCallout", props: { text: "No drivers listed in these documents" } } },
+
+  /* ---------- atoms ---------- */
+  { name: "StatusPill", group: "atoms", desc: "Filled pill with a dot.", props: [["label", T.S, ""], ["tone", T.E("success", "danger", "warning", "brand"), "Active success · Cancelled/Expired danger · Ends soon warning · Not started brand."]],
+    ex: { type: "Row", props: {}, children: [{ type: "StatusPill", props: { label: "Active", tone: "success" } }, { type: "StatusPill", props: { label: "Ends soon", tone: "warning" } }, { type: "StatusPill", props: { label: "Cancelled", tone: "danger" } }, { type: "StatusPill", props: { label: "Not started", tone: "brand" } }] } },
+  { name: "SeverityPill", group: "atoms", desc: "Stroke-only pill.", props: [["severity", T.R("Severity"), ""]],
+    ex: { type: "Row", props: {}, children: [{ type: "SeverityPill", props: { severity: { level: "critical", label: "Critical" } } }, { type: "SeverityPill", props: { severity: { level: "serious", label: "Serious" } } }, { type: "SeverityPill", props: { severity: { level: "review", label: "Review" } } }] } },
+  { name: "ScopeChip", group: "atoms", desc: "Who or what it applies to. Neutral outline, no colour.", props: [["label", T.S, ""]],
+    ex: { type: "Row", props: {}, children: [{ type: "ScopeChip", props: { label: "All owned autos" } }, { type: "ScopeChip", props: { label: "Scheduled drivers +2" } }] } },
+  { name: "CountPill", group: "atoms", desc: "Plum soft count.", props: [["count", T.N, ""]], ex: { type: "Row", props: {}, children: [{ type: "CountPill", props: { count: 6 } }] } },
+  { name: "ExceptionTag", group: "atoms", desc: "\"Has exception\" on a row.", props: [], ex: { type: "Row", props: {}, children: [{ type: "ExceptionTag", props: {} }] } },
+  { name: "CitationMarker", group: "atoms", desc: "Info icon that marks a sourced fact. Used for nothing else.", props: [["onPress", T.R("Action"), "Opens the source sheet."]],
+    ex: { type: "Row", props: {}, children: [{ type: "CitationMarker", props: { onPress: { action: "openSheet", params: { sheet: "sheet/source/1/0" } } } }] } },
+
+  /* ---------- sheet ---------- */
+  { name: "BottomSheet", group: "sheet", children: true, desc: "One level of sheets. A row inside may push another item's sheet (back arrow), never deeper than that.",
+    props: [["title", T.S, "Item or section title."], ["subtitle", T.opt(T.S), "formal wording when it adds something, else the item count."]],
+    ex: { type: "BottomSheet", props: { title: "Liability for injury and damage", subtitle: "Covered autos liability coverage" }, children: [
+      { type: "SheetGroup", props: {}, children: [{ type: "ValueBreakdownRow", props: { label: "Bodily injury", value: { main: "$1,000,000" }, note: "each accident" } }, { type: "ValueBreakdownRow", props: { label: "Property damage", value: { main: "$1,000,000" }, note: "each accident" } }] },
+      { type: "PageRefs", props: { pages: ["p.2", "p.14"] } },
+      { type: "SheetActions", props: { viewDocument: { action: "viewDocument", params: { doc: "Declarations", page: "2" } }, askOvie: { action: "askOvie", params: { question: "Tell me about liability for injury and damage" } } } }] } },
+  { name: "SheetSearch", group: "sheet", desc: "Shown at the top of a section sheet when it holds more than 8 items. Filters rows by their text.", props: [["placeholder", T.S, ""]],
+    ex: { type: "SheetSearch", props: { placeholder: "Search what's covered" } } },
+  { name: "SheetGroup", group: "sheet", children: true, desc: "Muted regular heading, then a grey box around related rows (boxed: false for chips and free text).",
+    props: [["heading", T.opt(T.S), ""], ["boxed", T.opt(T.B), "Default true."]],
+    ex: { type: "SheetGroup", props: { heading: "What you pay" }, children: [{ type: "KeyValueRow", props: { label: "Paid in", value: "Quarterly instalments" } }, { type: "KeyValueRow", props: { label: "Audit", value: "Annual payroll audit", note: "Premium can change after the audit" } }] } },
+  { name: "KeyValueRow", group: "sheet", desc: "Label left, value right-aligned. detail.rows and unknown fields land here.",
+    props: [["label", T.S, ""], ["value", T.S, ""], ["note", T.opt(T.S), "Muted line under the value."]],
+    ex: { type: "SheetGroup", props: {}, children: [{ type: "KeyValueRow", props: { label: "Address", value: "100 Example Rd, Springfield" } }] } },
+  { name: "ValueBreakdownRow", group: "sheet", desc: "Each of an item's several values, with its basis under it.",
+    props: [["label", T.S, ""], ["value", T.R("Value"), ""], ["note", T.opt(T.S), ""]],
+    ex: { type: "SheetGroup", props: {}, children: [{ type: "ValueBreakdownRow", props: { label: "Each accident", value: { main: "$1,000,000" } } }, { type: "ValueBreakdownRow", props: { label: "Aggregate", value: { main: "Not stated", missing: true } } }] } },
+  { name: "ReceiptRow", group: "sheet", desc: "Premium sheet: line, fees, other lines, total. Plain, no signs or swatches; the total has a dark top rule.",
+    props: [["label", T.S, "Semibold."], ["note", T.opt(T.S), "Qualifier."], ["amount", T.S, ""], ["total", T.opt(T.B), ""], ["onPress", T.opt(T.R("Action")), ""]],
+    ex: { type: "SheetGroup", props: { heading: "What you pay" }, children: [{ type: "ReceiptRow", props: { label: "Business auto premium", note: "per year", amount: "$18,420" } }, { type: "ReceiptRow", props: { label: "Policy fee", amount: "$640" } }, { type: "ReceiptRow", props: { label: "Total cost", amount: "$19,060", total: true } }] } },
+  { name: "SummaryRow", group: "sheet", desc: "One item in a section sheet: severity, title, value, summary (or formal name), first exception. Tapping pushes the item sheet.",
+    props: [["title", T.S, ""], ["severity", T.opt(T.R("Severity")), ""], ["value", T.opt(T.R("Value")), ""], ["summary", T.opt(T.S), ""], ["exception", T.opt(T.S), "\"↳ Except …\""], ["onPress", T.opt(T.R("Action")), "Present when the item has a sheet."]],
+    ex: { type: "SheetGroup", props: {}, children: [{ type: "SummaryRow", props: { title: "Uninsured motorist", value: { main: "$100,000", sub: "each accident" }, summary: "Pays you when an at-fault driver has no insurance.", onPress: { action: "openSheet", params: { sheet: "sheet/item/1/2" } } } }, { type: "SummaryRow", props: { title: "Pollution", summary: "Spills and leaks from what you carry aren't covered.", exception: "Except fuel leaking from the vehicle's own tank", onPress: { action: "openSheet", params: { sheet: "sheet/item/4/1" } } } }] } },
+  { name: "RelatedRow", group: "sheet", desc: "A linked item: its title and its own summary (2 lines), never a bare chip. Pending decision: may be removed until the payload carries a reason.",
+    props: [["title", T.S, ""], ["summary", T.opt(T.S), "The related item's summary, else its value or formal name."], ["onPress", T.R("Action"), "Pushes that item's sheet."]],
+    ex: { type: "SheetGroup", props: { heading: "Related" }, children: [{ type: "RelatedRow", props: { title: "Drivers must be listed before they drive", summary: "A driver missing from the schedule can void cover for that accident.", onPress: { action: "openSheet", params: { sheet: "sheet/item/3/0" } } } }] } },
+  { name: "SheetText", group: "sheet", desc: "The item summary (when the card didn't show it) or detail.summary.",
+    props: [["text", T.S, ""], ["tone", T.opt(T.E("body", "muted")), ""]],
+    ex: { type: "SheetText", props: { text: "Pays to repair or replace your vehicle after a crash, whoever is at fault." } } },
+  { name: "ScopeList", group: "sheet", desc: "Every applies-to label. Only when there's more than one (the card shows the first).",
+    props: [["labels", T.A(T.S), ""]], ex: { type: "ScopeList", props: { labels: ["Owned trucks", "Owned trailers", "Temporary substitutes"] } } },
+  { name: "ExceptionLine", group: "sheet", desc: "A carve-back.", props: [["text", T.S, "Rendered as \"↳ Except …\"."]],
+    ex: { type: "ExceptionLine", props: { text: "fuel leaking from the vehicle's own tank" } } },
+  { name: "Ladder", group: "sheet", desc: "You pay → policy pays. 2–3 steps, rising, not to scale.",
+    props: [["steps", T.A(T.O({ label: T.S, amount: T.S, payer: T.E("you", "policy") })), ""]],
+    ex: { type: "Ladder", props: { steps: [{ label: "You pay first", amount: "$1,000", payer: "you" }, { label: "Policy pays the rest", amount: "Up to $142,000", payer: "policy" }] } } },
+  { name: "BulletList", group: "sheet", desc: "detail.bullets.", props: [["items", T.A(T.S), ""]], ex: { type: "BulletList", props: { items: ["Report within 30 days", "Send copies of any legal papers"] } } },
+  { name: "DataTable", group: "sheet", desc: "detail.table. Scrolls sideways inside its own box.", props: [["columns", T.A(T.S), ""], ["rows", T.A(T.A(T.S)), ""]],
+    ex: { type: "DataTable", props: { columns: ["Class", "Payroll", "Rate"], rows: [["7219 Trucking", "$420,000", "$6.12"], ["8810 Clerical", "$95,000", "$0.21"]] } } },
+  { name: "DocumentStrip", group: "sheet", desc: "Forms sheet: a document's pages with the cited pages marked.", props: [["name", T.S, ""], ["pages", T.N, ""], ["cited", T.A(T.N), ""]],
+    ex: { type: "DocumentStrip", props: { name: "Policy form CA 00 01", pages: 24, cited: [2, 3, 9, 14, 21] } } },
+  { name: "PageRefs", group: "sheet", desc: "Page numbers only, 11px tertiary. No heading, no document names, no box.",
+    props: [["pages", T.A(T.S), "\"p.12\", \"p.27–29\", \"§4\"."]], ex: { type: "PageRefs", props: { pages: ["p.2", "p.14"] } } },
+  { name: "Button", group: "sheet", desc: "A single action, e.g. \"Upload a document\" on a gap.", props: [["label", T.S, ""], ["variant", T.opt(T.E("primary", "secondary")), ""], ["onPress", T.R("Action"), ""]],
+    ex: { type: "Button", props: { label: "Upload a document", onPress: { action: "uploadDocument" } } } },
+  { name: "SheetActions", group: "sheet", desc: "Ends every sheet. View in document opens the first cited source and is hidden without one.",
+    props: [["viewDocument", T.opt(T.R("Action")), ""], ["askOvie", T.R("Action"), ""]],
+    ex: { type: "SheetActions", props: { viewDocument: { action: "viewDocument", params: { doc: "Declarations", page: "2" } }, askOvie: { action: "askOvie", params: { question: "Tell me about collision" } } } } }
+];
+
+/* ---------- generators ---------- */
+function zodOf(t, ind) {
+  ind = ind || "";
+  var s;
+  if (t.k === "string") s = "z.string()";
+  else if (t.k === "number") s = "z.number()";
+  else if (t.k === "boolean") s = "z.boolean()";
+  else if (t.k === "enum") s = "z.enum([" + t.v.map(function (v) { return JSON.stringify(v); }).join(", ") + "])";
+  else if (t.k === "array") s = "z.array(" + zodOf(t.t, ind) + ")";
+  else if (t.k === "ref") s = t.name;
+  else if (t.k === "object") s = "z.object({ " + Object.keys(t.f).map(function (k) { return k + ": " + zodOf(t.f[k], ind); }).join(", ") + " })";
+  return s + (t.opt ? ".optional()" : "");
+}
+function jsonSchemaOf(t) {
+  var s;
+  if (t.k === "string" || t.k === "number" || t.k === "boolean") s = { type: t.k };
+  else if (t.k === "enum") s = { type: "string", enum: t.v };
+  else if (t.k === "array") s = { type: "array", items: jsonSchemaOf(t.t) };
+  else if (t.k === "ref") s = { $ref: "#/$defs/" + t.name };
+  else if (t.k === "object") { s = { type: "object", properties: {}, required: [], additionalProperties: false }; Object.keys(t.f).forEach(function (k) { s.properties[k] = jsonSchemaOf(t.f[k]); if (!t.f[k].opt) s.required.push(k); }); if (!s.required.length) delete s.required; }
+  return s;
+}
+function typeLabel(t) {
+  var s;
+  if (t.k === "enum") s = t.v.map(function (v) { return '"' + v + '"'; }).join(" | ");
+  else if (t.k === "array") s = typeLabel(t.t) + "[]";
+  else if (t.k === "ref") s = t.name;
+  else if (t.k === "object") s = "{ " + Object.keys(t.f).map(function (k) { return k + (t.f[k].opt ? "?" : "") + ": " + typeLabel(t.f[k]); }).join(", ") + " }";
+  else s = t.k;
+  return t.k === "array" && (t.t.k === "enum" || t.t.k === "object") ? (t.t.k === "object" ? s : "(" + typeLabel(t.t) + ")[]") : s;
+}
+function catalogTs() {
+  var L = [];
+  L.push("// Ovie Insights catalog for json-render. Generated from the component kit; edit the kit, not this file.");
+  L.push("// Check the import names against the json-render version you install (defineCatalog / createCatalog).");
+  L.push('import { z } from "zod";');
+  L.push('import { defineCatalog } from "@json-render/core";');
+  L.push('import { schema } from "@json-render/react";');
+  L.push("");
+  Object.keys(DEFS).forEach(function (n) { L.push("/** " + DEFS[n].desc + " */"); L.push("export const " + n + " = " + zodOf(DEFS[n].type) + ";"); L.push(""); });
+  L.push("export const ovieCatalog = defineCatalog(schema, {");
+  L.push("  components: {");
+  CATALOG.forEach(function (c) {
+    L.push("    " + c.name + ": {");
+    L.push("      description: " + JSON.stringify(c.desc) + ",");
+    L.push("      props: z.object({" + (c.props.length ? "" : "}),"));
+    c.props.forEach(function (p) { L.push("        " + p[0] + ": " + zodOf(p[1]) + "," + (p[2] ? " // " + p[2] : "")); });
+    if (c.props.length) L.push("      }),");
+    if (c.children) L.push("      hasChildren: true, // takes children; match the field name your json-render version uses");
+    L.push("    },");
+  });
+  L.push("  },");
+  L.push("  actions: {");
+  L.push('    openSheet: { params: z.object({ sheet: z.string() }), description: "Render elements[sheet] in a native bottom sheet. Push when already open." },');
+  L.push('    viewDocument: { params: z.object({ doc: z.string(), page: z.string().optional() }), description: "Open the cited document at the page." },');
+  L.push('    askOvie: { params: z.object({ question: z.string() }), description: "Open Ask Ovie with the question prefilled." },');
+  L.push('    uploadDocument: { params: z.object({}), description: "Start the document upload flow." },');
+  L.push("  },");
+  L.push("});");
+  return L.join("\n");
+}
+function catalogJson() {
+  var out = { $schema: "https://json-schema.org/draft/2020-12/schema", title: "Ovie Insights component catalog", version: "ovie-insights-ui/1", $defs: {}, components: {} };
+  Object.keys(DEFS).forEach(function (n) { out.$defs[n] = jsonSchemaOf(DEFS[n].type); out.$defs[n].description = DEFS[n].desc; });
+  CATALOG.forEach(function (c) { var o = {}; c.props.forEach(function (p) { o[p[0]] = p[1]; }); var s = jsonSchemaOf(T.O(o)); out.components[c.name] = { description: c.desc, group: c.group, hasChildren: !!c.children, props: s }; });
+  return out;
+}
+/* nested example → flat json-render spec */
+function flatten(node, prefix) {
+  var elements = {}, n = 0;
+  function walk(x) { var key = (prefix || "el") + "-" + (n++); elements[key] = { type: x.type, props: x.props || {}, children: [] }; (x.children || []).forEach(function (c) { elements[key].children.push(walk(c)); }); if (!elements[key].children.length) delete elements[key].children; return key; }
+  var root = walk(node);
+  return { root: root, elements: elements };
+}
+
+/* ===== Reference web renderer: spec {root, elements} → HTML. Mirrors what the json-render registry does. ===== */
+var OV_ICONS = {
+  employee: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>',
+  person: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>',
+  medical: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M12 11v6M9 14h6"/>',
+  contract: '<path d="M6 3h9l4 4v14H6zM15 3v4h4M9 13h6M9 17h4"/>',
+  intended: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
+  box: '<path d="M4 8l8-4 8 4v10l-8 4-8-4zM4 8l8 4 8-4M12 12v10"/>',
+  load: '<path d="M4 20h16M12 4v11M8 11l4 4 4-4"/>',
+  pollution: '<path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/>',
+  racing: '<path d="M5 21V4h12l-2 4 2 4H5"/>',
+  war: '<circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/>',
+  law: '<path d="M12 3v18M5 7h14M7 7l-3 7a3 3 0 0 0 6 0zM17 7l-3 7a3 3 0 0 0 6 0zM8 21h8"/>',
+  place: '<path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
+  money: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.8 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/>',
+  _generic: '<circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/>'
+};
+var OV_KINDS = {
+  truck: '<rect x="1" y="4" width="19" height="11" rx="1.5" fill="currentColor"/><path d="M20 7h6l4 4v4H20z" fill="currentColor"/><circle cx="7" cy="16.5" r="2.8" fill="currentColor"/><circle cx="25" cy="16.5" r="2.8" fill="currentColor"/>',
+  trailer: '<rect x="5" y="5" width="22" height="9" rx="1.5" fill="currentColor"/><rect x="0" y="11" width="6" height="1.8" fill="currentColor"/><circle cx="17" cy="16.5" r="2.8" fill="currentColor"/>',
+  person: '<circle cx="16" cy="6" r="4.5" fill="currentColor"/><path d="M8 20c0-5 3.6-8 8-8s8 3 8 8z" fill="currentColor"/>',
+  location: '<path d="M16 19s6-5 6-10a6 6 0 1 0-12 0c0 5 6 10 6 10z" fill="currentColor"/>',
+  building: '<path d="M16 1l12 9h-3v9H7v-9H4z" fill="currentColor"/>',
+  class: '<rect x="7" y="5" width="18" height="13" rx="2" fill="currentColor"/><path d="M12 5V3h8v2" stroke="currentColor" stroke-width="2" fill="none"/>',
+  _dot: '<circle cx="16" cy="10" r="7" fill="currentColor"/>'
+};
+var WARN_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg>';
+var INFO_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>';
+var CLOSE_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+
+function oe(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function act(a) { return a ? ' data-action="' + oe(JSON.stringify(a)) + '"' : ""; }
+var CHEV = '<span class="ov-chev" aria-hidden="true">›</span>';
+function val(v) { if (!v) return ""; return v.missing ? '<span class="ov-missing">' + oe(v.main) + "</span>" : oe(v.main); }
+function tag(pressable) { return pressable ? "button" : "div"; }
+
+var OVR = {
+  Row: function (p, k) { return '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' + k + "</div>"; },
+  Screen: function (p, k) { return '<div class="ov-screen"><div class="ov-appbar"><b>' + oe(p.title) + "</b>" + (p.subtitle ? "<small>" + oe(p.subtitle) + "</small>" : "") + "</div>" + k + "</div>"; },
+  JumpBar: function (p) { return '<nav class="ov-jump" aria-label="Jump to section">' + (p.items || []).map(function (x, i) { return '<button type="button" data-jump="' + oe(x.target) + '" aria-pressed="' + (i === 0) + '">' + oe(x.label) + "</button>"; }).join("") + "</nav>"; },
+  Section: function (p, k) { return '<section class="ov-sx" id="' + oe(p.id) + '">' + (p.heading ? '<h2 class="ov-sh">' + oe(p.heading) + "</h2>" : "") + '<div class="ov-card">' + k + "</div></section>"; },
+  PolicyHeader: function (p) {
+    return '<div class="ov-ph"><div class="ov-ph-top"><h2>' + oe(p.line) + "</h2>" + OVR.StatusPill(p.status || {}) + '</div><div class="ov-hl">' + (p.rows || []).map(function (r) { return "<div><span>" + oe(r.label) + "</span><b>" + oe(r.value) + (r.note ? "<small>" + oe(r.note) + "</small>" : "") + (r.alert ? '<small class="alert">' + oe(r.alert) + "</small>" : "") + "</b></div>"; }).join("") + "</div>" +
+      (p.detailsAction ? '<button type="button" class="ov-seeall"' + act(p.detailsAction) + ">Other details" + CHEV + "</button>" : "") + "</div>";
+  },
+  SeeAll: function (p) { return '<button type="button" class="ov-seeall"' + act(p.onPress) + ">" + oe(p.label) + CHEV + "</button>"; },
+  FooterNote: function (p) { return '<p class="ov-foot">' + oe(p.text) + "</p>"; },
+  PremiumSummary: function (p) {
+    var segs = p.segments || [], h = '<div class="ov-prem"><div><span class="ov-prem-l">' + oe(p.label) + '</span><b class="ov-prem-v">' + oe(p.amount) + '</b><span class="ov-prem-s">' + oe(p.caption) + (p.monthly ? '<span class="dot"> ·</span><b>' + oe(p.monthly) + "</b> monthly" : "") + "</span></div>";
+    if (segs.length) {
+      h += '<div class="ov-stack" role="img" aria-label="' + oe(segs.map(function (s) { return s.label + " " + s.amount; }).join(", ")) + '">' + segs.map(function (s) { return '<i class="s-' + oe(s.series) + '" style="flex:' + (+s.weight || 1) + '"></i>'; }).join("") + "</div>";
+      h += '<div class="ov-legend">' + segs.map(function (s) { return '<span><i class="s-' + oe(s.series) + '"></i>' + oe(s.label) + " <b>" + oe(s.amount) + "</b></span>"; }).join("") + "</div>";
+    }
+    return h + "</div>";
+  },
+  CoverageRow: function (p) {
+    var t = tag(p.onPress);
+    return "<" + t + (p.onPress ? ' type="button"' : "") + ' class="ov-ir ov-cov"' + act(p.onPress) + '><span class="ov-ir-t">' + oe(p.title) + "</span>" + (p.onPress ? CHEV : "") +
+      '<span class="ov-hero">' + val(p.value) + (p.value && p.value.sub ? "<small>" + oe(p.value.sub) + "</small>" : "") + "</span>" +
+      (p.bar ? '<i class="ov-mbar ' + (p.bar.series === "secondary" ? "secondary" : "") + '" style="width:' + Math.max(2, Math.min(100, +p.bar.pct || 0)) + '%"></i>' : "") +
+      (p.scope ? '<span class="ov-scope">' + oe(p.scope) + "</span>" : "") + (p.summary ? '<span class="ov-desc">' + oe(p.summary) + "</span>" : "") + "</" + t + ">";
+  },
+  ItemRow: function (p) {
+    var t = tag(p.onPress), sub = [];
+    if (p.scope) sub.push('<span class="ov-scope">' + oe(p.scope) + "</span>");
+    if (p.hasException) sub.push(OVR.ExceptionTag());
+    if (p.meta) sub.push('<span class="ov-foot" style="padding:0">' + oe(p.meta) + "</span>");
+    var wv = p.value && p.summary;
+    return "<" + t + (p.onPress ? ' type="button"' : "") + ' class="ov-ir' + (wv ? " ov-wv" : "") + '"' + act(p.onPress) + '><span class="ov-ir-m"><span class="ov-ir-t">' + oe(p.title) + "</span>" + (sub.length ? '<span class="ov-ir-s">' + sub.join("") + "</span>" : "") + (p.summary && !wv ? '<span class="ov-desc">' + oe(p.summary) + "</span>" : "") + "</span>" +
+      (p.value ? '<span class="ov-ir-v">' + val(p.value) + (p.value.sub ? "<small>" + oe(p.value.sub) + "</small>" : "") + "</span>" : "") + (p.onPress ? CHEV : "") + (wv ? '<span class="ov-desc">' + oe(p.summary) + "</span>" : "") + "</" + t + ">";
+  },
+  WatchRow: function (p) {
+    var t = tag(p.onPress);
+    return "<" + t + (p.onPress ? ' type="button"' : "") + ' class="ov-ir"' + act(p.onPress) + '><span class="ov-ir-m">' + OVR.SeverityPill({ severity: p.severity }) + '<span class="ov-ir-t">' + oe(p.title) + "</span>" + (p.summary ? '<span class="' + (p.severity && p.severity.level === "critical" ? "ov-crit-sum" : "ov-desc") + '">' + oe(p.summary) + "</span>" : "") + (p.scope ? '<span class="ov-ir-s"><span class="ov-scope">' + oe(p.scope) + "</span></span>" : "") + "</span>" + (p.onPress ? CHEV : "") + "</" + t + ">";
+  },
+  ExclusionRow: function (p) {
+    var t = tag(p.onPress);
+    return "<" + t + (p.onPress ? ' type="button"' : "") + ' class="ov-ir"' + act(p.onPress) + '><span class="ov-xi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (OV_ICONS[p.icon] || OV_ICONS._generic) + '</svg></span><span class="ov-ir-m"><span class="ov-ir-t">' + oe(p.title) + "</span>" + (p.summary ? '<span class="ov-desc">' + oe(p.summary) + "</span>" : "") + (p.hasException ? '<span class="ov-ir-s">' + OVR.ExceptionTag() + "</span>" : "") + "</span>" + (p.onPress ? CHEV : "") + "</" + t + ">";
+  },
+  GapRow: function (p) { var t = tag(p.onPress); return "<" + t + (p.onPress ? ' type="button"' : "") + ' class="ov-ir"' + act(p.onPress) + '><span class="ov-gq" aria-hidden="true">?</span><span class="ov-ir-m"><span class="ov-ir-t">' + oe(p.title) + "</span>" + (p.summary ? '<span class="ov-desc">' + oe(p.summary) + "</span>" : "") + "</span>" + (p.onPress ? CHEV : "") + "</" + t + ">"; },
+  GroupHeader: function (p, k) { return '<div class="ov-grp"><div class="ov-gh"><b>' + oe(p.label) + "</b>" + (p.partial ? '<span class="ov-partial">Partial list</span>' : "") + (p.count != null ? '<span class="ov-cnt">' + oe(p.count) + "</span>" : "") + "</div>" + k + "</div>"; },
+  KindCounts: function (p) { return '<div class="ov-kinds">' + (p.items || []).map(function (x) { return '<span class="ov-kd"><svg width="22" height="14" viewBox="0 0 32 20" aria-hidden="true">' + (OV_KINDS[x.kind] || OV_KINDS._dot) + "</svg>" + (x.count > 1 ? "<b>×" + x.count + "</b>" : "") + "<span>" + oe(x.label) + "</span></span>"; }).join("") + "</div>"; },
+  CodeChips: function (p) { return '<div class="ov-codes' + (p.struck ? " struck" : "") + (p.size === "large" ? " large" : "") + '">' + (p.codes || []).map(function (c) { return "<span>" + oe(c) + "</span>"; }).join("") + (p.more ? '<button type="button"' + act(p.more.onPress) + ">" + oe(p.more.label) + "</button>" : "") + "</div>"; },
+  MissingCallout: function (p) { return '<p class="ov-callout' + (p.tone === "soft" ? " soft" : "") + '">' + WARN_SVG + "<span>" + oe(p.text) + "</span></p>"; },
+  StatusPill: function (p) { return '<span class="ov-pill ' + oe(p.tone || "brand") + '">' + oe(p.label) + "</span>"; },
+  SeverityPill: function (p) { var s = p.severity || {}; return '<span class="ov-sev ' + oe(s.level || "other") + '">' + oe(s.label) + "</span>"; },
+  ScopeChip: function (p) { return '<span class="ov-scope">' + oe(p.label) + "</span>"; },
+  CountPill: function (p) { return '<span class="ov-cnt">' + oe(p.count) + "</span>"; },
+  ExceptionTag: function () { return '<span class="ov-tagx">Has exception</span>'; },
+  CitationMarker: function (p) { return '<button type="button" class="ov-cite" aria-label="View source"' + act(p.onPress) + ">" + INFO_SVG + "</button>"; },
+  BottomSheet: function (p, k) { return '<div class="ov-sheet" role="dialog" aria-label="' + oe(p.title) + '"><div class="ov-grab"></div><div class="ov-shead"><div><h3>' + oe(p.title) + "</h3>" + (p.subtitle ? "<small>" + oe(p.subtitle) + "</small>" : "") + '</div><button type="button" class="ov-x" data-close="1" aria-label="Close">' + CLOSE_SVG + '</button></div><div class="ov-sbody">' + k + "</div></div>"; },
+  SheetSearch: function (p) { return '<input type="search" class="ov-search" data-search="1" placeholder="' + oe(p.placeholder) + '" aria-label="' + oe(p.placeholder) + '">'; },
+  SheetGroup: function (p, k) { return '<div class="ov-sg">' + (p.heading ? '<div class="ov-sg-h">' + oe(p.heading) + "</div>" : "") + (p.boxed === false ? k : '<div class="ov-box">' + k + "</div>") + "</div>"; },
+  KeyValueRow: function (p) { return '<div class="ov-kv" data-find="' + oe((p.label + " " + p.value).toLowerCase()) + '"><span>' + oe(p.label) + "</span><b>" + oe(p.value) + (p.note ? "<small>" + oe(p.note) + "</small>" : "") + "</b></div>"; },
+  ValueBreakdownRow: function (p) { return '<div class="ov-vb"><span>' + oe(p.label) + "</span><b>" + val(p.value) + "</b>" + (p.note ? "<small>" + oe(p.note) + "</small>" : "") + "</div>"; },
+  ReceiptRow: function (p) { var t = tag(p.onPress); return "<" + t + (p.onPress ? ' type="button"' : "") + ' class="ov-rc' + (p.total ? " total" : "") + '"' + act(p.onPress) + '><span class="l">' + oe(p.label) + (p.note ? "<small>" + oe(p.note) + "</small>" : "") + "</span><b>" + oe(p.amount) + "</b></" + t + ">"; },
+  SummaryRow: function (p) { var t = tag(p.onPress); return "<" + t + (p.onPress ? ' type="button"' : "") + ' class="ov-sc"' + act(p.onPress) + ' data-find="' + oe([p.title, p.summary].join(" ").toLowerCase()) + '"><span class="ov-sc-h">' + (p.severity ? OVR.SeverityPill({ severity: p.severity }) : "") + "<b>" + oe(p.title) + "</b>" + (p.value ? '<span class="ov-sc-v">' + val(p.value) + (p.value.sub ? "<small>" + oe(p.value.sub) + "</small>" : "") + "</span>" : "") + "</span>" + (p.summary ? '<span class="ov-sc-s">' + oe(p.summary) + "</span>" : "") + (p.exception ? '<em class="ov-exc">↳ ' + oe(p.exception) + "</em>" : "") + "</" + t + ">"; },
+  RelatedRow: function (p) { return '<button type="button" class="ov-rel"' + act(p.onPress) + '><span class="t"><b>' + oe(p.title) + "</b>" + (p.summary ? "<span>" + oe(p.summary) + "</span>" : "") + "</span>" + CHEV + "</button>"; },
+  SheetText: function (p) { return '<p class="ov-text' + (p.tone === "muted" ? " muted" : "") + '">' + oe(p.text) + "</p>"; },
+  ScopeList: function (p) { return '<div class="ov-scopes">' + (p.labels || []).map(function (l) { return '<span class="ov-scope">' + oe(l) + "</span>"; }).join("") + "</div>"; },
+  ExceptionLine: function (p) { return '<em class="ov-exc">↳ Except ' + oe(p.text) + "</em>"; },
+  Ladder: function (p) { var hs = [42, 62, 78], st = p.steps || []; return '<div class="ov-ladder" role="img" aria-label="' + oe(st.map(function (s) { return s.label + " " + s.amount; }).join(", ")) + '. Not to scale">' + st.map(function (s, i) { return '<div class="ov-step' + (s.payer === "you" ? " you" : "") + '" style="min-height:' + (hs[i] || 78) + 'px"><b>' + oe(s.amount) + "</b><span>" + oe(s.label) + "</span></div>"; }).join("") + "</div>"; },
+  BulletList: function (p) { return '<ul class="ov-bul">' + (p.items || []).map(function (x) { return "<li>" + oe(x) + "</li>"; }).join("") + "</ul>"; },
+  DataTable: function (p) { return '<div class="ov-tblw"><table class="ov-tbl"><thead><tr>' + (p.columns || []).map(function (c) { return "<th>" + oe(c) + "</th>"; }).join("") + "</tr></thead><tbody>" + (p.rows || []).map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + oe(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div>"; },
+  DocumentStrip: function (p) { var N = p.pages || 1; return '<div><p class="ov-text">' + oe(p.name) + " · " + N + " pages · facts from " + (p.cited || []).length + ' pages</p><div class="ov-pages" role="img" aria-label="Facts cited from ' + (p.cited || []).length + " of " + N + ' pages"><div class="bar"></div>' + (p.cited || []).map(function (c) { return '<span class="pm" style="left:' + (c / N * 100).toFixed(1) + '%"></span>'; }).join("") + '<span class="pe" style="left:0">1</span><span class="pe" style="right:0">' + N + "</span></div></div>"; },
+  PageRefs: function (p) { return '<p class="ov-pgref">' + oe((p.pages || []).join(", ")) + "</p>"; },
+  Button: function (p) { return '<button type="button" class="ov-btn' + (p.variant === "secondary" ? " secondary" : "") + '"' + act(p.onPress) + ">" + oe(p.label) + "</button>"; },
+  SheetActions: function (p) { return '<div class="ov-actions">' + (p.viewDocument ? '<button type="button" class="ov-btn"' + act(p.viewDocument) + ">View in document</button>" : "") + '<button type="button" class="ov-btn secondary"' + act(p.askOvie) + ">Ask Ovie</button></div>"; }
+};
+function renderEl(spec, key, seen) {
+  seen = seen || {};
+  var el = spec.elements[key]; if (!el || seen[key]) return "";
+  seen[key] = 1;
+  var fn = OVR[el.type];
+  var kids = (el.children || []).map(function (c) { return renderEl(spec, c, seen); }).join("");
+  if (!fn) return '<div class="ov-ir"><span class="ov-ir-m"><span class="ov-ir-t">Unknown component: ' + oe(el.type) + "</span></span></div>" + kids;
+  return fn(el.props || {}, kids);
+}
+function renderSpec(spec, key) { return renderEl(spec, key || spec.root); }
+
+/* ===== toSpec(payload, options) → json-render spec =====
+   Deterministic. Branches only on section.type, value.type, severity, status, effect and field presence.
+   Never on policy line, label, id, title or a specific kind/concept value. */
+var OvieAdapter = (function () {
+  var CAP = { coverage: 6, exclusions: 5, watch: 5, conditions: 4, gaps: 4, _default: 5 };
+  var JUMP = { premium: "Premium", coverage: "Covered", subjects: "Insured", watch: "Watch", exclusions: "Not covered", conditions: "Conditions", forms: "Forms", gaps: "Not found" };
+  var SEV = { critical: "Critical", serious: "Serious", high: "High", moderate: "Moderate", review: "Review", low: "Low", info: "Info" };
+  var SEV_ORDER = { critical: 0, serious: 1, high: 1, moderate: 2, review: 3, low: 4, info: 5 };
+  var KIND_NAME = { truck: ["Truck", "Trucks"], trailer: ["Trailer", "Trailers"], location: ["Location", "Locations"], class: ["Class", "Classes"], state: ["State", "States"], person: ["Person", "People"], building: ["Building", "Buildings"] };
+  var KNOWN_ITEM = ["id", "title", "formal", "summary", "value", "values", "appliesTo", "severity", "group", "kind", "concept", "status", "exceptions", "detail", "related", "sources", "tag", "keywords", "code"];
+  var KNOWN_POLICY = ["line", "insured", "carrier", "policyNumber", "term", "events", "broker", "form", "details", "sources", "parties", "ids"];
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var GAP_NOTE = "Missing doesn't mean not covered. It may be in a document you haven't uploaded.";
+
+  function arr(x) { return Array.isArray(x) ? x : (x == null ? [] : [x]); }
+  function cap1(s) { s = String(s || ""); return s.charAt(0).toUpperCase() + s.slice(1); }
+  function humanKey(k) { return k.replace(/([A-Z])/g, " $1").replace(/^./, function (c) { return c.toUpperCase(); }).replace(/ (\w)/g, function (m, c) { return " " + c.toLowerCase(); }); }
+  function pd(s) { var p = String(s).split("-"); return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); }
+  function fd(d) { d = typeof d === "string" ? pd(d) : d; return d.getUTCDate() + " " + MONTHS[d.getUTCMonth()] + " " + d.getUTCFullYear(); }
+
+  return function toSpec(payload, options) {
+    options = options || {};
+    var CUR = { currency: payload.currency || "USD", locale: payload.locale || "en-US" };
+    function money(n, cur) { var d = n % 1 ? 2 : 0; try { return Number(n).toLocaleString(CUR.locale, { style: "currency", currency: cur || CUR.currency, minimumFractionDigits: d, maximumFractionDigits: d }); } catch (e) { return (cur || CUR.currency) + " " + n; } }
+    function isMissing(v) { return !!v && (v.type === "not_stated" || v.type === "none_listed"); }
+    function vmain(v) {
+      if (isMissing(v)) return { main: v.text || (v.type === "none_listed" ? "None listed" : "Not stated"), missing: true };
+      if (v.type === "removed") return { main: v.text || "Not included" };
+      if (v.type === "money" && v.amount != null) return { main: money(v.amount, v.currency) };
+      if (v.type === "percent" && v.amount != null) return { main: v.amount + "%" };
+      if (v.type === "date" && v.text == null && v.date) return { main: fd(v.date) };
+      if (v.type === "number" && v.amount != null && v.text == null) return { main: Number(v.amount).toLocaleString(CUR.locale) };
+      return { main: String(v.text != null ? v.text : (v.amount != null ? v.amount : "")) };
+    }
+    function upfront(it) {
+      if (arr(it.values).length) {
+        var vs = it.values, same = vs.every(function (v) { return v.type === "money" && v.amount === vs[0].amount; });
+        if (same) return { main: vmain(vs[0]).main, sub: vs.length + " limits" };
+        var f = vs[0], m = vmain(f); return { main: f.type === "text" && f.short ? f.short : m.main, sub: (f.type === "text" ? (f.label || "") : (f.qualifier || f.label || "")) + " · +" + (vs.length - 1) + " more", missing: m.missing || undefined };
+      }
+      if (!it.value) return null;
+      var r = vmain(it.value); if (!r.missing && it.value.qualifier) r.sub = it.value.qualifier; return r;
+    }
+    function extraKeys(o) { return Object.keys(o).filter(function (k) { return KNOWN_ITEM.indexOf(k) < 0; }); }
+    function summaryUpfront(it, sec) { return !!(it.summary && sec.type !== "premium" && sec.type !== "forms"); } /* every card row shows its summary */
+    function hasMore(it, sec) { return !!((it.summary && !summaryUpfront(it, sec)) || it.formal || it.detail || arr(it.values).length || arr(it.exceptions).length || arr(it.related).length || arr(it.sources).length || extraKeys(it).length); }
+    function isCode(x) { return x.code != null ? !!x.code : (!x.value && String(x.title).length <= 4); }
+    function sev(s) { return { level: SEV[s] ? s : "other", label: SEV[s] || cap1(s) }; }
+    function scope(it) { var a = arr(it.appliesTo); return a.length ? a[0] + (a.length > 1 ? " +" + (a.length - 1) : "") : undefined; }
+    function open(sheet) { return { action: "openSheet", params: { sheet: sheet } }; }
+    function pages(s) { var seen = {}, out = []; arr(s).forEach(function (x) { var r = x.page != null ? "p." + String(x.page).replace(/-/g, "–") : x.section ? "§" + x.section : ""; if (r && !seen[r]) { seen[r] = 1; out.push(r); } }); return out; }
+
+    var data = payload, P = data.policy || {}, S = arr(data.sections), E = {};
+    function add(key, type, props, children) { var p = {}; Object.keys(props || {}).forEach(function (k) { if (props[k] !== undefined && props[k] !== "" && props[k] !== null) p[k] = props[k]; }); E[key] = { type: type, props: p }; if (children && children.length) E[key].children = children; return key; }
+    function actions(key, sources, q) { var s = arr(sources)[0]; return add(key, "SheetActions", { viewDocument: s ? { action: "viewDocument", params: { doc: s.doc || "Document", page: s.page != null ? String(s.page) : undefined } } : undefined, askOvie: { action: "askOvie", params: { question: q } } }); }
+    function findItem(id) { var r = null; S.forEach(function (s, si) { arr(s.items).forEach(function (it, ii) { if (it.id === id) r = { si: si, ii: ii, it: it, sec: s }; }); }); return r; }
+    function groupsOf(sec) {
+      var order = arr(sec.groups).map(function (g) { return g.name; }), map = {};
+      arr(sec.items).forEach(function (it) { var g = it.group || "Other"; if (!map[g]) { map[g] = []; if (order.indexOf(g) < 0) order.push(g); } map[g].push(it); });
+      return order.filter(function (n) { return map[n]; }).map(function (n) { var meta = arr(sec.groups).filter(function (g) { return g.name === n; })[0] || {}; return { name: n, items: map[n], note: meta.note, complete: meta.complete }; });
+    }
+    function sorted(sec) { var it = arr(sec.items).map(function (x, i) { return { x: x, i: i }; }); if (sec.type === "watch") { var so = function (k) { return k in SEV_ORDER ? SEV_ORDER[k] : 9; }; it.sort(function (a, b) { return so(a.x.severity) - so(b.x.severity) || a.i - b.i; }); } return it; }
+    function periodOf(it) { var v = it.value || {}; if (v.period) return v.period; var t = (v.qualifier || "") + " " + it.title; return /\b(year|yearly|annual|annually)\b/i.test(t) ? "year" : /\b(month|monthly)\b/i.test(t) ? "month" : ""; }
+    function premiumParts(sec) {
+      var c = sec.chart || {}, by = {}; arr(sec.items).forEach(function (x) { by[x.id] = x; });
+      var line = by[c.line] || arr(sec.items).filter(function (x) { return x.value && x.value.type === "money"; })[0];
+      var total = by[c.total], fees = arr(c.fees).map(function (id) { return by[id]; }).filter(Boolean);
+      var fsum = fees.reduce(function (a, f) { return a + f.value.amount; }, 0);
+      var other = line && total ? Math.max(0, +(total.value.amount - line.value.amount - fsum).toFixed(2)) : 0;
+      return { c: c, line: line, total: total, fees: fees, fsum: fsum, other: other, otherLabel: c.otherLabel || "Other charges" };
+    }
+
+    /* ---------- status ---------- */
+    function today() { if (options.today) return pd(options.today); var n = new Date(); return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate())); }
+    function status(p) {
+      var term = p.term || {}, t = today(), s = term.start ? pd(term.start) : null, e = term.end ? pd(term.end) : null;
+      var end = arr(p.events).filter(function (x) { return x.effect === "ends_coverage"; }).sort(function (a, b) { return pd(a.date) - pd(b.date); })[0];
+      if (end && t >= pd(end.date)) return { label: "Cancelled", tone: "danger", event: end };
+      if (s && t < s) return { label: "Not started", tone: "brand" };
+      if (!s && !e) return { label: "Dates not stated", tone: "brand" };
+      if (!e) return { label: "Active", tone: "success", event: end };
+      if (t >= e) return { label: "Expired", tone: "danger" };
+      var left = Math.round(((end ? Math.min(+pd(end.date), +e) : +e) - t) / 864e5);
+      return { label: left <= 30 ? "Ends soon" : "Active", tone: left <= 30 ? "warning" : "success", event: end };
+    }
+    function parties(p) { if (arr(p.parties).length) return p.parties; var r = []; if (p.insured) r.push({ role: "Policyholder", name: p.insured.name, note: p.insured.description, address: p.insured.address }); if (p.carrier) r.push({ role: "Insurer", name: p.carrier }); if (p.broker) r.push({ role: "Broker", name: p.broker.name, note: p.broker.id ? "Producer no. " + p.broker.id : "", address: p.broker.address }); return r; }
+    function ids(p) { if (arr(p.ids).length) return p.ids; var r = []; if (p.policyNumber) r.push({ label: "Policy no.", value: p.policyNumber }); if (p.form) r.push({ label: "Policy form", value: p.form.number, note: p.form.title }); return r; }
+
+    /* ---------- policy header + its sheet ---------- */
+    var st = status(P), PA = parties(P), ID = ids(P), term = P.term || {};
+    var hrows = PA.slice(0, 2).map(function (x) { return { label: x.role, value: x.name }; }).concat(ID.slice(0, 1).map(function (x) { return { label: x.label, value: x.value } }));
+    hrows.push({ label: "Term", value: !term.start && !term.end ? "Not stated" : (term.start ? fd(term.start) : "?") + (term.end ? " – " + fd(term.end) : " onwards"), note: term.note, alert: st.event ? fd(st.event.date) + " · " + st.event.label : undefined });
+    var extra = [];
+    PA.slice(0, 2).forEach(function (x, i) { if (x.address) extra.push({ label: "Address", value: x.address, note: i ? x.role : undefined }); if (x.note) extra.push({ label: "Description", value: x.note, note: i ? x.role : undefined }); });
+    arr(P.events).filter(function (e) { return e !== st.event; }).forEach(function (e) { extra.push({ label: fd(e.date), value: e.label }); });
+    PA.slice(2).forEach(function (x) { extra.push({ label: x.role, value: x.name, note: [x.note, x.address].filter(Boolean).join(" · ") }); });
+    ID.slice(1).forEach(function (x) { extra.push({ label: x.label, value: x.value, note: x.note }); });
+    arr(P.details).forEach(function (r) { extra.push({ label: r.label, value: typeof r.value === "object" ? vmain(r.value).main : String(r.value) }); });
+    Object.keys(P).filter(function (k) { return KNOWN_POLICY.indexOf(k) < 0; }).forEach(function (k) { extra.push({ label: humanKey(k), value: typeof P[k] === "object" ? JSON.stringify(P[k]) : String(P[k]) }); });
+    if (extra.length) add("sheet/policy", "BottomSheet", { title: "Other details", subtitle: "More from your documents" }, [add("sheet/policy/g", "SheetGroup", {}, extra.map(function (r, i) { return add("sheet/policy/r" + i, "KeyValueRow", r); }))]);
+    var screenKids = [], jump = [{ label: "Policy", target: "sec-h" }];
+    screenKids.push(add("sec-h", "Section", { id: "sec-h" }, [add("sec-h/header", "PolicyHeader", { line: P.line, status: { label: st.label, tone: st.tone }, rows: hrows, detailsAction: extra.length ? open("sheet/policy") : undefined })]));
+
+    /* ---------- item sheet ---------- */
+    function itemSheet(sec, si, it, ii) {
+      var key = "sheet/item/" + si + "/" + ii, k = [], d = it.detail || {}, n = 0;
+      function c(type, props, kids) { return add(key + "/" + (n++), type, props, kids); }
+      if (arr(it.values).length) k.push(c("SheetGroup", {}, it.values.map(function (v) { var m = vmain(v); return c("ValueBreakdownRow", { label: v.label || "", value: { main: m.main, missing: m.missing }, note: [v.type !== "text" ? v.qualifier : "", v.note].filter(Boolean).join(" · ") }); })));
+      if (arr(it.appliesTo).length > 1) k.push(c("ScopeList", { labels: it.appliesTo }));
+      if (it.summary && !summaryUpfront(it, sec)) k.push(c("SheetText", { text: it.summary }));
+      if (d.summary) k.push(c("SheetText", { text: d.summary, tone: "muted" }));
+      arr(it.exceptions).forEach(function (e) { k.push(c("ExceptionLine", { text: e.charAt(0).toLowerCase() + e.slice(1) })); });
+      if (arr(d.ladder).length) k.push(c("Ladder", { steps: d.ladder.map(function (s, i) { return { label: s.label, amount: s.amount != null ? money(s.amount) : s.text, payer: i === 0 ? "you" : "policy" }; }) }));
+      if (arr(d.bullets).length) k.push(c("BulletList", { items: d.bullets }));
+      if (d.table) k.push(c("DataTable", { columns: d.table.columns, rows: d.table.rows }));
+      var rows = arr(d.rows).slice(); extraKeys(it).forEach(function (x) { rows.push({ label: humanKey(x), value: typeof it[x] === "object" ? JSON.stringify(it[x]) : it[x] }); });
+      if (rows.length) k.push(c("SheetGroup", {}, rows.map(function (r) { return c("KeyValueRow", { label: r.label, value: typeof r.value === "object" ? vmain(r.value).main : String(r.value), note: r.note }); })));
+      var rel = arr(it.related).map(findItem).filter(Boolean);
+      if (rel.length) k.push(c("SheetGroup", { heading: "Related" }, rel.map(function (r) { var v = upfront(r.it); return c("RelatedRow", { title: r.it.title, summary: r.it.summary || (v && !v.missing ? v.main + (v.sub ? " " + v.sub : "") : r.it.formal), onPress: open("sheet/item/" + r.si + "/" + r.ii) }); })));
+      if (sec.type === "gaps") { k.push(c("MissingCallout", { text: GAP_NOTE, tone: "soft" })); k.push(c("Button", { label: "Upload a document", onPress: { action: "uploadDocument" } })); }
+      var pg = pages(it.sources); if (pg.length) k.push(c("PageRefs", { pages: pg }));
+      k.push(actions(key + "/actions", it.sources, "Tell me about " + it.title.toLowerCase()));
+      add(key, "BottomSheet", { title: it.title, subtitle: it.formal || sec.title }, k);
+      return open(key);
+    }
+    function summaryRow(key, it, si, sec) {
+      var v = upfront(it);
+      return add(key, "SummaryRow", { title: it.title, severity: it.severity ? sev(it.severity) : undefined, value: v && sec.type !== "gaps" ? v : undefined, summary: it.summary || it.formal, exception: arr(it.exceptions).length ? "Except " + it.exceptions[0].charAt(0).toLowerCase() + it.exceptions[0].slice(1) : undefined, onPress: hasMore(it, sec) ? open("sheet/item/" + si + "/" + arr(sec.items).indexOf(it)) : undefined });
+    }
+
+    /* ---------- section sheet ---------- */
+    function sectionSheet(sec, si) {
+      var key = "sheet/section/" + si, k = [], n = 0, items = sorted(sec);
+      function c(type, props, kids) { return add(key + "/" + (n++), type, props, kids); }
+      if (arr(sec.items).length > 8) k.push(c("SheetSearch", { placeholder: "Search " + String(sec.title || "").toLowerCase() }));
+      if (sec.note) k.push(c("MissingCallout", { text: sec.note, tone: "soft" }));
+      if (sec.type === "subjects") {
+        groupsOf(sec).forEach(function (g) {
+          var kids = [];
+          if (g.note) kids.push(c("MissingCallout", { text: g.note, tone: g.complete === false ? "strong" : "soft" }));
+          if (g.items.every(isCode)) kids.push(c("CodeChips", { codes: g.items.map(function (x) { return x.title; }), size: "large", struck: g.items.every(function (x) { return x.status === "excluded"; }) || undefined }));
+          else kids.push(c("SheetGroup", {}, g.items.map(function (it) { return summaryRow(key + "/" + (n++), it, si, sec); })));
+          k.push(c("SheetGroup", { heading: g.name + " · " + g.items.length, boxed: false }, kids));
+        });
+      } else if (items.some(function (o) { return o.x.group; })) {
+        var pp = sec.type === "premium" ? premiumParts(sec) : null;
+        groupsOf(sec).forEach(function (g) {
+          var idsIn = g.items.map(function (x) { return x.id; });
+          if (pp && pp.line && pp.total && idsIn.indexOf(pp.line.id) > -1 && idsIn.indexOf(pp.total.id) > -1) {
+            var r = function (it, tot) { return c("ReceiptRow", { label: it.title, note: it.value.qualifier, amount: money(it.value.amount), total: tot || undefined, onPress: open("sheet/item/" + si + "/" + arr(sec.items).indexOf(it)) }); };
+            var rows = [r(pp.line)].concat(pp.fees.map(function (f) { return r(f); }));
+            if (pp.other) rows.push(c("ReceiptRow", { label: pp.otherLabel, note: "total minus the amounts above", amount: money(pp.other) }));
+            rows.push(r(pp.total, true));
+            g.items.filter(function (x) { return x !== pp.line && x !== pp.total && pp.fees.indexOf(x) < 0; }).forEach(function (x) { rows.push(summaryRow(key + "/" + (n++), x, si, sec)); });
+            k.push(c("SheetGroup", { heading: g.name }, rows));
+          } else k.push(c("SheetGroup", { heading: g.name }, g.items.map(function (it) { return summaryRow(key + "/" + (n++), it, si, sec); })));
+        });
+      } else k.push(c("SheetGroup", {}, items.map(function (o) { return summaryRow(key + "/" + (n++), o.x, si, sec); })));
+      if (sec.complete === false && sec.completeNote) k.push(c("FooterNote", { text: sec.completeNote }));
+      if (sec.type === "gaps") k.push(c("MissingCallout", { text: GAP_NOTE, tone: "soft" }));
+      arr(sec.documents).forEach(function (doc) { k.push(c("SheetGroup", { heading: "Documents used", boxed: false }, [c("DocumentStrip", { name: doc.name, pages: doc.pages, cited: arr(doc.citedPages) })])); });
+      var srcs = []; arr(sec.items).forEach(function (it) { arr(it.sources).forEach(function (x) { srcs.push(x); }); });
+      k.push(actions(key + "/actions", srcs, "Explain " + String(sec.title || "this section").toLowerCase() + " for this policy"));
+      add(key, "BottomSheet", { title: sec.title, subtitle: arr(sec.items).length + " items" }, k);
+      return open(key);
+    }
+
+    /* ---------- upfront per section type ---------- */
+    function rowFor(base, it, ii, sec, si, bar) {
+      var more = hasMore(it, sec), onPress = more ? itemSheet(sec, si, it, ii) : undefined, v = upfront(it);
+      if (sec.type === "exclusions") return add(base, "ExclusionRow", { title: it.title, icon: it.concept || "_generic", summary: it.summary, hasException: arr(it.exceptions).length ? true : undefined, onPress: onPress });
+      if (sec.type === "gaps") return add(base, "GapRow", { title: it.title, summary: it.summary, onPress: onPress });
+      if (sec.type === "watch") return add(base, "WatchRow", { title: it.title, severity: sev(it.severity || "info"), summary: it.summary, scope: scope(it), onPress: onPress });
+      if ((sec.type === "coverage" || sec.type === "subjects") && v) return add(base, "CoverageRow", { title: it.title, value: v, scope: scope(it), summary: it.summary, bar: bar, onPress: onPress });
+      return add(base, "ItemRow", { title: it.title, value: v || undefined, scope: scope(it), summary: it.summary, hasException: arr(it.exceptions).length ? true : undefined, meta: sec.type === "forms" ? it.formal : it.group, onPress: onPress });
+    }
+    var UP = {
+      list: function (sec, si, b) {
+        var items = sorted(sec), cap = CAP[sec.type] || CAP._default, shown = items.slice(0, cap), k = [];
+        shown.forEach(function (o) { k.push(rowFor(b + "/row" + o.i, o.x, o.i, sec, si)); });
+        arr(sec.items).forEach(function (it, ii) { if (!E["sheet/item/" + si + "/" + ii] && hasMore(it, sec)) itemSheet(sec, si, it, ii); });
+        if (items.length > shown.length) k.push(add(b + "/all", "SeeAll", { label: "See all " + items.length, onPress: sectionSheet(sec, si) }));
+        else if (sec.complete === false) k.push(add(b + "/foot", "FooterNote", { text: sec.completeNote || "The documents may list more." }));
+        if (sec.type === "watch" && sec.ratedBy === "ovie") k.push(add(b + "/rated", "FooterNote", { text: "Severity is rated by Ovie, not your insurer." }));
+        return k;
+      },
+      premium: function (sec, si, b) {
+        var pp = premiumParts(sec); if (!pp.line) return UP.list(sec, si, b);
+        arr(sec.items).forEach(function (it, ii) { if (hasMore(it, sec)) itemSheet(sec, si, it, ii); });
+        var per = periodOf(pp.line), lv = pp.line.value, segs;
+        if (pp.c.type === "stack" && pp.total) {
+          segs = [{ label: pp.line.title, amount: money(lv.amount), weight: lv.amount, series: "primary" }];
+          if (pp.fsum) segs.push({ label: pp.fees.length === 1 ? pp.fees[0].title : "Fees", amount: money(+pp.fsum.toFixed(2)), weight: pp.fsum, series: "secondary" });
+          if (pp.other > 0.005) segs.push({ label: pp.otherLabel, amount: money(pp.other), weight: pp.other, series: "other" });
+        }
+        return [add(b + "/sum", "PremiumSummary", { label: per === "year" ? "Yearly" : per === "month" ? "Monthly" : pp.line.title, amount: vmain(lv).main, caption: per ? pp.line.title : (lv.qualifier || ""), monthly: per === "year" && lv.type === "money" ? money(Math.round(lv.amount / 12)) : undefined, segments: segs }),
+          add(b + "/all", "SeeAll", { label: "Premium details", onPress: sectionSheet(sec, si) })];
+      },
+      forms: function (sec, si, b) { arr(sec.items).forEach(function (it, ii) { if (hasMore(it, sec)) itemSheet(sec, si, it, ii); }); return [add(b + "/all", "SeeAll", { label: arr(sec.items).length + " forms and endorsements", onPress: sectionSheet(sec, si) })]; },
+      subjects: function (sec, si, b) {
+        var k = [], groups = groupsOf(sec), sheet = sectionSheet(sec, si);
+        arr(sec.items).forEach(function (it, ii) { if (hasMore(it, sec)) itemSheet(sec, si, it, ii); });
+        if (sec.note) k.push(add(b + "/note", "FooterNote", { text: sec.note }));
+        groups.forEach(function (g, gi) {
+          var gb = b + "/g" + gi, kids = [], items = g.items, allMissing = items.length === 1 && isMissing(items[0].value);
+          if (allMissing) kids.push(add(gb + "/miss", "MissingCallout", { text: items[0].title }));
+          else {
+            var order = [], m = {}; items.forEach(function (x) { if (!x.kind || isCode(x)) return; if (!m[x.kind]) { m[x.kind] = 0; order.push(x.kind); } m[x.kind]++; });
+            if (order.length > 1) kids.push(add(gb + "/kinds", "KindCounts", { items: order.map(function (kd) { var nm = KIND_NAME[kd] || [cap1(kd), cap1(kd) + "s"]; return { kind: kd, label: m[kd] > 1 ? nm[1] : nm[0], count: m[kd] }; }) }));
+            if (items.every(isCode)) kids.push(add(gb + "/codes", "CodeChips", { codes: items.slice(0, 14).map(function (x) { return x.title; }), struck: items.every(function (x) { return x.status === "excluded"; }) || undefined, more: items.length > 14 ? { label: "+" + (items.length - 14), onPress: sheet } : undefined }));
+            else {
+              var mon = items.filter(function (x) { return x.value && x.value.type === "money"; }), tot = mon.reduce(function (a, x) { return a + x.value.amount; }, 0);
+              var srt = mon.length === items.length ? items.slice().sort(function (a, b2) { return b2.value.amount - a.value.amount; }) : items;
+              var max = mon.length ? Math.max.apply(null, mon.map(function (x) { return x.value.amount; })) : 0;
+              var main = order.slice().sort(function (a, b2) { return m[b2] - m[a]; })[0];
+              srt.slice(0, 3).forEach(function (it) { var ii = sec.items.indexOf(it); var bar = max && it.value && it.value.type === "money" ? { pct: +(it.value.amount / max * 100).toFixed(1), series: it.kind && it.kind !== main ? "secondary" : "primary" } : undefined; kids.push(rowFor(gb + "/row" + ii, it, ii, sec, si, bar)); });
+              if (items.length > 3) kids.push(add(gb + "/all", "SeeAll", { label: "See all " + items.length + (tot ? " · " + money(tot) : ""), onPress: sheet }));
+            }
+          }
+          k.push(add(gb, "GroupHeader", { label: groups.length === 1 && !items[0].group ? "All" : g.name, count: allMissing ? undefined : items.length, partial: g.complete === false || undefined }, kids));
+        });
+        return k;
+      }
+    };
+
+    S.forEach(function (sec, si) {
+      var b = "sec-" + si, fn = UP[sec.type] || UP.list, kids;
+      try { kids = fn(sec, si, b); } catch (e) { kids = UP.list(sec, si, b); }
+      var n = sec.type === "subjects" ? arr(sec.items).filter(function (x) { return !isCode(x) && !isMissing(x.value); }).length : arr(sec.items).length;
+      var showCount = ["premium", "forms"].indexOf(sec.type) < 0 && n;
+      screenKids.push(add(b, "Section", { id: b, heading: sec.title || humanKey(sec.type || "Details") }, kids));
+      jump.push({ label: (JUMP[sec.type] || sec.title || sec.type) + (showCount ? " " + n : ""), target: b });
+    });
+    var jb = add("jump", "JumpBar", { items: jump });
+    add("screen", "Screen", { title: "Insights", subtitle: [P.line, (PA[0] || {}).name].filter(Boolean).join(" · ") }, [jb].concat(screenKids));
+    /* order: the screen tree depth-first, then each sheet's subtree, so the spec reads top to bottom */
+    var out = {};
+    function walk(k) { if (out[k] || !E[k]) return; out[k] = E[k]; arr(E[k].children).forEach(walk); }
+    walk("screen");
+    Object.keys(E).filter(function (k) { return E[k].type === "BottomSheet"; }).sort(function (a, b) { return a.localeCompare(b, "en", { numeric: true }); }).forEach(walk);
+    Object.keys(E).forEach(function (k) { if (!out[k]) out[k] = E[k]; });
+    return { root: "screen", elements: out };
+  };
+})();
+
+/* Fictional sample payload (contract ovie-insights/2). Not a real policy: names, numbers and carrier are invented. */
+var SAMPLE = {
+  "contract": "ovie-insights/2",
+  "label": "Sample business auto",
+  "policy": {
+    "line": "Business Auto",
+    "insured": { "name": "Sample Freight LLC", "description": "Regional refrigerated trucking", "address": "100 Example Rd, Springfield" },
+    "carrier": "Example Mutual Insurance Co.",
+    "policyNumber": "BA-000123",
+    "term": { "start": "2026-01-01", "end": "2027-01-01" },
+    "broker": { "name": "Placeholder Brokerage", "id": "4471" },
+    "form": { "number": "CA 00 01", "title": "Business auto coverage form" },
+    "details": [{ "label": "Billing", "value": "Quarterly instalments" }],
+    "sources": [{ "doc": "Declarations", "page": 1 }]
+  },
+  "sections": [
+    { "id": "prem", "type": "premium", "title": "What you pay",
+      "chart": { "type": "stack", "line": "p-line", "fees": ["p-fee"], "total": "p-total" },
+      "items": [
+        { "id": "p-line", "group": "Cost", "title": "Business auto premium", "value": { "type": "money", "amount": 18420, "qualifier": "per year", "period": "year" }, "sources": [{ "doc": "Declarations", "page": 1 }] },
+        { "id": "p-fee", "group": "Cost", "title": "Policy fee", "value": { "type": "money", "amount": 640 }, "sources": [{ "doc": "Declarations", "page": 1 }] },
+        { "id": "p-total", "group": "Cost", "title": "Total cost", "value": { "type": "money", "amount": 19060 }, "sources": [{ "doc": "Declarations", "page": 1 }] },
+        { "id": "p-audit", "group": "How it can change", "title": "Mileage audit", "value": { "type": "text", "text": "At the end of the term" }, "summary": "Premium is adjusted if actual miles differ from the estimate.", "sources": [{ "doc": "Declarations", "page": 2 }] }
+      ] },
+    { "id": "cov", "type": "coverage", "title": "What's covered",
+      "items": [
+        { "id": "c-liab", "title": "Liability for injury and damage", "formal": "Covered autos liability coverage", "keywords": ["accident", "hurt someone"],
+          "values": [{ "label": "Bodily injury", "type": "money", "amount": 1000000, "qualifier": "each accident" }, { "label": "Property damage", "type": "money", "amount": 1000000, "qualifier": "each accident" }],
+          "appliesTo": ["All owned autos"], "summary": "Pays others when your driver hurts someone or damages their property.", "related": ["w-drivers"],
+          "sources": [{ "doc": "Declarations", "page": 2 }, { "doc": "Policy form CA 00 01", "page": 14 }] },
+        { "id": "c-coll", "title": "Collision", "formal": "Physical damage collision coverage", "value": { "type": "money", "amount": 142000, "qualifier": "stated value, each vehicle" },
+          "appliesTo": ["Owned trucks", "Owned trailers", "Temporary substitutes"], "summary": "Pays to repair or replace your vehicle after a crash, whoever is at fault.",
+          "detail": { "ladder": [{ "label": "You pay first", "amount": 1000 }, { "label": "Policy pays the rest", "text": "Up to stated value" }] }, "sources": [{ "doc": "Declarations", "page": 3 }] },
+        { "id": "c-um", "title": "Uninsured motorist", "value": { "type": "money", "amount": 100000, "qualifier": "each accident" }, "summary": "Pays you when an at-fault driver has no insurance.", "sources": [{ "doc": "Declarations", "page": 2 }] },
+        { "id": "c-cargo", "title": "Cargo", "value": { "type": "not_stated" }, "summary": "The declarations list cargo but give no limit.", "sources": [{ "doc": "Declarations", "page": 3 }] }
+      ] },
+    { "id": "sub", "type": "subjects", "title": "What's insured",
+      "groups": [{ "name": "Vehicles" }, { "name": "Drivers", "complete": false, "note": "No drivers listed in these documents" }, { "name": "Garaging states" }],
+      "items": [
+        { "id": "v1", "group": "Vehicles", "kind": "truck", "title": "2022 Freightliner Cascadia", "value": { "type": "money", "amount": 142000, "qualifier": "stated value" }, "detail": { "rows": [{ "label": "VIN", "value": "1FUJ…4821" }] }, "sources": [{ "doc": "Auto schedule", "page": 1 }] },
+        { "id": "v2", "group": "Vehicles", "kind": "truck", "title": "2021 Kenworth T680", "value": { "type": "money", "amount": 128500, "qualifier": "stated value" }, "sources": [{ "doc": "Auto schedule", "page": 1 }] },
+        { "id": "v3", "group": "Vehicles", "kind": "truck", "title": "2019 Volvo VNL", "value": { "type": "money", "amount": 96000, "qualifier": "stated value" }, "sources": [{ "doc": "Auto schedule", "page": 1 }] },
+        { "id": "v4", "group": "Vehicles", "kind": "trailer", "title": "2019 Utility reefer trailer", "value": { "type": "money", "amount": 48000, "qualifier": "stated value" }, "sources": [{ "doc": "Auto schedule", "page": 2 }] },
+        { "id": "v5", "group": "Vehicles", "kind": "trailer", "title": "2018 Great Dane reefer trailer", "value": { "type": "money", "amount": 41000, "qualifier": "stated value" }, "sources": [{ "doc": "Auto schedule", "page": 2 }] },
+        { "id": "d0", "group": "Drivers", "title": "No drivers listed in these documents", "value": { "type": "none_listed" } },
+        { "id": "s1", "group": "Garaging states", "kind": "state", "title": "TX", "code": true }, { "id": "s2", "group": "Garaging states", "kind": "state", "title": "OK", "code": true },
+        { "id": "s3", "group": "Garaging states", "kind": "state", "title": "LA", "code": true }, { "id": "s4", "group": "Garaging states", "kind": "state", "title": "AR", "code": true }
+      ] },
+    { "id": "watch", "type": "watch", "title": "Watch out for", "ratedBy": "ovie",
+      "items": [
+        { "id": "w-late", "severity": "serious", "title": "Report accidents quickly", "summary": "Late notice can reduce or deny a claim.", "detail": { "bullets": ["Report within 30 days", "Send copies of any legal papers"] }, "sources": [{ "doc": "Policy form CA 00 01", "page": 19 }] },
+        { "id": "w-drivers", "severity": "critical", "title": "Drivers must be listed before they drive", "summary": "A driver missing from the schedule can void cover for that accident.", "sources": [{ "doc": "Declarations", "page": 4 }] },
+        { "id": "w-use", "severity": "review", "title": "Radius of operation is 500 miles", "summary": "Trips beyond 500 miles need the insurer's approval.", "sources": [{ "doc": "Declarations", "page": 4 }] }
+      ] },
+    { "id": "excl", "type": "exclusions", "title": "What's not covered",
+      "items": [
+        { "id": "x-emp", "concept": "employee", "title": "Injury to your own employees", "summary": "Workers' compensation covers this instead.", "sources": [{ "doc": "Policy form CA 00 01", "page": 15 }] },
+        { "id": "x-pol", "concept": "pollution", "title": "Pollution", "summary": "Spills and leaks from what you carry aren't covered.", "exceptions": ["Fuel leaking from the vehicle's own tank"], "sources": [{ "doc": "Policy form CA 00 01", "page": 16 }] },
+        { "id": "x-race", "concept": "racing", "title": "Racing or speed contests", "sources": [{ "doc": "Policy form CA 00 01", "page": 16 }] },
+        { "id": "x-war", "concept": "war", "title": "War and military action", "sources": [{ "doc": "Policy form CA 00 01", "page": 16 }] }
+      ] },
+    { "id": "cond", "type": "conditions", "title": "Conditions and deductibles",
+      "items": [
+        { "id": "k-ded", "title": "Deductible for physical damage", "value": { "type": "money", "amount": 1000, "qualifier": "each vehicle" }, "sources": [{ "doc": "Declarations", "page": 3 }] },
+        { "id": "k-claim", "title": "Claims table", "value": { "type": "text", "text": "Two steps" }, "detail": { "table": { "columns": ["Step", "Deadline", "Who"], "rows": [["Notice", "30 days", "You"], ["Proof of loss", "60 days", "You"]] } }, "sources": [{ "doc": "Policy form CA 00 01", "page": 19 }] }
+      ] },
+    { "id": "forms", "type": "forms", "title": "Forms and endorsements", "documents": [{ "name": "Policy form CA 00 01", "pages": 24, "citedPages": [14, 15, 16, 19] }],
+      "items": [
+        { "id": "f1", "group": "Changes cover", "title": "Drive other car", "formal": "CA 99 10", "summary": "Covers named people driving cars you don't own.", "sources": [{ "doc": "CA 99 10", "page": 1 }] },
+        { "id": "f2", "group": "Administrative", "title": "Additional insured", "formal": "CA 20 48", "summary": "Adds a named party as insured for liability.", "sources": [{ "doc": "CA 20 48", "page": 1 }] }
+      ] },
+    { "id": "gaps", "type": "gaps", "title": "Not found in your documents",
+      "items": [
+        { "id": "g-hired", "title": "Hired and non-owned autos", "summary": "The declarations don't say whether rented or employee vehicles are covered." },
+        { "id": "g-trailer", "title": "Trailer interchange", "summary": "No trailer interchange limit appears in these documents." }
+      ] },
+    { "id": "tel", "type": "telematics", "title": "Telematics discount",
+      "items": [{ "id": "t1", "title": "Safe driving discount", "value": { "type": "percent", "amount": 5 }, "programme": "Fleet camera programme", "sources": [{ "doc": "Declarations", "page": 5 }] }] }
+  ],
+  "qa": ["Sample payload for the component kit. The last section uses a type the renderer doesn't know, to show the standard list fallback."]
+};
+
+/* ===== page behaviour ===== */
+(function () {
+  function $(id) { return document.getElementById(id); }
+  $("m-count").textContent = CATALOG.length;
+
+  /* ---------- catalogue ---------- */
+  var html = "";
+  GROUPS.forEach(function (g) {
+    html += '<div class="grp-h" id="g-' + g[0] + '"><h3>' + oe(g[1]) + "</h3><span>" + oe(g[2]) + "</span></div>";
+    CATALOG.filter(function (c) { return c.group === g[0]; }).forEach(function (c) {
+      var ex = c.ex, shown = ex.type === "Row" && ex.children ? ex.children[0] : ex;
+      var spec = flatten(ex, c.name.toLowerCase()), jsonSpec = flatten(shown, c.name.toLowerCase());
+      var onCard = ["CoverageRow", "ItemRow", "WatchRow", "ExclusionRow", "GapRow", "GroupHeader", "KindCounts", "CodeChips", "PremiumSummary", "PolicyHeader", "SeeAll", "FooterNote", "MissingCallout"].indexOf(c.name) > -1;
+      var inSheet = c.group === "sheet" && c.name !== "BottomSheet";
+      var prev = renderSpec(spec);
+      if (onCard) prev = '<div class="ov-card">' + prev + "</div>";
+      if (inSheet) prev = '<div class="ov-sheet" style="box-shadow:none;border-radius:16px"><div class="ov-sbody" style="padding:16px">' + prev + "</div></div>";
+      var rows = c.props.length ? c.props.map(function (p) { return "<tr><td>" + oe(p[0]) + "</td><td>" + oe(typeLabel(p[1])) + '</td><td class="req">' + (p[1].opt ? "optional" : "required") + "</td><td>" + oe(p[2]) + "</td></tr>"; }).join("") : '<tr><td colspan="4" style="font-family:inherit;color:var(--muted)">No props.</td></tr>';
+      var id = "json-" + c.name;
+      html += '<article class="comp" id="c-' + c.name + '"><div class="stage ov">' + prev + '</div><div class="spec-m"><div class="comp-h"><h4>' + c.name + "</h4>" + (c.children ? '<span class="badge kids">takes children</span>' : "") + (c.name === "RelatedRow" ? '<span class="badge pending">pending decision</span>' : "") + '</div><p class="d">' + oe(c.desc) + '</p><div class="tw"><table class="props"><thead><tr><th>Prop</th><th>Type</th><th></th><th>Notes</th></tr></thead><tbody>' + rows + '</tbody></table></div><details class="js codebox"><summary>Spec JSON</summary><button type="button" class="copy" data-copy="' + id + '">Copy</button><pre id="' + id + '">' + oe(JSON.stringify(jsonSpec, null, 2)) + "</pre></details></div></article>";
+    });
+  });
+  html += '<div class="grp-h"><h3>Shared types</h3><span>Referenced by name in the props above.</span></div>';
+  Object.keys(DEFS).forEach(function (n) {
+    html += '<article class="comp" style="grid-template-columns:minmax(0,1fr)"><div class="spec-m"><div class="comp-h"><h4>' + n + '</h4></div><p class="d">' + oe(DEFS[n].desc) + '</p><div class="codebox"><pre style="border:1px solid var(--line);border-radius:10px">' + oe(typeLabel(DEFS[n].type)) + "</pre></div></div></article>";
+  });
+  $("catalogue").innerHTML = html;
+
+  /* ---------- copy ---------- */
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-copy]"); if (!b) return;
+    var el = $(b.getAttribute("data-copy")), txt = el.textContent;
+    function done(ok) { b.textContent = ok ? "Copied" : "Selected"; setTimeout(function () { b.textContent = "Copy"; }, 1400); }
+    function sel() { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); done(false); }
+    try { navigator.clipboard.writeText(txt).then(function () { done(true); }, sel); } catch (err) { sel(); }
+  });
+
+  /* ---------- live example ---------- */
+  var SPEC = null, STACK = [];
+  function toast(t) { var el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(function () { el.classList.remove("show"); }, 2200); }
+  function stats(spec) {
+    var keys = Object.keys(spec.elements), types = {};
+    keys.forEach(function (k) { types[spec.elements[k].type] = 1; });
+    $("liveStat").innerHTML = "<span><b>" + keys.length + "</b> elements</span><span><b>" + keys.filter(function (k) { return spec.elements[k].type === "BottomSheet"; }).length + "</b> sheets</span><span><b>" + Object.keys(types).length + "</b> component types used</span><span>Renderer changes needed: <b>0</b></span>";
+  }
+  function draw(payload) {
+    SPEC = OvieAdapter(payload, {});
+    $("phoneScroll").innerHTML = '<div class="ov">' + renderSpec(SPEC) + "</div>";
+    $("specOut").textContent = JSON.stringify(SPEC, null, 2);
+    stats(SPEC); closeSheet(true);
+  }
+  function showSheet() {
+    var key = STACK[STACK.length - 1], host = $("sheetHost"), ph = $("phone");
+    if (!key) return closeSheet();
+    host.innerHTML = '<div class="ov">' + renderSpec(SPEC, key) + "</div>";
+    if (STACK.length > 1) host.querySelector(".ov-shead").insertAdjacentHTML("afterbegin", '<button type="button" class="ov-x" data-back="1" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>');
+    host.scrollTop = 0;
+    var sub = {}; (function walk(k) { var el = SPEC.elements[k]; if (!el) return; sub[k] = el; (el.children || []).forEach(walk); })(key);
+    $("sheetOut").textContent = JSON.stringify({ root: key, elements: sub }, null, 2);
+    if (host.hidden) { host.hidden = false; $("scrim").hidden = false; requestAnimationFrame(function () { ph.classList.add("open"); }); }
+    var q = host.querySelector("[data-search]"); if (q) q.addEventListener("input", function () { var v = q.value.toLowerCase(); host.querySelectorAll("[data-find]").forEach(function (el) { el.hidden = !!v && el.getAttribute("data-find").indexOf(v) < 0; }); });
+    var x = host.querySelector("[data-close]"); if (x) x.focus();
+  }
+  function closeSheet(now) { STACK = []; var ph = $("phone"); ph.classList.remove("open"); setTimeout(function () { $("sheetHost").hidden = true; $("scrim").hidden = true; }, now ? 0 : 250); }
+  $("phone").addEventListener("click", function (e) {
+    if (e.target.id === "scrim" || e.target.closest("[data-close]")) return closeSheet();
+    if (e.target.closest("[data-back]")) { STACK.pop(); return showSheet(); }
+    var j = e.target.closest("[data-jump]");
+    if (j) { var t = $("phoneScroll").querySelector("#" + CSS.escape(j.getAttribute("data-jump"))); if (t) $("phoneScroll").scrollTo({ top: t.offsetTop - 12, behavior: "smooth" }); j.parentNode.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b === j); }); return; }
+    var a = e.target.closest("[data-action]"); if (!a) return;
+    var A = JSON.parse(a.getAttribute("data-action")), p = A.params || {};
+    if (A.action === "openSheet") { var inside = !!e.target.closest("#sheetHost"); if (!inside) STACK = []; STACK.push(p.sheet); showSheet(); }
+    else if (A.action === "viewDocument") toast("viewDocument → " + p.doc + (p.page ? ", page " + p.page : ""));
+    else if (A.action === "askOvie") toast("askOvie → “" + p.question + "”");
+    else toast(A.action);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("sheetHost").hidden) closeSheet(); });
+
+  function tabs(container, attr, onPick) {
+    container.addEventListener("click", function (e) { var b = e.target.closest("[" + attr + "]"); if (!b) return; container.querySelectorAll("[" + attr + "]").forEach(function (x) { x.setAttribute("aria-selected", x === b); }); onPick(b.getAttribute(attr)); });
+  }
+  tabs(document.querySelector("#live .tabs"), "data-tab", function (t) { ["spec", "sheet", "payload"].forEach(function (k) { $("pane-" + k).hidden = k !== t; }); });
+  $("payloadIn").value = JSON.stringify(SAMPLE, null, 2);
+  $("applyPayload").addEventListener("click", function () {
+    var m = $("payloadMsg");
+    try { var d = JSON.parse($("payloadIn").value); if (!d.policy || !Array.isArray(d.sections)) throw new Error("It needs a policy object and a sections array."); draw(d); m.className = "msg-ok"; m.textContent = "Rendered. Same renderer, no code changes."; }
+    catch (err) { m.className = "msg-err"; m.textContent = "Couldn't render: " + err.message; }
+  });
+  $("resetPayload").addEventListener("click", function () { $("payloadIn").value = JSON.stringify(SAMPLE, null, 2); draw(SAMPLE); $("payloadMsg").textContent = ""; });
+  draw(SAMPLE);
+
+  /* ---------- code ---------- */
+  var REGISTRY = [
+    "// registry.tsx: shape only. Map each catalog type to the Ovie React component.",
+    "// json-render passes each element's props; wire Action props to your action handler.",
+    'import { Renderer, JSONUIProvider } from "@json-render/react";',
+    'import { ovieCatalog } from "./catalog";',
+    'import * as Ovie from "./components"; // CoverageRow, WatchRow, BottomSheet, ...',
+    "",
+    "type Act = { action: string; params?: Record<string, string> };",
+    "",
+    "export const registry = Object.fromEntries(",
+    "  Object.keys(ovieCatalog.components).map((type) => [",
+    "    type,",
+    "    ({ element, children, onAction }: any) => {",
+    "      const C = (Ovie as any)[type];",
+    "      const props = { ...element.props };",
+    "      for (const k of Object.keys(props)) {",
+    "        const v = props[k];",
+    "        if (v && typeof v === \"object\" && \"action\" in v) props[k] = () => onAction(v as Act); // onPress, detailsAction, askOvie…",
+    "      }",
+    "      return <C {...props}>{children}</C>;",
+    "    },",
+    "  ])",
+    ");",
+    "",
+    "// Host actions. Sheets are elements outside the root tree:",
+    "export function useOvieActions(spec, sheets) {",
+    "  return {",
+    "    openSheet: ({ sheet }) => sheets.push(sheet),            // render <Renderer spec={{ root: sheet, elements: spec.elements }} /> in a bottom sheet",
+    "    viewDocument: ({ doc, page }) => openDocument(doc, page),",
+    "    askOvie: ({ question }) => openAskOvie(question),",
+    "    uploadDocument: () => startUpload(),",
+    "  };",
+    "}",
+    "",
+    "// Screen:",
+    "// const spec = toSpec(payload);",
+    "// <Renderer spec={spec} registry={registry} />"
+  ].join("\n");
+  var SWIFT = [
+    "// InsightsView.swift: the same spec drives SwiftUI. Decode, then switch on type.",
+    "struct Spec: Decodable { let root: String; let elements: [String: Element] }",
+    "struct Element: Decodable { let type: String; let props: Props; let children: [String]? }",
+    "// Props: decode per type, or keep a [String: JSONValue] and read fields by name.",
+    "",
+    "struct Node: View {",
+    "  let key: String; let spec: Spec; let act: (Action) -> Void",
+    "  var body: some View {",
+    "    let el = spec.elements[key]!",
+    "    let kids = (el.children ?? []).map { Node(key: $0, spec: spec, act: act) }",
+    "    switch el.type {",
+    "    case \"Section\":      SectionView(props: el.props) { ForEach(kids.indices, id: \\.self) { kids[$0] } }",
+    "    case \"CoverageRow\":  CoverageRow(props: el.props, act: act)",
+    "    case \"WatchRow\":     WatchRow(props: el.props, act: act)",
+    "    case \"ExclusionRow\": ExclusionRow(props: el.props, act: act)",
+    "    // … one case per catalog component",
+    "    default:             ItemRow(props: el.props, act: act) // unknown types never crash",
+    "    }",
+    "  }",
+    "}",
+    "",
+    "// openSheet → .sheet(item:) presenting Node(key: params.sheet, …) with .presentationDetents([.medium, .large])"
+  ].join("\n");
+  var CODE = {
+    ts: catalogTs(),
+    json: JSON.stringify(catalogJson(), null, 2),
+    adapter: "// toSpec.js: payload (ovie-insights/2) → json-render spec. Plain JS, no dependencies.\n// Usage: const spec = OvieAdapter(payload, { today: \"2026-10-14\" }); // today is optional\n" + $("src-adapter").textContent.trim(),
+    registry: REGISTRY,
+    swift: SWIFT
+  };
+  function code(k) { $("codeOut").textContent = CODE[k]; }
+  tabs(document.querySelector("#code .tabs"), "data-code", code);
+  code("ts");
+})();
+
+</script>
+
+</body></html>

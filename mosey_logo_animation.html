@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mosey logo intro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;600;700&amp;family=Nunito:wght@700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,300,0,0&amp;display=block">
+<link rel="stylesheet" href="assets/mosey-logo-mosaic.css">
+<style>
+  :root { --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1); --motion-duration-press: 160ms; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; grid-template-rows: 1fr auto; background: #fff; color: #1b2550; font-family: 'Hind Vadodara', system-ui, sans-serif; }
+  .stage { display: grid; place-items: center; padding: 48px 16px; overflow: hidden; }
+  .controls { display: flex; gap: 8px; justify-content: center; padding: 0 16px 32px; }
+  .controls button { min-height: 44px; padding: 0 18px; border: 1px solid #c9d1e3; border-radius: 12px; background: #fff; color: inherit; font: 600 14px/20px 'Hind Vadodara', system-ui, sans-serif; cursor: pointer; transition: transform var(--motion-duration-press) var(--motion-ease-out); }
+  .controls button:active { transform: scale(0.97); }
+  .controls button[aria-pressed="true"] { background: #1b2550; border-color: #1b2550; color: #fff; }
+  .controls button:focus-visible { outline: 2px solid #3655a8; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main class="stage" id="stage"></main>
+<div class="controls">
+  <button type="button" data-variant="v1" aria-pressed="true">Logo V1</button>
+  <button type="button" data-variant="v2" aria-pressed="false">Logo V2</button>
+  <button type="button" data-variant="v3" aria-pressed="false">Logo V3</button>
+  <button type="button" id="replay">Replay</button>
+  <button type="button" id="slow" aria-pressed="false">Slow ×4</button>
+</div>
+<script src="assets/mosey-logo-mosaic.js"></script>
+<script>
+  const stage = document.getElementById('stage');
+  const slowButton = document.getElementById('slow');
+  const variantButtons = document.querySelectorAll('[data-variant]');
+  let variant = `v${new URLSearchParams(location.search).get('v') || 1}`;
+  if (![...variantButtons].some(b => b.dataset.variant === variant)) variant = 'v1';
+  const play = () => {
+    variantButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.variant === variant)));
+    return mountMoseyLogo(stage, { variant, slow: slowButton.getAttribute('aria-pressed') === 'true' ? 4 : 1 });
+  };
+  variantButtons.forEach(b => b.addEventListener('click', () => { variant = b.dataset.variant; play(); }));
+  document.getElementById('replay').addEventListener('click', play);
+  slowButton.addEventListener('click', () => {
+    slowButton.setAttribute('aria-pressed', String(slowButton.getAttribute('aria-pressed') !== 'true'));
+    play();
+  });
+  play();
+</script>
+</body>
+</html>

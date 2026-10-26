@@ -1,0 +1,123 @@
+/* Mosey logo intro. Base styles are the resting end state; keyframes supply the
+   "from" states, so removing the animation (skip, reduced motion) lands on the final lockup. */
+.mm-lockup {
+  --mosey-mark: #6b4062;   /* brand plum (icon-brand) */
+  --mm-shade-0: #dfc9d9;   /* light plums (plum scale #DFC9D9 → #F0E5ED), two families */
+  --mm-shade-1: #e6d5e1;
+  --mm-shade-2: #ece0e8;
+  --mm-shade-3: #e2cfdc;
+  --mm-shade-4: #e9dae4;
+  --mm-shade-5: #f0e5ed;
+  --mm-icon-ink: #6b4062;
+  --mm-ease-out: var(--motion-ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+  --mm-ease-in-out: var(--motion-ease-in-out, cubic-bezier(0.77, 0, 0.175, 1));
+  --mosey-slot: rgba(0, 0, 0, 0.05);
+  --mm-slow: 1;
+  transform: translateX(var(--mm-shift, 0)) scale(var(--mm-scale, 1));
+  animation: mm-settle calc(420ms * var(--mm-slow)) var(--mm-ease-in-out) calc(var(--mm-settle, 0) * var(--mm-slow) * 1ms) both;
+}
+.mm-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.mm-tile, .mm-drop, .mm-word { transform-box: fill-box; transform-origin: center; }
+
+/* Blocks slide in from outside (--dx/--dy, set per block) and gather around the M-shaped gap. */
+.mm-tile {
+  opacity: 0;
+  animation:
+    mm-slide calc(480ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d) * var(--mm-slow) * 1ms) both,
+    mm-fuse calc(200ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d) * var(--mm-slow) * 1ms) both,
+    mm-out calc(260ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d2) * var(--mm-slow) * 1ms) forwards;
+}
+/* Policy-type line icons: a deeper, slightly more saturated tone of their own tile. */
+.mm-icon {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+  font-feature-settings: 'liga';
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: color-mix(in oklab, var(--tile) 62%, var(--mm-icon-ink, #5b5d6e));
+}
+.mm-slot {
+  fill: var(--mosey-slot);
+  opacity: 0;
+  animation:
+    mm-fuse calc(260ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d) * var(--mm-slow) * 1ms) both,
+    mm-hide 1ms linear calc(var(--d2) * var(--mm-slow) * 1ms) forwards;
+}
+.mm-drop {
+  fill: var(--mosey-mark);
+  opacity: 0;
+  animation:
+    mm-drop calc(220ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d) * var(--mm-slow) * 1ms) both,
+    mm-hide 1ms linear calc(var(--d2) * var(--mm-slow) * 1ms) forwards;
+}
+.mm-piece {
+  fill: var(--mosey-mark);
+  animation: mm-fuse calc(260ms * var(--mm-slow)) var(--mm-ease-in-out) calc(var(--d) * var(--mm-slow) * 1ms) both;
+}
+.mm-word {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  fill: var(--mosey-mark);
+  animation: mm-word calc(300ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d) * var(--mm-slow) * 1ms) both;
+}
+
+@keyframes mm-slide { from { transform: translate(var(--dx, 0), var(--dy, 0)); } to { transform: none; } }
+@keyframes mm-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: scale(0.97); } }
+@keyframes mm-drop { from { opacity: 0; transform: translateY(-3px) scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes mm-hide { from { opacity: 1; } to { opacity: 0; } }
+@keyframes mm-fuse { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mm-word { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+@keyframes mm-settle { from { transform: none; } to { transform: translateX(var(--mm-shift, 0)) scale(var(--mm-scale, 1)); } }
+@keyframes mm-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* V3: triangles gather into the M at build size; the M settles into its slot; the wordmark slides in. */
+.mm-v3 {
+  --mm3-dark: #830869;
+  --mm3-bright: #b52095;
+  --mm3-word: #a01e7f;
+  /* Policy tiles are pale tints of the two logo plums, so they carry the same dark/light pattern as the M
+     and simply deepen into it. The dark tint is stronger so the pale pair keeps the logo's contrast. */
+  --mm3-pale-dark: color-mix(in oklab, var(--mm3-dark) 50%, white);
+  --mm3-pale-bright: color-mix(in oklab, var(--mm3-bright) 32%, white);
+}
+.mm3-tri {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation:
+    mm-slide calc(420ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d) * var(--mm-slow) * 1ms) both,
+    mm-fuse calc(200ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d) * var(--mm-slow) * 1ms) both;
+}
+/* Each triangle starts as a light policy tile (--tile) and turns its logo plum (--tone) once grouped. */
+.mm3-face {
+  fill: var(--tone);
+  animation: mm3-tone calc(300ms * var(--mm-slow)) ease calc(var(--d2) * var(--mm-slow) * 1ms) both;
+}
+.mm3-icon {
+  opacity: 0;
+  animation: mm-hide calc(200ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d2) * var(--mm-slow) * 1ms) both;
+}
+.mm3-mark {
+  transform-box: view-box;
+  transform-origin: 36.5px 22.5px; /* centre of the M */
+  animation: mm3-settle calc(600ms * var(--mm-slow)) var(--mm-ease-in-out) calc(var(--d) * var(--mm-slow) * 1ms) both;
+}
+.mm3-word {
+  fill: var(--mm3-word);
+  transform-box: fill-box;
+  animation: mm3-word calc(350ms * var(--mm-slow)) var(--mm-ease-out) calc(var(--d) * var(--mm-slow) * 1ms) both;
+}
+@keyframes mm3-tone { from { fill: var(--tile); } to { fill: var(--tone); } }
+@keyframes mm3-settle { from { transform: translate(var(--mx), var(--my)) scale(var(--mk)); } to { transform: none; } }
+@keyframes mm3-word { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: none; } }
+
+.mm-lockup.is-complete, .mm-lockup.is-complete * { animation: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-mosaic, .mm-slots, .mm-fill { display: none; }
+  .mm-mosaic *, .mm-slots *, .mm-fill * { animation: none; }
+  .mm-lockup { animation: none; }
+  .mm-piece, .mm-word, .mm3-mark, .mm3-word { animation: mm-fade 200ms ease both; }
+  .mm3-tri, .mm3-face, .mm3-icon { animation: none; }
+}
