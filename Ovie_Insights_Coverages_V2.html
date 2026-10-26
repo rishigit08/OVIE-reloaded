@@ -59,6 +59,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .lg{display:inline-flex;align-items:center;gap:6px;font-size:11px;line-height:16px;font-weight:600;color:var(--text3)}
 .lg .dot{width:10px;height:10px;border-radius:3px;flex:none}
 .lg.g .dot{background:var(--success)}.lg.r .dot{background:var(--danger)}.lg.o .dot{background:var(--mod)}.lg.y .dot{background:var(--warn-line)}
+.lg.p .dot{background:linear-gradient(90deg,var(--success) 0 50%,var(--mod) 50% 100%)}
 
 /* group head */
 .cap{display:flex;align-items:center;justify-content:space-between;margin:20px 4px 8px;text-transform:uppercase;color:var(--text3);font-size:11px;line-height:16px;font-weight:600;letter-spacing:.02em}
@@ -72,14 +73,15 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .ctile.r{background:var(--danger-soft);border-color:#F0C9C6}
 .ctile.o{background:var(--mod-soft);border-color:#F3D4C0}
 .ctile.y{background:var(--warn-bg);border-color:var(--warn-line)}
+.ctile.p{background:var(--mod-soft);border-color:#F3D4C0;background-image:linear-gradient(90deg,rgba(13,125,7,.10),transparent 60%)}
 .ct-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .ct-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;line-height:16px;font-weight:600}
 .ct-status .ic{width:14px;height:14px}
 .ctile.g .ct-status{color:var(--success)}.ctile.r .ct-status{color:var(--danger)}
-.ctile.o .ct-status{color:var(--mod)}.ctile.y .ct-status{color:var(--warn-ink)}
+.ctile.o .ct-status{color:var(--mod)}.ctile.y .ct-status{color:var(--warn-ink)}.ctile.p .ct-status{color:var(--mod)}
 .ct-name{font-size:13px;line-height:18px;font-weight:600;color:var(--text)}
 .ct-val{font-size:15px;line-height:20px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.ctile.r .ct-val{color:var(--danger)}.ctile.o .ct-val{color:var(--mod)}
+.ctile.r .ct-val{color:var(--danger)}.ctile.o .ct-val{color:var(--mod)}.ctile.p .ct-val{color:var(--mod)}
 .ct-basis{font-size:11px;line-height:16px;color:var(--text3);margin-top:-2px}
 .ct-asset{display:inline-flex;align-items:center;gap:6px;margin-top:auto;padding-top:4px;font-size:12px;line-height:16px;color:var(--text3);min-width:0}
 .ct-asset .ic{width:14px;height:14px;color:var(--text3)}
@@ -171,6 +173,9 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .stag.r{background:var(--danger-soft);color:var(--danger)}
 .stag.o{background:var(--mod-soft);color:var(--mod)}
 .stag.y{background:var(--warn-bg);color:var(--warn-ink)}
+.stag.p{background:var(--mod-soft);color:var(--mod)}
+.srow .d .mk{font-weight:600}
+.srow .d .mk.g{color:var(--success)}.srow .d .mk.r{color:var(--danger)}.srow .d .mk.o{color:var(--mod)}.srow .d .mk.y{color:var(--warn-ink)}
 .lbl{font-size:12px;line-height:16px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#72777C;margin:16px 0 8px}
 .gbox{background:var(--primary-soft);border-radius:12px;padding:4px 16px;margin-bottom:12px}
 .srow{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:10px 0;border:0;border-top:1px solid rgba(107,64,98,.18);background:none;text-align:left}
@@ -312,8 +317,8 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
   // Status of a coverage drives its tile colour.
   //   g green = covered · r red = no coverage (excluded) · o orange = gap (not included) · y yellow = overlap
   function covStatus(c){ if(c.s==='ex') return 'r'; if(c.s==='no') return 'o'; if(c.ov) return 'y'; return 'g'; }
-  var STLABEL={g:'Covered',r:'No coverage',o:'Gap',y:'Overlap'};
-  var STICON={g:'i-check',r:'i-xcircle',o:'i-alert',y:'i-layers'};
+  var STLABEL={g:'Covered',r:'No coverage',o:'Gap',y:'Overlap',p:'Partial'};
+  var STICON={g:'i-check',r:'i-xcircle',o:'i-alert',y:'i-layers',p:'i-layers'};
   // Watch points tied to a coverage: overlap findings for an overlapping coverage, or any finding naming it.
   function covWps(a,c){ var nm=c.n.toLowerCase(); return a.wp.filter(function(w){ if(c.ov&&w.q==='overlap') return true; return w.text.toLowerCase().indexOf(nm)>=0; }); }
   function maxSev(ws){ return ws.reduce(function(m,w){return Math.max(m,RANK[w.sev]||0)},0); }
@@ -321,26 +326,38 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 
   var COVS=[];
   ASSETS.forEach(function(a){ a.cov.forEach(function(c,ci){ var ws=covWps(a,c); COVS.push({a:a,c:c,ci:ci,st:covStatus(c),ws:ws,r:maxSev(ws)}); }); });
-  var STORDER={r:0,o:1,y:2,g:3};
+  var STORDER={r:0,p:1,o:2,y:3,g:4};
 
   // Club coverages that are the same (same name + status) but cover different assets.
   // Each merged tile carries every asset it applies to; the detail sheet breaks the amounts down per asset.
   var GICON={people:'i-user',home:'i-home',property:'i-gem',vehicles:'i-car',business:'i-briefcase'};
   var GNOUN={people:['person','people'],home:['home','homes'],property:['item','items'],vehicles:['vehicle','vehicles'],business:['area','areas']};
+  // Merge by group + coverage name (regardless of status): one tile per coverage, which may be
+  // covered for some assets and a gap/excluded for others. A mixed tile gets the 'p' (Partial) state.
   var mMap={}, MERGED=[];
   COVS.forEach(function(x){
-    var key=x.a.group+'|'+x.c.n+'|'+x.st, m=mMap[key];
-    if(!m){ m={id:'m'+MERGED.length,group:x.a.group,name:x.c.n,st:x.st,items:[],ws:[]}; mMap[key]=m; MERGED.push(m); }
+    var key=x.a.group+'|'+x.c.n, m=mMap[key];
+    if(!m){ m={id:'m'+MERGED.length,group:x.a.group,name:x.c.n,items:[],ws:[]}; mMap[key]=m; MERGED.push(m); }
     m.items.push({a:x.a,c:x.c,ci:x.ci});
     x.ws.forEach(function(w){ m.ws.push({a:x.a,w:w}); });
   });
   MERGED.forEach(function(m){
-    var vals=m.items.map(function(it){return it.c.v}), bases=m.items.map(function(it){return it.c.t||''});
-    m.uniformVal=vals.every(function(v){return v===vals[0]})?vals[0]:null;
-    m.uniformBasis=bases.every(function(b){return b===bases[0]})?bases[0]:'';
+    m.cnt={g:0,r:0,o:0,y:0};
+    m.items.forEach(function(it){ m.cnt[covStatus(it.c)]++; });
+    var keys=Object.keys(m.cnt).filter(function(k){return m.cnt[k]});
+    m.st = keys.length===1 ? keys[0] : 'p';
+    var covered=m.items.filter(function(it){return covStatus(it.c)==='g'||covStatus(it.c)==='y'});
+    var vals=covered.map(function(it){return it.c.v}), bases=covered.map(function(it){return it.c.t||''});
+    m.uniformVal=(vals.length&&vals.every(function(v){return v===vals[0]}))?vals[0]:null;
+    m.uniformBasis=(bases.length&&bases.every(function(b){return b===bases[0]}))?bases[0]:'';
     m.r=m.ws.reduce(function(mx,o){return Math.max(mx,RANK[o.w.sev]||0)},0);
   });
-  function assetsLabel(m){ if(m.items.length===1) return m.items[0].a.name; var g=GNOUN[m.group]; return m.items.length+' '+(g?g[1]:'assets'); }
+  function assetsLabel(m){
+    if(m.st==='p'){ var ord=['g','o','y','r'], lab={g:'covered',o:'gap',y:'overlap',r:'excluded'}, parts=[];
+      ord.forEach(function(k){ if(m.cnt[k]) parts.push(m.cnt[k]+' '+lab[k]); }); return parts.join(' · '); }
+    if(m.items.length===1) return m.items[0].a.name;
+    var g=GNOUN[m.group]; return m.items.length+' '+(g?g[1]:'assets');
+  }
   function mById(id){ return MERGED.filter(function(m){return m.id===id})[0]; }
 
   function plural(n,w){ return n+' '+(w==='policy'?(n===1?'policy':'policies'):w+(n===1?'':'s')); }
@@ -359,12 +376,13 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
   function covTile(m){
     var st=m.st;
     var wp = m.ws.length?'<span class="ct-wp '+sevCls(m.r)+'" title="'+esc(plural(m.ws.length,'watch point'))+'">'+ic('i-alert')+m.ws.length+'</span>':'';
-    var val = (st==='r') ? 'Excluded' : (st==='o') ? 'Not included' : (m.uniformVal||'Varies');
+    var val = (st==='r') ? 'Excluded' : (st==='o') ? 'Not included' : (st==='p') ? 'Varies' : (m.uniformVal||'Varies');
     var basis='';
-    if(st==='r'||st==='o'){ if(m.uniformBasis) basis='<span class="ct-basis">'+m.uniformBasis+'</span>'; }
+    if(st==='p') basis='<span class="ct-basis">Mixed by asset</span>';
+    else if(st==='r'||st==='o'){ if(m.uniformBasis) basis='<span class="ct-basis">'+m.uniformBasis+'</span>'; }
     else if(m.uniformVal){ if(m.uniformBasis) basis='<span class="ct-basis">'+m.uniformBasis+'</span>'; }
     else basis='<span class="ct-basis">'+(m.uniformBasis||'Amount varies by asset')+'</span>';
-    var multi=m.items.length>1, icon=multi?GICON[m.group]:m.items[0].a.icon;
+    var multi=m.items.length>1, icon=(st==='p')?'i-layers':(multi?GICON[m.group]:m.items[0].a.icon);
     return '<button type="button" class="ctile '+st+'" data-cov="'+m.id+'">'
       +'<span class="ct-top"><span class="ct-status">'+ic(STICON[st])+STLABEL[st]+'</span>'+wp+'</span>'
       +'<span class="ct-name">'+m.name+'</span>'
@@ -382,7 +400,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     if(tab==='coverages'){
       var parts=[]; if(cg)parts.push(cg+' covered'); if(co)parts.push(plural(co,'gap')); if(cy)parts.push(plural(cy,'overlap')); if(cr)parts.push(cr+' excluded');
       h+='<h2 class="lead">Your coverages</h2><p class="sum">'+plural(tot,'coverage')+' · '+parts.join(' · ')+'</p>';
-      h+='<div class="legend" aria-hidden="true"><span class="lg g"><span class="dot"></span>Covered</span><span class="lg o"><span class="dot"></span>Gap</span><span class="lg y"><span class="dot"></span>Overlap</span><span class="lg r"><span class="dot"></span>No coverage</span></div>';
+      h+='<div class="legend" aria-hidden="true"><span class="lg g"><span class="dot"></span>Covered</span><span class="lg o"><span class="dot"></span>Gap</span><span class="lg p"><span class="dot"></span>Partial</span><span class="lg y"><span class="dot"></span>Overlap</span><span class="lg r"><span class="dot"></span>No coverage</span></div>';
       GROUPS.forEach(function(g){
         var items=MERGED.filter(function(m){return m.group===g[0]});
         if(!items.length) return;
@@ -431,15 +449,19 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
   var lastFocus=null;
   function openCov(ref){
     var m=mById(ref), st=m.st, multi=m.items.length>1;
-    var val=(st==='r')?'Excluded':(st==='o')?'Not included':(m.uniformVal||'Varies');
-    var sub=(st==='r'||st==='o')?m.uniformBasis:(m.uniformVal?m.uniformBasis:(m.uniformBasis||'Amount varies by asset'));
+    var val=(st==='r')?'Excluded':(st==='o')?'Not included':(st==='p')?'Varies':(m.uniformVal||'Varies');
+    var sub=(st==='p')?'Mixed by asset':(st==='r'||st==='o')?m.uniformBasis:(m.uniformVal?m.uniformBasis:(m.uniformBasis||'Amount varies by asset'));
     var h='<div class="grab"></div><div class="sh"><h2>Coverage</h2><button type="button" class="icon-button x" data-close aria-label="Close">'+ic('i-x')+'</button></div>'
       +'<span class="stag '+st+'">'+ic(STICON[st])+STLABEL[st]+'</span>'
       +'<div class="covhead"><div class="cvv"><b>'+m.name+'</b>'+(sub?'<span class="b2">'+sub+'</span>':'')+'</div><div class="cvamt">'+val+'</div></div>';
     h+='<p class="lbl">Applies to '+(multi?plural(m.items.length,'asset'):'')+'</p><div class="gbox">';
     m.items.forEach(function(it){
-      var iv=(st==='r')?'Excluded':(st==='o')?'Not included':it.c.v;
-      h+='<button type="button" class="srow" data-open="'+it.a.id+'"><span class="m"><b>'+it.a.name+'</b><span class="d">'+iv+(it.c.t?' · '+it.c.t:'')+'</span></span>'+ic('i-right')+'</button>';
+      var cs=covStatus(it.c), d;
+      if(cs==='g') d='<span class="mk g">Covered</span> · '+it.c.v+(it.c.t?' · '+it.c.t:'');
+      else if(cs==='y') d='<span class="mk y">Overlap</span> · '+it.c.v+(it.c.t?' · '+it.c.t:'');
+      else if(cs==='o') d='<span class="mk o">Gap</span> · Not included';
+      else d='<span class="mk r">No coverage</span> · Excluded';
+      h+='<button type="button" class="srow" data-open="'+it.a.id+'"><span class="m"><b>'+it.a.name+'</b><span class="d">'+d+'</span></span>'+ic('i-right')+'</button>';
     });
     h+='</div>';
     var pols=[]; m.items.forEach(function(it){ it.c.p.forEach(function(p){ if(pols.indexOf(p)<0) pols.push(p); }); });
