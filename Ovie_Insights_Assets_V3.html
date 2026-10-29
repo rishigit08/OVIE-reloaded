@@ -130,14 +130,10 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .ct-val{font-size:15px;line-height:20px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .ctile.r .ct-val{color:var(--danger)}.ctile.o .ct-val{color:var(--mod)}
 .ct-basis{font-size:11px;line-height:16px;color:var(--text3);margin-top:-2px}
-.ct-asset{display:inline-flex;align-items:center;gap:6px;margin-top:auto;padding-top:4px;font-size:12px;line-height:16px;color:var(--text3);min-width:0}
+.ct-pols{display:flex;flex-direction:column;gap:2px;margin-top:auto;padding-top:4px}
+.ct-asset{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:var(--text3);min-width:0}
 .ct-asset .ic{width:14px;height:14px;color:var(--text3)}
 .ct-asset span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ct-wp{display:inline-flex;align-items:center;gap:4px;flex:none;min-height:20px;padding:2px 7px;border-radius:999px;font-size:11px;line-height:16px;font-weight:600}
-.ct-wp .ic{width:13px;height:13px}
-.ct-wp.c{background:var(--danger-soft);color:var(--danger)}
-.ct-wp.m{background:var(--mod-soft);color:var(--mod)}
-.ct-wp.n{background:var(--grey-soft);color:var(--text2)}
 
 /* bottom bar: nav pill + Ask FAB */
 .bottom-bar{position:absolute;z-index:4;left:12px;right:12px;bottom:8px;display:flex;align-items:flex-end;gap:12px;pointer-events:none}
@@ -164,15 +160,9 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .sh h2 .ic{color:var(--primary)}
 .covhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
 .covhead .cvv{flex:1;min-width:0}
-.covhead .cvv b{display:block;font-size:18px;line-height:24px;font-weight:600}
+.covhead .cvv b{display:block;font-size:14px;line-height:20px;font-weight:600}
 .covhead .cvv .b2{display:block;font-size:13px;line-height:18px;color:var(--text3);margin-top:2px}
-.covhead .cvamt{flex:none;text-align:right;font-size:18px;line-height:24px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
-.stag{display:inline-flex;align-items:center;gap:6px;min-height:24px;padding:3px 10px;border-radius:999px;font-size:12px;line-height:16px;font-weight:600;margin-bottom:12px}
-.stag .ic{width:15px;height:15px}
-.stag.g{background:var(--success-soft);color:var(--success)}
-.stag.r{background:var(--danger-soft);color:var(--danger)}
-.stag.o{background:var(--mod-soft);color:var(--mod)}
-.stag.y{background:var(--warn-bg);color:var(--warn-ink)}
+.covhead .cvamt{flex:none;text-align:right;font-size:14px;line-height:20px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
 .gbox{background:var(--primary-soft);border-radius:12px;padding:16px;margin-bottom:12px;color:var(--text2);font-size:14px;line-height:20px}
 .gbox .k{display:block;font-size:12px;line-height:16px;font-weight:600;color:var(--text3);margin-bottom:4px}
 .lbl{font-size:12px;line-height:16px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#72777C;margin:16px 0 8px}
@@ -188,11 +178,6 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .srow .d .mk{font-weight:600}
 .srow .d .mk.g{color:var(--success)}.srow .d .mk.r{color:var(--danger)}.srow .d .mk.o{color:var(--mod)}.srow .d .mk.y{color:var(--warn-ink)}
 .srow>.ic{width:16px;height:16px;color:var(--primary)}
-.wbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px 16px;margin-bottom:12px}
-.wprow{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-top:1px solid var(--line)}
-.wprow:first-child{border-top:0}
-.wprow .wtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.wprow p{margin:0;font-size:14px;line-height:20px;color:var(--text)}
 .cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:16px;border:1px solid var(--primary);background:transparent;color:var(--primary);border-radius:12px;font-weight:600;font-size:14px}
 @media (hover:hover) and (pointer:fine){.cta:hover{background:var(--primary-soft)}}
 .ctx{background:var(--surface);border-radius:var(--radius);box-shadow:var(--glow);padding:12px 16px;font-size:13px;line-height:18px;margin-bottom:16px;color:var(--text2)}
@@ -343,21 +328,20 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
   // Status drives a coverage tile's colour: g green = covered · r red = excluded (no coverage)
   //   · o orange = gap (not included) · y yellow = overlap (two sources).
   function covStatus(c){ if(c.s==='ex') return 'r'; if(c.s==='no') return 'o'; if(c.ov) return 'y'; return 'g'; }
-  var STLABEL={g:'Covered',r:'No coverage',o:'Gap',y:'Overlap'};
+  var STLABEL={g:'Covered',r:'Not covered',o:'Gap',y:'Overlap'};
   var STICON={g:'i-check',r:'i-xcircle',o:'i-alert',y:'i-layers'};
-  function maxSev(ws){ return ws.reduce(function(m,w){return Math.max(m,RANK[w.sev]||0)},0); }
-  function sevCls(r){ return r===3?'c':r===2?'m':'n'; }
-  // Watch points tied to a coverage: overlap findings for an overlapping coverage, or any finding naming it.
-  function covWps(a,c){ var nm=c.n.toLowerCase(); return a.wp.filter(function(w){ if(c.ov&&w.q==='overlap') return true; return w.text.toLowerCase().indexOf(nm)>=0; }); }
   // Cross-asset index: every asset that carries a coverage of the same name, so a tile's sheet
   // can list the other assets it also covers.
   var COVNAME={};
   ASSETS.forEach(function(a){ a.cov.forEach(function(c,ci){ (COVNAME[c.n]=COVNAME[c.n]||[]).push({a:a,c:c,ci:ci}); }); });
-  function covMark(c){ var cs=covStatus(c);
-    if(cs==='g') return '<span class="mk g">Covered</span> · '+c.v+(c.t?' · '+c.t:'');
-    if(cs==='y') return '<span class="mk y">Overlap</span> · '+c.v+(c.t?' · '+c.t:'');
-    if(cs==='o') return '<span class="mk o">Gap</span> · Not included';
-    return '<span class="mk r">No coverage</span> · Excluded';
+  // Status line for a coverage on one asset: coloured status word, then value and basis.
+  // bare=true drops the status word (used for the tapped asset, whose status is the sheet heading).
+  function covMark(c,bare){ var cs=covStatus(c);
+    function mk(k,l){ return bare?'':'<span class="mk '+k+'">'+l+'</span> · '; }
+    if(cs==='g') return mk('g','Covered')+c.v+(c.t?' · '+c.t:'');
+    if(cs==='y') return mk('y','Overlap')+c.v+(c.t?' · '+c.t:'');
+    if(cs==='o') return mk('o','Gap')+'Not included';
+    return mk('r','Not covered')+'Excluded';
   }
 
   function renderList(){
@@ -372,7 +356,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
         if(!items.length) return;
         h+='<h2 class="cap">'+g[1]+'</h2>';
         items.forEach(function(a){
-          h+='<div class="asset"><button type="button" class="main" data-open="'+a.id+'"><span class="tile">'+ic(a.icon)+'</span><span class="meta"><b>'+a.name+'</b><span class="s d">'+a.d+'</span><span class="s">'+sub(a)+'</span></span><span class="go">'+ic('i-right')+'</span></button></div>';
+          h+='<div class="asset"><button type="button" class="main" data-open="'+a.id+'"><span class="tile">'+ic(a.icon)+'</span><span class="meta"><b>'+a.d+'</b><span class="s">'+sub(a)+'</span></span><span class="go">'+ic('i-right')+'</span></button></div>';
         });
       });
     } else {
@@ -393,16 +377,13 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 
   // Coverage tile for a single asset's coverage (colour-coded, as in Coverages V2).
   function covTile(a,c,ci){
-    var st=covStatus(c), ws=covWps(a,c);
-    var wp = ws.length?'<span class="ct-wp '+sevCls(maxSev(ws))+'" title="'+esc(plural(ws.length,'watch point'))+'">'+ic('i-alert')+ws.length+'</span>':'';
+    var st=covStatus(c);
     var val=(st==='r')?'Excluded':(st==='o')?'Not included':c.v;
     var basis=(st!=='o'&&c.t)?'<span class="ct-basis">'+c.t+'</span>':'';
-    var others=(COVNAME[c.n]||[]).filter(function(x){return x.a!==a;});
-    var foot='';
-    if(others.length) foot='<span class="ct-asset">'+ic('i-layers')+'<span>Also on '+plural(others.length,'other asset')+'</span></span>';
-    else if(c.p.length) foot='<span class="ct-asset">'+ic('i-file')+'<span>'+POL[c.p[0]].n+(c.p.length>1?' +'+(c.p.length-1):'')+'</span></span>';
+    // Footer lists the policies that provide this coverage (none for a gap).
+    var foot=c.p.length?'<span class="ct-pols">'+c.p.map(function(id){return '<span class="ct-asset">'+ic('i-file')+'<span>'+POL[id].n+'</span></span>';}).join('')+'</span>':'';
     return '<button type="button" class="ctile '+st+'" data-cov="'+a.id+':'+ci+'">'
-      +'<span class="ct-top"><span class="ct-status">'+ic(STICON[st])+STLABEL[st]+'</span>'+wp+'</span>'
+      +'<span class="ct-top"><span class="ct-status">'+ic(STICON[st])+STLABEL[st]+'</span></span>'
       +'<span class="ct-name">'+c.n+'</span>'
       +'<span class="ct-val">'+val+'</span>'+basis
       +foot+'</button>';
@@ -420,13 +401,13 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
         +'<div class="wk-foot">'+w.p.map(function(id){return '<span class="wk-pol">'+ic('i-file')+'<span>'+POL[id].n+'</span></span>'}).join('')+'</div></div>';
     });
     // Coverages as colour-coded tiles; each opens the coverage bottom sheet.
-    h+='</div><h2 class="sec"><span>Coverages</span><span class="cnt">'+a.cov.length+'</span></h2>';
-    h+='<div class="legend" aria-hidden="true"><span class="lg g"><span class="dot"></span>Covered</span><span class="lg o"><span class="dot"></span>Gap</span><span class="lg y"><span class="dot"></span>Overlap</span><span class="lg r"><span class="dot"></span>No coverage</span></div>';
+    h+='</div><h2 class="sec"><span>Coverage map</span><span class="cnt">'+a.cov.length+'</span></h2>';
+    h+='<div class="legend" aria-hidden="true"><span class="lg g"><span class="dot"></span>Covered</span><span class="lg o"><span class="dot"></span>Gap</span><span class="lg y"><span class="dot"></span>Overlap</span><span class="lg r"><span class="dot"></span>Not covered</span></div>';
     h+='<div class="cov-grid">';
     a.cov.slice().sort(function(x,y){var o={in:0,ex:1,no:2};return o[x.s]-o[y.s]}).forEach(function(c){
       h+=covTile(a,c,a.cov.indexOf(c));
     });
-    h+='</div><h2 class="sec"><span>Underlying policies</span><span class="cnt">'+s.pols.length+'</span></h2><div class="card">';
+    h+='</div><h2 class="sec"><span>Policies included</span><span class="cnt">'+s.pols.length+'</span></h2><div class="card">';
     s.pols.forEach(function(p){
       var names=a.cov.filter(function(c){return c.s==='in'&&c.p.indexOf(p)>=0}).map(function(c){return c.n});
       h+='<button type="button" class="pol" data-toast="Opens '+esc(POL[p].n)+' in policy insights"><span class="tile">'+ic('i-file')+'</span><span class="meta"><b>'+POL[p].n+'</b><span class="s">'+plural(names.length,'coverage')+': '+names.slice(0,2).join(', ')+(names.length>2?' +'+(names.length-2):'')+'</span></span>'+ic('i-right')+'</button>';
@@ -446,29 +427,19 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     var p=ref.split(':'), a=byId(p[0]), ci=+p[1], c=a.cov[ci], st=covStatus(c);
     var val=(st==='r')?'Excluded':(st==='o')?'Not included':c.v;
     var sub=(st==='o')?'':(c.t||'');
-    var h='<div class="grab"></div><div class="sh"><h2>Coverage</h2><button type="button" class="icon-button x" data-close aria-label="Close">'+ic('i-x')+'</button></div>'
-      +'<span class="stag '+st+'">'+ic(STICON[st])+STLABEL[st]+'</span>'
+    var h='<div class="grab"></div><div class="sh"><h2>'+STLABEL[st]+'</h2><button type="button" class="icon-button x" data-close aria-label="Close">'+ic('i-x')+'</button></div>'
       +'<div class="covhead"><div class="cvv"><b>'+c.n+'</b>'+(sub?'<span class="b2">'+sub+'</span>':'')+'</div><div class="cvamt">'+val+'</div></div>';
-    h+='<p class="lbl">On this asset</p><div class="gbox rows"><div class="srow"><span class="m"><b>'+a.name+'</b><span class="d">'+covMark(c)+'</span></span></div></div>';
+    h+='<p class="lbl">Asset details</p><div class="gbox rows"><div class="srow"><span class="m"><b>'+a.d+'</b><span class="d">'+covMark(c,true)+'</span></span></div></div>';
     var others=(COVNAME[c.n]||[]).filter(function(x){return x.a!==a;});
-    h+='<p class="lbl">Also covered for</p>';
-    if(others.length){ h+='<div class="gbox rows">';
-      others.forEach(function(x){ h+='<button type="button" class="srow" data-open="'+x.a.id+'"><span class="m"><b>'+x.a.name+'</b><span class="d">'+covMark(x.c)+'</span></span>'+ic('i-right')+'</button>'; });
+    if(others.length){ h+='<p class="lbl">Also covered for</p><div class="gbox rows">';
+      others.forEach(function(x){ h+='<button type="button" class="srow" data-open="'+x.a.id+'"><span class="m"><b>'+x.a.d+'</b><span class="d">'+covMark(x.c)+'</span></span>'+ic('i-right')+'</button>'; });
       h+='</div>';
-    } else { h+='<div class="gbox rows"><div class="srow"><span class="m"><span class="d">No other assets carry this coverage.</span></span></div></div>'; }
+    }
     if(c.p.length){
       h+='<p class="lbl">'+(st==='r'?'From '+(c.p.length===1?'policy':'policies'):'Underlying '+(c.p.length===1?'policy':'policies'))+'</p><div class="gbox rows">';
       c.p.forEach(function(id){ h+='<button type="button" class="srow" data-toast="Opens '+esc(POL[id].n)+' in policy insights"><span class="m"><b>'+POL[id].n+'</b></span>'+ic('i-right')+'</button>'; });
       h+='</div>';
     }
-    var ws=covWps(a,c);
-    h+='<p class="lbl">Watch points</p>';
-    if(ws.length){ h+='<div class="wbox">';
-      ws.slice().sort(function(x,y){return (RANK[y.sev]||0)-(RANK[x.sev]||0)}).forEach(function(w){
-        h+='<div class="wprow"><div class="wtop">'+pill(w.sev)+'<button type="button" class="ask-m" data-ask="'+a.id+':'+a.wp.indexOf(w)+'">Ask Ovie</button></div><p>'+w.text+'</p></div>';
-      });
-      h+='</div>';
-    } else { h+='<div class="gbox rows"><div class="srow"><span class="m"><span class="d">Nothing to flag for this coverage.</span></span></div></div>'; }
     h+='<button type="button" class="cta" data-ask="'+a.id+':cov:'+ci+'">'+ic('i-spark')+'Ask Ovie about this coverage</button>';
     $('sheet').classList.remove('ask'); $('sheet').setAttribute('aria-label',c.n);
     $('sheet').innerHTML=h; $('sheet').classList.add('on'); $('scrim').classList.add('on'); lastFocus=document.activeElement; $('sheet').querySelector('.x').focus({preventScroll:true});
