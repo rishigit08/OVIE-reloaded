@@ -21,6 +21,7 @@
   --danger:#A63A33; --danger-soft:#FFEDED; --mod:#C2410C; --mod-soft:#FFF1E7;
   --warn-bg:#FFF5DF; --warn-line:#E7C982; --warn-ink:#634106; --grey-soft:#ECEFED;
   --success:#0D7D07; --success-soft:#E7FFF4; --success-line:#BFE6CF;
+  --yel-soft:#FEF9D7; --yel-line:#E8D868; --yel-ink:#6B5A00;
   --radius:12px; --glow:0 0 30px rgba(17,17,17,.1);
   --ease:cubic-bezier(.23,1,.32,1);
   --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -112,23 +113,23 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0 4px 12px}
 .lg{display:inline-flex;align-items:center;gap:6px;font-size:11px;line-height:16px;font-weight:600;color:var(--text3)}
 .lg .dot{width:10px;height:10px;border-radius:3px;flex:none}
-.lg.g .dot{background:var(--success)}.lg.r .dot{background:var(--danger)}.lg.o .dot{background:var(--mod)}.lg.y .dot{background:var(--warn-line)}
+.lg.g .dot{background:var(--success)}.lg.r .dot{background:var(--mod)}.lg.o .dot{background:var(--danger)}.lg.y .dot{background:var(--yel-line)}
 
 /* coverage tiles */
 .cov-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:4px}
-.ctile{display:flex;flex-direction:column;gap:6px;min-height:120px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);text-align:left;background:var(--surface);color:var(--text)}
-.ctile.g{background:var(--success-soft);border-color:var(--success-line)}
-.ctile.r{background:var(--danger-soft);border-color:#F0C9C6}
-.ctile.o{background:var(--mod-soft);border-color:#F3D4C0}
-.ctile.y{background:var(--warn-bg);border-color:var(--warn-line)}
+.ctile{display:flex;flex-direction:column;gap:6px;min-height:120px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);text-align:left;background:var(--surface);color:var(--text);box-shadow:var(--glow)}
+.ctile.g{background:var(--success-soft);border-color:var(--success-line);box-shadow:0 0 30px rgba(13,125,7,.05)}
+.ctile.r{background:var(--mod-soft);border-color:#F3D4C0;box-shadow:0 0 30px rgba(194,65,12,.05)}
+.ctile.o{background:var(--danger-soft);border-color:#F0C9C6;box-shadow:0 0 30px rgba(166,58,51,.05)}
+.ctile.y{background:var(--yel-soft);border-color:var(--yel-line);box-shadow:0 0 30px rgba(199,170,20,.05)}
 .ct-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .ct-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;line-height:16px;font-weight:600}
 .ct-status .ic{width:14px;height:14px}
-.ctile.g .ct-status{color:var(--success)}.ctile.r .ct-status{color:var(--danger)}
-.ctile.o .ct-status{color:var(--mod)}.ctile.y .ct-status{color:var(--warn-ink)}
+.ctile.g .ct-status{color:var(--success)}.ctile.r .ct-status{color:var(--mod)}
+.ctile.o .ct-status{color:var(--danger)}.ctile.y .ct-status{color:var(--yel-ink)}
 .ct-name{font-size:13px;line-height:18px;font-weight:600;color:var(--text)}
 .ct-val{font-size:15px;line-height:20px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.ctile.r .ct-val{color:var(--danger)}.ctile.o .ct-val{color:var(--mod)}
+.ctile.r .ct-val{color:var(--mod)}.ctile.o .ct-val{color:var(--danger)}
 .ct-basis{font-size:11px;line-height:16px;color:var(--text3);margin-top:-2px}
 .ct-pols{display:flex;flex-direction:column;gap:2px;margin-top:auto;padding-top:4px}
 .ct-asset{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:var(--text3);min-width:0}
@@ -176,7 +177,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .srow b{display:block;font-size:14px;line-height:20px;font-weight:600;color:var(--primary)}
 .srow .d{display:block;font-size:12px;line-height:16px;color:var(--text3)}
 .srow .d .mk{font-weight:600}
-.srow .d .mk.g{color:var(--success)}.srow .d .mk.r{color:var(--danger)}.srow .d .mk.o{color:var(--mod)}.srow .d .mk.y{color:var(--warn-ink)}
+.srow .d .mk.g{color:var(--success)}.srow .d .mk.r{color:var(--mod)}.srow .d .mk.o{color:var(--danger)}.srow .d .mk.y{color:var(--yel-ink)}
 .srow>.ic{width:16px;height:16px;color:var(--primary)}
 .cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:16px;border:1px solid var(--primary);background:transparent;color:var(--primary);border-radius:12px;font-weight:600;font-size:14px}
 @media (hover:hover) and (pointer:fine){.cta:hover{background:var(--primary-soft)}}
