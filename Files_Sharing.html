@@ -73,13 +73,12 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-title h1{font-size:18px;line-height:24px;font-weight:600}
 .sh-title p{font-size:12px;line-height:16px;color:var(--sh-text3);margin-top:4px}
 .sh-main{padding:18px 16px 40px}
-.sh-object{display:flex;align-items:center;gap:12px;padding:16px;border-radius:var(--sh-radius);background:var(--sh-soft)}
-.sh-object-icon{width:44px;height:44px;border-radius:var(--sh-radius);background:#fff;color:var(--sh-primary);display:grid;place-items:center;flex:0 0 auto}
-.sh-object-label{font-size:12px;line-height:16px;color:var(--sh-text3)}
+.sh-object{display:flex;align-items:center;gap:12px}
+.sh-object-icon{width:44px;height:44px;border-radius:var(--sh-radius);background:var(--sh-soft);color:var(--sh-primary);display:grid;place-items:center;flex:0 0 auto}
 .sh-object-name{font-weight:600}
 .sh-object-meta{font-size:12px;line-height:16px;color:var(--sh-text3)}
 :where(.sh-scope) fieldset{border:0;margin:0;padding:0;min-width:0}
-.sh-scope .sh-options{margin-top:12px;padding:0 16px;border-radius:var(--sh-radius);background:var(--sh-surface)}
+.sh-scope .sh-options{margin-top:24px;padding:0 16px;border-radius:var(--sh-radius);background:var(--sh-surface)}
 .sh-opt{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 0;border-bottom:1px solid var(--sh-line);cursor:pointer}
 .sh-opt:last-child{border-bottom:0}
 .sh-opt-name{flex:1;font-weight:400}
@@ -134,17 +133,15 @@ dialog.sh-dialog{width:min(100%,390px)}
         </button>
       </header>
       <main class="sh-main">
-        <div class="sh-object">
+        <div class="sh-object" role="group" aria-label="What you’re sharing">
           <span class="sh-object-icon"><svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></span>
           <div>
-            <div class="sh-object-label">What you’re sharing</div>
             <div class="sh-object-name" id="shName">—</div>
             <div class="sh-object-meta" id="shMeta"></div>
           </div>
         </div>
 
-        <fieldset class="sh-options">
-          <legend class="sh-sr">What to share</legend>
+        <fieldset class="sh-options" aria-label="Choose what to share">
           <label class="sh-opt selected" id="shOptBoth">
             <input type="radio" name="shScopeRadio" value="both" checked>
             <span class="sh-opt-name">Policy docs + Policy summary</span>
