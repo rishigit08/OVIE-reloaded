@@ -51,8 +51,8 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-btn:active:not(:disabled){transform:scale(.97)}
 .sh-primary{background:var(--sh-primary);color:#fff}
 .sh-primary:disabled{background:var(--sh-dis-bg);color:var(--sh-dis-text);cursor:not-allowed}
-.sh-secondary{background:#fff;color:var(--sh-text);border-color:var(--sh-border)}
-@media (hover:hover) and (pointer:fine){.sh-primary:hover:not(:disabled){background:var(--sh-primary-dark)}.sh-secondary:hover{background:var(--sh-canvas)}}
+.sh-secondary{background:transparent;color:var(--sh-primary);border-color:transparent}
+@media (hover:hover) and (pointer:fine){.sh-primary:hover:not(:disabled){background:var(--sh-primary-dark)}.sh-secondary:hover{background:var(--sh-soft)}}
 
 /* privacy */
 #shPrivacy .sheet-header{border-bottom:1px solid var(--sh-line);margin:0 -16px;padding:0 16px}
@@ -72,16 +72,18 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-title{flex:1;padding-top:4px}
 .sh-title h1{font-size:18px;line-height:24px;font-weight:600}
 .sh-title p{font-size:12px;line-height:16px;color:var(--sh-text3);margin-top:4px}
+.sh-title .sh-policy-line{color:var(--sh-primary)}
+.sh-title #shPolicyName{font-weight:600}
+
 .sh-main{padding:18px 16px 40px}
-.sh-object{display:flex;align-items:center;gap:12px}
-.sh-object-icon{width:44px;height:44px;border-radius:var(--sh-radius);background:var(--sh-soft);color:var(--sh-primary);display:grid;place-items:center;flex:0 0 auto}
-.sh-object-name{font-weight:600}
-.sh-object-meta{font-size:12px;line-height:16px;color:var(--sh-text3)}
 :where(.sh-scope) fieldset{border:0;margin:0;padding:0;min-width:0}
-.sh-scope .sh-options{margin-top:24px;padding:0 16px;border-radius:var(--sh-radius);background:var(--sh-surface)}
-.sh-opt{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 0;border-bottom:1px solid var(--sh-line);cursor:pointer}
+.sh-section-heading{font-size:14px;line-height:20px;font-weight:600}
+.sh-scope .sh-options{margin-top:12px;padding:0 16px;border-radius:var(--sh-radius);background:var(--sh-surface)}
+.sh-opt{display:flex;align-items:flex-start;gap:12px;min-height:56px;padding:12px 0;border-bottom:1px solid var(--sh-line);cursor:pointer}
 .sh-opt:last-child{border-bottom:0}
-.sh-opt-name{flex:1;font-weight:400}
+.sh-opt-copy{flex:1;min-width:0}
+.sh-opt-name{display:block;font-weight:400}
+.sh-opt-sub{display:block;margin-top:2px;font-size:12px;line-height:16px;font-weight:400;color:var(--sh-text3)}
 .sh-opt input{width:20px;height:20px;margin:0;accent-color:var(--sh-primary);flex:0 0 auto}
 .sh-opt.selected .sh-opt-name{color:var(--sh-primary);font-weight:600}
 .sh-opt:has(input:focus-visible){border-radius:var(--sh-radius);box-shadow:var(--sh-ring)}
@@ -94,8 +96,21 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-control::placeholder{color:var(--sh-text3)}
 .sh-scope select.sh-control{appearance:none;-webkit-appearance:none;padding-right:44px;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b4062' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center/20px 20px}
 .sh-err{color:var(--sh-danger);font-size:12px;line-height:16px}
-.sh-actions{display:flex;flex-direction:column;gap:8px;margin-top:20px}
-.sh-notice{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:8px}
+.sh-divider{height:0;margin:24px 0 0;border:0;border-top:1px solid var(--sh-border)}
+.sh-email-row{display:flex;align-items:center;margin-top:24px;min-height:48px;padding-right:2px;border:1px solid var(--sh-border);border-radius:var(--sh-radius);background:#fff}
+.sh-email-row:focus-within{border-color:var(--sh-primary);box-shadow:var(--sh-ring)}
+.sh-scope .sh-email-row .sh-control{flex:1;min-width:0;min-height:46px;border:0;background:transparent;box-shadow:none}
+.sh-scope .sh-email-row .sh-control:focus-visible{border:0;box-shadow:none}
+.sh-scope .sh-email-row .sh-btn{--face:var(--sh-primary);position:relative;width:44px;min-width:44px;min-height:44px;height:44px;padding:0;flex:0 0 auto;border:0;border-radius:var(--sh-radius);background:transparent}
+.sh-scope .sh-email-row .sh-btn:disabled{--face:var(--sh-dis-bg);background:transparent}
+.sh-scope .sh-email-row .sh-btn::before{content:'';position:absolute;inset:4px;border-radius:8px;background:var(--face);transition:background-color 200ms ease}
+.sh-scope .sh-email-row .sh-btn .sh-ic{position:relative;width:18px;height:18px}
+@media (hover:hover) and (pointer:fine){.sh-scope .sh-email-row .sh-btn:hover:not(:disabled){--face:var(--sh-primary-dark);background:transparent}}
+.sh-email-row+.sh-err{margin-top:6px}
+.sh-err:empty{display:none}
+.sh-or{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:8px}
+.sh-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.sh-notice{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:16px}
 .sh-legal{text-align:center;font-size:12px;line-height:16px;font-weight:600;margin-top:20px}
 .sh-legal a{color:var(--sh-text);text-decoration:none}
 
@@ -126,39 +141,28 @@ dialog.sh-dialog{width:min(100%,390px)}
       <header class="sh-top">
         <div class="sh-title">
           <h1 id="shTitle" tabindex="-1">Share</h1>
-          <p>Send a secure, time-limited copy.</p>
+          <p class="sh-policy-line" id="shPolicyName"></p>
+          <p class="sh-policy-line" id="shPolicyNumber"></p>
         </div>
         <button class="sh-util strong" type="button" id="shClose" aria-label="Close">
           <svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
       </header>
       <main class="sh-main">
-        <div class="sh-object" role="group" aria-label="What you’re sharing">
-          <span class="sh-object-icon"><svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></span>
-          <div>
-            <div class="sh-object-name" id="shName">—</div>
-            <div class="sh-object-meta" id="shMeta"></div>
-          </div>
-        </div>
-
-        <fieldset class="sh-options" aria-label="Choose what to share">
+        <h2 class="sh-section-heading" id="shChooseHeading">Choose what to share</h2>
+        <fieldset class="sh-options" aria-labelledby="shChooseHeading">
           <label class="sh-opt selected" id="shOptBoth">
             <input type="radio" name="shScopeRadio" value="both" checked>
-            <span class="sh-opt-name">Policy docs + Policy summary</span>
+            <span class="sh-opt-copy"><span class="sh-opt-name">Policy docs + Policy summary</span><span class="sh-opt-sub">All policy documents along with the policy summary</span></span>
           </label>
           <label class="sh-opt" id="shOptSummary">
             <input type="radio" name="shScopeRadio" value="summary">
-            <span class="sh-opt-name">Policy summary only</span>
+            <span class="sh-opt-copy"><span class="sh-opt-name">Policy summary only</span><span class="sh-opt-sub">Policy summary with additional masking options</span></span>
           </label>
         </fieldset>
 
         <p class="sh-mask-note" id="shMaskNote" hidden>Sensitive details are hidden before sharing. <button class="sh-link" type="button" id="shManage">Manage what’s shared</button></p>
 
-        <div class="sh-field">
-          <label for="shEmail">Recipient email</label>
-          <input class="sh-control" id="shEmail" type="email" inputmode="email" autocomplete="off" placeholder="name@example.com" aria-describedby="shEmailErr">
-          <div class="sh-err" id="shEmailErr" role="alert"></div>
-        </div>
         <div class="sh-field">
           <label for="shExpiry">Link expires after</label>
           <select class="sh-control" id="shExpiry">
@@ -167,8 +171,15 @@ dialog.sh-dialog{width:min(100%,390px)}
             <option selected>1 month</option>
           </select>
         </div>
+        <hr class="sh-divider">
+
+        <div class="sh-email-row">
+          <input class="sh-control" id="shEmail" type="email" inputmode="email" autocomplete="off" placeholder="Recipient email" aria-label="Recipient email" aria-describedby="shEmailErr">
+          <button class="sh-btn sh-primary" type="button" id="shEmailBtn" aria-label="Share by email" disabled><svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></button>
+        </div>
+        <div class="sh-err" id="shEmailErr" role="alert"></div>
+        <p class="sh-or" aria-hidden="true">OR</p>
         <div class="sh-actions">
-          <button class="sh-btn sh-primary" type="button" id="shEmailBtn" disabled>Share by email</button>
           <button class="sh-btn sh-secondary" type="button" id="shCopyBtn"><svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy secure link</button>
         </div>
         <p class="sh-notice">Anyone with the link can view the shared information until it expires.</p>
@@ -252,8 +263,9 @@ dialog.sh-dialog{width:min(100%,390px)}
   $('#shConfirm').addEventListener('click',function(){
     closeSheet($('#shPrivacy'),function(){
       var n=String(policy.policyNumber||'');
-      $('#shName').textContent=policy.title||'Policy';
-      $('#shMeta').textContent=n?'Policy ••'+n.slice(-4):'';
+      $('#shPolicyName').textContent=policy.title||'Policy';
+      $('#shPolicyNumber').textContent=n||'';
+      $('#shPolicyNumber').hidden=!n;
       $('input[name=shScopeRadio][value=both]').checked=true;syncScope();
       page.hidden=false;document.documentElement.classList.add('sh-lock');
       page.scrollTop=0;$('#shTitle').focus();
