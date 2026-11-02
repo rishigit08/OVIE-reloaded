@@ -72,7 +72,8 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-title{flex:1;padding-top:4px}
 .sh-title h1{font-size:18px;line-height:24px;font-weight:600}
 .sh-title p{font-size:12px;line-height:16px;color:var(--sh-text3);margin-top:4px}
-.sh-title .sh-policy-line{color:var(--sh-primary)}
+.sh-title #shPolicyName{color:var(--sh-text)}
+.sh-title #shPolicyNumber{color:var(--sh-text2)}
 .sh-title #shPolicyName{font-weight:600}
 
 .sh-main{padding:18px 16px 40px}
@@ -97,20 +98,14 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-scope select.sh-control{appearance:none;-webkit-appearance:none;padding-right:44px;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b4062' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center/20px 20px}
 .sh-err{color:var(--sh-danger);font-size:12px;line-height:16px}
 .sh-divider{height:0;margin:24px 0 0;border:0;border-top:1px solid var(--sh-border)}
-.sh-email-row{display:flex;align-items:center;margin-top:24px;min-height:48px;padding-right:2px;border:1px solid var(--sh-border);border-radius:var(--sh-radius);background:#fff}
-.sh-email-row:focus-within{border-color:var(--sh-primary);box-shadow:var(--sh-ring)}
-.sh-scope .sh-email-row .sh-control{flex:1;min-width:0;min-height:46px;border:0;background:transparent;box-shadow:none}
-.sh-scope .sh-email-row .sh-control:focus-visible{border:0;box-shadow:none}
-.sh-scope .sh-email-row .sh-btn{--face:var(--sh-primary);position:relative;width:44px;min-width:44px;min-height:44px;height:44px;padding:0;flex:0 0 auto;border:0;border-radius:var(--sh-radius);background:transparent}
-.sh-scope .sh-email-row .sh-btn:disabled{--face:var(--sh-dis-bg);background:transparent}
-.sh-scope .sh-email-row .sh-btn::before{content:'';position:absolute;inset:4px;border-radius:8px;background:var(--face);transition:background-color 200ms ease}
-.sh-scope .sh-email-row .sh-btn .sh-ic{position:relative;width:18px;height:18px}
-@media (hover:hover) and (pointer:fine){.sh-scope .sh-email-row .sh-btn:hover:not(:disabled){--face:var(--sh-primary-dark);background:transparent}}
-.sh-email-row+.sh-err{margin-top:6px}
+.sh-email{margin-top:24px}
+.sh-email+.sh-err{margin-top:6px}
+.sh-share-mail{margin-top:12px}
 .sh-err:empty{display:none}
-.sh-or{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:8px}
-.sh-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-.sh-notice{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:16px}
+.sh-or{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:12px}
+.sh-scope .sh-copy{width:auto;margin:8px auto 0;padding:0 4px;border:0;border-radius:6px;background:transparent}
+@media (hover:hover) and (pointer:fine){.sh-scope .sh-copy:hover{background:transparent;color:var(--sh-primary-dark)}}
+.sh-notice{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:12px}
 .sh-legal{text-align:center;font-size:12px;line-height:16px;font-weight:600;margin-top:20px}
 .sh-legal a{color:var(--sh-text);text-decoration:none}
 
@@ -173,15 +168,11 @@ dialog.sh-dialog{width:min(100%,390px)}
         </div>
         <hr class="sh-divider">
 
-        <div class="sh-email-row">
-          <input class="sh-control" id="shEmail" type="email" inputmode="email" autocomplete="off" placeholder="Recipient email" aria-label="Recipient email" aria-describedby="shEmailErr">
-          <button class="sh-btn sh-primary" type="button" id="shEmailBtn" aria-label="Share by email" disabled><svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></button>
-        </div>
+        <input class="sh-control sh-email" id="shEmail" type="email" inputmode="email" autocomplete="off" placeholder="Recipient email" aria-label="Recipient email" aria-describedby="shEmailErr">
         <div class="sh-err" id="shEmailErr" role="alert"></div>
+        <button class="sh-btn sh-primary sh-share-mail" type="button" id="shEmailBtn" disabled>Share via mail</button>
         <p class="sh-or" aria-hidden="true">OR</p>
-        <div class="sh-actions">
-          <button class="sh-btn sh-secondary" type="button" id="shCopyBtn"><svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy secure link</button>
-        </div>
+        <button class="sh-btn sh-secondary sh-copy" type="button" id="shCopyBtn"><svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy secure link</button>
         <p class="sh-notice">Anyone with the link can view the shared information until it expires.</p>
         <p class="sh-legal"><a href="#">Privacy Policy</a> · <a href="#">Terms &amp; Conditions</a></p>
       </main>
