@@ -68,16 +68,19 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-page{position:fixed;inset:0;z-index:1000;overflow-y:auto;background:var(--sh-backdrop)}
 .sh-page[hidden]{display:none}
 .sh-col{width:min(100%,390px);min-height:100%;margin:0 auto;background:var(--sh-canvas)}
-.sh-top{background:var(--sh-surface);display:flex;align-items:flex-start;gap:8px;padding:12px 8px 12px 16px;border-bottom:1px solid var(--sh-line)}
-.sh-title{flex:1;padding-top:4px}
+.sh-top{background:var(--sh-surface);display:flex;align-items:center;gap:8px;padding:12px 8px 12px 16px;border-bottom:1px solid var(--sh-line)}
+.sh-title{flex:1}
 .sh-title h1{font-size:18px;line-height:24px;font-weight:600}
 .sh-title p{font-size:12px;line-height:16px;color:var(--sh-text3);margin-top:4px}
-.sh-title #shPolicyName{color:var(--sh-text)}
-.sh-title #shPolicyNumber{color:var(--sh-text2)}
-.sh-title #shPolicyName{font-weight:600}
+
 
 .sh-main{padding:18px 16px 40px}
 :where(.sh-scope) fieldset{border:0;margin:0;padding:0;min-width:0}
+.sh-policy-block{margin-bottom:24px}
+.sh-policy-block p{font-size:14px;line-height:20px}
+.sh-policy-block p+p{margin-top:4px}
+.sh-policy-block #shPolicyName{color:var(--sh-text3);font-weight:600}
+.sh-policy-block #shPolicyNumber{color:var(--sh-text3)}
 .sh-section-heading{font-size:14px;line-height:20px;font-weight:600}
 .sh-scope .sh-options{margin-top:12px;padding:0 16px;border-radius:var(--sh-radius);background:var(--sh-surface)}
 .sh-opt{display:flex;align-items:flex-start;gap:12px;min-height:56px;padding:12px 0;border-bottom:1px solid var(--sh-line);cursor:pointer}
@@ -136,14 +139,16 @@ dialog.sh-dialog{width:min(100%,390px)}
       <header class="sh-top">
         <div class="sh-title">
           <h1 id="shTitle" tabindex="-1">Share</h1>
-          <p class="sh-policy-line" id="shPolicyName"></p>
-          <p class="sh-policy-line" id="shPolicyNumber"></p>
         </div>
         <button class="sh-util strong" type="button" id="shClose" aria-label="Close">
           <svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
       </header>
       <main class="sh-main">
+        <div class="sh-policy-block">
+          <p class="sh-policy-line" id="shPolicyName"></p>
+          <p class="sh-policy-line" id="shPolicyNumber"></p>
+        </div>
         <h2 class="sh-section-heading" id="shChooseHeading">Choose what to share</h2>
         <fieldset class="sh-options" aria-labelledby="shChooseHeading">
           <label class="sh-opt selected" id="shOptBoth">
