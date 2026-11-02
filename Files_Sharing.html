@@ -76,11 +76,13 @@ dialog.sh-dialog{width:min(100%,390px)}
 
 .sh-main{padding:18px 16px 40px}
 :where(.sh-scope) fieldset{border:0;margin:0;padding:0;min-width:0}
-.sh-policy-block{margin-bottom:24px}
+.sh-policy-block{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.sh-policy-icon{width:44px;height:44px;border-radius:var(--sh-radius);background:var(--sh-soft);color:var(--sh-primary);display:grid;place-items:center;flex:0 0 auto}
+.sh-policy-text{flex:1;min-width:0}
 .sh-policy-block p{font-size:14px;line-height:20px}
 .sh-policy-block p+p{margin-top:4px}
 .sh-policy-block #shPolicyName{color:var(--sh-text3);font-weight:600}
-.sh-policy-block #shPolicyNumber{color:var(--sh-text3)}
+.sh-policy-block #shPolicyNumber{color:var(--sh-text3);font-size:12px;line-height:16px}
 .sh-section-heading{font-size:14px;line-height:20px;font-weight:600}
 .sh-scope .sh-options{margin-top:12px;padding:0 16px;border-radius:var(--sh-radius);background:var(--sh-surface)}
 .sh-opt{display:flex;align-items:flex-start;gap:12px;min-height:56px;padding:12px 0;border-bottom:1px solid var(--sh-line);cursor:pointer}
@@ -109,8 +111,8 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-scope .sh-copy{width:auto;margin:8px auto 0;padding:0 4px;border:0;border-radius:6px;background:transparent}
 @media (hover:hover) and (pointer:fine){.sh-scope .sh-copy:hover{background:transparent;color:var(--sh-primary-dark)}}
 .sh-notice{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:12px}
-.sh-legal{text-align:center;font-size:12px;line-height:16px;font-weight:600;margin-top:20px}
-.sh-legal a{color:var(--sh-text);text-decoration:none}
+.sh-legal{text-align:center;font-size:12px;line-height:16px;font-weight:600;margin-top:16px}
+.sh-legal a{color:var(--sh-text3);text-decoration:none}
 
 /* masking: eye / eye-off reveal controls */
 .sh-mask-row{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 4px;border-bottom:1px solid var(--sh-line)}
@@ -146,8 +148,11 @@ dialog.sh-dialog{width:min(100%,390px)}
       </header>
       <main class="sh-main">
         <div class="sh-policy-block">
-          <p class="sh-policy-line" id="shPolicyName"></p>
-          <p class="sh-policy-line" id="shPolicyNumber"></p>
+          <span class="sh-policy-icon" aria-hidden="true"><svg class="sh-ic" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></span>
+          <div class="sh-policy-text">
+            <p class="sh-policy-line" id="shPolicyName"></p>
+            <p class="sh-policy-line" id="shPolicyNumber"></p>
+          </div>
         </div>
         <h2 class="sh-section-heading" id="shChooseHeading">Choose what to share</h2>
         <fieldset class="sh-options" aria-labelledby="shChooseHeading">
