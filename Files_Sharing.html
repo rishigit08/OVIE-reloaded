@@ -83,8 +83,8 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-policy-block p+p{margin-top:4px}
 .sh-policy-block #shPolicyName{color:var(--sh-text3);font-weight:600}
 .sh-policy-block #shPolicyNumber{color:var(--sh-text3);font-size:12px;line-height:16px}
-.sh-section-heading{font-size:14px;line-height:20px;font-weight:600}
-.sh-scope .sh-options{margin-top:12px;padding:0 16px;border-radius:var(--sh-radius);background:var(--sh-surface)}
+.sh-section-heading{font-size:12px;line-height:16px;font-weight:600;color:var(--sh-text3);text-transform:uppercase}
+.sh-scope .sh-options{margin-top:4px;padding:0 16px;border-radius:var(--sh-radius);background:var(--sh-surface)}
 .sh-opt{display:flex;align-items:flex-start;gap:12px;min-height:56px;padding:12px 0;border-bottom:1px solid var(--sh-line);cursor:pointer}
 .sh-opt:last-child{border-bottom:0}
 .sh-opt-copy{flex:1;min-width:0}
@@ -96,8 +96,8 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-mask-note{color:var(--sh-text3);margin-top:12px}
 .sh-mask-note[hidden]{display:none}
 .sh-link{border:0;background:none;padding:0;color:var(--sh-primary);font-weight:600;min-height:20px}
-.sh-field{display:flex;flex-direction:column;gap:6px;margin-top:18px}
-.sh-field label{font-weight:600}
+.sh-field{display:flex;flex-direction:column;gap:4px;margin-top:18px}
+.sh-field label{font-size:12px;line-height:16px;font-weight:600;color:var(--sh-text3);text-transform:uppercase}
 .sh-control{min-height:48px;width:100%;padding:0 12px;border:1px solid var(--sh-border);border-radius:var(--sh-radius);background:#fff}
 .sh-control::placeholder{color:var(--sh-text3)}
 .sh-scope select.sh-control{appearance:none;-webkit-appearance:none;padding-right:44px;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b4062' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center/20px 20px}
@@ -169,7 +169,7 @@ dialog.sh-dialog{width:min(100%,390px)}
         <p class="sh-mask-note" id="shMaskNote" hidden>Sensitive details are hidden before sharing. <button class="sh-link" type="button" id="shManage">Manage what’s shared</button></p>
 
         <div class="sh-field">
-          <label for="shExpiry">Link expires after</label>
+          <label for="shExpiry">Select expiry</label>
           <select class="sh-control" id="shExpiry">
             <option>24 hours</option>
             <option>7 days</option>
