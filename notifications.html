@@ -136,7 +136,7 @@
     <main>
       <div class="tabs" role="tablist" aria-label="Notification type">
         <button class="tab" role="tab" id="tab-alerts" aria-controls="panel" data-tab="alerts" aria-selected="true">Alerts <span class="tab-count" id="count-alerts">0</span></button>
-        <button class="tab" role="tab" id="tab-updates" aria-controls="panel" data-tab="updates" aria-selected="false" tabindex="-1">Updates <span class="tab-count" id="count-updates">0</span></button>
+        <button class="tab" role="tab" id="tab-updates" aria-controls="panel" data-tab="updates" aria-selected="false" tabindex="-1">Updates</button>
       </div>
       <div id="panel" role="tabpanel" aria-labelledby="tab-alerts" style="display:flex;flex-direction:column;gap:18px"></div>
     </main>
@@ -211,17 +211,17 @@
         toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 2400);
       };
       const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-      const unreadIn = (tab) => DATA[tab].filter((r) => r[6] && !read.has(r[0])).length;
+      const unreadIn = (tab) => tab !== 'alerts' ? 0 : DATA[tab].filter((r) => r[6] && !read.has(r[0])).length;
 
       function render() {
-        ['alerts', 'updates'].forEach((t) => { document.querySelector('#count-' + t).textContent = unreadIn(t); });
+        document.querySelector('#count-alerts').textContent = unreadIn('alerts');
         panel.setAttribute('aria-labelledby', 'tab-' + current);
         panel.innerHTML = '<section class="card" aria-label="' + (current === 'alerts' ? 'Alerts' : 'Updates') + '">' + DATA[current].map((r) => {
-          const unread = r[6] && !read.has(r[0]);
+          const unread = current === 'alerts' && r[6] && !read.has(r[0]);
           return '<button class="row tone-' + r[2] + (unread ? ' unread' : '') + '" type="button" data-id="' + r[0] + '"' + (r[7] ? ' data-href="' + r[7] + '"' : '') + '>' +
             '<span class="row-icon" aria-hidden="true">' + icon(r[1]) + '</span>' +
             '<span class="row-copy"><span class="row-title">' + esc(r[3]) + (unread ? '<span class="visually-hidden"> (unread)</span>' : '') + '</span><span class="row-body">' + esc(r[4]) + '</span></span>' +
-            '<span class="row-side"><span class="unread-dot" aria-hidden="true"></span><span class="row-time">' + esc(r[5]) + '</span></span></button>';
+            '<span class="row-side">' + (current === 'alerts' ? '<span class="unread-dot" aria-hidden="true"></span>' : '<span></span>') + '<span class="row-time">' + esc(r[5]) + '</span></span></button>';
         }).join('') + '</section>';
       }
 
