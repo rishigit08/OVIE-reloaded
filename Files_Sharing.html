@@ -103,12 +103,12 @@ dialog.sh-dialog{width:min(100%,390px)}
 .sh-scope select.sh-control{appearance:none;-webkit-appearance:none;padding-right:44px;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b4062' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center/20px 20px}
 .sh-err{color:var(--sh-danger);font-size:12px;line-height:16px}
 .sh-divider{height:0;margin:24px 0 0;border:0;border-top:1px solid var(--sh-border)}
-.sh-email{margin-top:24px}
-.sh-email+.sh-err{margin-top:6px}
-.sh-share-mail{margin-top:12px}
+.sh-share-mail{margin-top:24px}
+.sh-scope .sh-copy:disabled{opacity:.4;cursor:not-allowed}
+.sh-email-hint{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:8px}
 .sh-err:empty{display:none}
 .sh-or{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:12px}
-.sh-scope .sh-copy{width:auto;margin:8px auto 0;padding:0 4px;border:0;border-radius:6px;background:transparent}
+.sh-scope .sh-copy{width:auto;margin:4px auto 0;padding:0 4px;border:0;border-radius:6px;background:transparent}
 @media (hover:hover) and (pointer:fine){.sh-scope .sh-copy:hover{background:transparent;color:var(--sh-primary-dark)}}
 .sh-notice{text-align:center;color:var(--sh-text3);font-size:12px;line-height:16px;margin-top:12px}
 .sh-legal{text-align:center;font-size:12px;line-height:16px;font-weight:600;margin-top:16px}
@@ -176,14 +176,17 @@ dialog.sh-dialog{width:min(100%,390px)}
             <option selected>1 month</option>
           </select>
         </div>
+        <div class="sh-field">
+          <label for="shEmail">Recipient email</label>
+          <input class="sh-control sh-email" id="shEmail" type="email" inputmode="email" autocomplete="off" placeholder="name@example.com" required aria-required="true" aria-describedby="shEmailErr">
+          <div class="sh-err" id="shEmailErr" role="alert"></div>
+        </div>
         <hr class="sh-divider">
 
-        <input class="sh-control sh-email" id="shEmail" type="email" inputmode="email" autocomplete="off" placeholder="Recipient email" aria-label="Recipient email" aria-describedby="shEmailErr">
-        <div class="sh-err" id="shEmailErr" role="alert"></div>
-        <button class="sh-btn sh-primary sh-share-mail" type="button" id="shEmailBtn" disabled>Share via mail</button>
+                <button class="sh-btn sh-primary sh-share-mail" type="button" id="shEmailBtn" disabled>Share via mail</button>
         <p class="sh-or" aria-hidden="true">OR</p>
-        <button class="sh-btn sh-secondary sh-copy" type="button" id="shCopyBtn"><svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy secure link</button>
-        <p class="sh-notice">Anyone with the link can view the shared information until it expires.</p>
+        <button class="sh-btn sh-secondary sh-copy" type="button" id="shCopyBtn" disabled><svg class="sh-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy secure link</button>
+        <p class="sh-notice">Only the recipient can view the shared information by signing in with the email address above, until the link expires.</p>
         <p class="sh-legal"><a href="#">Privacy Policy</a> · <a href="#">Terms &amp; Conditions</a></p>
       </main>
     </div>
@@ -316,9 +319,9 @@ dialog.sh-dialog{width:min(100%,390px)}
   $('#shMask').addEventListener('close',function(){/* focus returns to Manage via closeSheet */});
 
   /* email + actions */
-  var email=$('#shEmail'),btn=$('#shEmailBtn'),err=$('#shEmailErr'),re=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  email.addEventListener('input',function(){var ok=re.test(email.value.trim());btn.disabled=!ok;if(ok)err.textContent=''});
-  email.addEventListener('blur',function(){if(email.value.trim()&&!re.test(email.value.trim()))err.textContent='Enter a valid email address.'});
+  var copyBtn=$('#shCopyBtn'),email=$('#shEmail'),btn=$('#shEmailBtn'),err=$('#shEmailErr'),re=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  email.addEventListener('input',function(){var ok=re.test(email.value.trim());btn.disabled=!ok;copyBtn.disabled=!ok;if(ok)err.textContent=''});
+  email.addEventListener('blur',function(){var v=email.value.trim();if(!v)err.textContent='Recipient email is required to share.';else if(!re.test(v))err.textContent='Enter a valid email address.'});
   var toast=$('#shToast'),tt;
   function show(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('show')},3000)}
   btn.addEventListener('click',function(){show('Secure link sent to '+email.value.trim())});
