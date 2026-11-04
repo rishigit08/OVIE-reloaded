@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Notifications | Ovie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6b4062;
+      --primary-dark: #54324d;
+      --primary-soft: #f5edf3;
+      --ink: #111111;
+      --copy: #333a3d;
+      --muted: #5f6368;
+      --surface: #ffffff;
+      --bg-canvas: #f6f6f6;
+      --bg-subtle: #f6f6f6;
+      --prototype-backdrop: #e3e3e3;
+      --border: #d8dddb;
+      --border-soft: #ecefed;
+      --warning: #8a5a06;
+      --warning-ink: #634106;
+      --warning-soft: #fff5df;
+      --danger: #a63a33;
+      --danger-soft: #ffeded;
+      --success: #0d7d07;
+      --success-soft: #e7fff4;
+      --focus: #6b4062;
+      --radius: 12px;
+      --motion-duration-press: 160ms;
+      --motion-ease-out: cubic-bezier(.23, 1, .32, 1);
+      --z-sticky: 100;
+      --z-toast: 900;
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: light; scrollbar-gutter: stable; scrollbar-width: thin; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--prototype-backdrop); color: var(--ink);
+      font-family: Figtree, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 14px; line-height: 20px; -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+    svg { display: block; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    :focus-visible { outline: 3px solid rgba(107, 64, 98, .24); outline-offset: 2px; }
+
+    .app-shell { position: relative; width: min(100%, 480px); min-height: 100vh; margin: 0 auto; background: var(--bg-canvas); }
+
+    .top-shell { position: sticky; top: 0; z-index: var(--z-sticky); background: var(--surface); border-bottom: 1px solid var(--border-soft); }
+    .status-bar { min-height: 36px; padding: 8px 18px 2px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; line-height: 16px; font-weight: 600; }
+    .status-icons { display: flex; align-items: center; gap: 5px; color: var(--muted); }
+    .app-header { padding: 8px 16px 14px; display: flex; align-items: center; gap: 8px; }
+    .app-title { margin: 0; flex: 1; font-size: 18px; line-height: 24px; font-weight: 600; letter-spacing: -.012em; }
+    .icon-button {
+      width: 44px; height: 44px; padding: 0; display: grid; place-items: center; border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink); cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease;
+    }
+    .icon-button:active { transform: scale(.97); }
+
+    .tabs { display: flex; gap: 8px; padding: 0 16px 8px; background: var(--surface); }
+    .tab {
+      min-height: 44px; padding: 0; border: 0; background: transparent; display: inline-flex; align-items: center;
+      color: var(--copy); font-weight: 600; cursor: pointer;
+    }
+    .tab-face { min-height: 36px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; background: var(--bg-subtle); }
+    .tab-count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; display: inline-grid; place-items: center; background: var(--surface); color: var(--muted); font-size: 11px; line-height: 16px; }
+    .tab[aria-selected="true"] { color: var(--primary); }
+    .tab[aria-selected="true"] .tab-face { background: var(--primary-soft); box-shadow: inset 0 0 0 1px var(--primary); }
+    .tab[aria-selected="true"] .tab-count { color: var(--primary); }
+    .tab:active .tab-face { transform: scale(.97); }
+    .tab-face { transition: transform var(--motion-duration-press) var(--motion-ease-out); }
+
+    main { display: flex; flex-direction: column; gap: 18px; padding: 18px 16px 40px; }
+    .panel-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 24px; }
+    .panel-summary { margin: 0; color: var(--muted); }
+    .text-button { min-height: 44px; margin: -10px -8px -10px 0; padding: 0 8px; border: 0; background: transparent; color: var(--primary); font-weight: 600; cursor: pointer; border-radius: var(--radius); }
+    .text-button:disabled { color: var(--muted); cursor: default; }
+
+    .card { overflow: hidden; border-radius: var(--radius); background: var(--surface); }
+    .card-head { padding: 16px 16px 8px; }
+    .section-heading { margin: 0; font-size: 18px; line-height: 24px; font-weight: 600; letter-spacing: -.012em; }
+    .row {
+      width: 100%; min-height: 64px; padding: 12px 16px; border: 0; border-top: 1px solid var(--border-soft); background: var(--surface);
+      display: flex; align-items: flex-start; gap: 12px; text-align: left; cursor: pointer;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease;
+    }
+    .row:first-of-type { border-top: 0; }
+    .row:active { transform: scale(.97); }
+    @media (hover: hover) and (pointer: fine) { .row:hover { background: var(--bg-subtle); } }
+    .row-icon { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; background: var(--primary-soft); color: var(--primary); }
+    .row.tone-warning .row-icon { background: var(--warning-soft); color: var(--warning); }
+    .row.tone-warning .row-title { color: var(--warning-ink); }
+    .row.tone-danger .row-icon { background: var(--danger-soft); color: var(--danger); }
+    .row.tone-success .row-icon { background: var(--success-soft); color: var(--success); }
+    .row.tone-neutral .row-icon { background: var(--bg-subtle); color: var(--muted); }
+    .row-copy { flex: 1; min-width: 0; }
+    .row-title { display: block; font-weight: 400; }
+    .row.unread .row-title { font-weight: 600; }
+    .row-body { display: block; margin-top: 2px; color: var(--muted); }
+    .row-time { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 16px; font-weight: 600; }
+    .row-flag { width: 44px; margin: -10px -12px -10px 0; flex: 0 0 auto; align-self: flex-start; min-height: 40px; display: grid; place-items: center; }
+    .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+    .row:not(.unread) .unread-dot { visibility: hidden; }
+    .priority { margin-left: 8px; padding: 0 8px; border-radius: 999px; background: var(--bg-subtle); color: var(--muted); font-size: 11px; line-height: 16px; font-weight: 600; vertical-align: 1px; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; z-index: var(--z-toast); max-width: min(calc(100% - 32px), 440px); padding: 12px 16px;
+      border-radius: var(--radius); background: var(--ink); color: #fff; font-weight: 600;
+      opacity: 0; transform: translate(-50%, 8px); pointer-events: none;
+      transition: opacity 200ms var(--motion-ease-out), transform 200ms var(--motion-ease-out);
+    }
+    .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .icon-button:active, .row:active, .tab:active .tab-face { transform: none; }
+      .toast { transform: translate(-50%, 0); transition: opacity 125ms ease; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-shell">
+      <div class="status-bar" aria-hidden="true">
+        <span>9:41</span>
+        <span class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M1 9h2v3H1zm4-3h2v6H5zm4-3h2v9H9zm4-3h2v12h-2z"/></svg>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5A9.2 9.2 0 0 1 15 4.5M4.7 7.2a5.4 5.4 0 0 1 7.6 0M7.2 9.7a1.8 1.8 0 0 1 2.6 0"/></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".5" y=".5" width="20" height="11" rx="3" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M22 4v4c1-.3 1.5-1 1.5-2S23 4.3 22 4Z" fill="currentColor" opacity=".45"/></svg>
+        </span>
+      </div>
+      <div class="app-header">
+        <button class="icon-button" id="backButton" type="button" aria-label="Back to Home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+        <h1 class="app-title">Notifications</h1>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Notification type">
+        <button class="tab" role="tab" id="tab-alerts" aria-controls="panel" data-tab="alerts" aria-selected="true"><span class="tab-face">Alerts <span class="tab-count" id="count-alerts">0</span></span></button>
+        <button class="tab" role="tab" id="tab-updates" aria-controls="panel" data-tab="updates" aria-selected="false" tabindex="-1"><span class="tab-face">Updates <span class="tab-count" id="count-updates">0</span></span></button>
+      </div>
+    </header>
+
+    <main>
+      <div class="panel-tools">
+        <p class="panel-summary" id="summary" role="status"></p>
+        <button class="text-button" id="markAll" type="button">Mark all as read</button>
+      </div>
+      <div id="panel" role="tabpanel" aria-labelledby="tab-alerts" style="display:flex;flex-direction:column;gap:18px"></div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const I = {
+        clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+        calX: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m14 14-4 4"/><path d="m10 14 4 4"/>',
+        calClock: '<path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><circle cx="16" cy="16" r="6"/><path d="M16 14v2l1 1"/>',
+        refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+        shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+        gauge: '<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
+        fileSearch: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><circle cx="11.5" cy="14.5" r="2.5"/><path d="M13.3 16.3 15 18"/>',
+        copy: '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+        alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+        ban: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+        eyeOff: '<path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/>',
+        diff: '<path d="M12 3v14"/><path d="M5 10h14"/><path d="M5 21h14"/>',
+        users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+        link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+        mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+        upload: '<path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>',
+        check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+        sparkles: '<path d="M9.94 14.06 8 20l-1.94-5.94L0 12l6.06-2.06L8 4l1.94 5.94L16 12z" transform="translate(4 0)"/><path d="M20 3v4"/><path d="M22 5h-4"/>',
+        xCircle: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+        file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>',
+        folder: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+        smartphone: '<rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/>',
+        key: '<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/>',
+        download: '<path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>',
+        card: '<rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/>',
+        receipt: '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/>',
+        life: '<circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/>',
+        scale: '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+        megaphone: '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>'
+      };
+      const icon = (n) => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[n] + '</svg>';
+
+      /* Each row: [id, icon, tone, title, body, time, unread, target] */
+      const DATA = {
+        alerts: [
+          { group: 'Expiry', rows: [
+            ['a1', 'clock', 'warning', 'Home policy ends in 7 days', 'Austin home · Travelers. Your uploaded policy ends Nov 9, 2026.', 'Today', 1, 'insights_upd.html?insight=home-expiry'],
+            ['a2', 'calClock', 'warning', 'Auto policy ends in 30 days', '2018 Toyota Camry · State Farm. Your uploaded policy ends Dec 2, 2026.', '2d ago', 1],
+            ['a3', 'calX', 'danger', 'Renters policy has expired', 'Downtown apartment. The policy term in your uploaded document has ended.', '5d ago', 0],
+            ['a4', 'calX', 'warning', 'Cancellation effective Dec 14, 2026', 'Boat policy. Based on a cancellation notice you uploaded.', '1w ago', 0],
+            ['a5', 'refresh', 'warning', 'Renewal due for umbrella policy', 'The renewal date in your uploaded policy is Jan 3, 2027.', '1w ago', 0]
+          ]},
+          { group: 'Gaps', rows: [
+            ['g1', 'shield', 'warning', 'Coverage gap found', 'Downtown apartment: no personal liability coverage appears in the pages analyzed.', 'Today', 1, 'insights_upd.html?insight=state-minimum'],
+            ['g2', 'gauge', 'warning', 'Limit may be below what you’d expect', 'Proposed: Austin home liability limit looks low compared with your umbrella policy.', '3d ago', 1],
+            ['g3', 'fileSearch', 'neutral', 'Ovie couldn’t find this in your documents', 'Camry deductible amounts are not available in the pages analyzed.', '4d ago', 0]
+          ]},
+          { group: 'Duplicates', rows: [
+            ['d1', 'copy', 'warning', 'Two policies cover the same thing', 'Austin home and Downtown apartment both include personal property coverage.', 'Yesterday', 1, 'insights_upd.html?insight=duplicate'],
+            ['d2', 'copy', 'warning', 'Overlapping cover across policies', 'Camry and umbrella policy both list a liability limit for the same driver.', '6d ago', 0]
+          ]},
+          { group: 'Watch points', rows: [
+            ['w1', 'alert', 'danger', 'New critical red flag', 'Austin home: a water damage exclusion was found in the endorsements.', 'Today', 1],
+            ['w2', 'ban', 'warning', 'Exclusion affects one of your assets', 'Boat policy excludes use outside the listed navigation area.', '2d ago', 1],
+            ['w3', 'eyeOff', 'warning', 'Hidden clause found', 'Camry policy: a rideshare exclusion appears on page 14 of the policy form.', '1w ago', 0]
+          ]},
+          { group: 'Changes (proposed)', rows: [
+            ['c1', 'diff', 'neutral', 'Liability limit dropped on renewal', 'Proposed: your uploaded renewal lowers Austin home liability from $500,000 to $300,000.', 'Yesterday', 1],
+            ['c2', 'diff', 'neutral', 'Exclusion added on renewal', 'Proposed: your uploaded Camry renewal adds a new exclusion.', '3d ago', 0],
+            ['c3', 'diff', 'neutral', 'Premium changed on renewal', 'Proposed: Austin home premium rises from $1,820 to $1,960 per year.', '3d ago', 0]
+          ]},
+          { group: 'Sharing', rows: [
+            ['s1', 'users', 'neutral', 'Policy shared with you', 'Maya shared “Condo policy” with you.', 'Today', 1],
+            ['s2', 'mail', 'neutral', 'Invite received', 'Daniel invited you to collaborate on Family policies.', 'Yesterday', 1],
+            ['s3', 'check', 'success', 'Invite accepted', 'Priya accepted your invite.', '2d ago', 0],
+            ['s4', 'link', 'neutral', 'Shared link viewed', 'Your Austin home insight link was viewed.', '3d ago', 0],
+            ['s5', 'link', 'neutral', 'Shared link expired', 'The link to your Camry insights has expired.', '5d ago', 0],
+            ['s6', 'users', 'neutral', 'Role changed', 'Your role on Family policies is now Viewer.', '1w ago', 0],
+            ['s7', 'upload', 'neutral', 'Agent upload link used', 'Your insurance agent uploaded 2 documents with your upload link.', '1w ago', 0]
+          ]}
+        ],
+        updates: [
+          { group: 'Upload and processing', rows: [
+            ['u1', 'sparkles', 'success', 'Insights generated', 'Austin home insights are ready.', 'Today', 1, 'insights_upd.html'],
+            ['u2', 'file', 'success', 'Policy summary ready', 'Your Travelers home policy summary is ready.', 'Today', 1],
+            ['u3', 'check', 'success', 'Upload completed', '3 documents were uploaded.', 'Today', 0],
+            ['u4', 'xCircle', 'danger', 'Processing failed', 'We couldn’t read Camry_policy.pdf. Try uploading it again.', 'Yesterday', 1],
+            ['u5', 'alert', 'warning', 'Low-confidence extraction needs review', 'Check the premium we read from Boat_declarations.pdf.', '2d ago', 1]
+          ]},
+          { group: 'Upload rejections', rows: [
+            ['r1', 'ban', 'danger', 'Unsupported file', 'notes.docx wasn’t uploaded. Use PDF, PNG or JPG.', 'Yesterday', 0],
+            ['r2', 'ban', 'danger', 'Over the size limit', 'scan_full.pdf is larger than 25 MiB.', '3d ago', 0],
+            ['r3', 'key', 'danger', 'Password-protected or unreadable scan', 'We couldn’t open renters_2026.pdf.', '3d ago', 0],
+            ['r4', 'fileSearch', 'danger', 'Not an insurance document', 'utility_bill.pdf doesn’t look like an insurance document.', '4d ago', 0],
+            ['r5', 'copy', 'neutral', 'Duplicate file', 'Home_policy.pdf was already in your wallet. Existing file kept.', '1w ago', 0]
+          ]},
+          { group: 'Wallet', rows: [
+            ['wl1', 'folder', 'neutral', 'New version added', 'A new version of Camry declarations was added.', '2d ago', 0],
+            ['wl2', 'folder', 'neutral', 'Document tagged or moved', 'Boat_declarations.pdf moved to Boat policy.', '4d ago', 0]
+          ]},
+          { group: 'Account and security', rows: [
+            ['ac1', 'smartphone', 'warning', 'New device sign-in', 'Pixel 8 signed in on Nov 2, 2026 at 9:12 AM.', 'Today', 1],
+            ['ac2', 'key', 'neutral', 'MPIN changed', 'Your MPIN was changed. Biometric and password changes appear here too.', '3d ago', 0],
+            ['ac3', 'check', 'neutral', 'Consent updated', 'Your data-processing consent was updated.', '1w ago', 0],
+            ['ac4', 'download', 'success', 'Data export complete', 'Your export is ready to download.', '2w ago', 0]
+          ]},
+          { group: 'Plan and billing', rows: [
+            ['p1', 'gauge', 'warning', 'Free limit reached', 'You’ve used 5 of 5 documents and 2 of 2 collaborators.', 'Yesterday', 1],
+            ['p2', 'card', 'danger', 'Payment failed', 'We couldn’t charge your card. Update your payment method.', '3d ago', 1],
+            ['p3', 'refresh', 'success', 'Subscription renewed', 'Your plan renewed on Oct 28, 2026.', '5d ago', 0],
+            ['p4', 'receipt', 'neutral', 'Receipt', 'Your receipt for October is available.', '5d ago', 0]
+          ]},
+          { group: 'Ask Ovie and support', rows: [
+            ['as1', 'life', 'neutral', 'Support ticket replied', 'Support replied to “Wrong premium on my home policy”.', 'Today', 1],
+            ['as2', 'scale', 'neutral', 'Comparison ready', 'Your what-if comparison for a $1,000 deductible is ready.', '2d ago', 0]
+          ]},
+          { group: 'Product', rows: [
+            ['pr1', 'megaphone', 'neutral', 'New language available', 'Ovie is now available in Spanish.', '3d ago', 0],
+            ['pr2', 'megaphone', 'neutral', 'Scheduled maintenance', 'Ovie will be unavailable Nov 8, 2026 from 1 to 2 AM.', '5d ago', 0],
+            ['pr3', 'file', 'neutral', 'Terms change', 'We’ve updated our Terms of Service.', '2w ago', 0]
+          ]}
+        ]
+      };
+
+      const read = new Set();
+      try { JSON.parse(sessionStorage.getItem('ovieNotifRead') || '[]').forEach((id) => read.add(id)); } catch (e) {}
+      const persist = () => { try { sessionStorage.setItem('ovieNotifRead', JSON.stringify([...read])); } catch (e) {} };
+
+      const panel = document.querySelector('#panel');
+      const summary = document.querySelector('#summary');
+      const markAll = document.querySelector('#markAll');
+      const toast = document.querySelector('#toast');
+      let current = 'alerts';
+      let toastTimer;
+
+      const showToast = (msg) => {
+        toast.textContent = msg;
+        toast.classList.add('is-visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 2400);
+      };
+      const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      const unreadIn = (tab) => DATA[tab].flatMap((g) => g.rows).filter((r) => r[6] && !read.has(r[0])).length;
+
+      function render() {
+        ['alerts', 'updates'].forEach((t) => { document.querySelector('#count-' + t).textContent = unreadIn(t); });
+        const n = unreadIn(current);
+        summary.textContent = n ? n + ' unread' : 'You’re all caught up';
+        markAll.disabled = !n;
+        panel.setAttribute('aria-labelledby', 'tab-' + current);
+        panel.innerHTML = DATA[current].map((g, gi) => (
+          '<section class="card" aria-labelledby="grp-' + gi + '"><div class="card-head"><h2 class="section-heading" id="grp-' + gi + '">' + esc(g.group) + '</h2></div>' +
+          g.rows.map((r) => {
+            const unread = r[6] && !read.has(r[0]);
+            return '<button class="row tone-' + r[2] + (unread ? ' unread' : '') + '" type="button" data-id="' + r[0] + '"' + (r[7] ? ' data-href="' + r[7] + '"' : '') + '>' +
+              '<span class="row-icon" aria-hidden="true">' + icon(r[1]) + '</span>' +
+              '<span class="row-copy"><span class="row-title">' + esc(r[3]) + (unread ? '<span class="visually-hidden"> (unread)</span>' : '') + '</span><span class="row-body">' + esc(r[4]) + '</span><span class="row-time">' + esc(r[5]) + '</span></span>' +
+              '<span class="row-flag" aria-hidden="true"><span class="unread-dot"></span></span></button>';
+          }).join('') + '</section>'
+        )).join('');
+      }
+
+      panel.addEventListener('click', (e) => {
+        const row = e.target.closest('.row');
+        if (!row) return;
+        read.add(row.dataset.id);
+        persist();
+        if (row.dataset.href) { location.href = row.dataset.href; return; }
+        const title = row.querySelector('.row-title').firstChild.textContent;
+        render();
+        showToast('Opening ' + title);
+        const next = panel.querySelector('[data-id="' + row.dataset.id + '"]');
+        if (next) next.focus();
+      });
+
+      markAll.addEventListener('click', () => {
+        DATA[current].flatMap((g) => g.rows).forEach((r) => read.add(r[0]));
+        persist();
+        render();
+        showToast('All marked as read');
+      });
+
+      const tabs = Array.from(document.querySelectorAll('.tab'));
+      function selectTab(tab, focus) {
+        current = tab.dataset.tab;
+        tabs.forEach((t) => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+        render();
+        if (focus) tab.focus();
+      }
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => selectTab(tab, false));
+        tab.addEventListener('keydown', (e) => {
+          const i = tabs.indexOf(tab);
+          const move = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+          if (move === undefined) return;
+          e.preventDefault();
+          selectTab(tabs[(move + tabs.length) % tabs.length], true);
+        });
+      });
+
+      document.querySelector('#backButton').addEventListener('click', () => {
+        if (history.length > 1 && document.referrer) history.back(); else location.href = 'index.html';
+      });
+
+      const startTab = new URLSearchParams(location.search).get('tab');
+      selectTab(tabs.find((t) => t.dataset.tab === startTab) || tabs[0], false);
+    })();
+  </script>
+</body>
+</html>

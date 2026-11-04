@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Manage access | Ovie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6b4062;
+      --primary-dark: #54324d;
+      --primary-soft: #f5edf3;
+      --ink: #111111;
+      --copy: #333a3d;
+      --muted: #5f6368;
+      --surface: #ffffff;
+      --bg-canvas: #f6f6f6;
+      --bg-subtle: #f6f6f6;
+      --prototype-backdrop: #e3e3e3;
+      --border: #d8dddb;
+      --border-soft: #ecefed;
+      --warning-ink: #634106;
+      --danger: #a63a33;
+      --danger-soft: #ffeded;
+      --radius: 12px;
+      --focus-ring: 0 0 0 3px rgba(107, 64, 98, .24);
+      --motion-duration-press: 160ms;
+      --motion-duration-standard: 200ms;
+      --motion-duration-overlay: 260ms;
+      --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --motion-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+      --z-sticky: 100;
+      --z-sheet: 800;
+      --z-toast: 900;
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: light; scrollbar-gutter: stable; scrollbar-width: none; }
+    html::-webkit-scrollbar { display: none; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--prototype-backdrop); color: var(--ink);
+      font-family: Figtree, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 14px; line-height: 20px; -webkit-font-smoothing: antialiased;
+    }
+    button, select { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    h1, h2, p { margin: 0; }
+    [hidden] { display: none !important; }
+    svg { display: block; flex: 0 0 auto; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    :focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+    .app-shell { position: relative; width: min(100%, 480px); min-height: 100vh; margin: 0 auto; background: var(--bg-canvas); }
+
+    .top-shell { position: sticky; top: 0; z-index: var(--z-sticky); background: var(--surface); border-bottom: 1px solid var(--border-soft); }
+    .status-bar { min-height: 36px; padding: 8px 18px 2px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; line-height: 16px; font-weight: 600; }
+    .status-icons { display: flex; align-items: center; gap: 5px; color: var(--muted); }
+    .app-header { min-height: 56px; padding: 8px 16px 12px; display: flex; align-items: center; gap: 4px; }
+    .app-header.has-back { padding-left: 8px; }
+    .title-wrap { flex: 1; min-width: 0; }
+    .app-title { font-size: 18px; line-height: 24px; font-weight: 600; overflow-wrap: anywhere; }
+    .app-sub { margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .icon-button {
+      width: 44px; height: 44px; padding: 0; display: grid; place-items: center; border: 0; border-radius: var(--radius);
+      background: transparent; color: var(--ink);
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease;
+    }
+    .icon-button:active { transform: scale(.97); }
+    .icon-button.muted { color: var(--muted); }
+
+    main { display: flex; flex-direction: column; gap: 24px; padding: 18px 16px 40px; }
+    .top-action { min-width: 44px; height: 44px; margin-right: -8px; padding: 0 8px; border: 0; border-radius: var(--radius); background: transparent; color: var(--primary); font-weight: 600; transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease; }
+    .top-action:active:not(:disabled) { transform: scale(.97); }
+    .top-action:disabled { color: var(--muted); cursor: not-allowed; }
+    #listView { display: flex; flex-direction: column; gap: 24px; }
+    .panel-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .panel-summary { color: var(--muted); }
+
+    #activeList { display: flex; flex-direction: column; gap: 18px; }
+    .group { display: flex; flex-direction: column; gap: 8px; }
+    .group-heading { padding: 0 4px; color: var(--muted); font-size: 11px; line-height: 16px; font-weight: 600; text-transform: uppercase; }
+    .card-head { padding: 16px 16px 8px; }
+    .section-heading { font-size: 18px; line-height: 24px; font-weight: 600; }
+    .row {
+      width: 100%; min-height: 64px; padding: 12px 8px 12px 12px; border: 0; border-radius: var(--radius); background: var(--surface); cursor: pointer;
+      display: flex; align-items: flex-start; gap: 10px; text-align: left; color: inherit;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease;
+    }
+    .row-icon { width: 40px; height: 40px; border-radius: var(--radius); display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); }
+    .row-copy { flex: 1; min-width: 0; }
+    .row-title { display: block; font-weight: 600; overflow-wrap: anywhere; }
+    .row-doc { display: block; margin-top: 2px; color: var(--copy); }
+    .row-icon { align-self: flex-start; }
+    .row-chev { width: 28px; height: 20px; flex: 0 0 auto; display: grid; place-items: center; color: var(--muted); }
+    .row-meta + .row-meta { margin-top: 0; }
+    .row-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .expiry-pill { display: block; width: fit-content; margin-top: 6px; padding: 2px 7px; border-radius: 999px; background: var(--bg-subtle); color: var(--copy); font-size: 11px; line-height: 16px; font-weight: 600; }
+    .expiry-pill.soon { background: #fff5df; color: var(--warning-ink); }
+    .row { position: relative; }
+    .row-hit { position: absolute; inset: 0; z-index: 1; border: 0; border-radius: var(--radius); background: transparent; }
+    .row > :not(.row-hit) { position: relative; pointer-events: none; }
+    .row .eye-btn { pointer-events: auto; z-index: 2; }
+    .row:has(.row-hit:active) { transform: scale(.97); }
+    .row-holder { display: block; margin-top: 4px; color: var(--muted); }
+    .row-number { display: flex; align-items: center; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
+    .eye-btn { width: 44px; height: 44px; margin: -12px 0 -12px -4px; padding: 0; display: grid; place-items: center; border: 0; border-radius: var(--radius); background: transparent; color: var(--muted); transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease; }
+    .eye-btn:active { transform: scale(.96); }
+    .row-actions { display: flex; flex: 0 0 auto; margin: -12px 0 -12px; }
+    .row.detail-row > :not(.row-hit) { pointer-events: auto; }
+    .act-btn { width: 44px; height: 44px; padding: 0; display: grid; place-items: center; border: 0; border-radius: var(--radius); background: transparent; color: var(--muted); transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease; }
+    .act-btn:active { transform: scale(.96); }
+    .act-btn.danger { color: var(--danger); }
+    .empty { padding: 16px; border-radius: var(--radius); background: var(--surface); color: var(--muted); }
+    .empty strong { display: block; color: var(--ink); font-weight: 600; }
+
+    /* sheets */
+    .sheet {
+      position: fixed; z-index: var(--z-sheet); inset: auto auto 0 50%; width: min(100%, 480px); max-width: none; max-height: 86dvh;
+      margin: 0; padding: 0; overflow: auto; border: 0; border-radius: var(--radius) var(--radius) 0 0; background: var(--surface); color: var(--ink);
+      box-shadow: 0 6px 16px rgba(17, 17, 17, .12);
+      transform: translate(-50%, 100%); transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
+    }
+    .sheet[open].is-visible { transform: translate(-50%, 0); }
+    .sheet { scrollbar-width: none; }
+    .sheet::-webkit-scrollbar { display: none; }
+    .sheet::backdrop { background: rgba(17, 24, 23, .58); opacity: 0; transition: opacity var(--motion-duration-overlay) var(--motion-ease-out); }
+    .sheet.is-visible::backdrop { opacity: 1; }
+    .sheet-inner { padding: 8px 16px calc(18px + env(safe-area-inset-bottom)); }
+    .sheet-handle { width: 36px; height: 4px; margin: 0 auto 4px; border-radius: 999px; background: var(--border); }
+    .sheet-header { display: flex; align-items: center; gap: 8px; }
+    .sheet-header h2 { flex: 1; min-width: 0; font-size: 18px; line-height: 24px; font-weight: 600; overflow-wrap: anywhere; }
+    .sheet-sub { margin-top: -4px; color: var(--muted); }
+    .sheet-copy { margin-top: 8px; color: var(--copy); }
+
+
+    .btn {
+      width: 100%; min-height: 44px; margin-top: 12px; padding: 0 16px; border: 1px solid transparent; border-radius: var(--radius); font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger-soft { background: var(--danger-soft); color: var(--danger); }
+    .btn-secondary { background: transparent; color: var(--primary); }
+
+    .toast {
+      position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: var(--z-toast); max-width: min(calc(100% - 32px), 440px); padding: 12px 16px;
+      border-radius: var(--radius); background: var(--ink); color: #fff; font-weight: 600;
+      opacity: 0; transform: translate(-50%, 8px); pointer-events: none;
+      transition: opacity var(--motion-duration-standard) var(--motion-ease-out), transform var(--motion-duration-standard) var(--motion-ease-out);
+    }
+    .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+
+    /* bottom navigation (shared with Home and Files) */
+    .bottom-bar { position: fixed; z-index: 400; left: 50%; bottom: max(8px, env(safe-area-inset-bottom)); width: min(calc(100% - 24px), 456px); display: flex; align-items: flex-end; gap: 12px; transform: translateX(-50%); pointer-events: none; }
+    .bottom-bar > * { pointer-events: auto; }
+    .bottom-nav { flex: 1 1 auto; min-width: 0; min-height: 72px; padding: 6px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; border: 1px solid var(--border-soft); border-radius: 999px; background: var(--surface); box-shadow: 0 4px 8px rgba(17, 17, 17, .10); }
+    .nav-link { min-width: 0; min-height: 58px; padding: 5px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-size: 11px; line-height: 16px; font-weight: 600; text-decoration: none; transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease; }
+    .nav-link:active { transform: scale(.97); }
+    .nav-link[aria-current="page"] { background: var(--primary-soft); color: var(--primary); }
+    .nav-icon { width: 32px; height: 28px; display: grid; place-items: center; border-radius: 999px; }
+    .fab-stack { order: 2; padding-bottom: 8px; }
+    .ask-fab { position: relative; width: 56px; height: 56px; display: grid; place-items: center; overflow: hidden; border-radius: 999px; color: #fff; text-decoration: none; background: linear-gradient(90deg, #bd4ba5 0%, #5c2e8b 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 4px 8px rgba(84, 50, 77, .28); isolation: isolate; transition: transform var(--motion-duration-press) var(--motion-ease-out); }
+    .ask-fab::before { position: absolute; inset: 0; z-index: -1; content: ""; background: rgba(255, 255, 255, .10); opacity: 0; transition: opacity var(--motion-duration-press) ease; }
+    .ask-fab:active { transform: scale(.96); }
+    .ovie-assistant-mark { width: 28px; height: 28px; display: block; overflow: visible; }
+    .action-list { margin-top: 4px; display: grid; }
+    .action-row { width: 100%; min-height: 60px; padding: 8px 4px; display: flex; align-items: center; gap: 12px; border: 0; border-top: 1px solid var(--border-soft); background: transparent; color: var(--ink); text-align: left; text-decoration: none; transition: background-color var(--motion-duration-press) var(--motion-ease-out); }
+    .action-row:first-child { border-top: 0; }
+    .action-row:active { background: var(--bg-subtle); }
+    .action-icon { width: 40px; height: 40px; border-radius: var(--radius); display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); }
+    .action-label { font-weight: 600; }
+    .action-row.danger .action-icon { background: var(--danger-soft); color: var(--danger); }
+    .action-row.danger .action-label { color: var(--danger); }
+    .radio-list { margin: 8px 0 0; padding: 0; min-width: 0; border: 0; }
+    .radio-row { min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--border-soft); cursor: pointer; }
+    .radio-row:first-child { border-top: 0; }
+    .radio-row input { width: 20px; height: 20px; margin: 0; accent-color: var(--primary); flex: 0 0 auto; }
+    .radio-row:has(input:focus-visible) { border-radius: var(--radius); box-shadow: var(--focus-ring); }
+    main { padding-bottom: calc(72px + 90px + env(safe-area-inset-bottom)); }
+    .toast { bottom: calc(72px + 18px + env(safe-area-inset-bottom)); }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-link:hover { background: var(--bg-subtle); color: var(--primary); }
+      .nav-link[aria-current="page"]:hover { background: var(--primary-soft); }
+      .ask-fab:hover::before { opacity: 1; }
+      .action-row:hover { background: var(--bg-subtle); }
+      .row:has(.row-hit:hover) { background: var(--bg-subtle); }
+      .eye-btn:hover { background: var(--primary-soft); }
+      .act-btn:hover { background: var(--primary-soft); }
+      .act-btn.danger:hover { background: var(--danger-soft); }
+      .icon-button:hover { background: var(--primary-soft); }
+      .top-action:hover:not(:disabled) { background: var(--primary-soft); }
+      .btn-danger:hover { filter: brightness(.9); }
+      .btn-danger-soft:hover { background: #ffdede; }
+      .btn-secondary:hover { background: var(--primary-soft); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .icon-button:active, .row:has(.row-hit:active), .eye-btn:active, .act-btn:active, .btn:active, .top-action:active, .nav-link:active, .ask-fab:active { transform: none; }
+      .sheet, .sheet[open].is-visible { transform: translate(-50%, 0); opacity: 0; transition: opacity 125ms ease; }
+      .sheet[open].is-visible { opacity: 1; }
+      .sheet::backdrop { transition: opacity 125ms ease; }
+      .toast { transform: translate(-50%, 0); transition: opacity 125ms ease; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-shell">
+      <div class="status-bar" aria-hidden="true">
+        <span>9:41</span>
+        <span class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M1 9h2v3H1zm4-3h2v6H5zm4-3h2v9H9zm4-3h2v12h-2z"/></svg>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5A9.2 9.2 0 0 1 15 4.5M4.7 7.2a5.4 5.4 0 0 1 7.6 0M7.2 9.7a1.8 1.8 0 0 1 2.6 0"/></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x=".5" y=".5" width="20" height="11" rx="3" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/></svg>
+        </span>
+      </div>
+      <div class="app-header">
+        <button class="icon-button" id="backButton" type="button" aria-label="Back to Manage access" hidden><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button>
+        <div class="title-wrap">
+          <h1 class="app-title" id="pageTitle" tabindex="-1">Manage access</h1>
+          <p class="app-sub" id="pageSub" hidden></p>
+        </div>
+        <button class="top-action" id="stopAll" type="button">Stop all sharing</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="listView">
+        <div class="panel-tools">
+          <p class="panel-summary" id="summary" role="status"></p>
+        </div>
+        <section class="card" id="activeCard" aria-label="Active shares">
+          <div id="activeList"></div>
+        </section>
+      </div>
+      <div id="detailView" hidden>
+        <section class="group" aria-labelledby="dHeading">
+          <h2 class="group-heading" id="dHeading">Shared with</h2>
+          <div class="row detail-row">
+            <span class="row-icon" id="dIcon" aria-hidden="true"></span>
+            <span class="row-copy">
+              <span class="row-title" id="dWith"></span>
+              <span class="row-holder" id="dDate"></span>
+              <span class="expiry-pill" id="dExp"></span>
+            </span>
+            <span class="row-actions">
+              <button class="act-btn" type="button" id="changeExpiry" aria-haspopup="dialog" aria-label="Change expiry" title="Change expiry"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><circle cx="16" cy="16" r="6"/><path d="M16 14v2l1 1"/></svg></button>
+              <button class="act-btn danger" type="button" id="revokeBtn" aria-haspopup="dialog" aria-label="Revoke access" title="Revoke access"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></button>
+            </span>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="bottom-bar">
+    <nav class="bottom-nav" aria-label="Primary navigation">
+      <a class="nav-link" href="index.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span>Home</span></a>
+      <a class="nav-link" href="insights_upd.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg></span><span>Insights</span></a>
+      <a class="nav-link" href="Files_upd.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span>Files</span></a>
+      <button class="nav-link" type="button" id="moreMenu" aria-haspopup="dialog" aria-controls="moreSheet"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></span><span>More</span></button>
+    </nav>
+    <div class="fab-stack"><a class="ask-fab" href="index.html?ask=1" aria-label="Ask Ovie"><svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg></a></div>
+  </div>
+
+  <dialog class="sheet" id="moreSheet" aria-labelledby="moreTitle">
+    <div class="sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-header">
+        <h2 id="moreTitle">More</h2>
+        <button class="icon-button muted" type="button" data-close aria-label="Close more options"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <div class="action-list">
+        <button class="action-row" type="button" data-close aria-current="page"><span class="action-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 8a1 1 0 0 1-1-1V2a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8z"/><path d="M20 8v12a2 2 0 0 1-2 2h-4.182"/><path d="m3.305 19.53.923-.382"/><path d="M4 10.592V4a2 2 0 0 1 2-2h8"/><path d="m4.228 16.852-.924-.383"/><path d="m5.852 15.228-.383-.923"/><path d="m5.852 20.772-.383.924"/><path d="m8.148 15.228.383-.923"/><path d="m8.53 21.696-.382-.924"/><path d="m9.773 16.852.922-.383"/><path d="m9.773 19.148.922.383"/><circle cx="7" cy="18" r="3"/></svg></span><span class="action-label">Manage Shared Documents</span></button>
+        <a class="action-row" href="ovie_upload_quote_comparison.html"><span class="action-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 13H7"/><path d="M19 9h-4"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><rect x="15" y="5" width="4" height="12" rx="1"/><rect x="7" y="8" width="4" height="9" rx="1"/></svg></span><span class="action-label">Compare Quotes</span></a>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="expirySheet" aria-labelledby="expiryTitle">
+    <div class="sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-header">
+        <h2 id="expiryTitle">Change expiry</h2>
+        <button class="icon-button muted" type="button" data-close aria-label="Close change expiry"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <p class="sheet-sub" id="expirySub"></p>
+      <fieldset class="radio-list" aria-labelledby="expiryTitle">
+        <label class="radio-row"><span>24 hours from now</span><input type="radio" name="expiry" value="1"></label>
+        <label class="radio-row"><span>7 days from now</span><input type="radio" name="expiry" value="7"></label>
+        <label class="radio-row"><span>1 month from now</span><input type="radio" name="expiry" value="30"></label>
+      </fieldset>
+    </div>
+  </dialog>
+
+  <dialog class="sheet" id="confirmSheet" aria-labelledby="confirmTitle">
+    <div class="sheet-inner">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-header">
+        <h2 id="confirmTitle"></h2>
+        <button class="icon-button muted" type="button" data-close aria-label="Close"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg></button>
+      </div>
+      <p class="sheet-copy" id="confirmBody"></p>
+      <button class="btn btn-danger" type="button" id="confirmGo"></button>
+      <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const $ = (s) => document.querySelector(s);
+      const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      const svg = (p, n = 20) => '<svg width="' + n + '" height="' + n + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+      const P = {
+        file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+        folder: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+        mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+        link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+        chevR: '<path d="m9 18 6-6-6-6"/>',
+        chevD: '<path d="m6 9 6 6 6-6"/>',
+        eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+        eyeOff: '<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>'
+      };
+
+      const NOW = new Date(2026, 10, 3);
+      const DAY = 86400000;
+      const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const at = (m, d) => new Date(2026, m, d);
+      const BOTH = 'Policy docs + Policy summary';
+      const SUMMARY = 'Policy summary only';
+      const FIELDS = [
+        ['Policyholder name', 'Jordan Rivera', 'J••• R•••'],
+        ['Mailing address', '418 Elm St, Austin, TX', '•••• •••, ••••••, ••'],
+        ['Policy number', 'PU202610438389', '••8389'],
+        ['Date of birth', 'Mar 14, 1986', '••/••/••••'],
+        ['Phone and email', '(512) 555-0142 · jordan@example.com', '(•••) •••-•••• · j•••@•••.com'],
+        ['Premium amount', '$1,284', '$•,•••']
+      ];
+
+      /* status: active | expired | revoked. hidden: which FIELDS are masked (summary-only shares). */
+      const shares = [
+        { id: 's1', to: 'maya.patel@gmail.com', type: 'mail', doc: 'Citizens personal umbrella policy', num: 'PU••••8389', full: 'PU202610438389', holder: 'Rishi Verma', scope: BOTH, shared: at(10, 1), exp: at(11, 1), status: 'active' },
+        { id: 's2', to: 'Secure link', type: 'link', doc: 'Hanover personal auto policy', num: 'PA••••8340', full: 'PA202610448340', holder: 'Rishi Verma', scope: SUMMARY, hidden: [1, 1, 1, 1, 1, 1], shared: at(9, 30), exp: at(10, 6), status: 'active' },
+        { id: 's3', to: 'daniel.k@brightagency.com', type: 'mail', doc: 'Citizens homeowners policy', num: 'HO••••8341', full: 'HO202610458341', holder: 'Rishi Verma', scope: SUMMARY, hidden: [1, 0, 1, 1, 0, 1], shared: at(9, 28), exp: at(10, 4), status: 'active' },
+        { id: 's4', to: 'priya.s@example.com', type: 'mail', doc: 'Citizens personal umbrella policy', num: 'PU••••8389', scope: BOTH, shared: at(9, 20), exp: at(10, 20), status: 'revoked', ended: at(9, 25) },
+        { id: 's5', to: 'Secure link', type: 'link', doc: 'Citizens homeowners policy', num: 'HO••••8341', scope: SUMMARY, hidden: [1, 1, 1, 1, 1, 1], shared: at(9, 13), exp: at(9, 20), status: 'expired' }
+      ];
+      const byId = (id) => shares.find((s) => s.id === id);
+      const daysLeft = (s) => Math.ceil((s.exp - NOW) / DAY);
+
+      const activeList = $('#activeList');
+      const summary = $('#summary'), stopAll = $('#stopAll'), toast = $('#toast');
+      let toastTimer;
+      const showToast = (m) => {
+        toast.textContent = m;
+        toast.classList.add('is-visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 2400);
+      };
+
+      const how = (s) => (s.type === 'link' ? 'Secure link' : 'Email');
+      const withWho = (s) => (s.type === 'link' ? 'Anyone with the link' : s.to);
+      const revealed = new Set();
+      function rowHtml(s) {
+        const soon = daysLeft(s) <= 1;
+        const exp = soon ? 'Expires tomorrow' : 'Expires ' + fmt(s.exp);
+        const shown = revealed.has(s.id);
+        return '<div class="row" data-id="' + s.id + '">' +
+          '<button class="row-hit" type="button" aria-label="' + esc(s.doc + ', ' + s.scope + ', ' + exp) + '"></button>' +
+          '<span class="row-icon" aria-hidden="true">' + svg(s.scope === SUMMARY ? P.file : P.folder) + '</span>' +
+          '<span class="row-copy"><span class="row-title">' + esc(s.doc) + '</span><span class="row-holder">' + esc(s.holder) + '</span>' +
+          '<span class="row-number"><span class="num-text">' + esc(shown ? s.full : s.num) + '</span>' +
+          '<button class="eye-btn" type="button" data-eye="' + s.id + '" aria-label="' + (shown ? 'Hide' : 'Show') + ' policy number">' + svg(shown ? P.eye : P.eyeOff, 18) + '</button></span>' +
+          '<span class="expiry-pill' + (soon ? ' soon' : '') + '">' + exp + '</span></span>' +
+          '<span class="row-chev" aria-hidden="true">' + svg(P.chevR) + '</span></div>';
+      }
+      function render() {
+        const act = shares.filter((s) => s.status === 'active');
+        summary.textContent = act.length ? act.length + (act.length === 1 ? ' active share' : ' active shares') : 'No active shares';
+        stopAll.disabled = !act.length;
+        const groups = [BOTH, SUMMARY].map((scope) => [scope, act.filter((s) => s.scope === scope)]).filter((g) => g[1].length);
+        activeList.innerHTML = act.length ? groups.map((g, i) => '<section class="group" aria-labelledby="grp' + i + '"><h2 class="group-heading" id="grp' + i + '">' + (g[0] === BOTH ? 'Shared - Policy & Summary' : 'Shared - Policy Summary Only') + '</h2>' + g[1].map(rowHtml).join('') + '</section>').join('') :
+          '<p class="empty"><strong>No active shares</strong>When you share a policy, it appears here so you can end access at any time.</p>';
+      }
+
+      /* sheets */
+      const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const dur = () => (reduce() ? 125 : 260) + 34;
+      function openSheet(d) {
+        d.classList.remove('is-visible');
+        d.showModal();
+        requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('is-visible')));
+      }
+      function closeSheet(d, cb) {
+        if (!d.open) { if (cb) cb(); return; }
+        d.classList.remove('is-visible');
+        setTimeout(() => { d.close(); if (cb) cb(); }, dur());
+      }
+      let returnFocus = null;
+      const restoreFocus = () => {
+        const el = returnFocus && document.contains(returnFocus) ? returnFocus : (returnFocus && returnFocus.dataset && document.querySelector('.row[data-id="' + returnFocus.dataset.id + '"] .row-hit'));
+        if (el) el.focus({ preventScroll: true });
+      };
+      document.querySelectorAll('dialog.sheet').forEach((d) => {
+        d.addEventListener('cancel', (e) => { e.preventDefault(); closeSheet(d, restoreFocus); });
+        d.addEventListener('pointerdown', (e) => {
+          const b = d.getBoundingClientRect();
+          if (e.clientX < b.left || e.clientX > b.right || e.clientY < b.top || e.clientY > b.bottom) closeSheet(d, restoreFocus);
+        });
+        d.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => closeSheet(d, restoreFocus)));
+      });
+
+      /* views */
+      const expiry = $('#expirySheet');
+      const listView = $('#listView'), detailView = $('#detailView');
+      const backButton = $('#backButton'), pageTitle = $('#pageTitle'), pageSub = $('#pageSub');
+      let currentId = null;
+
+      function fillDetail(s) {
+        const soon = daysLeft(s) <= 1;
+        $('#dIcon').innerHTML = svg(s.type === 'link' ? P.link : P.mail);
+        $('#dWith').textContent = withWho(s);
+        $('#dDate').textContent = 'Shared on ' + fmt(s.shared) + ' · ' + how(s);
+        const pill = $('#dExp');
+        pill.textContent = soon ? 'Expires tomorrow' : 'Expires ' + fmt(s.exp);
+        pill.classList.toggle('soon', soon);
+      }
+      function showList(focusId) {
+        currentId = null;
+        detailView.hidden = true; listView.hidden = false;
+        backButton.hidden = true; $('.app-header').classList.remove('has-back');
+        pageTitle.textContent = 'Manage access'; pageSub.hidden = true;
+        stopAll.hidden = false;
+        document.title = 'Manage access | Ovie';
+        window.scrollTo(0, 0);
+        const el = focusId && $('.row[data-id="' + focusId + '"] .row-hit');
+        (el || pageTitle).focus({ preventScroll: true });
+      }
+      function showDetail(id) {
+        const s = byId(id);
+        if (!s || s.status !== 'active') { showList(); return; }
+        currentId = id;
+        fillDetail(s);
+        listView.hidden = true; detailView.hidden = false;
+        backButton.hidden = false; $('.app-header').classList.add('has-back');
+        pageTitle.textContent = s.doc; pageSub.textContent = s.num; pageSub.hidden = false;
+        stopAll.hidden = true;
+        document.title = s.doc + ' | Ovie';
+        window.scrollTo(0, 0);
+        pageTitle.focus({ preventScroll: true });
+      }
+      activeList.addEventListener('click', (e) => {
+        const eye = e.target.closest('.eye-btn');
+        if (eye) {
+          const id = eye.dataset.eye, s = byId(id), shown = !revealed.has(id);
+          if (shown) revealed.add(id); else revealed.delete(id);
+          eye.closest('.row-number').querySelector('.num-text').textContent = shown ? s.full : s.num;
+          eye.setAttribute('aria-label', (shown ? 'Hide' : 'Show') + ' policy number');
+          eye.innerHTML = svg(shown ? P.eye : P.eyeOff, 18);
+          return;
+        }
+        const hit = e.target.closest('.row-hit');
+        if (hit) showDetail(hit.closest('.row').dataset.id);
+      });
+      backButton.addEventListener('click', () => showList(currentId));
+
+      /* change expiry */
+      $('#changeExpiry').addEventListener('click', () => {
+        const s = byId(currentId);
+        returnFocus = $('#changeExpiry');
+        $('#expirySub').textContent = s.doc + ' · ' + s.num;
+        expiry.querySelectorAll('input').forEach((r) => { r.checked = false; });
+        openSheet(expiry);
+      });
+      expiry.addEventListener('change', (e) => {
+        const s = byId(currentId);
+        s.exp = new Date(NOW.getTime() + Number(e.target.value) * DAY);
+        render();
+        fillDetail(s);
+        closeSheet(expiry, () => { restoreFocus(); showToast('Expiry updated to ' + fmt(s.exp)); });
+      });
+      $('#revokeBtn').addEventListener('click', () => askRevoke(byId(currentId)));
+
+      /* confirmation */
+      const confirm = $('#confirmSheet');
+      let onConfirm = null;
+      function ask(title, body, label, go, origin) {
+        $('#confirmTitle').textContent = title;
+        $('#confirmBody').textContent = body;
+        $('#confirmGo').textContent = label;
+        onConfirm = go;
+        const open = () => { returnFocus = origin; openSheet(confirm); };
+        open();
+      }
+      function askRevoke(s) {
+        ask('Revoke access?', (s.type === 'link' ? 'Anyone with this secure link' : s.to) + ' will no longer be able to open ' + s.doc + '. This can’t be undone.', 'Revoke access', () => {
+          s.status = 'revoked'; s.ended = NOW;
+          render();
+          showList();
+          returnFocus = pageTitle;
+          showToast('Access revoked');
+        }, $('#revokeBtn'));
+      }
+      stopAll.addEventListener('click', () => {
+        const n = shares.filter((s) => s.status === 'active').length;
+        ask('Stop all sharing?', 'All ' + n + ' active ' + (n === 1 ? 'share' : 'shares') + ' will be revoked, and no one will be able to open what you shared. This can’t be undone.', 'Stop all sharing', () => {
+          shares.forEach((s) => { if (s.status === 'active') { s.status = 'revoked'; s.ended = NOW; } });
+          render();
+          returnFocus = pageTitle;
+          showToast('All sharing stopped');
+        }, stopAll);
+      });
+      $('#confirmGo').addEventListener('click', () => {
+        const go = onConfirm; onConfirm = null;
+        closeSheet(confirm, () => { if (go) go(); restoreFocus(); });
+      });
+
+      const more = $('#moreSheet'), moreBtn = $('#moreMenu');
+      moreBtn.addEventListener('click', () => { returnFocus = moreBtn; openSheet(more); });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
