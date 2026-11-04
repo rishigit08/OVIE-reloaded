@@ -110,7 +110,7 @@
     .eye-btn { width: 44px; height: 44px; margin: -12px 0 -12px -4px; padding: 0; display: grid; place-items: center; border: 0; border-radius: var(--radius); background: transparent; color: var(--muted); transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease; }
     .eye-btn:active { transform: scale(.96); }
     .detail-row { flex-wrap: wrap; }
-    .detail-row > .expiry-pill { flex: 0 0 auto; margin-top: 0; }
+    .detail-row .expiry-pill { margin-top: 8px; }
     .row-actions { flex: 1 0 100%; display: flex; justify-content: flex-end; gap: 4px; margin: 4px -8px -4px -12px; padding: 4px 8px 0; border-top: 1px solid var(--border-soft); }
     .row.detail-row > :not(.row-hit) { pointer-events: auto; }
     .act-btn { min-height: 44px; padding: 0 12px 0 10px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: var(--radius); background: transparent; color: var(--primary); font-weight: 600; transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease; }
@@ -250,8 +250,8 @@
             <span class="row-copy">
               <span class="row-title" id="dWith"></span>
               <span class="row-holder" id="dDate"></span>
+              <span class="expiry-pill" id="dExp"></span>
             </span>
-            <span class="expiry-pill" id="dExp"></span>
             <span class="row-actions">
               <button class="act-btn" type="button" id="changeExpiry" aria-haspopup="dialog"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><circle cx="16" cy="16" r="6"/><path d="M16 14v2l1 1"/></svg>Change expiry</button>
               <button class="act-btn danger" type="button" id="revokeBtn" aria-haspopup="dialog"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>Revoke access</button>
