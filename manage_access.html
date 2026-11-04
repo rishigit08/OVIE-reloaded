@@ -57,7 +57,9 @@
     .status-bar { min-height: 36px; padding: 8px 18px 2px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; line-height: 16px; font-weight: 600; }
     .status-icons { display: flex; align-items: center; gap: 5px; color: var(--muted); }
     .app-header { min-height: 56px; padding: 8px 16px 12px; display: flex; align-items: center; gap: 4px; }
-    .app-header.has-back { padding-left: 8px; }
+    .app-header.has-back { align-items: flex-start; padding-left: 5px; }
+    .app-header.has-back #backButton { margin-top: -10px; }
+    #backButton, #backButton:hover, #backButton:active { background: transparent; transform: none; }
     .title-wrap { flex: 1; min-width: 0; }
     .app-title { font-size: 18px; line-height: 24px; font-weight: 600; overflow-wrap: anywhere; }
     .app-sub { margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 16px; }
