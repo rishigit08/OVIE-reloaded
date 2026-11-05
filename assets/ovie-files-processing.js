@@ -58,8 +58,8 @@
     if (!card) build();
     if (card.previousElementSibling !== tabs) tabs.after(card);
     const names = s.custom, item = phase(s), time = window.OvieUploadFlow.elapsed(s);
-    const label = time < 2000 ? 'Uploading new docs' : time < 4000 ? 'Extracting data' : time < 6000 ? 'Reading info' : 'Generating insights';
-    const index = Math.min(names.length - 1, Math.floor(time / (6000 / names.length)));
+    const label = ['Uploading', 'Extracting data', 'Reading info'][Math.floor(time / 2000) % 3]; // loops while the batch is active
+    const index = Math.floor(time / (6000 / names.length)) % names.length;
     put(card.querySelector('.files-processing-label'), label);
     put(card.querySelector('.files-processing-meta'), names.length === 1 ? names[0] : `${names[index]} · ${index + 1}/${names.length}`);
     const bar = card.querySelector('.files-processing-bar'), t = `scaleX(${item.progress / 100})`;
