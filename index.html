@@ -119,7 +119,7 @@
 
     .app-shell {
       position: relative;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       min-height: 100vh;
       margin: 0 auto;
       overflow: hidden;
@@ -202,30 +202,24 @@
       background: var(--surface);
     }
 
-    /* Ask Mosey widget: top-of-Home entry point; opens the shared Ask sheet. No motion beyond the shared hover colour. */
-    .ask-widget {
-      width: 100%;
-      min-height: 72px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border: 0;
-      border-radius: var(--radius);
-      background: var(--surface);
-      color: var(--ink);
-      font: inherit;
-      text-align: left;
-      cursor: pointer;
-    }
-    .ask-widget-icon { width: 40px; height: 40px; flex: 0 0 auto; display: grid; place-items: center; border-radius: var(--radius); background: var(--primary-soft); color: var(--primary); }
-    .ask-widget-icon .ovie-assistant-mark { width: 24px; height: 24px; }
-    .ask-widget-copy { min-width: 0; flex: 1 1 auto; display: flex; flex-direction: column; }
-    .ask-widget-title { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--ink); }
-    .ask-widget-prompt { font-size: 14px; line-height: 20px; color: var(--muted); }
-    .ask-widget-action { width: 44px; height: 44px; flex: 0 0 auto; display: grid; place-items: center; margin: -2px -8px -2px 0; border-radius: var(--radius); background: var(--bg-subtle); color: var(--muted); }
+    /* Ask Mosey widget: greeting card at the top of Home; chips and the input open the shared Ask sheet. */
+    .ask-widget { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+    .ask-widget-greeting { display: flex; align-items: flex-start; gap: 12px; }
+    .ask-widget-avatar { width: 44px; height: 44px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(90deg, var(--ai-gradient-start) 0%, var(--ai-gradient-end) 100%); color: var(--surface); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22); }
+    .ask-widget-avatar .ovie-assistant-mark { width: 28px; height: 28px; }
+    .ask-widget-bubble { position: relative; margin: 0; padding: 10px 14px; border-radius: 16px; background: var(--primary-soft); color: var(--ink); font-size: 14px; line-height: 20px; }
+    .ask-widget-bubble::before { content: ""; position: absolute; left: -5px; top: 16px; width: 12px; height: 12px; background: var(--primary-soft); transform: rotate(45deg); border-radius: 2px; }
+    .ask-widget-bubble strong { font-weight: 600; }
+    .ask-widget-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ask-widget-chip { min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: var(--primary-soft); color: var(--primary); font: inherit; font-size: 14px; line-height: 20px; font-weight: 600; cursor: pointer; }
+    .ask-widget-form { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 4px 4px 4px 16px; border: 1px solid transparent; border-radius: 999px; background: var(--bg-subtle); }
+    .ask-widget-form:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(107, 64, 98, .24); }
+    .ask-widget-input { min-width: 0; flex: 1; padding: 8px 0; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 14px; line-height: 20px; }
+    .ask-widget-input::placeholder { color: var(--muted); opacity: 1; }
+    .ask-widget-send { width: 40px; height: 40px; flex: 0 0 auto; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--primary); color: #fff; cursor: pointer; }
     @media (hover: hover) and (pointer: fine) {
-      .ask-widget:hover .ask-widget-action { background: var(--primary-soft); }
+      .ask-widget-chip:hover { background: #ebdde7; }
+      .ask-widget-send:hover { background: var(--primary-dark); }
     }
 
     .section-heading {
@@ -356,6 +350,12 @@
     }
 
     .premium-card .card-section-head { min-height: 52px; padding: 10px 14px 0; }
+    /* Section headings sit on the canvas above their card, aligned with card content. */
+    section:has(> .section-head-out) { display: flex; flex-direction: column; gap: 8px; }
+    .section-head-out + .policy-list { padding-top: 8px; }
+    .section-head-out + .premium-card { padding-top: 12px; }
+    .section-head-out .section-heading { color: var(--muted); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0; text-transform: uppercase; }
+    .section-head-out { padding: 0 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .premium-card .section-heading { color: var(--ink); }
 
     .text-button {
@@ -475,7 +475,7 @@
       z-index: var(--z-navigation);
       left: 50%;
       bottom: max(8px, env(safe-area-inset-bottom));
-      width: min(calc(100% - 24px), 456px);
+      width: min(calc(100% - 32px), 358px);
       min-height: var(--nav-height);
       padding: 6px;
       display: grid;
@@ -493,7 +493,7 @@
       z-index: var(--z-navigation);
       left: 50%;
       bottom: max(8px, env(safe-area-inset-bottom));
-      width: min(calc(100% - 24px), 456px);
+      width: min(calc(100% - 32px), 358px);
       display: flex;
       align-items: flex-end;
       gap: 12px;
@@ -593,7 +593,7 @@
       position: fixed;
       z-index: var(--z-sheet);
       inset: 0 auto 0 50%;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       max-width: none;
       height: 100dvh;
       max-height: none;
@@ -727,7 +727,7 @@
       position: fixed;
       z-index: var(--z-sheet);
       inset: auto auto 0 50%;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       max-width: none;
       margin: 0;
       padding: 0;
@@ -774,7 +774,7 @@
       position: fixed;
       z-index: var(--z-sheet);
       inset: auto auto 0 50%;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       max-width: none;
       margin: 0;
       padding: 0;
@@ -951,7 +951,7 @@
     .ask-fab {
       position: fixed;
       z-index: var(--z-fab);
-      right: max(18px, calc((100vw - 480px) / 2 + 18px));
+      right: max(18px, calc((100vw - 390px) / 2 + 18px));
       bottom: calc(var(--nav-height) + 22px + env(safe-area-inset-bottom));
       width: 56px;
       height: 56px;
@@ -1000,7 +1000,7 @@
       position: fixed;
       z-index: var(--z-sheet);
       inset: auto auto var(--keyboard-inset, 0px) 50%;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       max-width: none;
       max-height: min(calc(var(--visual-viewport-height, 100dvh) - 12px), 560px);
       margin: 0;
@@ -1026,7 +1026,7 @@
 
     .ask-sheet.chat-view {
       inset: calc(var(--visual-viewport-top, 0px) + 52px) auto auto 50%;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       height: calc(var(--visual-viewport-height, 100dvh) - 52px);
       max-height: none;
       border-radius: var(--radius) var(--radius) 0 0;
@@ -1510,7 +1510,7 @@
       position: fixed;
       z-index: calc(var(--z-sheet) + 1);
       inset: 52px auto auto 50%;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       height: calc(100dvh - 52px);
       max-width: none;
       max-height: none;
@@ -1792,7 +1792,7 @@
 
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    @media (min-width: 481px) {
+    @media (min-width: 391px) {
       .app-shell { border-inline: 1px solid #d2d2d2; }
     }
 
@@ -1920,17 +1920,9 @@
     </header>
 
     <main>
-      <section aria-label="Ask Mosey">
-        <button class="ask-widget" id="askMoseyWidget" type="button" aria-haspopup="dialog" aria-controls="askOvieSheet" aria-label="Ask Mosey. Ask anything about your policies.">
-          <span class="ask-widget-icon" aria-hidden="true"><svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg></span>
-          <span class="ask-widget-copy" aria-hidden="true"><span class="ask-widget-title">Ask Mosey</span><span class="ask-widget-prompt">Ask anything about your policies...</span></span>
-          <span class="ask-widget-action" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></span>
-        </button>
-      </section>
-
       <section id="insights" aria-labelledby="insights-heading">
+        <div class="section-head-out"><h2 class="section-heading" id="insights-heading" tabindex="-1">Needs your attention</h2></div>
         <div class="card insight-list">
-          <div class="card-section-head"><h2 class="section-heading" id="insights-heading" tabindex="-1">Needs your attention</h2></div>
           <button class="insight status-warning" type="button" data-insight-id="home-expiry" data-insight="Austin home (Travelers): no newer policy document has been uploaded and the current policy ends in 12 days.">
             <span class="insight-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
             <span class="insight-copy"><span class="insight-title">Home policy ends in 12 days</span><span class="insight-meta">Austin home · Travelers</span></span>
@@ -1950,11 +1942,10 @@
       </section>
 
       <section id="policies" aria-labelledby="policies-heading">
-        <div class="card policy-list">
-          <div class="card-section-head">
+        <div class="section-head-out">
             <h2 class="section-heading" id="policies-heading">Your policies</h2>
-            <button class="text-button" id="togglePolicies" type="button" aria-expanded="false">See all 5</button>
           </div>
+        <div class="card policy-list">
           <div class="policy-summary-strip" aria-label="5 policies, 4 insurers, 4,860 dollars per year">
             <span class="policy-summary-stat"><span class="policy-summary-value">5</span><span class="policy-summary-label">Policies</span></span>
             <span class="policy-summary-stat"><span class="policy-summary-value">4</span><span class="policy-summary-label">Insurers</span></span>
@@ -1987,7 +1978,7 @@
             </summary>
             <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Dec 5, 2025–Dec 5, 2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$830</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">Approx. $69</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded Chubb policy</span></span></div></div>
           </details>
-          <details class="policy extra-policy" hidden>
+          <details class="policy">
             <summary>
               <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
               <span class="policy-copy"><span class="policy-name">Downtown apartment</span><span class="policy-meta">Lemonade · •• 3218</span></span>
@@ -1996,7 +1987,7 @@
             </summary>
             <div class="policy-detail"><div class="policy-detail-grid"><span><span class="detail-label">Policy period</span><span class="detail-value">Nov 2, 2025–Nov 2, 2026</span></span><span><span class="detail-label">Annual premium</span><span class="detail-value">$480</span></span><span class="detail-monthly"><span class="detail-label">Monthly equivalent</span><span class="detail-value">$40</span></span><span class="detail-source"><span class="detail-label">Source</span><span class="detail-value">From uploaded Lemonade policy</span></span></div></div>
           </details>
-          <details class="policy extra-policy" hidden>
+          <details class="policy">
             <summary>
               <span class="policy-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>
               <span class="policy-copy"><span class="policy-name">2018 Toyota Camry</span><span class="policy-meta">State Farm · •• 7784</span></span>
@@ -2009,8 +2000,8 @@
       </section>
 
       <section id="expiries" aria-labelledby="expiries-heading">
+        <div class="section-head-out"><h2 class="section-heading" id="expiries-heading" tabindex="-1">Upcoming expiry dates</h2></div>
         <div class="card expiry-list">
-          <div class="card-section-head"><h2 class="section-heading" id="expiries-heading" tabindex="-1">Upcoming expiry dates</h2></div>
           <div class="expiry-row"><div class="expiry-date"><span class="expiry-month">Sep</span><span class="expiry-day">12</span></div><div class="expiry-copy"><span class="expiry-name">Austin home</span><span class="expiry-carrier">Travelers</span></div><span class="status-pill warning">12 days</span></div>
           <div class="expiry-row"><div class="expiry-date"><span class="expiry-month">Nov</span><span class="expiry-day">02</span></div><div class="expiry-copy"><span class="expiry-name">Downtown apartment</span><span class="expiry-carrier">Lemonade</span></div><span class="status-pill neutral">63 days</span></div>
           <div class="expiry-row"><div class="expiry-date"><span class="expiry-month">Dec</span><span class="expiry-day">05</span></div><div class="expiry-copy"><span class="expiry-name">Family umbrella</span><span class="expiry-carrier">Chubb</span></div><span class="status-pill neutral">96 days</span></div>
@@ -2018,10 +2009,10 @@
       </section>
 
       <section aria-labelledby="premium-heading">
-        <div class="card premium-card">
-          <div class="card-section-head">
+        <div class="section-head-out">
             <h2 class="section-heading" id="premium-heading">Your premium breakdown</h2>
           </div>
+        <div class="card premium-card">
           <div class="premium-visual">
             <div class="donut">
               <svg viewBox="0 0 164 164" role="img" aria-label="Annual premium breakdown: Auto 42 percent, Home 31 percent, Umbrella 17 percent, Renters 10 percent">
@@ -2067,7 +2058,7 @@
   <div class="bottom-bar">
     <nav class="bottom-nav" aria-label="Primary navigation">
       <a class="nav-link" href="index.html" aria-current="page"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span>Home</span></a>
-      <a class="nav-link" id="insightsNav" href="insights_upd.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg></span><span>Insights</span></a>
+      <a class="nav-link" id="insightsNav" href="Ovie_Insights_Assets_V3.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg></span><span>Insights</span></a>
       <a class="nav-link" id="myFiles" href="Files_upd.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span>Files</span></a>
       <button class="nav-button" type="button" id="moreMenu" aria-haspopup="dialog" aria-controls="moreActionsSheet"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></span><span>More</span></button>
     </nav>
@@ -2962,14 +2953,11 @@
           askOvieConversation.hidden = true;
           document.body.classList.remove('sheet-open');
           syncAskSheetToViewport();
-          if (returnFocus) (askSheetTrigger || askOvieFab).focus({ preventScroll: true });
+          if (returnFocus) askOvieFab.focus({ preventScroll: true });
         }, sheetTransitionDuration() + 34);
       }
 
-      const askMoseyWidget = document.querySelector('#askMoseyWidget');
-      let askSheetTrigger = null;
-      askOvieFab.addEventListener('click', () => { askSheetTrigger = askOvieFab; openAskSheet(); });
-      askMoseyWidget.addEventListener('click', () => { askSheetTrigger = askMoseyWidget; openAskSheet(); });
+      askOvieFab.addEventListener('click', openAskSheet);
       if (new URLSearchParams(location.search).has('ask')) openAskSheet();
       closeAskOvie.addEventListener('click', () => closeAskSheet());
       askOvieSheet.addEventListener('cancel', (event) => {
@@ -3342,15 +3330,6 @@
             segment.classList.toggle('dim', !selected);
           });
         });
-      });
-
-      const extraPolicies = Array.from(document.querySelectorAll('.extra-policy'));
-      const togglePolicies = document.querySelector('#togglePolicies');
-      togglePolicies.addEventListener('click', () => {
-        const opening = togglePolicies.getAttribute('aria-expanded') === 'false';
-        extraPolicies.forEach((policy) => { policy.hidden = !opening; });
-        togglePolicies.setAttribute('aria-expanded', String(opening));
-        togglePolicies.textContent = opening ? 'Show less' : 'See all 5';
       });
 
       document.querySelector('#notificationsButton').addEventListener('click', () => {
