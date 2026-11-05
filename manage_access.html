@@ -51,7 +51,7 @@
     .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     :focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
-    .app-shell { position: relative; width: min(100%, 480px); min-height: 100vh; margin: 0 auto; background: var(--bg-canvas); }
+    .app-shell { position: relative; width: min(100%, 390px); min-height: 100vh; margin: 0 auto; background: var(--bg-canvas); }
 
     .top-shell { position: sticky; top: 0; z-index: var(--z-sticky); background: var(--surface); border-bottom: 1px solid var(--border-soft); }
     .status-bar { min-height: 36px; padding: 8px 18px 2px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; line-height: 16px; font-weight: 600; }
@@ -121,7 +121,7 @@
 
     /* sheets */
     .sheet {
-      position: fixed; z-index: var(--z-sheet); inset: auto auto 0 50%; width: min(100%, 480px); max-width: none; max-height: 86dvh;
+      position: fixed; z-index: var(--z-sheet); inset: auto auto 0 50%; width: min(100%, 390px); max-width: none; max-height: 86dvh;
       margin: 0; padding: 0; overflow: auto; border: 0; border-radius: var(--radius) var(--radius) 0 0; background: var(--surface); color: var(--ink);
       box-shadow: 0 6px 16px rgba(17, 17, 17, .12);
       transform: translate(-50%, 100%); transition: transform var(--motion-duration-overlay) var(--motion-ease-drawer);
@@ -161,7 +161,7 @@
     .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
 
     /* bottom navigation (shared with Home and Files) */
-    .bottom-bar { position: fixed; z-index: 400; left: 50%; bottom: max(8px, env(safe-area-inset-bottom)); width: min(calc(100% - 24px), 456px); display: flex; align-items: flex-end; gap: 12px; transform: translateX(-50%); pointer-events: none; }
+    .bottom-bar { position: fixed; z-index: 400; left: 50%; bottom: max(8px, env(safe-area-inset-bottom)); width: min(calc(100% - 32px), 358px); display: flex; align-items: flex-end; gap: 12px; transform: translateX(-50%); pointer-events: none; }
     .bottom-bar > * { pointer-events: auto; }
     .bottom-nav { flex: 1 1 auto; min-width: 0; min-height: 72px; padding: 6px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; border: 1px solid var(--border-soft); border-radius: 999px; background: var(--surface); box-shadow: 0 4px 8px rgba(17, 17, 17, .10); }
     .nav-link { min-width: 0; min-height: 58px; padding: 5px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-size: 11px; line-height: 16px; font-weight: 600; text-decoration: none; transition: transform var(--motion-duration-press) var(--motion-ease-out), background-color 180ms ease; }
@@ -265,7 +265,7 @@
   <div class="bottom-bar">
     <nav class="bottom-nav" aria-label="Primary navigation">
       <a class="nav-link" href="index.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span>Home</span></a>
-      <a class="nav-link" href="insights_upd.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg></span><span>Insights</span></a>
+      <a class="nav-link" href="Ovie_Insights_Assets_V3.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg></span><span>Insights</span></a>
       <a class="nav-link" href="Files_upd.html"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span><span>Files</span></a>
       <button class="nav-link" type="button" id="moreMenu" aria-haspopup="dialog" aria-controls="moreSheet"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></span><span>More</span></button>
     </nav>

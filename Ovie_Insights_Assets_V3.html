@@ -137,7 +137,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .ct-asset span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* bottom bar: nav pill + Ask FAB */
-.bottom-bar{position:absolute;z-index:4;left:12px;right:12px;bottom:8px;display:flex;align-items:flex-end;gap:12px;pointer-events:none}
+.bottom-bar{position:absolute;z-index:4;left:16px;right:16px;bottom:8px;display:flex;align-items:flex-end;gap:12px;pointer-events:none}
 .bottom-bar>*{pointer-events:auto}
 .nav{flex:1;min-width:0;min-height:72px;padding:6px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;border:1px solid var(--line);border-radius:999px;background:var(--surface);box-shadow:0 4px 8px #1111111A}
 .nav button{min-width:0;min-height:58px;padding:5px 2px;border:0;border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:transparent;color:var(--text3);font-size:11px;line-height:16px;font-weight:600}
@@ -226,9 +226,9 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
   <section class="screen" id="asset" aria-label="Asset" hidden></section>
   <div class="bottom-bar">
     <nav class="nav" aria-label="Primary navigation">
-      <button type="button" data-toast="Home is outside this prototype"><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg></span><span>Home</span></button>
+      <button type="button" data-href="index.html"><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg></span><span>Home</span></button>
       <button type="button" aria-current="page" data-gotolist><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-sparkles"/></svg></span><span>Insights</span></button>
-      <button type="button" data-toast="Files is outside this prototype"><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg></span><span>Files</span></button>
+      <button type="button" data-href="Files_upd.html"><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg></span><span>Files</span></button>
       <button type="button" data-toast="More is outside this prototype"><span class="nav-icon"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></span><span>More</span></button>
     </nav>
     <button type="button" class="ask-fab" id="askFab" data-ask="*" aria-label="Ask Ovie"><svg class="ovie-assistant-mark" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg></button>
@@ -485,6 +485,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     t=e.target.closest('[data-detail]'); if(t){ openDetail(t.getAttribute('data-detail')); return; }
     t=e.target.closest('[data-open]'); if(t){ if($('sheet').classList.contains('on')) closeSheet(); show(t.getAttribute('data-open')); return; }
     t=e.target.closest('[data-back]'); if(t){ show(null); return; }
+    t=e.target.closest('[data-href]'); if(t){ location.href=t.getAttribute('data-href'); return; }
     t=e.target.closest('[data-gotolist]'); if(t){ if(!$('list').hidden) $('list').scrollTo({top:0}); else show(null); return; }
     t=e.target.closest('[data-close]'); if(t){ closeSheet(); return; }
     t=e.target.closest('[data-toast]'); if(t){ toast(t.getAttribute('data-toast')); }
@@ -493,5 +494,6 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
   renderList();
 })();
 </script>
+<script src="assets/ovie-more-sheet.js?v=20261105a"></script>
 </body>
 </html>

@@ -90,13 +90,13 @@
       }
 
       .app-shell {
-        width: min(100%, 480px);
+        width: min(100%, 390px);
         min-height: 100vh;
         margin: 0 auto;
         background: var(--canvas);
       }
       .workspace { width: 100%; min-width: 0; }
-      @media (min-width: 481px) { .app-shell { border-inline: 1px solid #d2d2d2; } }
+      @media (min-width: 391px) { .app-shell { border-inline: 1px solid #d2d2d2; } }
       .topbar {
         position: sticky;
         top: 0;
@@ -283,7 +283,7 @@
       z-index: 400;
       left: 50%;
       bottom: max(8px, env(safe-area-inset-bottom));
-      width: min(calc(100% - 24px), 456px);
+      width: min(calc(100% - 32px), 358px);
       min-height: var(--nav-height);
       padding: 6px;
       display: grid;
@@ -395,7 +395,7 @@
       .ask-fab {
         position: fixed;
         z-index: var(--z-fab);
-        right: max(18px, calc((100vw - 480px) / 2 + 18px));
+        right: max(18px, calc((100vw - 390px) / 2 + 18px));
         bottom: calc(var(--nav-height) + 22px + env(safe-area-inset-bottom));
         width: 56px;
         height: 56px;
@@ -444,7 +444,7 @@
       position: fixed;
       z-index: var(--z-sheet);
       inset: auto auto var(--keyboard-inset, 0px) 50%;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       max-width: none;
       max-height: min(calc(var(--visual-viewport-height, 100dvh) - 12px), 560px);
       margin: 0;
@@ -470,7 +470,7 @@
 
     .ask-sheet.chat-view {
       inset: calc(var(--visual-viewport-top, 0px) + 52px) auto auto 50%;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       height: calc(var(--visual-viewport-height, 100dvh) - 52px);
       max-height: none;
       border-radius: var(--radius) var(--radius) 0 0;
@@ -956,7 +956,7 @@
       position: fixed;
       z-index: calc(var(--z-sheet) + 1);
       inset: 52px auto auto 50%;
-      width: min(100%, 480px);
+      width: min(100%, 390px);
       height: calc(100dvh - 52px);
       max-width: none;
       max-height: none;
@@ -1563,7 +1563,9 @@
       }
 
       function renderChips() {
-        chipGroup.innerHTML = filters.map(filter => `<button type="button" role="radio" class="filter-chip" data-filter="${filter.value}" aria-label="${filter.label}, ${filterCount(filter.value)}" aria-checked="${selectedFilter === filter.value}"><span class="filter-chip-face">${filter.label}<span class="filter-chip-count">${filterCount(filter.value)}</span></span></button>`).join("");
+        chipGroup.innerHTML = filters.map(filter => filter.href
+          ? `<button type="button" role="radio" class="filter-chip" data-filter="${filter.value}" data-href="${filter.href}" aria-label="${filter.label}" aria-checked="false"><span class="filter-chip-face">${filter.label}</span></button>`
+          : `<button type="button" role="radio" class="filter-chip" data-filter="${filter.value}" aria-label="${filter.label}, ${filterCount(filter.value)}" aria-checked="${selectedFilter === filter.value}"><span class="filter-chip-face">${filter.label}<span class="filter-chip-count">${filterCount(filter.value)}</span></span></button>`).join("");
       }
 
       function render() {
@@ -1602,7 +1604,9 @@
 
       chipGroup.addEventListener("click", event => {
         const chip = event.target.closest(".filter-chip");
-        if (!chip || chip.dataset.filter === selectedFilter) return;
+        if (!chip) return;
+        if (chip.dataset.href) { location.href = chip.dataset.href; return; }
+        if (chip.dataset.filter === selectedFilter) return;
         selectedFilter = chip.dataset.filter;
         renderChips();
         render();
@@ -1612,8 +1616,11 @@
         const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
         if (!(event.key in keys)) return;
         event.preventDefault();
-        const index = filters.findIndex(filter => filter.value === selectedFilter);
-        selectedFilter = filters[(index + keys[event.key] + filters.length) % filters.length].value;
+        const current = event.target.closest(".filter-chip")?.dataset.filter || selectedFilter;
+        const index = filters.findIndex(filter => filter.value === current);
+        const next = filters[(index + keys[event.key] + filters.length) % filters.length];
+        if (next.href) { chipGroup.querySelector(`[data-filter="${next.value}"]`).focus(); return; }
+        selectedFilter = next.value;
         renderChips();
         render();
         chipGroup.querySelector(`[data-filter="${selectedFilter}"]`).focus();
@@ -2361,5 +2368,6 @@
   <script src="assets/ovie-upload-flow.js?v=20260910b"></script>
   <script src="assets/ovie-upload-options.js?v=20260911a"></script>
   <script src="assets/ovie-upload-indicator.js?v=20260911e"></script>
+<script src="assets/ovie-more-sheet.js?v=20261105a"></script>
 </body>
 </html>

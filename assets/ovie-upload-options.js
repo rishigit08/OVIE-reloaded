@@ -9,7 +9,7 @@
     const target = new URL('../ovie_upload.html', scriptUrl);
     const returnPage = location.pathname.endsWith('/ovie_upload.html')
       ? new URLSearchParams(location.search).get('return') : location.pathname.split('/').pop();
-    target.searchParams.set('return', ['ovie_homepage.html','MyFiles.html','Insights.html'].includes(returnPage) ? returnPage : 'ovie_homepage.html');
+    target.searchParams.set('return', ['ovie_homepage.html','MyFiles.html','Files_upd.html','Insights.html'].includes(returnPage) ? returnPage : 'ovie_homepage.html');
     target.hash = route;
     if (batchId) target.searchParams.set(route==='review'?'draft':'batch', batchId);
     location.href = target.href;

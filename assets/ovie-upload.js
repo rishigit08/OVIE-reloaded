@@ -33,7 +33,7 @@
   const main=document.querySelector('#main'),header=document.querySelector('#header'),nav=document.querySelector('#nav');
   let previous='files',restoreIndicator=false;
   const requestedReturn=new URLSearchParams(location.search).get('return');
-  const returnPage=['ovie_homepage.html','MyFiles.html','Insights.html'].includes(requestedReturn)?requestedReturn:'ovie_homepage.html';
+  const returnPage=['ovie_homepage.html','MyFiles.html','Files_upd.html','Insights.html'].includes(requestedReturn)?requestedReturn:'ovie_homepage.html';
   const terminal=()=>state.stage===4;
   const failure=()=>['failed','regenerationFailed','uploadFailed'].includes(state.scenario);
   const noInsights=()=>state.scenario==='unmatched'||state.scenario==='duplicate';
