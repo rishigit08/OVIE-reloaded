@@ -112,11 +112,19 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .pol>.ic{width:18px;height:18px;color:var(--text3)}
 .empty{padding:14px 0;font-size:13px;color:var(--text3)}
 
-/* coverage legend (per asset) */
-.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0 4px 12px}
-.lg{display:inline-flex;align-items:center;gap:6px;font-size:11px;line-height:16px;font-weight:600;color:var(--text3)}
-.lg .dot{width:10px;height:10px;border-radius:3px;flex:none}
-.lg.g .dot{background:var(--success)}.lg.r .dot{background:var(--mod)}.lg.o .dot{background:var(--danger)}.lg.y .dot{background:var(--yel-line)}
+/* coverage status filter: single-select chips (radio group). 44px target, 36px pill face; selection is instant. */
+.fchips{display:flex;gap:8px;margin:0 -16px 4px;padding:0 16px;overflow-x:auto;scrollbar-width:none}
+.fchips::-webkit-scrollbar{display:none}
+.fchip{flex:none;min-height:44px;padding:4px 0;border:0;background:none}
+.fchip .face{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text2);font-size:14px;line-height:20px;font-weight:600;white-space:nowrap}
+.fchip .n{font-size:14px;line-height:20px;font-weight:400;font-variant-numeric:tabular-nums;color:var(--text3)}
+.fchip[aria-checked=true] .face{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
+.fchip[aria-checked=true] .n{color:var(--primary)}
+.fchip:focus-visible{outline:0}
+.fchip:focus-visible .face{border-color:var(--primary);box-shadow:0 0 0 3px rgba(107,64,98,.24)}
+.fchip .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.fchip .dot.g{background:var(--success)}.fchip .dot.r{background:var(--mod)}.fchip .dot.o{background:var(--danger)}.fchip .dot.y{background:var(--yel-line)}
+.vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
 /* coverage tiles */
 .cov-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:4px}
@@ -414,21 +422,47 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     });
     // Coverages as colour-coded tiles; each opens the coverage bottom sheet.
     h+='</div><h2 class="sec"><span>Coverage map</span><span class="cnt">'+a.cov.length+'</span></h2>';
-    h+='<div class="legend" aria-hidden="true"><span class="lg g"><span class="dot"></span>Covered</span><span class="lg o"><span class="dot"></span>Gap</span><span class="lg y"><span class="dot"></span>Overlap</span><span class="lg r"><span class="dot"></span>Not covered</span></div>';
-    h+='<div class="cov-grid">';
-    a.cov.slice().sort(function(x,y){var o={in:0,ex:1,no:2};return o[x.s]-o[y.s]}).forEach(function(c){
-      h+=covTile(a,c,a.cov.indexOf(c));
-    });
-    h+='</div><h2 class="sec"><span>Policies included</span><span class="cnt">'+s.pols.length+'</span></h2><div class="card">';
+    h+='<div id="covchips"></div><p class="vh" id="covlive" role="status"></p><div class="cov-grid" id="covgrid"></div>';
+    h+='<h2 class="sec"><span>Policies included</span><span class="cnt">'+s.pols.length+'</span></h2><div class="card">';
     s.pols.forEach(function(p){
       var names=a.cov.filter(function(c){return c.s==='in'&&c.p.indexOf(p)>=0}).map(function(c){return c.n});
       h+='<button type="button" class="pol" data-toast="Opens '+esc(POL[p].n)+' in policy insights"><span class="tile">'+ic('i-file')+'</span><span class="meta"><b>'+POL[p].n+'</b><span class="s">'+plural(names.length,'coverage')+': '+names.slice(0,2).join(', ')+(names.length>2?' +'+(names.length-2):'')+'</span></span>'+ic('i-right')+'</button>';
     });
     $('asset').innerHTML=h+'</div></div>';
+    drawCov(a,false);
+  }
+
+  // Coverage map: status filter chips (All plus the statuses present) and the matching tiles.
+  var STFILTER=[['g','Covered'],['o','Gap'],['y','Overlap'],['r','Not covered']];
+  var covFilter='all', curAsset=null;
+  function drawCov(a,announce){
+    var tiles=a.cov.slice().sort(function(x,y){var o={in:0,ex:1,no:2};return o[x.s]-o[y.s]}).map(function(c){return {c:c,ci:a.cov.indexOf(c),st:covStatus(c)};});
+    var cnt={}; tiles.forEach(function(t){cnt[t.st]=(cnt[t.st]||0)+1;});
+    var avail=STFILTER.filter(function(f){return cnt[f[0]];});
+    if(covFilter!=='all'&&!cnt[covFilter]) covFilter='all';
+    var vis=tiles.filter(function(t){return covFilter==='all'||t.st===covFilter;});
+    var chips='';
+    // A single status needs no filter: each tile already names its status.
+    if(avail.length>1){
+      chips='<div class="fchips" role="radiogroup" aria-label="Filter coverages by status">';
+      [['all','All',tiles.length]].concat(avail.map(function(f){return [f[0],f[1],cnt[f[0]]];})).forEach(function(f){
+        var on=covFilter===f[0];
+        chips+='<button type="button" class="fchip" role="radio" aria-checked="'+on+'" tabindex="'+(on?0:-1)+'" data-cf="'+f[0]+'"><span class="face">'+(f[0]==='all'?'':'<i class="dot '+f[0]+'"></i>')+f[1]+'<span class="n">'+f[2]+'</span></span></button>';
+      });
+      chips+='</div>';
+    }
+    $('covchips').innerHTML=chips;
+    $('covgrid').innerHTML=vis.map(function(t){return covTile(a,t.c,t.ci);}).join('');
+    if(announce){ var lab=covFilter==='all'?'':' · '+STFILTER.filter(function(f){return f[0]===covFilter;})[0][1];
+      $('covlive').textContent='Showing '+vis.length+' of '+tiles.length+' coverages'+lab; }
+  }
+  function setCovFilter(v){
+    covFilter=v; drawCov(curAsset,true);
+    var on=$('covchips').querySelector('[aria-checked=true]'); if(on) on.focus({preventScroll:true});
   }
 
   function show(id){
-    if(id){ listScroll=$('list').scrollTop; renderAsset(byId(id)); $('list').hidden=true; $('asset').hidden=false; $('asset').scrollTop=0; $('askFab').setAttribute('data-ask',id+':*'); }
+    if(id){ covFilter='all'; curAsset=byId(id); listScroll=$('list').scrollTop; renderAsset(curAsset); $('list').hidden=true; $('asset').hidden=false; $('asset').scrollTop=0; $('askFab').setAttribute('data-ask',id+':*'); }
     else { $('asset').hidden=true; $('list').hidden=false; $('list').scrollTop=listScroll; $('askFab').setAttribute('data-ask','*'); }
   }
 
@@ -491,6 +525,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
   document.addEventListener('click',function(e){
     var t=e.target.closest('[data-tab]');
     if(t){ tab=t.getAttribute('data-tab'); renderList(); var f=document.getElementById('tab-'+tab); if(f) f.focus(); return; }
+    t=e.target.closest('[data-cf]'); if(t){ setCovFilter(t.getAttribute('data-cf')); return; }
     t=e.target.closest('[data-ask]'); if(t){ openSheet(t.getAttribute('data-ask')); return; }
     t=e.target.closest('[data-cov]'); if(t){ openCov(t.getAttribute('data-cov')); return; }
     t=e.target.closest('[data-detail]'); if(t){ openDetail(t.getAttribute('data-detail')); return; }
@@ -501,7 +536,16 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     t=e.target.closest('[data-close]'); if(t){ closeSheet(); return; }
     t=e.target.closest('[data-toast]'); if(t){ toast(t.getAttribute('data-toast')); }
   });
-  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&$('sheet').classList.contains('on')) closeSheet(); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&$('sheet').classList.contains('on')){ closeSheet(); return; }
+    // Radio-group keys on the filter chips: arrows move and select, Home/End jump.
+    var chip=e.target.closest&&e.target.closest('.fchip');
+    if(chip&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].indexOf(e.key)>=0){
+      var all=[].slice.call($('covchips').querySelectorAll('.fchip')), i=all.indexOf(chip);
+      i=e.key==='Home'?0:e.key==='End'?all.length-1:(i+(e.key==='ArrowLeft'||e.key==='ArrowUp'?-1:1)+all.length)%all.length;
+      e.preventDefault(); setCovFilter(all[i].getAttribute('data-cf'));
+    }
+  });
   renderList();
 })();
 </script>
