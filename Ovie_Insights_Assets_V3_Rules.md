@@ -29,7 +29,7 @@ Insights list (tabs: Assets | Watchpoints)
 │                           ├── Watchpoints section ──► Ask Ovie sheet
 │                           ├── Coverage map (tiles) ─► Coverage sheet
 │                           │                            ├── "Also covered for" row ─► Asset detail (other asset)
-│                           │                            ├── Underlying policy row ──► toast (placeholder)
+│                           │                            ├── Source policy row ──────► toast (placeholder)
 │                           │                            └── Ask Ovie about this coverage ─► Ask Ovie sheet
 │                           └── Policies included ───► toast (placeholder)
 └── Watchpoints tab ─► Watchpoint details sheet
@@ -229,7 +229,7 @@ Opens when a tile is tapped. It is a modal bottom sheet over a dark scrim, 12px 
 | 3 | Coverage header | Left: coverage name (14px semibold) and basis below it. Right: the value (14px semibold). The basis line is omitted for a Gap. |
 | 4 | **Asset details** | Label and a plum-tinted box with the tapped asset: its name, then the value and basis on one line. **The status word is not repeated here**, because the heading already states it. Not tappable, since the user is already on that asset. |
 | 5 | **Also covered for** | Label and a plum-tinted box, one tappable row per **other** asset carrying a coverage with the same name. Each row shows the asset's name, then the status word, then the value and basis. **The whole section, label included, is hidden when no other asset has the coverage.** |
-| 6 | **Underlying policy / policies** | Label and a box with one row per policy. Hidden when the coverage has no policy. |
+| 6 | **Source policy / Source policies** | Label and a box with one row per policy. Hidden when the coverage has no policy. |
 | 7 | **Ask Ovie about this coverage** | Outlined full-width action. |
 
 **Watch points are not shown in the sheet.** They live only on the asset page.
@@ -238,10 +238,10 @@ Opens when a tile is tapped. It is a modal bottom sheet over a dark scrim, 12px 
 
 | Status | Heading | Value (header) | Asset details line | Policy label |
 |---|---|---|---|---|
-| Covered | Covered | The limit | `$100K/$300K/$100K · Split limit` | "Underlying policy" |
-| Overlap | Overlap | The limit | `25 miles · Towing distance` | "Underlying policies" (both policies listed) |
-| Not covered | Not covered | "Excluded" | "Excluded" | **"From policy"**, naming the policy whose exclusion applies |
-| Gap | Gap | "Not included" | "Not included" | "Underlying policy" only if a policy is named (see 4.2), otherwise the section is hidden |
+| Covered | Covered | The limit | `$100K/$300K/$100K · Split limit` | "Source policy" |
+| Overlap | Overlap | The limit | `25 miles · Towing distance` | "Source policies" (both policies listed) |
+| Not covered | Not covered | "Excluded" | "Excluded" | "Source policy", naming the policy whose exclusion applies |
+| Gap | Gap | "Not included" | "Not included" | "Source policy" only if a policy is named (see 4.2), otherwise the section is hidden |
 
 The label is singular or plural to match the number of policies.
 
@@ -301,11 +301,11 @@ Examples are from the sample household. "Result" is what the screen does.
 | 1 | Covered by a single policy | Your car / Collision | Green tile. Sheet: Covered heading, Also covered for lists Second car and Motorcycle. |
 | 2 | Covered, shared across assets | You / Medical | Sheet lists Your spouse and Your child under Also covered for, each with its own value. |
 | 3 | Covered, unique to one asset | Your home / Dwelling · A | No Also covered for section. |
-| 4 | Overlap | Your car / Roadside help | Yellow tile. Sheet lists both policies under Underlying policies. The related Low watchpoint is on the asset page. |
-| 5 | Not covered | Your home / Flood | Orange tile, "Excluded". Sheet policy label reads "From policy". Vacation cabin also has Flood as Not covered. |
+| 4 | Overlap | Your car / Roadside help | Yellow tile. Sheet lists both policies under Source policies. The related Low watchpoint is on the asset page. |
+| 5 | Not covered | Your home / Flood | Orange tile, "Excluded". Sheet policy label reads "Source policy". Vacation cabin also has Flood as Not covered. |
 | 6 | Not covered on several assets | Flood (home and cabin) | Each sheet lists the other asset with its status word, "Not covered · Excluded". |
 | 7 | Gap, no policy | You / Short-term disability | Red tile, "Not included", no basis. Sheet has no policy section. |
-| 8 | Gap, policy named | Motorcycle / Umbrella liability | Red tile. The sheet still names the Personal umbrella under Underlying policy. The policy is not in Policies included, since it provides nothing on this asset. |
+| 8 | Gap, policy named | Motorcycle / Umbrella liability | Red tile. The sheet still names the Personal umbrella under Source policy. The policy is not in the asset page's Policies included section, since it provides nothing on this asset. |
 | 9 | Same coverage, mixed status | Umbrella liability (car Covered, motorcycle Gap) | The car's sheet lists the motorcycle as "Gap · Not included". |
 | 10 | Gap on several assets | Rental reimbursement (both cars) | Each sheet lists the other car as a Gap. |
 | 11 | Asset with no watchpoints | Your child, Scheduled jewelry, Landscaping business | Watchpoints section shows "Nothing to flag for this asset." |

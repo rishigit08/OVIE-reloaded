@@ -475,7 +475,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
       h+='</div>';
     }
     if(c.p.length){
-      h+='<p class="lbl">'+(st==='r'?'From '+(c.p.length===1?'policy':'policies'):'Underlying '+(c.p.length===1?'policy':'policies'))+'</p><div class="gbox rows">';
+      h+='<p class="lbl">Source '+(c.p.length===1?'policy':'policies')+'</p><div class="gbox rows">';
       c.p.forEach(function(id){ h+='<button type="button" class="srow" data-toast="Opens '+esc(POL[id].n)+' in policy insights"><span class="m"><b>'+POL[id].n+'</b></span>'+ic('i-right')+'</button>'; });
       h+='</div>';
     }
