@@ -134,18 +134,14 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .ctile.o{background:var(--danger-soft);border-color:#F0C9C6;box-shadow:0 0 30px rgba(166,58,51,.05)}
 .ctile.y{background:var(--yel-soft);border-color:var(--yel-line);box-shadow:0 0 30px rgba(199,170,20,.05)}
 .ct-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
-.ct-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;line-height:16px;font-weight:600}
+.ct-status{display:inline-flex;align-items:center;gap:5px;font-size:12px;line-height:16px;font-weight:600}
 .ct-status .ic{width:14px;height:14px}
 .ctile.g .ct-status{color:var(--success)}.ctile.r .ct-status{color:var(--mod)}
 .ctile.o .ct-status{color:var(--danger)}.ctile.y .ct-status{color:var(--yel-ink)}
-.ct-name{font-size:13px;line-height:18px;font-weight:600;color:var(--text)}
-.ct-val{font-size:15px;line-height:20px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.ct-name{font-size:14px;line-height:20px;font-weight:600;color:var(--text)}
+.ct-val{font-size:14px;line-height:20px;font-weight:400;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .ctile.r .ct-val{color:var(--mod)}.ctile.o .ct-val{color:var(--danger)}
-.ct-basis{font-size:11px;line-height:16px;color:var(--text3);margin-top:-2px}
-.ct-pols{display:flex;flex-direction:column;gap:2px;margin-top:auto;padding-top:4px}
-.ct-asset{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:var(--text3);min-width:0}
-.ct-asset .ic{width:14px;height:14px;color:var(--text3)}
-.ct-asset span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ct-basis{font-size:12px;line-height:16px;color:var(--text3);margin-top:-2px}
 
 /* bottom bar: nav pill + Ask FAB */
 .bottom-bar{position:absolute;z-index:4;left:16px;right:16px;bottom:8px;display:flex;align-items:flex-end;gap:12px;pointer-events:none}
@@ -173,7 +169,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .covhead{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
 .covhead .cvv{flex:1;min-width:0}
 .covhead .cvv b{display:block;font-size:14px;line-height:20px;font-weight:600}
-.covhead .cvv .b2{display:block;font-size:13px;line-height:18px;color:var(--text3);margin-top:2px}
+.covhead .cvv .b2{display:block;font-size:12px;line-height:16px;color:var(--text3);margin-top:2px}
 .covhead .cvamt{flex:none;text-align:right;font-size:14px;line-height:20px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
 .gbox{background:var(--primary-soft);border-radius:12px;padding:16px;margin-bottom:12px;color:var(--text2);font-size:14px;line-height:20px}
 .gbox .k{display:block;font-size:12px;line-height:16px;font-weight:600;color:var(--text3);margin-bottom:4px}
@@ -400,13 +396,10 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     var st=covStatus(c);
     var val=(st==='r')?'Excluded':(st==='o')?'Not included':c.v;
     var basis=(st!=='o'&&c.t)?'<span class="ct-basis">'+c.t+'</span>':'';
-    // Footer lists the policies that provide this coverage (none for a gap).
-    var foot=c.p.length?'<span class="ct-pols">'+c.p.map(function(id){return '<span class="ct-asset">'+ic('i-file')+'<span>'+POL[id].n+'</span></span>';}).join('')+'</span>':'';
     return '<button type="button" class="ctile '+st+'" data-cov="'+a.id+':'+ci+'">'
       +'<span class="ct-top"><span class="ct-status">'+ic(STICON[st])+STLABEL[st]+'</span></span>'
       +'<span class="ct-name">'+c.n+'</span>'
-      +'<span class="ct-val">'+val+'</span>'+basis
-      +foot+'</button>';
+      +'<span class="ct-val">'+val+'</span>'+basis+'</button>';
   }
 
   function renderAsset(a){

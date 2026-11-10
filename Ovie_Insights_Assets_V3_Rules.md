@@ -185,9 +185,8 @@ Below it, a summary line with the same `N watchpoints · N coverages · N polici
 | Name | The coverage name. |
 | Value | See section 5. Long values wrap and are never cut off. |
 | Basis | The coverage basis, such as "Deductible". Hidden for a Gap, which has no basis. |
-| Policies | One line per policy that provides the coverage, each with a file icon. **Hidden when the coverage has no policy**, which is the case for most Gaps. A coverage with two policies shows two lines and the tile grows to fit. |
 
-Tiles carry no "also on other assets" text. That comparison lives in the sheet.
+Tiles show no policy names and no "also on other assets" text. The policies behind a coverage and the other assets that carry it are in the coverage sheet.
 
 #### 7.2.1 Status filter chips
 
@@ -299,14 +298,14 @@ Examples are from the sample household. "Result" is what the screen does.
 
 | # | Use case | Example | Result |
 |---|---|---|---|
-| 1 | Covered by a single policy | Your car / Collision | Green tile, one policy line. Sheet: Covered heading, Also covered for lists Second car and Motorcycle. |
+| 1 | Covered by a single policy | Your car / Collision | Green tile. Sheet: Covered heading, Also covered for lists Second car and Motorcycle. |
 | 2 | Covered, shared across assets | You / Medical | Sheet lists Your spouse and Your child under Also covered for, each with its own value. |
 | 3 | Covered, unique to one asset | Your home / Dwelling · A | No Also covered for section. |
-| 4 | Overlap | Your car / Roadside help | Yellow tile with two policy lines. Sheet lists both policies. The related Low watchpoint is on the asset page. |
+| 4 | Overlap | Your car / Roadside help | Yellow tile. Sheet lists both policies under Underlying policies. The related Low watchpoint is on the asset page. |
 | 5 | Not covered | Your home / Flood | Orange tile, "Excluded". Sheet policy label reads "From policy". Vacation cabin also has Flood as Not covered. |
 | 6 | Not covered on several assets | Flood (home and cabin) | Each sheet lists the other asset with its status word, "Not covered · Excluded". |
-| 7 | Gap, no policy | You / Short-term disability | Red tile, "Not included", no basis and no policy line. Sheet has no policy section. |
-| 8 | Gap, policy named | Motorcycle / Umbrella liability | Red tile that still names the Personal umbrella. The policy is not in Policies included, since it provides nothing on this asset. |
+| 7 | Gap, no policy | You / Short-term disability | Red tile, "Not included", no basis. Sheet has no policy section. |
+| 8 | Gap, policy named | Motorcycle / Umbrella liability | Red tile. The sheet still names the Personal umbrella under Underlying policy. The policy is not in Policies included, since it provides nothing on this asset. |
 | 9 | Same coverage, mixed status | Umbrella liability (car Covered, motorcycle Gap) | The car's sheet lists the motorcycle as "Gap · Not included". |
 | 10 | Gap on several assets | Rental reimbursement (both cars) | Each sheet lists the other car as a Gap. |
 | 11 | Asset with no watchpoints | Your child, Scheduled jewelry, Landscaping business | Watchpoints section shows "Nothing to flag for this asset." |
