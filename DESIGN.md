@@ -171,7 +171,7 @@ Ovie should feel like a careful insurance guide held in one hand: calm, legible,
 - Page titles, card headings, section headings, sheet headings: 18px semibold with 24px line height.
 - Captions and compact statuses: 12px with 16px line height; use semibold when the text represents status.
 - Reserve 32px/36px semibold display text for a single high-priority value when the page genuinely needs it.
-- Use sentence case. Do not use decorative uppercase tracking.
+- Use sentence case. Do not use decorative uppercase tracking. The one exception is the canvas section label described under Cards and section headings, which is uppercase without tracking.
 - Let long names, identifiers, dates, and policy requirements wrap. Do not truncate essential content.
 - Prefer stacked label/value layouts when values can be long or unpredictable.
 
@@ -242,9 +242,9 @@ Ovie should feel like a careful insurance guide held in one hand: calm, legible,
 
 ### Cards and section headings
 
-- Put a card's heading inside the card it labels.
+- Home section headings (Needs your attention, Your policies, Upcoming expiry dates, Your premium breakdown) sit on the canvas directly above the card they label, not inside it. Set them in 12px/16px semibold uppercase `text-tertiary` with no letter-spacing, in a minimum 44px row with 16px side padding aligned to card content, and 8px above the card. A trailing text action such as “See all” stays on the same row at the right edge. This canvas-label treatment is approved for Home; elsewhere put a card's heading inside the card it labels.
 - Use 18px semibold headings. Remove routine subtext beneath headings unless it changes a decision or prevents misunderstanding.
-- Do not use a separate floating heading followed by a visually unrelated card.
+- Do not use a separate floating heading followed by a visually unrelated card; the Home canvas label above is the approved exception because it labels the card directly beneath it.
 
 ### Lists and rows
 
@@ -716,6 +716,7 @@ Every Ask Ovie surface that presents a conversation sheet reuses the behavior be
 
 - **Header:** a 44×44px Lucide Menu button opens chat history (accessible name “Chat history”, `aria-haspopup="dialog"`), followed by the 18px semibold “Ask Ovie” title, with the 44px close action at the trailing edge. While a conversation is on screen, add a 44px Lucide Message Square Plus “New chat” button immediately before the close action (`icon-default`, transparent like the close action); it clears the sheet back to the empty greeting and focuses the input, and it is hidden in the empty state. All header icon buttons (Menu, New chat, Close, and the Close in chat history) sit in 44×44px `background-subtle` containers with the shared 12px radius and a primary-soft hover, matching the top-bar utility buttons, with 8px between them. Do not place the assistant mark in this header; the mark remains on the floating button and composer entry points. Once a conversation is on screen, the header is a fixed row spanning the sheet width with a bottom divider and 16px padding on all sides, aligning its content with the 16px sheet gutter.
 - **Empty-state greeting:** while no conversation is on screen, show a centered greeting above the composer: “Hi {first name}, how can we help you?” in 18px/24px semibold `text-primary`, then, 4px below, “Ask about the policies you have uploaded.” in 14px/20px `text-tertiary`. Do not add an illustration, logo, or assistant mark. The greeting appears every time the sheet opens empty, including after an earlier conversation, and is hidden while a conversation is shown. Never leave the empty sheet blank.
+- **No-policy empty state:** when the user has no uploaded policy, replace the greeting, suggestion cards, and composer with a centered prompt (18px/24px semibold title, 14px/20px `text-tertiary` copy, a solid-plum “Upload a policy document” button). Do not show a disabled input, microphone, or send action; the composer returns once a policy exists. Keep the header and disclaimer.
 - **Suggestion cards:** below the greeting, show a single horizontally scrolling row of cards that bleeds to the sheet edges so the next card peeks in, with no visible scrollbar. Each card is 152px wide, minimum 56px tall, `background-subtle`, 12px radius, no border or shadow, with a 14px semibold `text-secondary` title and a 12px/16px `text-tertiary` descriptor. Tapping a card asks its question immediately. Keep the cards visible while the keyboard is open.
 - **Keyboard on send:** sending a question dismisses the keyboard (and the desktop keyboard preview) so the whole answer is visible; do not refocus the input afterwards. Tapping the input brings the keyboard back, and the native keyboard’s own dismissal animation is used on touch devices.
 - **Answer actions:** show only Copy, Thumbs up, and Thumbs down, in 44px targets. Do not offer Regenerate, Save, or a generic information/source button on an answer; sources are shown as citations.
@@ -747,7 +748,7 @@ Every Ask Ovie surface that presents a conversation sheet reuses the behavior be
 - Do not infer insurance coverage from conventions or from another policy.
 - Do not merge underlying-policy insights into an umbrella-policy summary.
 - Do not use shadows on static cards or strokes around every container.
-- Do not repeat headings outside the cards they label.
+- Do not repeat headings outside the cards they label (the Home canvas section label replaces the in-card heading rather than repeating it).
 - Do not use raster icons when Lucide vectors are available.
 - Do not hide essential values, statuses, or evidence gaps behind a tap.
 - Do not let sticky UI cover content or focused controls.
