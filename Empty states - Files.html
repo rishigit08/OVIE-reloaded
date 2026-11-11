@@ -67,7 +67,7 @@
   <script src="assets/ovie-upload-options.js?v=20260911a"></script>
   <script src="assets/ovie-upload-indicator.js?v=20260911e"></script>
   <script src="assets/ovie-files-processing.js?v=20261105d"></script>
-  <script src="assets/ovie-files-nav.js?v=20261105a"></script>
+  
 <!--ASKHOME-START-->
 <style id="ask-home-css">
 .ask-sheet, .policy-picker-sheet, .askhome-toast {
@@ -1807,6 +1807,7 @@ const askOvieFab = { focus: (options) => document.querySelector('.ask-fab')?.foc
 })();
 </script>
 <!--ASKHOME-END-->
+<script>document.addEventListener('click',function(e){var r=e.target.closest('[data-href="manage_access.html"]');if(r)r.dataset.href='Empty%20states%20-%20Manage%20access.html';},true);</script>
 <script src="assets/ovie-more-sheet.js?v=20261105a"></script>
 <style id="files-empty-css">
 /* Empty state: no files. The Files header, tabs, search, filter and Add button stay live; only the list is replaced. */
@@ -1818,6 +1819,16 @@ const askOvieFab = { focus: (options) => document.querySelector('.ask-fab')?.foc
 @media (hover: hover) and (pointer: fine) { @media (prefers-reduced-motion: reduce) { </style>
 <script id="files-empty-js">
 (function () {
+  /* Navigation between the empty-state pages (replaces assets/ovie-files-nav.js, which routes by the old "Insights" label). */
+  var ROUTES = { Home: 'Empty%20states%20-%20Home.html', Coverage: 'Empty%20states%20-%20Coverage.html', Insights: 'Empty%20states%20-%20Coverage.html' };
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('.mobile-nav button, .sidebar nav button, .sidebar button');
+    if (!b || b.getAttribute('aria-current') === 'page') return;
+    var t = ROUTES[b.textContent.trim()];
+    if (!t) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    location.href = t;
+  }, true);
   var COPY = {
     'files-tab-policies': ['No policies to show', 'Upload a policy document and Mosey will add it here.'],
     'files-tab-shared': ['Nothing shared with you', 'Policies and documents others share with you will appear here.'],
