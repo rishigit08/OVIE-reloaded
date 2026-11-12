@@ -49,8 +49,9 @@ Only one screen, one sheet and one toast are active at a time. Opening an asset 
 
 | Field | Meaning |
 |---|---|
-| `asset.name` | Role label: "You", "Your spouse", "Your car". Used only in the detail page title bar. |
-| `asset.d` | The asset's own name or description: "Jordan Rivera", "2022 Subaru Outback", an address. **This is the name shown in lists and sheets.** |
+| `asset.name` | Role label: "You", "Your spouse", "Your car". Shown only as the second line of the asset row in the watchpoint sheet. |
+| `asset.d` | The asset's own name or description: "Jordan Rivera", "2022 Subaru Outback", an address. **This is the name shown in lists, sheets and the asset page title.** |
+| `asset.meta` | A short list of attributes shown as one dotted line on the asset page, such as "Primary residence" or "Passenger vehicle". Illustrative in the prototype. |
 | `asset.group` | People, Home, Property, Vehicles or Business. Sets list grouping and order. |
 | `coverage.n / v / t` | Name, value (limit or deductible), and basis (for example "Split limit"). |
 | `coverage.s` | Source flag: `in` provided, `ex` explicitly excluded, `no` not included. |
@@ -157,9 +158,17 @@ The prototype defines these colours itself. See section 12.
 
 ## 7. Asset detail
 
-Title bar: back action to the list, and the asset's **role label** (`asset.name`).
+**Title bar.** A back action to the list, the **asset's own name** (`asset.d`) as the title, and the **metadata subtext** under it.
 
-Below it, a summary line with the same `N watchpoints · N coverages · N policies` format as the list row.
+- **Back arrow:** matches the other Ovie insights pages (for example `ovie_commercial_package_insights.html`): a Lucide arrow-left with a shaft, drawn 22px at 2px stroke in `#111111`, on a transparent 44px target with 12px corners. The bar has 16px side padding and an 8px gap between the arrow and the title. The arrow is centred on the title's first line, not on the title and subtext together, and the subtext lines up under the title.
+- **Title:** for example "Alex Rivera" or "142 Maple Ridge Dr, Nashville, TN". A long name wraps instead of being cut off.
+- **Metadata subtext:** the asset's attributes (`asset.meta`) as plain text separated by dots, for example "Primary residence · Owner-occupied" for a home or "Passenger vehicle · Personal use" for a car.
+  - 12px / 16px regular, in the tertiary text colour (`#5F6368`), 4px below the title. It wraps if it is long.
+  - It is information only, not tappable. The role label ("Your spouse", "Your car") is not shown.
+  - An asset with no attributes shows the title alone.
+  - It is part of the title bar, so it stays visible with the title when the bar sticks to the top.
+
+**Page body.** Starts 16px below the title bar (the Insights list keeps 24px). The first line is a summary with the same `N watchpoints · N coverages · N policies` format as the list row.
 
 ### 7.1 Watchpoints section
 
@@ -192,12 +201,13 @@ Tiles show no policy names and no "also on other assets" text. The policies behi
 
 | Rule | Behaviour |
 |---|---|
-| Options | **All** (default), then one chip for each status that has at least one tile on this asset, in the order Covered, Gap, Overlap, Not covered. A status with no tiles gets no chip. |
-| Single status | If every tile on the asset has the same status, the chip row is hidden. Each tile already names its status. Example: Your child (two Covered tiles). |
-| Chip content | A status-coloured dot (none on All), the status name, and the number of tiles. |
-| Selection | Single-select. Selecting a chip shows only the matching tiles, instantly, in the same order as the unfiltered grid. |
-| Reset | The filter returns to All each time an asset page is opened. It is not remembered per asset. |
-| Count chip | The "Coverage map" count chip keeps showing the total number of tiles. It does not change with the filter. |
+| Options | One chip for each status that has at least one tile on this asset, in the order Covered, Gap, Overlap, Not covered. A status with no tiles gets no chip. **There is no "All" chip.** |
+| Default | **Covered** is selected when an asset page opens. If the asset has no Covered tiles, the first available status is selected instead. |
+| Single status | If every tile on the asset has the same status, the chip row is hidden and all tiles (all of that status) are shown. Each tile already names its status. Example: Your child (two Covered tiles). |
+| Chip content | A status-coloured dot, the status name, and the number of tiles. |
+| Selection | Single-select, and one chip is always selected. Selecting a chip shows only the matching tiles, instantly, in the same order as the underlying list. |
+| Reset | The filter returns to Covered each time an asset page is opened. It is not remembered per asset. |
+| Count chip | The "Coverage map" count chip keeps showing the total number of tiles across all statuses. It does not change with the filter, so it can be larger than the number of tiles shown. |
 | Scrolling | The row scrolls horizontally with no visible scrollbar when the chips do not fit. |
 | Tile behaviour | Filtered tiles open the same coverage sheet. |
 | Footprint | 44px touch target with a 36px pill face. The selected chip is plum-tinted with a plum border and text. The others are white. |
@@ -317,10 +327,11 @@ Examples are from the sample household. "Result" is what the screen does.
 | 17 | Return from an asset page | Back arrow | Returns to the list at its previous scroll position. |
 | 18 | Watchpoint to asset | Watchpoint details / Asset row | Opens the asset page. |
 | 19 | Placeholder destinations | Policy rows, Home, Files, More | Show a short toast. No real navigation in the prototype. |
-| 20 | Filter by status | Your car, tap Gap | One tile left (Rental reimbursement). Chips: All 8, Covered 5, Gap 1, Overlap 1, Not covered 1. Tap All to restore the full grid. |
-| 21 | Filter hidden | Your child, Your pet, Scheduled jewelry | Only one status present, so no chip row. |
-| 22 | Fewer statuses on an asset | You (Covered and Gap only) | Chips: All 6, Covered 4, Gap 2. No Overlap or Not covered chips. |
-| 23 | Filter reset | Filter your car by Gap, go back, open You | You opens on All. |
+| 20 | Filter by status | Your car, tap Gap | The page opens on Covered (5 tiles). Tap Gap and one tile shows (Rental reimbursement). Chips: Covered 5, Gap 1, Overlap 1, Not covered 1. |
+| 21 | Filter hidden | Your child, Your pet, Scheduled jewelry | Only one status present, so no chip row. All tiles show. |
+| 22 | Fewer statuses on an asset | You (Covered and Gap only) | Chips: Covered 4, Gap 2. Opens on Covered. No Overlap or Not covered chips. |
+| 23 | Filter reset | Filter your car by Gap, go back, open You | You opens on Covered. |
+| 24 | No Covered tiles | An asset whose coverages are all Gaps | Opens on the first available status (Gap) because there is no Covered chip to select. |
 
 ### Prototype data at a glance
 
@@ -341,7 +352,7 @@ Several numbers on this screen are computed differently on purpose. They can loo
 |---|---|
 | List header "N coverages" | Provided coverages (Covered and Overlap) across all assets. |
 | Row or page summary "N coverages" | Provided coverages on that asset only. |
-| Coverage map chip | **All tiles** on the asset, including Gap and Not covered. |
+| Coverage map chip | **All tiles** on the asset, including Gap and Not covered, whichever filter is selected. |
 | "N policies" (list and page) | Distinct policies behind provided coverages. |
 | Policies included chip | Same as "N policies" for that asset. |
 | Watchpoints chip | Watchpoints on that asset. |
