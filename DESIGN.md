@@ -44,6 +44,7 @@ focus:
   ring: "0 0 0 3px rgba(107, 64, 98, 0.24)"
   border: "#6B4062"
 elevation:
+  card: "0 0 30px rgba(17, 17, 17, 0.1)"
   small: "0 2px 8px rgba(17, 17, 17, 0.07)"
   overlay: "0 6px 16px rgba(17, 17, 17, 0.12)"
   navigation: "0 4px 8px rgba(17, 17, 17, 0.10)"
@@ -190,14 +191,14 @@ Ovie should feel like a careful insurance guide held in one hand: calm, legible,
 
 - Cards, buttons, icon containers, inputs, textareas, and sheets use a 12px radius.
 - Status chips may use a full pill radius.
-- Static cards have no drop shadow and normally no stroke. Separate them from the page using surface color and spacing.
+- Every card and separate white list row in the page content area uses the card elevation `0 0 30px rgba(17, 17, 17, 0.1)` (a centered glow with no offset) and normally no stroke. Use this one value for all cards in every module; do not create per-card, per-state, or tinted variants (for example colored glows on status tiles). Inset neutral notes, rows grouped inside a card, and cards inside sheets or drawers do not take it.
 - Use subtle dividers inside list and disclosure cards; do not outline every group.
 - Use the small elevation `0 2px 8px rgba(17, 17, 17, 0.07)` only for open dropdowns, selects, and small anchored popovers.
 - Drawers, dialogs, and bottom sheets use the same overlay elevation: `0 6px 16px rgba(17, 17, 17, 0.12)`. Do not create direction-specific drawer or sheet shadows.
 - The floating bottom navigation uses `0 4px 8px rgba(17, 17, 17, 0.10)`.
 - The centered Upload action inside the bottom navigation uses its own plum elevation: `0 2px 4px rgba(84, 50, 77, 0.22)`.
 - The Ask Ovie floating action button uses its dedicated two-layer elevation: `inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 4px 8px rgba(84, 50, 77, 0.28)`.
-- The top bar, persistent chat dock, static cards, list rows, inputs, and ordinary buttons have no elevation. Focus rings are accessibility indicators and are not elevation.
+- The top bar, persistent chat dock, inputs, and ordinary buttons have no elevation. Cards and separate list rows use only the card elevation above. Focus rings are accessibility indicators and are not elevation.
 - Shadows used only to represent an operating-system keyboard or to separate a centered mobile prototype from the surrounding review canvas are preview treatments, not product elevation tokens.
 - Avoid nested cards. Use a divider, grouped rows, or an inset neutral note instead.
 
@@ -252,7 +253,7 @@ Ovie should feel like a careful insurance guide held in one hand: calm, legible,
 - A list row may include: leading icon container, primary label, secondary metadata, optional status, and a trailing chevron.
 - Carrier or source metadata sits below the primary label, not inline with it.
 - Keep row status short, explicit, and right-aligned. Never hide an unavailable status behind a tap.
-- Destination lists on the app background use separate white rows with a 12px radius, an 8px gap between rows, no static shadow, and no visible outline. Use the shared card/list padding and let row height grow when labels or identifiers wrap.
+- Destination lists on the app background use separate white rows with a 12px radius, an 8px gap between rows, the card elevation `0 0 30px rgba(17, 17, 17, 0.1)`, and no visible outline. Use the shared card/list padding and let row height grow when labels or identifiers wrap.
 - When a row has secondary actions, keep the full row as the primary destination and place a trailing Lucide Ellipsis Vertical button in its own 44×44px target. The secondary-action button must not trigger the row destination.
 - A masked policy identifier may include an adjacent 44px reveal control using Lucide Eye/Eye Off. Give the control an explicit “Show policy number” or “Hide policy number” accessible name and never reveal or hide the value when the surrounding row is selected.
 

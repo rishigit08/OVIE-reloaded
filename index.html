@@ -200,6 +200,7 @@
       overflow: hidden;
       border-radius: var(--radius);
       background: var(--surface);
+      box-shadow: 0 0 30px rgba(17, 17, 17, .1);
     }
 
     /* Ask Mosey widget: greeting card at the top of Home; chips and the input open the shared Ask sheet. */
@@ -991,6 +992,19 @@
     }
 
     .ask-fab .ovie-assistant-mark { width: 28px; height: 28px; }
+
+    /* The chat mark is the button: gradient disc with a white ring */
+    .ask-fab:has(.ask-fab-mark) {
+      box-sizing: border-box;
+      width: 58px;
+      height: 58px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: 0 4px 8px rgba(17, 17, 17, .10);
+    }
+    .ask-fab:has(.ask-fab-mark)::before { background: rgba(255, 255, 255, .10); }
+    .ask-fab .ask-fab-mark { width: 100%; height: 100%; }
 
     @media (hover: hover) and (pointer: fine) {
       .ask-fab:hover::before { opacity: 1; }
@@ -2064,7 +2078,7 @@
     </nav>
     <div class="fab-stack">
     <button class="ask-fab" id="askOvieFab" type="button" aria-label="Ask Ovie" aria-haspopup="dialog" aria-controls="askOvieSheet">
-      <svg class="ovie-assistant-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8a5 5 0 0 1 5 5v5.5a4.5 4.5 0 0 1-4.5 4.5H15l-3 2.5V19H7.5A4.5 4.5 0 0 1 3 14.5V9a5 5 0 0 1 5-5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7.55" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/><rect x="13.95" y="9.25" width="2.5" height="4.7" rx="1.25" fill="currentColor"/></svg>
+      <svg class="ovie-assistant-mark ask-fab-mark" aria-hidden="true" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="54" height="54" rx="27" fill="url(#paint0_linear_askfab)"/><path d="M10 27C10 24.7675 10.4397 22.5569 11.294 20.4944C12.1484 18.4318 13.4006 16.5578 14.9792 14.9792C16.5578 13.4006 18.4318 12.1484 20.4944 11.294C22.5569 10.4397 24.7675 10 27 10C29.2325 10 31.4431 10.4397 33.5056 11.294C35.5682 12.1484 37.4422 13.4006 39.0208 14.9792C40.5994 16.5578 41.8516 18.4318 42.706 20.4944C43.5603 22.5569 44 24.7675 44 27C44 29.2325 43.5603 31.4431 42.706 33.5056C41.8516 35.5682 40.5994 37.4422 39.0208 39.0208C37.4422 40.5994 35.5682 41.8516 33.5056 42.706C31.4431 43.5603 29.2325 44 27 44C24.7675 44 22.5569 43.5603 20.4944 42.706C18.4318 41.8516 16.5578 40.5994 14.9792 39.0208C13.4006 37.4422 12.1484 35.5682 11.294 33.5056C10.4397 31.4431 10 29.2325 10 27ZM21.1633 36.7148C23.5348 38.1396 26.3455 38.6477 29.0657 38.1435C31.7859 37.6392 34.2277 36.1574 35.931 33.9773C37.6342 31.7972 38.4811 29.0694 38.3122 26.308C38.1433 23.5466 36.9701 20.9424 35.0139 18.9861C33.0576 17.0299 30.4534 15.8567 27.692 15.6878C24.9306 15.5189 22.2028 16.3658 20.0227 18.069C17.8426 19.7723 16.3608 22.2141 15.8565 24.9343C15.3523 27.6545 15.8604 30.4652 17.2852 32.8367L16.1023 37.8977L21.1633 36.7148Z" fill="white"/><defs><linearGradient id="paint0_linear_askfab" x1="51.3" y1="3.78" x2="2.16" y2="49.14" gradientUnits="userSpaceOnUse"><stop stop-color="#92237B"/><stop offset="1" stop-color="#6B4062"/></linearGradient></defs></svg>
     </button>
     </div>
   </div>
