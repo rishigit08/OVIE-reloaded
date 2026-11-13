@@ -51,7 +51,7 @@ Only one screen, one sheet and one toast are active at a time. Opening an asset 
 |---|---|
 | `asset.name` | Role label: "You", "Your spouse", "Your car". Shown only as the second line of the asset row in the watchpoint sheet. |
 | `asset.d` | The asset's own name or description: "Jordan Rivera", "2022 Subaru Outback", an address. **This is the name shown in lists, sheets and the asset page title.** |
-| `asset.meta` | A short list of attributes shown as one dotted line on the asset page, such as "Primary residence" or "Passenger vehicle". Illustrative in the prototype. |
+| `asset.meta` | A short list of label and value pairs shown as rows of one outlined card on the asset page, such as "Primary residence" or "Passenger vehicle". Illustrative in the prototype. |
 | `asset.group` | People, Home, Property, Vehicles or Business. Sets list grouping and order. |
 | `coverage.n / v / t` | Name, value (limit or deductible), and basis (for example "Split limit"). |
 | `coverage.s` | Source flag: `in` provided, `ex` explicitly excluded, `no` not included. |
@@ -158,17 +158,22 @@ The prototype defines these colours itself. See section 12.
 
 ## 7. Asset detail
 
-**Title bar.** A back action to the list, the **asset's own name** (`asset.d`) as the title, and the **metadata subtext** under it.
+**Title bar.** A back action to the list and the **asset's own name** (`asset.d`) as the title. Nothing else.
 
-- **Back arrow:** matches the other Ovie insights pages (for example `ovie_commercial_package_insights.html`): a Lucide arrow-left with a shaft, drawn 22px at 2px stroke in `#111111`, on a transparent 44px target with 12px corners. The bar has 16px side padding and an 8px gap between the arrow and the title. The arrow is centred on the title's first line, not on the title and subtext together, and the subtext lines up under the title.
+- **Back arrow:** matches the other Ovie insights pages (for example `ovie_commercial_package_insights.html`): a Lucide arrow-left with a shaft, drawn 22px at 2px stroke in `#111111`, on a transparent 44px target with 12px corners.
+- **Bar:** 64px tall, 16px side padding, 8px between the arrow and the title, with the arrow centred on the title.
 - **Title:** for example "Alex Rivera" or "142 Maple Ridge Dr, Nashville, TN". A long name wraps instead of being cut off.
-- **Metadata subtext:** the asset's attributes (`asset.meta`) as plain text separated by dots, for example "Primary residence · Owner-occupied" for a home or "Passenger vehicle · Personal use" for a car.
-  - 12px / 16px regular, in the tertiary text colour (`#5F6368`), 4px below the title. It wraps if it is long.
-  - It is information only, not tappable. The role label ("Your spouse", "Your car") is not shown.
-  - An asset with no attributes shows the title alone.
-  - It is part of the title bar, so it stays visible with the title when the bar sticks to the top.
 
-**Page body.** Starts 16px below the title bar (the Insights list keeps 24px). The first line is a summary with the same `N watchpoints · N coverages · N policies` format as the list row.
+**Page body.** Starts 16px below the title bar (the Insights list keeps 24px). In this order:
+
+1. **Asset details card.** The asset's attributes (`asset.meta`) in **one combined outlined card**: a 1px stroke in the border colour (`#D8DDDB`), 12px corners and **no fill**, so the page background shows through.
+   - One row per attribute, separated by a 1px line in the same border colour. There is no line above the first row.
+   - Each row is about 36px tall: 10px above and below the text, and 12px side padding on the card. The label sits on the left (12px / 16px regular, tertiary text `#5F6368`) and the value on the right (12px / 16px semibold, `#111111`, right-aligned) on the same line. A long value wraps and stays right-aligned.
+   - Examples: a home shows "Use … Primary residence" and "Occupancy … Owner-occupied" as two rows of one card; a car shows "Vehicle type … Passenger vehicle" and "Use … Personal".
+   - It is information only, not tappable. The role label ("Your spouse", "Your car") is not shown.
+   - An asset with no attributes shows no card.
+   - There is a 24px gap between the card and the summary line.
+2. A summary line with the same `N watchpoints · N coverages · N policies` format as the list row.
 
 ### 7.1 Watchpoints section
 

@@ -54,14 +54,19 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 .icon-button:active{transform:scale(.97)}
 .lead{margin:0 4px 4px;font-size:16px;line-height:24px;font-weight:600;color:var(--text)}
 .lead+.sum+.cap{margin-top:0}
-/* Asset page title bar. Spacing and the back arrow follow ovie_commercial_package_insights: 16px side padding,
-   8px gap, a 44px transparent target with a 22px #111 arrow. The arrow lines up with the title's first line. */
-.topbar.tall{align-items:flex-start;padding:4px 16px 10px;gap:8px}
+/* Asset page title bar. Spacing and the back arrow follow ovie_commercial_package_insights: 64px bar, 16px side
+   padding, 8px gap, a 44px transparent target with a 22px #111 arrow. */
+.topbar.tall{min-height:64px;padding:4px 16px 10px;gap:8px}
 .icon-button.back{background:transparent;color:var(--text)}
 .icon-button.back .ic{width:22px;height:22px}
-.tb-title{min-width:0;padding-top:10px}
-.tsub{margin:4px 0 0;font-size:12px;line-height:16px;color:var(--text3)}
 #asset .body{padding-top:16px}
+/* Asset metadata: one combined outlined card (1px border-default stroke, no fill) with a line between rows,
+   12px label on the left and 12px value on the right. */
+.mbox{margin:0 0 24px;padding:0 12px;border:1px solid var(--border);border-radius:var(--radius);background:none}
+.mbox .mr{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid var(--border)}
+.mbox .mr:first-child{border-top:0}
+.mbox dt{margin:0;font-size:12px;line-height:16px;color:var(--text3)}
+.mbox dd{margin:0;font-size:12px;line-height:16px;font-weight:600;color:var(--text);text-align:right;overflow-wrap:anywhere}
 .sum{margin:0 4px 14px;font-size:12px;line-height:16px;color:var(--text3);font-variant-numeric:tabular-nums}
 
 /* tabs (as in Files_upd) */
@@ -272,52 +277,52 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     term:{n:'Term life policy'}, pet:{n:'Pet insurance policy'}
   };
   var ASSETS = [
-    {id:'you',name:'You',d:'Jordan Rivera',icon:'i-user',group:'people',meta:['Policyholder','Employer plan member'],
+    {id:'you',name:'You',d:'Jordan Rivera',icon:'i-user',group:'people',meta:[['Status','Policyholder'],['Employer plan','Member']],
       wp:[{sev:'Moderate',kind:'Not included',text:'No policy in your documents includes short-term disability.',q:'gap',p:['emp']},
           {sev:'Low',kind:'Not included',text:'No policy in your documents includes long-term care.',q:'gap',p:['emp']}],
       cov:[{n:'Medical',v:'$1,500',t:'Deductible',s:'in',p:['emp']},{n:'Group life',v:'$85,000',t:'1× salary',s:'in',p:['emp']},{n:'Term life',v:'$500,000',t:'Death benefit',s:'in',p:['term']},
            {n:'Personal liability',v:'$300,000',t:'Liability limit',s:'in',p:['ho']},{n:'Short-term disability',v:'Not included',s:'no',p:[]},{n:'Long-term care',v:'Not included',s:'no',p:[]}]},
-    {id:'spouse',name:'Your spouse',d:'Alex Rivera',icon:'i-user',group:'people',meta:['Employer plan member'],
+    {id:'spouse',name:'Your spouse',d:'Alex Rivera',icon:'i-user',group:'people',meta:[['Employer plan','Member']],
       wp:[{sev:'Moderate',kind:'Not included',text:'No policy in your documents includes disability income for your spouse.',q:'gap',p:['emp']}],
       cov:[{n:'Medical',v:'$1,500',t:'Deductible',s:'in',p:['emp']},{n:'Term life',v:'$250,000',t:'Death benefit',s:'in',p:['term2']},
            {n:'Disability income',v:'Not included',s:'no',p:[]}]},
-    {id:'child',name:'Your child',d:'Maya Rivera · 8 yrs',icon:'i-user',group:'people',meta:['Dependent'],wp:[],
+    {id:'child',name:'Your child',d:'Maya Rivera · 8 yrs',icon:'i-user',group:'people',meta:[['Status','Dependent']],wp:[],
       cov:[{n:'Medical',v:'$1,500',t:'Deductible',s:'in',p:['emp']},{n:'Dental',v:'$1,500',t:'Annual maximum',s:'in',p:['emp']}]},
-    {id:'pet',name:'Your pet',d:'Biscuit · Labrador, 4 yrs',icon:'i-paw',group:'people',meta:['Dog'],wp:[],
+    {id:'pet',name:'Your pet',d:'Biscuit · Labrador, 4 yrs',icon:'i-paw',group:'people',meta:[['Species','Dog']],wp:[],
       cov:[{n:'Accident & illness',v:'$10,000',t:'Annual limit · 80% reimbursed',s:'in',p:['pet']}]},
-    {id:'home',name:'Your home',d:'142 Maple Ridge Dr, Nashville, TN',icon:'i-home',group:'home',meta:['Primary residence','Owner-occupied'],
+    {id:'home',name:'Your home',d:'142 Maple Ridge Dr, Nashville, TN',icon:'i-home',group:'home',meta:[['Use','Primary residence'],['Occupancy','Owner-occupied']],
       wp:[{sev:'Critical',kind:'Excluded',text:'Flood is excluded by the water exclusion in your homeowners policy.',q:'gap',p:['ho']},
           {sev:'Moderate',kind:'Excluded',text:'Water back-up is excluded by the water exclusion in your homeowners policy.',q:'gap',p:['ho']}],
       cov:[{n:'Dwelling · A',v:'$420,000',t:'Coverage limit',s:'in',p:['ho']},{n:'Other structures · B',v:'$42,000',t:'Coverage limit',s:'in',p:['ho']},{n:'Personal property · C',v:'$210,000',t:'Coverage limit',s:'in',p:['ho']},
            {n:'Loss of use · D',v:'$84,000',t:'Coverage limit',s:'in',p:['ho']},{n:'Wind / hail deductible',v:'$8,400',t:'2% of Coverage A · Deductible',s:'in',p:['ho']},
            {n:'Flood',v:'Excluded',t:'Water exclusion',s:'ex',p:['ho']},{n:'Water back-up',v:'Excluded',t:'Water exclusion',s:'ex',p:['ho']},
            {n:'Earth movement',v:'Excluded',t:'Earth movement exclusion',s:'ex',p:['ho']}]},
-    {id:'cabin',name:'Vacation cabin',d:'27 Lakeview Ln, Gatlinburg, TN',icon:'i-home',group:'home',meta:['Secondary home','Seasonal use'],
+    {id:'cabin',name:'Vacation cabin',d:'27 Lakeview Ln, Gatlinburg, TN',icon:'i-home',group:'home',meta:[['Use','Secondary home'],['Occupancy','Seasonal']],
       wp:[{sev:'Moderate',kind:'Excluded',text:'Flood is excluded by the water exclusion in your dwelling policy.',q:'gap',p:['dp3']}],
       cov:[{n:'Dwelling',v:'$310,000',t:'Coverage limit',s:'in',p:['dp3']},{n:'Personal property',v:'$31,000',t:'Coverage limit',s:'in',p:['dp3']},
            {n:'Personal liability',v:'$100,000',t:'Liability limit',s:'in',p:['dp3']},{n:'Flood',v:'Excluded',t:'Water exclusion',s:'ex',p:['dp3']},
            {n:'Short-term rental',v:'Excluded',t:'Rental use exclusion',s:'ex',p:['dp3']}]},
-    {id:'gems',name:'Scheduled jewelry',d:'3 scheduled items',icon:'i-gem',group:'property',meta:['Personal property'],wp:[],
+    {id:'gems',name:'Scheduled jewelry',d:'3 scheduled items',icon:'i-gem',group:'property',meta:[['Type','Personal property']],wp:[],
       cov:[{n:'Scheduled jewelry',v:'$12,500',t:'Scheduled limit',s:'in',p:['ho']}]},
-    {id:'car',name:'Your car',d:'2022 Subaru Outback',icon:'i-car',group:'vehicles',meta:['Passenger vehicle','Personal use'],
+    {id:'car',name:'Your car',d:'2022 Subaru Outback',icon:'i-car',group:'vehicles',meta:[['Vehicle type','Passenger vehicle'],['Use','Personal']],
       wp:[{sev:'Critical',kind:'Layer seam',text:'Umbrella needs more underlying auto liability than your auto policy lists.',q:'seam',p:['umb','auto']},
           {sev:'Low',kind:'Overlap',text:'Roadside help comes from two sources: your auto policy and your auto club.',q:'overlap',p:['auto','club']}],
       cov:[{n:'Auto liability',v:'$100K/$300K/$100K',t:'Split limit',s:'in',p:['auto']},{n:'Collision',v:'$500',t:'Deductible',s:'in',p:['auto']},{n:'Comprehensive',v:'$250',t:'Deductible',s:'in',p:['auto']},
            {n:'Uninsured motorist',v:'$100K/$300K',t:'Split limit',s:'in',p:['auto']},{n:'Roadside help',v:'25 miles',t:'Towing distance',s:'in',p:['auto','club'],ov:1},
            {n:'Umbrella liability',v:'$1,000,000',t:'Excess limit',s:'in',p:['umb']},{n:'Rideshare driving',v:'Excluded',t:'Livery use exclusion',s:'ex',p:['auto']},{n:'Rental reimbursement',v:'Not included',s:'no',p:[]}]},
-    {id:'car2',name:'Second car',d:'2019 Honda CR-V',icon:'i-car',group:'vehicles',meta:['Passenger vehicle','Personal use'],
+    {id:'car2',name:'Second car',d:'2019 Honda CR-V',icon:'i-car',group:'vehicles',meta:[['Vehicle type','Passenger vehicle'],['Use','Personal']],
       wp:[{sev:'Low',kind:'Not included',text:'Rental reimbursement is not included in your auto policy.',q:'gap',p:['auto']}],
       cov:[{n:'Auto liability',v:'$100K/$300K/$100K',t:'Split limit',s:'in',p:['auto']},{n:'Collision',v:'$1,000',t:'Deductible',s:'in',p:['auto']},
            {n:'Comprehensive',v:'$500',t:'Deductible',s:'in',p:['auto']},{n:'Rental reimbursement',v:'Not included',s:'no',p:[]}]},
-    {id:'moto',name:'Motorcycle',d:'2021 Harley-Davidson Sportster',icon:'i-bike',group:'vehicles',meta:['Personal use'],
+    {id:'moto',name:'Motorcycle',d:'2021 Harley-Davidson Sportster',icon:'i-bike',group:'vehicles',meta:[['Use','Personal']],
       wp:[{sev:'Critical',kind:'Layer seam',text:'Your umbrella does not list your motorcycle policy as underlying coverage.',q:'seam',p:['umb','moto']}],
       cov:[{n:'Motorcycle liability',v:'$50K/$100K/$50K',t:'Split limit',s:'in',p:['moto']},{n:'Collision',v:'$500',t:'Deductible',s:'in',p:['moto']},
            {n:'Comprehensive',v:'$500',t:'Deductible',s:'in',p:['moto']},{n:'Racing',v:'Excluded',t:'Racing exclusion',s:'ex',p:['moto']},{n:'Umbrella liability',v:'Not included',s:'no',p:['umb']}]},
-    {id:'biz',name:'Landscaping business',d:'88 Quarry Rd, Gallatin, TN',icon:'i-briefcase',group:'business',meta:['Commercial property','Landscaping'],
+    {id:'biz',name:'Landscaping business',d:'88 Quarry Rd, Gallatin, TN',icon:'i-briefcase',group:'business',meta:[['Property type','Commercial'],['Industry','Landscaping']],
       wp:[],
       cov:[{n:'General liability',v:'$1,000,000',t:'Per occurrence',s:'in',p:['bop']},{n:'Business personal property',v:'$75,000',t:'At 88 Quarry Rd',s:'in',p:['bop']},
            {n:'Additional insured',v:'4',t:'Certificate holders',s:'in',p:['bop']},{n:'Pollution cleanup',v:'Excluded',t:'Pollution exclusion',s:'ex',p:['bop']},{n:'Professional liability',v:'Not included',s:'no',p:[]}]},
-    {id:'equip',name:'Business equipment',d:'Mowers and trimmers',icon:'i-wrench',group:'business',meta:['Landscaping','Mobile equipment'],
+    {id:'equip',name:'Business equipment',d:'Mowers and trimmers',icon:'i-wrench',group:'business',meta:[['Industry','Landscaping'],['Type','Mobile equipment']],
       wp:[{sev:'Moderate',kind:'Location seam',text:'Equipment you keep in the garage is limited under your homeowners policy. Your business policy lists the business address only.',q:'loc',p:['ho','bop']}],
       cov:[{n:'Special limit at home',v:'$2,500',t:'Limit on business equipment',s:'in',p:['ho']},{n:'Special limit away from home',v:'$1,500',t:'Limit on business equipment',s:'in',p:['ho']},{n:'Business property',v:'$40,000',t:'At 88 Quarry Rd only',s:'in',p:['bop']}]}
   ];
@@ -411,15 +416,14 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
       +'<span class="ct-val">'+val+'</span>'+basis+'</button>';
   }
 
-  // Asset metadata: the asset's attributes on one line, separated by dots, as subtext under the title.
-  // Omitted when an asset has none.
-  function metaSub(a){
+  // Asset metadata: label and value rows in one outlined card above the summary line. Omitted when an asset has none.
+  function metaBox(a){
     var items=a.meta||[];
-    return items.length?'<p class="tsub">'+items.join(' · ')+'</p>':'';
+    return items.length?'<dl class="mbox" aria-label="Asset details">'+items.map(function(m){return '<div class="mr"><dt>'+m[0]+'</dt><dd>'+m[1]+'</dd></div>';}).join('')+'</dl>':'';
   }
   function renderAsset(a){
     var s=stats(a);
-    var h='<div class="topbar tall"><button type="button" class="icon-button back" data-back aria-label="Back to Insights">'+ic('i-arrowleft')+'</button><div class="tb-title"><h1>'+a.d+'</h1>'+metaSub(a)+'</div></div><div class="body"><p class="sum">'+sub(a)+'</p>';
+    var h='<div class="topbar tall"><button type="button" class="icon-button back" data-back aria-label="Back to Insights">'+ic('i-arrowleft')+'</button><h1>'+a.d+'</h1></div><div class="body">'+metaBox(a)+'<p class="sum">'+sub(a)+'</p>';
     h+='<h2 class="sec"><span>Watchpoints</span><span class="cnt">'+a.wp.length+'</span></h2>'+(a.wp.length?'<div>':'<div class="card">');
     if(!a.wp.length) h+='<div class="empty">Nothing to flag for this asset.</div>';
     sortWp(a).forEach(function(w){
