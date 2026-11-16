@@ -344,6 +344,12 @@ footer nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 8p
 footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiary)}
 
 /* Reveal: once, first view. Visible without JS (section 15). */
+/* Hero first load: content appears in sequence (rare first-view tier; opacity + transform only) */
+@keyframes hi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes hf{from{opacity:0}to{opacity:1}}
+.hi{animation:hi 700ms var(--motion-ease-out) both;animation-delay:var(--d,0ms)}
+.js .plum-fx{animation:hf 700ms var(--motion-ease-out) both;animation-delay:420ms}
+@media (prefers-reduced-motion:reduce){.hi,.js .plum-fx{animation:hf 160ms ease both;animation-delay:0ms}}
 /* Scroll expand: hero plum surface grows to fill the viewport and becomes the Mosaic background */
 .flow{position:relative;background:var(--bg)}
 .flow>section{position:relative;z-index:1;background:transparent}
@@ -436,17 +442,17 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
 <!-- 1. Hero -->
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap" id="hero-wrap">
-    <div class="hero-copy reveal">
-      <p class="eyebrow" style="margin-bottom:16px">The insurance wallet that reads</p>
-      <h1 class="display" id="hero-title">Know what your insurance covers before you need it.</h1>
-      <p class="lead">Mosey reads every policy you have and fits them into one clear picture, in plain language and traced to your documents.</p>
-      <div class="cta-row">
+    <div class="hero-copy">
+      <p class="eyebrow hi" style="margin-bottom:16px;--d:0ms">The insurance wallet that reads</p>
+      <h1 class="display hi" style="--d:90ms" id="hero-title">Know what your insurance covers before you need it.</h1>
+      <p class="lead hi" style="--d:180ms">Mosey reads every policy you have and fits them into one clear picture, in plain language and traced to your documents.</p>
+      <div class="cta-row hi" style="--d:270ms">
         <a class="btn btn-primary btn-lg" href="#early-access">Request early access</a>
         <a class="btn btn-secondary btn-lg" href="#how">See how it works</a>
       </div>
     </div>
 
-    <div class="stage reveal" aria-label="Sample Mosey screens">
+    <div class="stage hi" style="--d:420ms" aria-label="Sample Mosey screens">
       <div class="mock m1">
         <h4>Needs your attention</h4>
         <div class="row">
