@@ -300,7 +300,7 @@ section{padding:var(--rhythm) 0}
 @media (prefers-reduced-motion:reduce){.js .cq .cq-c{transform:none;transition:opacity var(--motion-duration-tooltip) ease;--d:0ms!important}}
 
 /* Grid */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
 .card{background:var(--bg);border:1px solid #6A4E64;border-radius:var(--radius);padding:16px 24px;display:flex;flex-direction:column;gap:10px}
 .card .icon-box{align-self:flex-start}
 .card h3{font-size:18px;line-height:24px;font-weight:600}
@@ -326,8 +326,8 @@ section{padding:var(--rhythm) 0}
 .js .grid.reveal{opacity:1;transform:none;transition:none}
 .js .grid .card{opacity:0;transform:translateY(16px) scale(.92);transition:opacity 600ms var(--motion-ease-out) var(--d,0ms),transform 600ms var(--motion-ease-out) var(--d,0ms)}
 .js .grid.go .card{opacity:1;transform:none}
-.grid .card:nth-child(1){--d:0ms}.grid .card:nth-child(2){--d:70ms}.grid .card:nth-child(3){--d:140ms}
-.grid .card:nth-child(4){--d:260ms}.grid .card:nth-child(5){--d:330ms}.grid .card:nth-child(6){--d:400ms}
+.grid .card:nth-child(1){--d:0ms}.grid .card:nth-child(2){--d:70ms}
+.grid .card:nth-child(3){--d:240ms}.grid .card:nth-child(4){--d:310ms}
 @media (prefers-reduced-motion:reduce){.js .grid .card{transform:none;transition:opacity var(--motion-duration-tooltip) ease;--d:0ms!important}}
 
 /* Form */
@@ -719,10 +719,8 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
     <div class="grid reveal">
       <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-file"/></svg></span><h3>Traceable to source</h3><p>Every tile links to the policy page it came from.</p></article>
       <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-bell"/></svg></span><h3>Reminders</h3><p>Renewals, expiring certificates and watch points, flagged early.</p></article>
-      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-heart"/></svg></span><h3>Beneficiaries and legacy</h3><p>See who is named on every life policy. Pick Legacy Contacts and Mosey prepares a Family Hand-off.</p></article>
       <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-share"/></svg></span><h3>Sharing on your terms</h3><p>View-only sharing with anyone you choose. Sensitive details stay hidden, and you can withdraw consent anytime.</p></article>
       <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-folder"/></svg></span><h3>Document vault</h3><p>Policies, endorsements, certificates and notices in one secure place.</p></article>
-      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-globe"/></svg></span><h3>In your language</h3><p>Mosey works in the languages you speak.</p></article>
     </div>
   </div>
 </section>
