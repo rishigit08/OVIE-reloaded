@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mosey: an insurance wallet that reads</title>
 <meta name="description" content="Mosey reads every insurance policy you have and fits them together into one clear picture, with every statement traced to your documents.">
-<link rel="icon" href="mosey-o.svg" type="image/svg+xml">
+<link rel="icon" href="mosey-favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
   --elev-small:0 2px 8px rgba(17,17,17,.07);
   --radius:12px;--pill:999px;
   --motion-duration-tooltip:125ms;--motion-duration-press:160ms;--motion-duration-overlay:260ms;
-  --motion-ease-out:cubic-bezier(0.23,1,0.32,1);
+  --motion-ease-out:cubic-bezier(0.23,1,0.32,1);--motion-ease-in-out:cubic-bezier(0.77,0,0.175,1);--motion-ease-drawer:cubic-bezier(0.32,0.72,0,1);
   --gutter:24px;--rhythm:96px;
 }
 *{box-sizing:border-box}
@@ -69,14 +69,14 @@ section{padding:var(--rhythm) 0}
 .top.scrolled{border-bottom-color:var(--border-subtle)}
 .top .wrap{display:flex;align-items:center;gap:24px;min-height:64px}
 .brand{display:flex;align-items:center;min-height:44px;text-decoration:none;border-radius:var(--radius)}
-.brand img{height:26px;width:auto}
+.brand img{height:34px;width:auto}
 .nav{display:flex;gap:4px;margin-left:auto}
 .nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:var(--radius);text-decoration:none;color:var(--text-secondary);font-weight:500}
 @media (hover:hover) and (pointer:fine){.nav a:hover{background:var(--subtle)}}
-.top .btn{margin-left:8px}
+.nav-cta{margin-left:8px}
 
 /* Hero */
-.hero{padding:72px 0 var(--rhythm);background:var(--bg)}
+.hero{padding:72px 0 48px;background:var(--bg)}
 .hero-copy{max-width:760px;margin:0 auto;text-align:center}
 .hero-copy .lead{margin:20px auto 0;max-width:600px}
 .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px}
@@ -89,7 +89,6 @@ section{padding:var(--rhythm) 0}
 .mock{background:var(--bg);border-radius:var(--radius);box-shadow:var(--elev-card);padding:16px;text-align:left}
 .mock h4{font-size:18px;line-height:24px;font-weight:600}
 .mock .sub{color:var(--text-tertiary)}
-.tag-sample{display:inline-block;margin-top:12px;font-size:11px;line-height:16px;font-weight:600;color:var(--text-tertiary)}
 .row{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 0;border-top:1px solid var(--border-subtle)}
 .row:first-of-type{border-top:0}
 .row .grow{flex:1;min-width:0}
@@ -117,6 +116,11 @@ section{padding:var(--rhythm) 0}
 .kv:first-of-type{border-top:0}
 .kv span{color:var(--text-tertiary)}
 .kv b{font-weight:600;text-align:right}
+.wp{padding:12px 0;border-top:1px solid var(--border-subtle)}
+.wp:first-of-type{border-top:0}
+.wp-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.wp-h b{font-weight:600}
+.wp .sub{margin-top:4px}
 .note{background:var(--subtle);border-radius:var(--radius);padding:12px;color:var(--text-tertiary);margin-top:12px}
 
 /* How it works */
@@ -126,6 +130,12 @@ section{padding:var(--rhythm) 0}
 .step h3{font-size:18px;line-height:24px;font-weight:600}
 .step p{color:var(--text-tertiary)}
 .step .viz{margin-top:auto;background:var(--subtle);border-radius:var(--radius);padding:12px;display:flex;flex-direction:column;gap:8px;min-height:136px;justify-content:center}
+/* Cards arrive one by one on first view (rare tier, explanation): opacity + transform only */
+.js .steps.reveal{opacity:1;transform:none;transition:none}
+.js .steps .step{opacity:0;transform:translateY(32px) scale(.6);transition:opacity 800ms var(--motion-ease-out) calc(250ms + var(--i,0)*240ms),transform 800ms var(--motion-ease-out) calc(250ms + var(--i,0)*240ms)}
+.js .steps.go .step{opacity:1;transform:none}
+.step:nth-child(2){--i:1}.step:nth-child(3){--i:2}.step:nth-child(4){--i:3}
+@media (prefers-reduced-motion:reduce){.js .steps .step{transform:none;transition:opacity var(--motion-duration-tooltip) ease}}
 .mini{display:flex;align-items:center;gap:8px;font-size:12px;line-height:16px;font-weight:600;color:var(--text-secondary)}
 .mini .ic{width:16px;height:16px;color:var(--icon-brand)}
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
@@ -143,18 +153,48 @@ section{padding:var(--rhythm) 0}
 .fchip{padding:4px 0}
 .fchip input:checked+span{background:var(--info-bg);border-color:var(--primary);color:var(--primary)}
 .fchip input:focus-visible+span{box-shadow:var(--focus-ring)}
-.cov .row b{font-weight:600}
-.cov .src{margin-top:6px}
+.cov-h{display:flex;align-items:center;justify-content:space-between;margin:4px 0 10px}
+.cov-h.x{margin-top:16px}
+.cov-h .lbl{font-size:12px;line-height:16px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase}
+.cov-h .count{font-size:11px;line-height:16px;font-weight:600;background:var(--info-bg);color:var(--primary);border-radius:var(--pill);padding:2px 10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:12px;font-size:12px;line-height:16px;color:var(--text-secondary)}
+.legend li{display:flex;align-items:center;gap:6px}
+.sq{width:12px;height:12px;border-radius:4px;display:inline-block}
+.s-cov{background:#13820A}.s-ovl{background:#E8D26A}.s-nc{background:#C2410C}.s-gap{background:#A63A33}
+.cgrid{columns:2;column-gap:10px}
+.tl{break-inside:avoid;margin-bottom:10px;border:1px solid;border-radius:12px;padding:12px}
+.tl .st{display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;font-weight:600}
+.tl .st .ic{width:16px;height:16px}
+.tl b{display:block;margin-top:8px;font-size:14px;line-height:20px;font-weight:600}
+.tl p{margin-top:4px;font-size:13px;line-height:18px;color:var(--text-secondary)}
+.tl small{display:block;margin-top:4px;font-size:12px;line-height:16px;color:var(--text-tertiary)}
+.tl.cov{background:var(--success-bg);border-color:#BFE9D2}.tl.cov .st{color:var(--success)}
+.tl.ovl{background:#FFF9DC;border-color:#EBDD95}.tl.ovl .st{color:#7A5E00}
+.tl.nc,.tl.exc{background:#FFF1E8;border-color:#F4CDB4}.tl.nc .st,.tl.exc .st{color:#B4400A}
+.tl.gap{background:var(--danger-bg);border-color:#EFC2BE}.tl.gap .st{color:var(--danger)}
+/* Mosaic demo: card scales in once on arrival; tiles rise in per selection (rare/explanatory tier, opacity + transform only) */
+.js .flow:not(.static) #mosaic-demo{opacity:0;transform:translateY(32px) scale(.1);pointer-events:none;transition:opacity 320ms ease,transform 0s linear 320ms}
+.js .flow:not(.static) #mos-l{opacity:0;transform:translateX(-120px);pointer-events:none;transition:opacity 320ms ease,transform 0s linear 320ms}
+.js .flow:not(.static) #mos-l.out{opacity:0;transform:translateX(-160px);pointer-events:none;transition:opacity 420ms var(--motion-ease-in-out),transform 420ms var(--motion-ease-in-out)}
+.js .flow:not(.static) #mos-l.in{opacity:1;transform:none;pointer-events:auto;transition:opacity 1200ms var(--motion-ease-out),transform 1200ms var(--motion-ease-out)}
+.js .flow:not(.static) #mosaic-demo.out{opacity:0;transform:translateX(160px);pointer-events:none;transition:opacity 420ms var(--motion-ease-in-out),transform 420ms var(--motion-ease-in-out)}
+.js .flow:not(.static) #mosaic-demo.in{opacity:1;transform:none;pointer-events:auto;transition:opacity 1200ms var(--motion-ease-out),transform 1200ms var(--motion-ease-out)}
+@keyframes tl-in{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes tl-fade{from{opacity:0}to{opacity:1}}
+.cgrid.arrive .tl{animation-delay:calc(750ms + var(--i,0)*50ms)}
+.tl{animation:tl-in 460ms var(--motion-ease-in-out) both;animation-delay:calc(var(--i,0)*50ms)}
+@media (prefers-reduced-motion:reduce){.tl{animation:tl-fade 125ms ease both;animation-delay:0s}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* Feature rows */
-.feat{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;padding:48px 0}
-.feat.flip .feat-copy{order:2}
-.feat-copy .h2{font-size:32px;line-height:36px}
-.feat-copy .lead{margin-top:16px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:48px 24px}
+.ftile .stage{height:440px;display:grid;place-items:center;padding:32px}
+.ftile .stage>*{width:100%;max-width:420px}
+.ftile h3{margin-top:16px;font-size:14px;line-height:20px;font-weight:600}
+.ftile p{margin-top:4px;color:var(--text-secondary)}
 .bullets{margin-top:20px;display:flex;flex-direction:column;gap:12px}
 .bullets li{display:flex;gap:12px;color:var(--text-secondary)}
 .bullets .ic{color:var(--icon-brand);margin-top:0}
-.feat .stage{padding:32px}
 .disc{background:var(--bg);border-radius:var(--radius);box-shadow:var(--elev-card)}
 .disc .d{display:flex;align-items:center;gap:8px;min-height:48px;padding:0 16px;border-top:1px solid var(--border-subtle);font-weight:600}
 .disc .d:first-of-type{border-top:0}
@@ -169,40 +209,114 @@ section{padding:var(--rhythm) 0}
 .cmp-col li:first-child{border-top:0}
 .cmp-col .ic{width:16px;height:16px;margin-top:2px;flex:none}
 
+
+/* Insights phone mock with working "Other details" bottom sheet (DESIGN.md bottom-sheet motion: translateY, overlay duration, drawer curve) */
+.ftile .stage.ph{padding:24px}
+.ph-wrap{max-width:320px!important;zoom:1.2}
+.phone{position:relative;height:300px;border-radius:24px;background:var(--canvas);overflow:hidden;box-shadow:var(--elev-card)}
+.ph-body{height:100%;display:flex;align-items:center;padding:0 10px}
+.ph-body .ph-card{width:100%}
+.ph-card{background:var(--bg);border-radius:var(--radius);padding:12px 14px}
+.ph-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.ph-title h4{font-size:16px;line-height:22px;font-weight:600}
+.ph-kv{display:grid;grid-template-columns:84px 1fr;gap:8px;padding:7px 0;border-top:1px solid var(--border-subtle);font-size:12px;line-height:16px}
+.ph-kv span{color:var(--text-tertiary)}
+.ph-kv b{font-weight:600}
+.ph-kv small{display:block;margin-top:2px;color:var(--text-tertiary)}
+.ph-more{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;margin-top:2px;padding:0;border:0;border-top:1px solid var(--border-subtle);background:none;font:600 13px/20px Figtree,system-ui,sans-serif;color:var(--primary);cursor:pointer;border-radius:0}
+.ph-more:focus-visible,.ph-x:focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:var(--radius)}
+.ph-lbl{margin:12px 4px 6px;font-size:11px;line-height:16px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase}
+.ph-peek small{color:var(--text-tertiary)}
+.ph-peek b{display:block;font-size:20px;line-height:26px}
+.ph-back{position:absolute;inset:0;background:rgba(17,17,17,.4);opacity:0;visibility:hidden;transition:opacity var(--motion-duration-overlay) var(--motion-ease-drawer),visibility 0s linear var(--motion-duration-overlay)}
+.ph-sheet{position:absolute;left:0;right:0;bottom:0;height:92%;display:flex;flex-direction:column;background:var(--bg);border-radius:20px 20px 0 0;transform:translateY(100%);visibility:hidden;transition:transform var(--motion-duration-overlay) var(--motion-ease-drawer),visibility 0s linear var(--motion-duration-overlay)}
+.phone.open .ph-back{opacity:1;visibility:visible;transition:opacity var(--motion-duration-overlay) var(--motion-ease-drawer),visibility 0s}
+.phone.open .ph-sheet{transform:none;visibility:visible;transition:transform var(--motion-duration-overlay) var(--motion-ease-drawer),visibility 0s}
+.ph-grab{align-self:center;width:36px;height:4px;border-radius:2px;background:var(--border);margin-top:8px}
+.ph-sh{display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 16px;min-height:48px}
+.ph-sh h4{font-size:16px;line-height:22px;font-weight:600}
+.ph-x{width:44px;height:44px;border:0;background:none;border-radius:var(--radius);display:grid;place-items:center;color:var(--text-secondary);cursor:pointer}
+.ph-scroll{flex:1;overflow-y:auto;padding:0 12px 12px;scrollbar-width:none}
+.ph-scroll::-webkit-scrollbar{display:none}
+.ph-panel{background:var(--info-bg);border-radius:var(--radius);padding:4px 12px}
+.ph-r{display:flex;justify-content:space-between;gap:12px;padding:9px 0;font-size:12px;line-height:16px;text-align:right}
+.ph-r span{color:var(--text-secondary);text-align:left;flex:none}
+.ph-r b{font-weight:600}
+.ph-r small{display:block;color:var(--text-tertiary);font-weight:400}
+.ph-src{display:flex;align-items:center;justify-content:space-between;min-height:36px;font-size:12px;line-height:16px;color:var(--text-secondary)}
+.ph-src em{display:inline-flex;align-items:center;gap:4px;font-style:normal;color:var(--primary);font-weight:600}
+.ph-src .ic{width:14px;height:14px}
+.ph-ask{width:100%;margin-top:10px}
+@media (prefers-reduced-motion:reduce){
+  .ph-sheet{transform:none;opacity:0;transition:opacity var(--motion-duration-tooltip) ease,visibility 0s linear var(--motion-duration-tooltip)}
+  .phone.open .ph-sheet{opacity:1;transition:opacity var(--motion-duration-tooltip) ease,visibility 0s}
+}
+
+
+/* Ask Mosey chat demo: question appears, answer streams in, sources and follow-ups follow, then it repeats (rare/explanatory tier; opacity + transform only) */
+.js #chat-demo.cx [data-s]{opacity:0;transform:translateY(8px);transition:opacity 260ms var(--motion-ease-out),transform 260ms var(--motion-ease-out)}
+.js #chat-demo.cx [data-s].on{opacity:1;transform:none}
+.js #chat-demo.cx.nt [data-s]{transition:none}
+#chat-demo .bubble-a .h{visibility:hidden}
+
+
+/* Coverage assets mock */
+.ftile .stage.ca{padding:24px}
+.cov-assets{padding:12px 14px}
+.cov-assets h4{margin-top:0;font-size:16px;line-height:22px}
+.cov-assets .sub{margin-top:2px;font-size:12px;line-height:16px}
+.ca-l{margin:10px 0 2px;font-size:11px;line-height:16px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase}
+.cov-assets .row{min-height:52px;padding:6px 0}
+.cov-assets .row b{display:block;font-size:13px;line-height:18px;font-weight:600}
+.cov-assets .row small{display:block;font-size:12px;line-height:16px;color:var(--text-tertiary)}
+.cov-assets .row small em{font-style:normal;font-weight:600;color:var(--primary)}
+.cov-assets .icon-box{width:36px;height:36px}
+
+
+/* Quote comparison mock (after ovie_auto_quote_comparison.html) */
+.ftile .stage.cq-stage{padding:24px}
+.cq{padding:0;overflow:hidden}
+.cq-h{padding:14px 14px 10px}
+.cq-h h4{font-size:16px;line-height:22px}
+.cq-h .sub{margin-top:2px;font-size:12px;line-height:16px}
+.cq-row{display:grid;grid-template-columns:104px repeat(3,minmax(0,1fr));border-top:1px solid var(--border-subtle)}
+.cq-row:nth-child(even){background:#FAFAFA}
+.cq-c{overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center;min-height:46px;padding:8px 4px;text-align:center;font-size:12px;line-height:16px;font-weight:600;color:var(--text-tertiary)}
+.cq-c:first-child{justify-content:flex-start;text-align:left;padding-left:14px;color:var(--text-primary)}
+.cq-c.best{color:var(--success)}
+.cq-head .cq-c{min-height:36px;color:var(--text-secondary)}
+
 /* Grid */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.card{background:var(--bg);border-radius:var(--radius);box-shadow:var(--elev-card);padding:20px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--bg);border:1px solid #6A4E64;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:12px}
+.card .icon-box{align-self:flex-start}
 .card h3{font-size:18px;line-height:24px;font-weight:600}
-.card p{color:var(--text-tertiary)}
+.card p{color:var(--text-secondary)}
 
 /* Privacy: the one dark band */
-.privacy{background:var(--primary-dark);color:#fff}
-.privacy .h2{color:#fff}
-.privacy .lead{color:#fff;opacity:.88}
-.privacy .eyebrow{color:#DFC9D9}
+.privacy,#early-access{background:var(--bg);transition:background-color 900ms var(--motion-ease-in-out) 120ms}
+.privacy.lit,#early-access.lit{background:var(--primary-disabled-bg)}
+.privacy{padding-bottom:56px}
+#early-access{padding-top:24px}
+.privacy .lead{color:var(--text-secondary)}
 .priv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:48px}
-.priv-grid .ic{color:var(--icon-inverse);width:24px;height:24px}
+.priv-grid>div{background:var(--bg);border-radius:var(--radius);padding:24px}
+.priv-grid .ic{color:#6A4E64;width:24px;height:24px}
 .priv-grid h3{font-size:18px;line-height:24px;font-weight:600;margin:16px 0 8px}
-.priv-grid p{color:#fff;opacity:.85}
+.priv-grid p{color:var(--text-secondary)}
 .stds{display:flex;flex-wrap:wrap;gap:8px;margin-top:40px}
-.stds span{min-height:32px;display:inline-flex;align-items:center;padding:0 14px;border-radius:var(--pill);border:1px solid rgba(255,255,255,.4);font-weight:600}
+.stds span{min-height:32px;display:inline-flex;align-items:center;padding:0 14px;border-radius:var(--pill);border:1px solid var(--primary);color:var(--primary);font-weight:600;font-size:12px;line-height:16px}
+@media (prefers-reduced-motion:reduce){.privacy,#early-access,footer{transition:none}}
 
-/* Partners */
-.partner{background:var(--bg)}
-.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.door{background:var(--canvas);border-radius:var(--radius);padding:20px}
-.door h3{font-size:18px;line-height:24px;font-weight:600;margin:12px 0 4px}
-.door p{color:var(--text-tertiary)}
-.mods{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
-.mods .chip{min-height:36px;padding:0 14px;font-size:14px;line-height:20px;background:var(--info-bg);color:var(--primary)}
-.partner .link{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-top:20px;font-weight:600;color:var(--primary);text-decoration:none}
 
 /* Form */
 .signup{max-width:560px;margin:0 auto}
 .form{background:var(--bg);border-radius:var(--radius);box-shadow:var(--elev-card);padding:24px;margin-top:32px}
 .field{margin-bottom:16px}
 .field label,.field legend{display:block;font-weight:600;margin-bottom:6px;padding:0}
+.input::placeholder{color:var(--text-tertiary);opacity:.55}
 fieldset{border:0;margin:0 0 16px;padding:0}
+fieldset legend{font-weight:600;padding:0 0 12px}
 .input{width:100%;min-height:44px;padding:0 12px;border:1px solid var(--border);border-radius:var(--radius);font:400 14px/20px Figtree,system-ui,sans-serif;color:var(--text-primary);background:var(--bg)}
 .input::placeholder{color:var(--text-tertiary)}
 .input:focus-visible{border-color:var(--primary);box-shadow:var(--focus-ring)}
@@ -219,10 +333,10 @@ fieldset{border:0;margin:0 0 16px;padding:0}
 .done.show{display:block}
 .done .icon-box{margin:0 auto 12px;background:var(--success-bg);color:var(--icon-success)}
 .fine{margin-top:12px;font-size:12px;line-height:16px;color:var(--text-tertiary);text-align:center}
-.disclaimer{max-width:760px;margin:0 auto;padding:0 var(--gutter) 48px;font-size:12px;line-height:16px;color:var(--text-tertiary);text-align:center}
 
 /* Footer */
-footer{background:var(--bg);border-top:1px solid var(--border-subtle);padding:32px 0}
+footer{background:var(--bg);border-top:1px solid rgba(107,64,98,.2);padding:32px 0;transition:background-color 900ms var(--motion-ease-in-out) 120ms}
+footer.lit{background:var(--primary-disabled-bg)}
 footer .wrap{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center}
 footer img{height:22px}
 footer nav{display:flex;flex-wrap:wrap;gap:0 8px;margin-left:auto}
@@ -230,6 +344,16 @@ footer nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 8p
 footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiary)}
 
 /* Reveal: once, first view. Visible without JS (section 15). */
+/* Scroll expand: hero plum surface grows to fill the viewport and becomes the Mosaic background */
+.flow{position:relative;background:var(--bg)}
+.flow>section{position:relative;z-index:1;background:transparent}
+.flow.expanded{background:var(--primary-disabled-bg)}
+.plum-fx{display:none}
+.js .plum-fx{display:block;position:fixed;inset:0;z-index:0;background:var(--primary-disabled-bg);pointer-events:none;visibility:hidden}
+.js .flow:not(.static) .hero .stage,.js .flow:not(.static) .mosaic .stage{background:none}
+.js .flow:not(.static) #mosaic{pointer-events:none}
+.flow.static #mosaic,.flow.static #how{background:var(--primary-disabled-bg)}
+.js .flow.static .hero .stage{background:var(--primary-disabled-bg)}
 .js .reveal{opacity:0;transform:translateY(8px);transition:opacity var(--motion-duration-overlay) var(--motion-ease-out),transform var(--motion-duration-overlay) var(--motion-ease-out)}
 .js .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
@@ -243,18 +367,17 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
   :root{--gutter:16px;--rhythm:56px}
   .display{font-size:36px;line-height:40px}
   .h2{font-size:28px;line-height:32px}
-  .feat-copy .h2{font-size:28px;line-height:32px}
   .lead{font-size:16px;line-height:24px}
   .nav{display:none}
-  .top .btn{margin-left:auto}
+  .nav-cta{margin-left:auto}
   .hero{padding-top:40px}
-  .stage,.mosaic .stage,.feat .stage{padding:20px;border-radius:20px}
+  .stage,.mosaic .stage,.ftile .stage{padding:20px;border-radius:20px}
   .hero .stage{grid-template-columns:1fr;min-height:0;margin-top:40px}
   .hero .stage .m1,.hero .stage .m3{margin-top:0}
-  .steps,.grid,.doors,.priv-grid{grid-template-columns:1fr}
-  .mosaic,.feat{grid-template-columns:1fr;gap:28px}
-  .feat.flip .feat-copy{order:0}
-  .feat{padding:28px 0}
+  .steps,.grid,.priv-grid{grid-template-columns:1fr}
+  .mosaic{grid-template-columns:1fr;gap:28px}
+  .fgrid{grid-template-columns:1fr;gap:36px}
+  .ftile .stage{height:auto}
   .sec-head{margin-bottom:32px}
   footer nav{margin-left:0}
 }
@@ -274,6 +397,12 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
   <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-cc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-xc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
@@ -295,21 +424,22 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
       <a href="#privacy">Privacy</a>
-      <a href="#partners">Partners</a>
     </nav>
-    <a class="btn btn-primary" href="#early-access">Request early access</a>
+    <a class="btn btn-secondary nav-cta" href="#early-access">Request early access</a>
   </div>
 </header>
 
 <main id="main">
 
+<div class="flow" id="flow">
+<div class="plum-fx" id="plum-fx" aria-hidden="true"></div>
 <!-- 1. Hero -->
 <section class="hero" aria-labelledby="hero-title">
-  <div class="wrap">
+  <div class="wrap" id="hero-wrap">
     <div class="hero-copy reveal">
       <p class="eyebrow" style="margin-bottom:16px">The insurance wallet that reads</p>
       <h1 class="display" id="hero-title">Know what your insurance covers before you need it.</h1>
-      <p class="lead">Mosey reads every policy you have, from start to finish, and fits them together into one clear picture. Plain language, with every statement traced back to your own documents.</p>
+      <p class="lead">Mosey reads every policy you have and fits them into one clear picture, in plain language and traced to your documents.</p>
       <div class="cta-row">
         <a class="btn btn-primary btn-lg" href="#early-access">Request early access</a>
         <a class="btn btn-secondary btn-lg" href="#how">See how it works</a>
@@ -334,24 +464,20 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
           <div class="grow"><b>State minimum not shown</b><small>Auto · Liability</small></div>
           <svg class="ic chev"><use href="#i-chev"/></svg>
         </div>
-        <span class="tag-sample">Sample data</span>
       </div>
 
       <div class="mock m2">
-        <div style="display:flex;align-items:center;gap:12px">
-          <span class="icon-box"><svg class="ic"><use href="#i-sparkles"/></svg></span>
-          <div><h4>Insights</h4><p class="sub">Personal auto · ••4821</p></div>
+        <h4>Watch points</h4>
+        <div class="wp">
+          <span class="chip crit">Critical</span>
+          <div class="wp-h"><b>D&amp;O and fiduciary limits are blank</b><svg class="ic chev"><use href="#i-chev"/></svg></div>
+          <p class="sub">Limits and retentions are not completed. Confirm the declarations.</p>
         </div>
-        <div style="margin-top:12px">
-          <div class="kv"><span>Policy period</span><b>Mar 3, 2026 – Mar 3, 2027</b></div>
-          <div class="kv"><span>Premium</span><b>$1,284 per year</b></div>
-          <div class="kv"><span>Bodily injury</span><b>$100,000 / $300,000</b></div>
+        <div class="wp">
+          <span class="chip mod">Moderate</span>
+          <div class="wp-h"><b>Claims need prompt written notice</b><svg class="ic chev"><use href="#i-chev"/></svg></div>
+          <p class="sub">The policy is claims-made. Notice is due as soon as practicable.</p>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-          <span class="chip mod"><svg class="ic"><use href="#i-alert"/></svg>Moderate</span>
-          <span class="cite"><svg class="ic"><use href="#i-file"/></svg>Declarations · p. 2</span>
-        </div>
-        <span class="tag-sample">Sample data</span>
       </div>
 
       <div class="mock m3">
@@ -364,13 +490,42 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
             <span class="sub">Ask Mosey</span>
           </div>
         </div>
-        <span class="tag-sample">Sample data</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 2. How it works -->
+<!-- 2. Mosaic (the hero plum surface expands into this section) -->
+<section id="mosaic" aria-labelledby="mosaic-title">
+  <div class="wrap mosaic">
+    <div id="mos-l">
+      <p class="eyebrow" style="margin-bottom:12px">Mosaic</p>
+      <h2 class="h2" id="mosaic-title">Every policy, organized by who and what it protects.</h2>
+      <p class="lead" style="margin-top:16px">Pick yourself, your spouse, your home, a vehicle or your business. Mosey shows every coverage from every policy that applies, side by side.</p>
+      <ul class="bullets">
+        <li><svg class="ic"><use href="#i-check"/></svg>Includes policies you own and policies you are covered under, such as a parent's auto plan or an employer's group life.</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>Spans home, auto, liability, business, life, health, disability, travel and pet.</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>Shows where policies overlap, and what is and isn't included.</li>
+      </ul>
+    </div>
+    <div class="stage" id="mosaic-demo">
+      <div class="chips" role="radiogroup" aria-label="Choose what to see coverage for">
+        <label class="fchip"><input type="radio" name="subj" value="you" checked><span>Priya</span></label>
+        <label class="fchip"><input type="radio" name="subj" value="home"><span>Austin home</span></label>
+        <label class="fchip"><input type="radio" name="subj" value="car"><span>2021 Civic</span></label>
+      </div>
+      <div class="mock cov" aria-live="polite">
+        <div class="cov-h"><span class="lbl">Coverage map<span class="sr-only" id="cov-title"> for Priya</span></span><span class="count" id="cov-n"></span></div>
+        <ul class="legend" aria-label="Legend">
+          <li><i class="sq s-cov"></i>Covered</li><li><i class="sq s-ovl"></i>Overlap</li><li><i class="sq s-nc"></i>Not covered</li><li><i class="sq s-gap"></i>Gap</li>
+        </ul>
+        <div class="cgrid" id="cov-tiles"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. How it works -->
 <section id="how" aria-labelledby="how-title">
   <div class="wrap">
     <div class="sec-head reveal">
@@ -419,35 +574,6 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
   </div>
 </section>
 
-<!-- 3. Mosaic -->
-<section id="mosaic" style="background:var(--bg)" aria-labelledby="mosaic-title">
-  <div class="wrap mosaic">
-    <div class="reveal">
-      <p class="eyebrow" style="margin-bottom:12px">Mosaic</p>
-      <h2 class="h2" id="mosaic-title">Every policy, organized by who and what it protects.</h2>
-      <p class="lead" style="margin-top:16px">Pick yourself, your spouse, your home, a vehicle or your business. Mosey shows every coverage from every policy that applies, side by side.</p>
-      <ul class="bullets">
-        <li><svg class="ic"><use href="#i-check"/></svg>Includes policies you own and policies you are covered under, such as a parent's auto plan or an employer's group life.</li>
-        <li><svg class="ic"><use href="#i-check"/></svg>Spans home, auto, liability, business, life, health, disability, travel and pet.</li>
-        <li><svg class="ic"><use href="#i-check"/></svg>Shows where policies overlap, and what is and isn't included.</li>
-      </ul>
-    </div>
-    <div class="stage reveal" id="mosaic-demo">
-      <div class="chips" role="radiogroup" aria-label="Choose what to see coverage for">
-        <label class="fchip"><input type="radio" name="subj" value="you" checked><span>Priya</span></label>
-        <label class="fchip"><input type="radio" name="subj" value="home"><span>Austin home</span></label>
-        <label class="fchip"><input type="radio" name="subj" value="car"><span>2021 Civic</span></label>
-        <label class="fchip"><input type="radio" name="subj" value="biz"><span>Studio LLC</span></label>
-      </div>
-      <div class="mock cov" aria-live="polite">
-        <h4 id="cov-title">Coverage for Priya</h4>
-        <div id="cov-rows"></div>
-        <span class="tag-sample">Sample data</span>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- 4. Feature rows -->
 <section id="features" aria-labelledby="feat-title">
   <div class="wrap">
@@ -456,133 +582,118 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
       <h2 class="h2" id="feat-title">Understand it. Ask about it. Show it. Compare it.</h2>
     </div>
 
-    <div class="feat reveal">
-      <div class="feat-copy">
-        <h3 class="h2">Plain language, with the receipts.</h3>
-        <p class="lead">Each policy gets its own page: what's included, what's not included, limitations, and watch points ranked Critical, Moderate or Low. Every statement links to the policy page it came from.</p>
-        <ul class="bullets">
-          <li><svg class="ic"><use href="#i-check"/></svg>"Not available in the pages analyzed" is never confused with "not covered".</li>
-          <li><svg class="ic"><use href="#i-check"/></svg>Each watch point suggests a review with an insurance professional.</li>
-        </ul>
-      </div>
-      <div class="stage">
-        <div class="disc">
-          <div class="d" style="min-height:56px"><span style="font-size:18px;line-height:24px">Policy details</span></div>
-          <div class="d">What's included<span class="count">8</span><svg class="ic chev"><use href="#i-chev"/></svg></div>
-          <div class="d">What's not included<span class="count">4</span><svg class="ic chev"><use href="#i-chev"/></svg></div>
-          <div class="d">Coverage limitations<span class="count">5</span><svg class="ic chev"><use href="#i-chev"/></svg></div>
-          <div class="d">Coverage watch points<span class="count">3</span><svg class="ic chev"><use href="#i-chev"/></svg></div>
-          <div class="watch">
-            <span class="chip crit"><svg class="ic"><use href="#i-alert"/></svg>Critical</span>
-            <p>Rental reimbursement ends after 30 days. Check this if repairs could take longer.</p>
+    <div class="fgrid">
+      <article class="ftile reveal">
+        <div class="stage ph">
+        <div class="ph-wrap" id="ph-wrap">
+          <div class="phone">
+            <div class="ph-body">
+              <div class="ph-card">
+                <div class="ph-title"><h4>Homeowners policy</h4><span class="chip ok">Active</span></div>
+                <div class="ph-kv"><span>Policy holder</span><b>Priya and Dev Raman</b></div>
+                <div class="ph-kv"><span>Policy no.</span><b>HO-48210377</b></div>
+                <div class="ph-kv"><span>Insurer</span><b>Summit Mutual Insurance Company</b></div>
+                <div class="ph-kv"><span>Term</span><div><b>Apr 30, 2026 – Apr 30, 2027</b><small>12 months</small></div></div>
+                <button type="button" class="ph-more" id="ph-open" aria-haspopup="dialog" aria-controls="ph-sheet">Other details<svg class="ic chev"><use href="#i-chev"/></svg></button>
+              </div>
+            </div>
+            <div class="ph-back" id="ph-back"></div>
+            <div class="ph-sheet" id="ph-sheet" role="dialog" aria-modal="true" aria-labelledby="ph-st" inert>
+              <i class="ph-grab" aria-hidden="true"></i>
+              <div class="ph-sh"><h4 id="ph-st">Other details</h4><button type="button" class="ph-x" id="ph-close" aria-label="Close other details"><svg class="ic"><use href="#i-x"/></svg></button></div>
+              <div class="ph-scroll">
+                <div class="ph-panel">
+                  <div class="ph-r"><span>Payment plan</span><b>Full pay</b></div>
+                  <div class="ph-r"><span>Payment method</span><b>Automatic</b></div>
+                  <div class="ph-r"><span>Renewal billing</span><b>Insured</b></div>
+                  <div class="ph-r"><span>Agent</span><div><b>Jordan Ellis</b><small>412 Market St Ste 100, Austin TX 78701</small></div></div>
+                  <div class="ph-r"><span>Phone</span><b>512-555-0142</b></div>
+                  <div class="ph-r"><span>Email</span><b>jordan@summitagency.example</b></div>
+                  <div class="ph-r"><span>Insurer address</span><b>900 Congress Ave<br>Austin, Texas<br>78701-2200</b></div>
+                  <div class="ph-r"><span>Website</span><b>summitmutual.example</b></div>
+                </div>
+                <p class="ph-lbl">Sources</p>
+                <div class="ph-src"><span>Policy change declarations</span><em><svg class="ic"><use href="#i-file"/></svg>p.2</em></div>
+                <div class="ph-src"><span>Declarations</span><em><svg class="ic"><use href="#i-file"/></svg>p.4</em></div>
+                <div class="ph-src"><span>Policy change letter</span><em><svg class="ic"><use href="#i-file"/></svg>p.1</em></div>
+                <div class="ph-src"><span>Premium summary</span><em><svg class="ic"><use href="#i-file"/></svg>p.4</em></div>
+                <button type="button" class="btn btn-secondary ph-ask" style="color:var(--primary);border-color:var(--primary)">Ask Mosey</button>
+              </div>
+            </div>
           </div>
         </div>
-        <span class="tag-sample">Sample data</span>
-      </div>
-    </div>
-
-    <div class="feat flip reveal">
-      <div class="feat-copy">
-        <h3 class="h2">Ask Mosey. It answers from your policies only.</h3>
-        <p class="lead">Ask what a policy says, including right after something goes wrong. Mosey finds the coverages that relate, shows limits, deductibles and exclusions, and lays out what the policy asks you to do and by when.</p>
-        <ul class="bullets">
-          <li><svg class="ic"><use href="#i-check"/></svg>Every answer cites the document and page.</li>
-          <li><svg class="ic"><use href="#i-check"/></svg>Your insurer decides the claim. Mosey helps you understand your policy and know who to call.</li>
-        </ul>
-      </div>
-      <div class="stage">
+        </div>
+        <h3>Plain language, with reference citations</h3>
+        <p>Every policy in plain language: what's covered, what's not, and watch points. Each statement cites its page.</p>
+      </article>
+      <article class="ftile reveal">
+        <div class="stage">
         <div class="mock">
-          <div class="chat">
-            <div class="bubble-u">A tree fell on my garage. What do I do?</div>
+          <div class="chat" id="chat-demo">
+            <div class="bubble-u" data-s>A tree fell on my garage. What do I do?</div>
             <div class="bubble-a">Your homeowners policy lists other structures coverage at $25,000 with a $1,000 deductible. It asks you to give prompt notice and protect the property from further damage.</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="cite"><svg class="ic"><use href="#i-file"/></svg>Home policy · p. 3</span><span class="cite"><svg class="ic"><use href="#i-file"/></svg>Home policy · p. 11</span></div>
-            <div class="followups">
+            <div data-s style="display:flex;gap:8px;flex-wrap:wrap"><span class="cite"><svg class="ic"><use href="#i-file"/></svg>Home policy · p. 3</span><span class="cite"><svg class="ic"><use href="#i-file"/></svg>Home policy · p. 11</span></div>
+            <div class="followups" data-s>
               <span class="fu">Who do I call to report this?</span>
               <span class="fu">What is excluded for wind damage?</span>
             </div>
           </div>
-          <span class="tag-sample">Sample data</span>
+        </div>
+        </div>
+        <h3>Ask Mosey. Answers come from your policies only.</h3>
+        <p>Ask what a policy says, even right after something goes wrong. Every answer cites the document and page. Your insurer decides the claim.</p>
+      </article>
+      <article class="ftile reveal">
+        <div class="stage ca">
+        <div class="mock cov-assets">
+          <h4>Your covered assets</h4>
+          <p class="sub">4 assets · 27 coverages · 4 policies</p>
+          <p class="ca-l">Self and family</p>
+          <div class="row"><span class="icon-box"><svg class="ic"><use href="#i-user"/></svg></span><div class="grow"><b>Priya Raman</b><small><em>1 watchpoint</em> · 9 coverages · 2 policies</small></div><svg class="ic chev"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="icon-box"><svg class="ic"><use href="#i-user"/></svg></span><div class="grow"><b>Dev Raman</b><small>No watchpoints · 6 coverages · 1 policy</small></div><svg class="ic chev"><use href="#i-chev"/></svg></div>
+          <p class="ca-l">Home</p>
+          <div class="row"><span class="icon-box"><svg class="ic"><use href="#i-home"/></svg></span><div class="grow"><b>Austin home</b><small><em>2 watchpoints</em> · 8 coverages · 1 policy</small></div><svg class="ic chev"><use href="#i-chev"/></svg></div>
+          <p class="ca-l">Vehicles</p>
+          <div class="row"><span class="icon-box"><svg class="ic"><use href="#i-car"/></svg></span><div class="grow"><b>2021 Civic</b><small>No watchpoints · 4 coverages · 1 policy</small></div><svg class="ic chev"><use href="#i-chev"/></svg></div>
         </div>
       </div>
-    </div>
-
-    <div class="feat reveal">
-      <div class="feat-copy">
-        <h3 class="h2">Proof of insurance that stays current.</h3>
-        <p class="lead">Complete ACORD certificate and evidence-of-insurance forms in minutes, pre-filled from the insurance data already in your profile. Certificates renew with the policy, and anyone who asks can see the latest one with no Mosey account.</p>
-        <ul class="bullets">
-          <li><svg class="ic"><use href="#i-check"/></svg>A live view shows the latest certificate and whether it is current.</li>
-          <li><svg class="ic"><use href="#i-check"/></svg>Mosey shows the facts. The company asking decides whether they meet its requirements.</li>
-        </ul>
-      </div>
-      <div class="stage">
-        <div class="mock">
-          <div style="display:flex;align-items:center;gap:12px">
-            <span class="icon-box"><svg class="ic"><use href="#i-file"/></svg></span>
-            <div class="grow"><h4>Certificate of insurance</h4><p class="sub">Studio LLC · General liability</p></div>
-          </div>
-          <div style="margin-top:12px">
-            <div class="kv"><span>Holder</span><b>Northside Builders</b></div>
-            <div class="kv"><span>Policy period</span><b>Jan 15, 2026 – Jan 15, 2027</b></div>
-            <div class="kv"><span>Each occurrence</span><b>$1,000,000</b></div>
-          </div>
-          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-            <span class="chip ok"><svg class="ic"><use href="#i-check"/></svg>Current</span>
-            <span class="chip"><svg class="ic"><use href="#i-share"/></svg>Shared · view only</span>
-          </div>
-          <span class="tag-sample">Sample data</span>
+        <h3>Every asset and its coverage in one place</h3>
+        <p>See everyone and everything you protect, with the coverages, policies and watch points behind each one.</p>
+      </article>
+      <article class="ftile reveal">
+        <div class="stage cq-stage">
+        <div class="mock cq" role="table" aria-label="Comparison of three auto insurance quotes">
+          <div class="cq-h"><h4>Compare quotes</h4><p class="sub">Auto insurance · 2021 Civic</p></div>
+          <div class="cq-row cq-head" role="row"><div class="cq-c" role="columnheader">Compare</div><div class="cq-c" role="columnheader">Summit</div><div class="cq-c" role="columnheader">Harbor</div><div class="cq-c" role="columnheader">Pioneer</div></div>
+          <div class="cq-row" role="row"><div class="cq-c" role="rowheader">Monthly premium</div><div class="cq-c" role="cell">$142.50</div><div class="cq-c best" role="cell">$128.00</div><div class="cq-c" role="cell">$155.00</div></div>
+          <div class="cq-row" role="row"><div class="cq-c" role="rowheader">Bodily injury limits</div><div class="cq-c best" role="cell">$250k/<wbr>$500k</div><div class="cq-c" role="cell">$100k/<wbr>$300k</div><div class="cq-c best" role="cell">$250k/<wbr>$500k</div></div>
+          <div class="cq-row" role="row"><div class="cq-c" role="rowheader">Collision deductible</div><div class="cq-c" role="cell">$1,000</div><div class="cq-c best" role="cell">$500</div><div class="cq-c" role="cell">$1,000</div></div>
+          <div class="cq-row" role="row"><div class="cq-c" role="rowheader">Rental car coverage</div><div class="cq-c" role="cell">$30/day</div><div class="cq-c" role="cell">Not incl.</div><div class="cq-c best" role="cell">$40/day</div></div>
         </div>
       </div>
-    </div>
-
-    <div class="feat flip reveal">
-      <div class="feat-copy">
-        <h3 class="h2">Compare a quote against everything you already have.</h3>
-        <p class="lead">A quote that looks stronger on its own isn't always the best fit. Mosey compares quotes and renewal offers side by side and against your full Mosaic, showing what each adds, overlaps with or leaves unaddressed.</p>
-        <ul class="bullets">
-          <li><svg class="ic"><use href="#i-check"/></svg>No winner is picked and nothing is recommended. You decide.</li>
-        </ul>
-      </div>
-      <div class="stage">
-        <div class="mock">
-          <h4>Renewal offer vs current</h4>
-          <div class="two" style="margin-top:12px">
-            <div class="cmp-col">
-              <h4>Adds</h4>
-              <ul>
-                <li><svg class="ic" style="color:var(--icon-success)"><use href="#i-check"/></svg>Roadside assistance</li>
-                <li><svg class="ic" style="color:var(--icon-success)"><use href="#i-check"/></svg>Rental up to 45 days</li>
-              </ul>
-            </div>
-            <div class="cmp-col">
-              <h4>Overlaps</h4>
-              <ul>
-                <li><svg class="ic" style="color:var(--icon-brand)"><use href="#i-users"/></svg>Roadside, also on your credit card</li>
-                <li><svg class="ic" style="color:var(--icon-warning)"><use href="#i-alert"/></svg>Higher deductible</li>
-              </ul>
-            </div>
-          </div>
-          <span class="tag-sample">Sample data</span>
-        </div>
-      </div>
+        <h3>Compare a quote against what you already have</h3>
+        <p>Line quotes up side by side and against your full Mosaic. Mosey shows the differences. You decide.</p>
+      </article>
     </div>
   </div>
 </section>
 
+</div>
+
 <!-- 5. Grid -->
-<section style="padding-top:0" aria-labelledby="more-title">
+<section style="padding-top:0;background:var(--bg)" aria-labelledby="more-title">
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="eyebrow">And everything around it</p>
       <h2 class="h2" id="more-title">Built for the moments that count.</h2>
     </div>
     <div class="grid reveal">
-      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-file"/></svg></span><h3>Traceable to source</h3><p>Every tile links back to the policy and page it came from, so you can check instead of wondering.</p></article>
-      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-bell"/></svg></span><h3>Reminders</h3><p>Renewal dates, expiring certificates and watch points, surfaced before they matter.</p></article>
-      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-heart"/></svg></span><h3>Beneficiaries and legacy</h3><p>See who is named on every policy that pays out on death, including ones families often miss. Choose Legacy Contacts and Mosey prepares a Family Hand-off for them.</p></article>
-      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-share"/></svg></span><h3>Sharing on your terms</h3><p>View-only sharing with family or anyone you choose. Sensitive details are hidden, and you can withdraw consent at any time.</p></article>
-      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-folder"/></svg></span><h3>Document vault</h3><p>Policies, declarations, endorsements, certificates and renewal notices, kept together in one secure place.</p></article>
-      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-globe"/></svg></span><h3>In your language</h3><p>Mosey speaks the languages its users speak.</p></article>
+      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-file"/></svg></span><h3>Traceable to source</h3><p>Every tile links to the policy page it came from.</p></article>
+      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-bell"/></svg></span><h3>Reminders</h3><p>Renewals, expiring certificates and watch points, flagged early.</p></article>
+      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-heart"/></svg></span><h3>Beneficiaries and legacy</h3><p>See who is named on every life policy. Pick Legacy Contacts and Mosey prepares a Family Hand-off.</p></article>
+      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-share"/></svg></span><h3>Sharing on your terms</h3><p>View-only sharing with anyone you choose. Sensitive details stay hidden, and you can withdraw consent anytime.</p></article>
+      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-folder"/></svg></span><h3>Document vault</h3><p>Policies, endorsements, certificates and notices in one secure place.</p></article>
+      <article class="card"><span class="icon-box"><svg class="ic"><use href="#i-globe"/></svg></span><h3>In your language</h3><p>Mosey works in the languages you speak.</p></article>
     </div>
   </div>
 </section>
@@ -603,27 +714,6 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
     <div class="stds reveal" aria-label="Security and privacy standards">
       <span>SOC 2</span><span>HIPAA</span><span>NAIC</span><span>NYDFS</span>
     </div>
-  </div>
-</section>
-
-<!-- 7. Partners -->
-<section class="partner" id="partners" aria-labelledby="partner-title">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow">For partners</p>
-      <h2 class="h2" id="partner-title">One platform, many doors.</h2>
-      <p class="lead">Employers, governments, apps and membership organizations can offer Mosey to their people, whole or one feature at a time.</p>
-    </div>
-    <div class="doors reveal">
-      <div class="door"><span class="icon-box"><svg class="ic"><use href="#i-sparkles"/></svg></span><h3>Mosey's own apps</h3><p>iOS, Android and the web.</p></div>
-      <div class="door"><span class="icon-box"><svg class="ic"><use href="#i-building"/></svg></span><h3>Under your brand</h3><p>A complete Mosey experience in your name.</p></div>
-      <div class="door"><span class="icon-box"><svg class="ic"><use href="#i-folder"/></svg></span><h3>Inside your product</h3><p>Individual modules built into tools people already use.</p></div>
-    </div>
-    <ul class="mods reveal" aria-label="Modules">
-      <li class="chip">Policy Reader</li><li class="chip">Mosaic</li><li class="chip">Ask Mosey</li><li class="chip">Proof</li><li class="chip">Share &amp; Consent</li><li class="chip">Reminders</li>
-    </ul>
-    <p class="reveal" style="margin-top:24px;max-width:680px;color:var(--text-secondary)">Companies can also use Mosey to distribute employee insurance and benefits, so each employee sees what their employer provides alongside their own policies.</p>
-    <a class="link" href="#early-access">Talk to us about partnering <svg class="ic ic-sm"><use href="#i-arrow"/></svg></a>
   </div>
 </section>
 
@@ -667,20 +757,18 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
         </div>
       </form>
       <!-- Preview note: this form is not connected to a backend yet. -->
-      <p class="fine">Preview only: this form isn't connected yet, so nothing is sent.</p>
     </div>
   </div>
 </section>
 
 </main>
 
-<p class="disclaimer">Mosey summaries are based on the documents you provide. Incomplete or missing documents may result in incomplete or inaccurate insights. Mosey is not evidence of insurance for third parties and does not advise on whether coverage is adequate. Consult your agent or insurance carrier for coverage questions or determinations. Screens shown use sample data.</p>
 
 <footer>
   <div class="wrap">
     <img src="Mosey Word Mark - Brand.png" alt="Mosey">
     <nav aria-label="Footer">
-      <a href="#how">How it works</a><a href="#features">Features</a><a href="#privacy">Privacy</a><a href="#partners">Partners</a><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a>
+      <a href="#how">How it works</a><a href="#features">Features</a><a href="#privacy">Privacy</a><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a>
     </nav>
     <small>&copy; 2026 Mosey. Mosey doesn't sell insurance or recommend policies.</small>
   </div>
@@ -707,39 +795,237 @@ document.documentElement.classList.add('js');
   setTimeout(function(){els.forEach(function(e){e.classList.add('in')})},4000);
 })();
 
+/* Scroll-linked expand: plum stage -> full viewport -> Mosaic background (DESIGN.md section 15) */
+(function(){
+  var flow=document.getElementById('flow'),fx=document.getElementById('plum-fx'),
+      stage=document.querySelector('.hero .stage'),wrap=document.getElementById('hero-wrap'),
+      ml=document.getElementById('mos-l'),mr=document.getElementById('mosaic-demo'),
+      hero=document.querySelector('.hero'),hc=document.querySelector('.hero-copy'),mos=document.getElementById('mosaic'),feat=document.getElementById('features');
+  if(!flow||!fx||!stage||!wrap)return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){flow.classList.add('static');return;}
+  var D=400,H=360,ticking=false;
+  function measure(){
+    var r=stage.getBoundingClientRect();
+    D=Math.max(320,(r.top+window.scrollY)*0.9);
+    H=Math.round(window.innerHeight*0.45); /* hold: scroll this far with the hero cards in plain view before the expand starts */
+    /* Pull the Mosaic content up so it lands where the hero copy was, as the hero finishes fading */
+    mos.style.marginTop='0px';
+    var sy=window.scrollY,heroBottom=hero.getBoundingClientRect().bottom+sy,
+        copyTop=hc.getBoundingClientRect().top+sy,
+        pad=parseFloat(getComputedStyle(mos).paddingTop)||0;
+    mos.style.marginTop=(copyTop+H+0.95*D-pad-heroBottom)+'px';
+    update();
+  }
+  function done0(p){var q=Math.min(1,Math.max(0,(p-0.4)/0.45));return q*q*(3-2*q)}
+  function lerp(a,b,t){return a+(b-a)*t}
+  function update(){
+    ticking=false;
+    var y=window.scrollY,p=Math.min(1,Math.max(0,(y-H)/D));
+    var pe=Math.min(1,p/0.6),e=pe*pe*(3-2*pe);
+    var o=done0(p);
+    var on=mr._on?o>0.5:o>0.15; /* leaves earlier on the way up so it dissolves as you scroll back */
+    if(on!==mr._on){
+      mr._on=on;mr.classList.toggle('in',on);ml.classList.toggle('in',on);
+      clearTimeout(mr._t);
+      if(on){mr.classList.remove('out');ml.classList.remove('out')}
+      else{mr.classList.add('out');ml.classList.add('out');mr._t=setTimeout(function(){mr.classList.remove('out');ml.classList.remove('out')},460)} /* leaves to the right, then resets for the next arrival */
+      if(on&&window.__mosRender)window.__mosRender();
+    }
+    var done=pe>=0.97;
+    if(done!==flow._done){flow._done=done;flow.style.transition='none';flow._lit=undefined;flow.style.backgroundColor=''} /* swap plum on/off instantly, never through a fade */
+    flow.classList.toggle('expanded',done);
+    wrap.style.opacity=String(Math.max(0,1-Math.max(0,p-0.12)/0.5));
+    wrap.style.visibility=p>0.62?'hidden':'visible';
+    if(done){
+      fx.style.visibility='hidden';
+      /* Keep plum through "How it works". Once Features reaches mid-screen the page warms to white over time, like a light switching on */
+      var lit=feat.getBoundingClientRect().top<=window.innerHeight*0.5;
+      if(flow._lit===undefined){flow._lit=lit;flow.style.backgroundColor=lit?'#FFFFFF':'';}
+      else if(lit!==flow._lit){
+        flow._lit=lit;
+        flow.style.transition='background-color 900ms var(--motion-ease-in-out) 120ms';
+        flow.style.backgroundColor=lit?'#FFFFFF':'';
+      }
+      return;
+    }
+    flow.style.transition='none';
+    var r=stage.getBoundingClientRect(),vw=document.documentElement.clientWidth,vh=window.innerHeight;
+    var t=Math.max(0,lerp(r.top,0,e)),l=Math.max(0,lerp(r.left,0,e)),
+        rt=Math.max(0,lerp(vw-r.right,0,e)),b=Math.max(0,lerp(vh-r.bottom,0,e)),
+        rad=lerp(24,0,e);
+    fx.style.clipPath='inset('+t+'px '+rt+'px '+b+'px '+l+'px round '+rad+'px)';
+    fx.style.visibility='visible';
+  }
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(update)}}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',measure);
+  window.addEventListener('load',measure);
+  measure();
+})();
+
+/* "How it works" cards start scaling in one by one once the section heading reaches mid-screen */
+(function(){
+  var steps=document.querySelector('.steps'),head=document.querySelector('#how .sec-head');if(!steps||!head)return;
+  function chk(){
+    var t=head.getBoundingClientRect().top,vh=window.innerHeight;
+    if(t<=vh*0.5)steps.classList.add('go');
+    else if(t>vh*0.95)steps.classList.remove('go'); /* reset once it is back below the fold so it plays again on the next arrival */
+  }
+  window.addEventListener('scroll',chk,{passive:true});window.addEventListener('resize',chk);chk();
+})();
+
+/* Privacy band: plum warms in over time once it reaches mid-screen, like the Features hand-off */
+(function(){
+  var sec=document.getElementById('privacy'),ea=document.getElementById('early-access'),ft=document.querySelector('footer');if(!sec||!ea||!ft)return;
+  function chk(){var on=sec.getBoundingClientRect().top<=window.innerHeight*0.5;sec.classList.toggle('lit',on);ea.classList.toggle('lit',on);ft.classList.toggle('lit',on)}
+  window.addEventListener('scroll',chk,{passive:true});window.addEventListener('resize',chk);chk();
+})();
+
 /* Mosaic demo: selection is instant (DESIGN.md section 12 chips) */
 (function(){
   var DATA={
-    you:{t:'Coverage for Priya',r:[
-      ['i-heart','Term life','$500,000 death benefit · Employer group plan','Group life · p. 2'],
-      ['i-shield','Health','Medical · Employer plan','Benefits summary · p. 1'],
-      ['i-car','Auto liability','Covered driver · Personal auto','Auto policy · p. 2']]},
-    home:{t:'Coverage for Austin home',r:[
-      ['i-home','Dwelling','$420,000 · $1,000 deductible','Home policy · p. 3'],
-      ['i-shield','Personal liability','$300,000 per occurrence','Home policy · p. 3'],
-      ['i-alert','Flood','Not available in the pages analyzed','Home policy · p. 14']]},
-    car:{t:'Coverage for 2021 Civic',r:[
-      ['i-car','Collision','$500 deductible','Auto policy · p. 2'],
-      ['i-car','Rental reimbursement','$40 per day · 30 days','Auto policy · p. 4'],
-      ['i-shield','Roadside assistance','Also offered by a card benefit','Card benefits · p. 1']]},
-    biz:{t:'Coverage for Studio LLC',r:[
-      ['i-building','General liability','$1,000,000 each occurrence','GL policy · p. 1'],
-      ['i-shield','Business property','$60,000 · scheduled location','BOP · p. 5'],
-      ['i-alert','Cyber','Not included in the documents supplied','BOP · p. 9']]}
+    you:{n:'Priya',c:[
+      ['cov','Term life','$500,000 death benefit','Limit'],
+      ['cov','Health','Medical · Employer plan','Included'],
+      ['ovl','Roadside assistance','In both your auto policy and a card benefit','Overlap'],
+      ['gap','Disability income','No policy found','Gap']],
+      x:[['Death in military combat','Group life · p. 6'],['Injury from self-harm in the first 2 years','Group life · p. 7']]},
+    home:{n:'Austin home',c:[
+      ['cov','Dwelling','$420,000 · $1,000 deductible','Limit'],
+      ['cov','Personal liability','$300,000 per occurrence','Limit'],
+      ['nc','Flood','Not available in the pages analyzed','Not covered'],
+      ['gap','Earthquake','No policy found','Gap']],
+      x:[['Earth movement','Home policy · p. 11'],['Water backup unless endorsed','Home policy · p. 12']]},
+    car:{n:'2021 Civic',c:[
+      ['cov','Collision','$500 deductible','Included'],
+      ['cov','Rental reimbursement','$40 per day · 30 days','Limit'],
+      ['ovl','Roadside assistance','Also offered by a card benefit','Overlap'],
+      ['gap','Uninsured motorist','Not shown in the policy','Gap']],
+      x:[['Business use of the vehicle','Auto policy · p. 8'],['Racing or speed contests','Auto policy · p. 9']]}
   };
-  var rows=document.getElementById('cov-rows'),title=document.getElementById('cov-title');
+  var LAB={cov:'Covered',ovl:'Overlap',nc:'Not covered',gap:'Gap'};
+  var tiles=document.getElementById('cov-tiles'),
+      title=document.getElementById('cov-title'),cn=document.getElementById('cov-n');
   function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
-  function render(k){
-    var d=DATA[k];title.textContent=d.t;
-    rows.innerHTML=d.r.map(function(x){
-      return '<div class="row"><span class="icon-box"><svg class="ic"><use href="#'+x[0]+'"/></svg></span>'+
-      '<div class="grow"><b>'+esc(x[1])+'</b><small>'+esc(x[2])+'</small><span class="cite src"><svg class="ic"><use href="#i-file"/></svg>'+esc(x[3])+'</span></div></div>';
+  var cur='you';
+  function render(k,arrive){
+    tiles.classList.toggle('arrive',!!arrive);
+    cur=k;var d=DATA[k];title.textContent=' for '+d.n;
+    cn.textContent=d.c.length+d.x.length;
+    var n=d.c.length+d.x.length,half=Math.ceil(n/2);
+    function vi(i){return i<half?i*2:(i-half)*2+1} /* stagger in reading order across the two columns */
+    tiles.innerHTML=d.c.map(function(c,i){
+      var ic=c[0]==='cov'?'i-cc':(c[0]==='nc'?'i-xc':'i-alert');
+      return '<div class="tl '+c[0]+'" style="--i:'+vi(i)+'"><div class="st"><svg class="ic"><use href="#'+ic+'"/></svg>'+LAB[c[0]]+'</div><b>'+esc(c[1])+'</b><p>'+esc(c[2])+'</p><small>'+esc(c[3])+'</small></div>';
+    }).join('')+d.x.map(function(x,j){
+      return '<div class="tl exc" style="--i:'+vi(d.c.length+j)+'"><div class="st"><svg class="ic"><use href="#i-xc"/></svg>Excluded</div><b>'+esc(x[0])+'</b><small>'+esc(x[1])+'</small></div>';
     }).join('');
   }
-  document.querySelectorAll('input[name=subj]').forEach(function(i){
-    i.addEventListener('change',function(){render(i.value)});
+  var radios=[].slice.call(document.querySelectorAll('input[name=subj]')),
+      demo=document.getElementById('mosaic-demo'),timer=null,stopped=false,seen=false,
+      reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function stopAuto(){clearInterval(timer);timer=null}
+  function startAuto(){
+    if(stopped||reduce||timer)return;
+    timer=setInterval(function(){
+      if(!demo.classList.contains('in')||!seen)return;
+      var i=(radios.findIndex(function(r){return r.checked})+1)%radios.length;
+      radios[i].checked=true;render(radios[i].value);
+    },3000);
+  }
+  radios.forEach(function(i){
+    i.addEventListener('change',function(){stopped=true;stopAuto();render(i.value)}); /* only a real user choice fires change */
   });
+  var chipsEl=document.querySelector('.chips');
+  ['pointerdown','keydown'].forEach(function(ev){chipsEl.addEventListener(ev,function(){stopped=true;stopAuto()})});
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      seen=es[0].isIntersecting;
+      if(seen)startAuto();else stopAuto();
+    },{threshold:0.4}).observe(demo);
+  }
+  window.__mosRender=function(){if(!stopped){radios[0].checked=true;cur=radios[0].value} render(cur,true)}; /* each arrival starts on the first tab until the visitor picks one */
   render('you');
+})();
+
+/* Ask Mosey chat demo */
+(function(){
+  var chat=document.getElementById('chat-demo');if(!chat)return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var q=chat.querySelector('.bubble-u'),a=chat.querySelector('.bubble-a'),
+      cites=chat.querySelectorAll('[data-s]')[1],fu=chat.querySelector('.followups'),
+      words=a.textContent.trim().split(/\s+/),timers=[],live=false;
+  chat.classList.add('cx');
+  function later(f,ms){timers.push(setTimeout(f,ms))}
+  function clear(){timers.forEach(clearTimeout);timers=[]}
+  function paint(n){
+    a.innerHTML='<span class="v"></span><span class="h"></span>';
+    a.firstChild.textContent=words.slice(0,n).join(' ')+(n?' ':'');
+    a.lastChild.textContent=words.slice(n).join(' ');
+  }
+  function reset(){
+    [q,cites,fu].forEach(function(e){e.classList.remove('on')});
+    paint(0);
+  }
+  function run(){
+    reset();
+    later(function(){q.classList.add('on')},500);
+    var t=1300,step=55;
+    words.forEach(function(w,i){later(function(){paint(i+1)},t+i*step)});
+    var end=t+words.length*step;
+    later(function(){cites.classList.add('on')},end+200);
+    later(function(){fu.classList.add('on')},end+450);
+    /* everything dissolves together, resets while invisible, then the loop restarts */
+    later(function(){chat.style.transition='opacity 350ms ease';chat.style.opacity='0'},end+450+4000);
+    later(function(){
+      chat.classList.add('nt');reset();void chat.offsetWidth;
+      chat.style.transition='none';chat.style.opacity='1';void chat.offsetWidth;
+      chat.classList.remove('nt');run();
+    },end+450+4000+420);
+  }
+  function start(){if(!live){live=true;chat.style.transition='none';chat.style.opacity='1';run()}}
+  function stop(){live=false;clear()}
+  reset();
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){es[0].isIntersecting?start():stop()},{threshold:0.5}).observe(chat);
+  }else{stop();chat.classList.remove('cx');paint(words.length)}
+})();
+
+/* Insights mock: Other details bottom sheet. Plays by itself while on screen; any touch from the visitor takes over for good. */
+(function(){
+  var phone=document.querySelector('.phone');if(!phone)return;
+  var open=document.getElementById('ph-open'),sheet=document.getElementById('ph-sheet'),
+      close=document.getElementById('ph-close'),back=document.getElementById('ph-back'),
+      scroller=sheet.querySelector('.ph-scroll'),
+      reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      timers=[],stopped=false,visible=false,running=false;
+  function show(auto){phone.classList.add('open');sheet.removeAttribute('inert');if(!auto)setTimeout(function(){close.focus({preventScroll:true})},60)}
+  function hide(auto){phone.classList.remove('open');sheet.setAttribute('inert','');if(!auto)open.focus({preventScroll:true})}
+  function later(fn,ms){timers.push(setTimeout(fn,ms))}
+  function clearAll(){timers.forEach(clearTimeout);timers=[];running=false}
+  function cycle(){
+    running=true;
+    later(function(){show(true)},2200);
+    later(function(){scroller.scrollTo({top:scroller.scrollHeight,behavior:'smooth'})},4200);
+    later(function(){scroller.scrollTo({top:0,behavior:'smooth'})},7000);
+    later(function(){hide(true)},8600);
+    later(function(){scroller.scrollTop=0;cycle()},11000);
+  }
+  function startAuto(){if(!stopped&&!reduce&&!running)cycle()}
+  function stopAuto(){clearAll();if(!phone.classList.contains('open'))return;}
+  function userTook(){stopped=true;clearAll()}
+  open.addEventListener('click',function(){userTook();show(false)});
+  close.addEventListener('click',function(){userTook();hide(false)});
+  back.addEventListener('click',function(){userTook();hide(false)});
+  phone.addEventListener('pointerdown',userTook);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&phone.classList.contains('open')){userTook();hide(false)}});
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      visible=es[0].isIntersecting;
+      if(visible){startAuto()}
+      else if(!stopped){clearAll();hide(true);scroller.scrollTop=0}
+    },{threshold:0.6}).observe(phone);
+  }
 })();
 
 /* Early-access form: validation per DESIGN.md section 8; front-end only */
