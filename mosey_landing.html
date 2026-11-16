@@ -306,20 +306,10 @@ section{padding:var(--rhythm) 0}
 .card h3{font-size:18px;line-height:24px;font-weight:600}
 .card p{color:var(--text-secondary)}
 
-/* Privacy: the one dark band */
-.privacy,#early-access{background:var(--bg);transition:background-color 900ms var(--motion-ease-in-out) 120ms}
-.privacy.lit,#early-access.lit{background:var(--primary-disabled-bg)}
-.privacy{padding-bottom:56px}
-#early-access{padding-top:24px}
-.privacy .lead{color:var(--text-secondary)}
-.priv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:48px}
-.priv-grid>div{background:var(--bg);border-radius:var(--radius);padding:16px 24px}
-.priv-grid .ic{color:#6A4E64;width:24px;height:24px}
-.priv-grid h3{font-size:18px;line-height:24px;font-weight:600;margin:16px 0 8px}
-.priv-grid p{color:var(--text-secondary)}
-.stds{display:flex;flex-wrap:wrap;gap:8px;margin-top:40px}
-.stds span{min-height:32px;display:inline-flex;align-items:center;padding:0 14px;border-radius:var(--pill);border:1px solid var(--primary);color:var(--primary);font-weight:600;font-size:12px;line-height:16px}
-@media (prefers-reduced-motion:reduce){.privacy,#early-access,footer{transition:none}}
+/* Early access and footer share the plum surface, warming in together */
+#early-access{background:var(--bg);transition:background-color 900ms var(--motion-ease-in-out) 120ms}
+#early-access.lit{background:var(--primary-disabled-bg)}
+@media (prefers-reduced-motion:reduce){#early-access,footer{transition:none}}
 
 
 /* Cards scale in row by row on first view (rare tier, explanation): opacity + transform only */
@@ -403,7 +393,7 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
   .stage,.mosaic .stage,.ftile .stage{padding:20px;border-radius:20px}
   .hero .stage{grid-template-columns:1fr;min-height:0;margin-top:40px}
   .hero .stage .m1,.hero .stage .m3{margin-top:0}
-  .steps,.grid,.priv-grid{grid-template-columns:1fr}
+  .steps,.grid{grid-template-columns:1fr}
   .mosaic{grid-template-columns:1fr;gap:28px}
   .fgrid{grid-template-columns:1fr;gap:36px}
   .ftile .stage{height:auto}
@@ -452,7 +442,6 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
     <nav class="nav" aria-label="Primary">
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
-      <a href="#privacy">Privacy</a>
     </nav>
     <a class="btn btn-secondary nav-cta" href="#early-access">Request early access</a>
   </div>
@@ -725,25 +714,6 @@ footer small{width:100%;font-size:12px;line-height:16px;color:var(--text-tertiar
   </div>
 </section>
 
-<!-- 6. Privacy (the one dark band) -->
-<section class="privacy" id="privacy" aria-labelledby="priv-title">
-  <div class="wrap">
-    <div class="reveal" style="max-width:680px">
-      <p class="eyebrow" style="margin-bottom:12px">Privacy</p>
-      <h2 class="h2" id="priv-title">On your side of the table.</h2>
-      <p class="lead" style="margin-top:16px">Mosey doesn't sell insurance, recommend policies or judge whether coverage is enough. It states the facts, with sources, so you can decide.</p>
-    </div>
-    <div class="priv-grid reveal">
-      <div><svg class="ic"><use href="#i-shield"/></svg><h3>Your data stays yours</h3><p>Your documents are never sold. You stay in control of what Mosey holds.</p></div>
-      <div><svg class="ic"><use href="#i-share"/></svg><h3>Sharing is your choice</h3><p>Nothing is visible to anyone unless you choose to share it. Shares are view-only with sensitive details masked.</p></div>
-      <div><svg class="ic"><use href="#i-file"/></svg><h3>Grounded in your documents</h3><p>Every policy fact comes from a document you uploaded. Mosey has no direct carrier connection.</p></div>
-    </div>
-    <div class="stds reveal" aria-label="Security and privacy standards">
-      <span>SOC 2</span><span>HIPAA</span><span>NAIC</span><span>NYDFS</span>
-    </div>
-  </div>
-</section>
-
 <!-- 9. Early access -->
 <section id="early-access" aria-labelledby="ea-title">
   <div class="wrap">
@@ -901,10 +871,10 @@ document.documentElement.classList.add('js');
   window.addEventListener('scroll',chk,{passive:true});window.addEventListener('resize',chk);chk();
 })();
 
-/* Privacy band: plum warms in over time once it reaches mid-screen, like the Features hand-off */
+/* Early access: plum warms in over time once the section reaches mid-screen, footer with it */
 (function(){
-  var sec=document.getElementById('privacy'),ea=document.getElementById('early-access'),ft=document.querySelector('footer');if(!sec||!ea||!ft)return;
-  function chk(){var on=sec.getBoundingClientRect().top<=window.innerHeight*0.5;sec.classList.toggle('lit',on);ea.classList.toggle('lit',on);ft.classList.toggle('lit',on)}
+  var ea=document.getElementById('early-access'),ft=document.querySelector('footer');if(!ea||!ft)return;
+  function chk(){var on=ea.getBoundingClientRect().top<=window.innerHeight*0.5;ea.classList.toggle('lit',on);ft.classList.toggle('lit',on)}
   window.addEventListener('scroll',chk,{passive:true});window.addEventListener('resize',chk);chk();
 })();
 
