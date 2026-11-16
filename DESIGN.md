@@ -753,3 +753,16 @@ Every Ask Ovie surface that presents a conversation sheet reuses the behavior be
 - Do not use raster icons when Lucide vectors are available.
 - Do not hide essential values, statuses, or evidence gaps behind a tap.
 - Do not let sticky UI cover content or focused controls.
+
+## 15. Marketing site
+
+Scoped to the public Mosey landing page (`mosey_landing.html`). Product screens and any product UI shown inside the page keep sections 1–14 unchanged. Tokens from section 3 are reused; nothing here introduces a new brand color.
+
+- **Type:** Figtree only. Hero display 56/60 semibold desktop and 36/40 mobile; section display 40/44 and 28/32; lead copy 18/28 `text-secondary`. Body, caption and heading roles are unchanged. Sentence case.
+- **Layout:** 1120px maximum content width, 24px gutters desktop and 16px mobile, 96px section rhythm desktop and 56px mobile. Two-column rows collapse to one column below 860px.
+- **Surfaces:** page on `background-canvas`. Product frames sit on a soft stage panel (24px radius, linear gradient from `info-background` to `primary-disabled-background`). Mock product cards inside a stage use the section 6 card elevation and 12px radius. The AI gradient stays reserved for the Ask Mosey mark.
+- **Dark band:** one privacy band on `primary-dark` with white text and `icon-inverse` icons. No other dark section.
+- **Motion (approved via the `$animate` gate):** rare first-view tier, purpose explanation. Each section may reveal once with `opacity` 0→1 and `translateY(8px)`→0 over `--motion-duration-overlay` and `--motion-ease-out`. Content is visible without JavaScript. No parallax, looping, staggering or animated numbers. Under `prefers-reduced-motion: reduce` the reveal is opacity-only at `--motion-duration-tooltip`. Hover motion stays gated by `(hover: hover) and (pointer: fine)`.
+- **Product mock-ups:** static, illustrative, labeled as sample data, and built with the real tokens and components. Never show live carrier, claim or payment status.
+- **Claims guardrail:** copy must not imply that Mosey sells insurance, recommends policies, judges whether coverage is enough, guarantees coverage, or decides claims. Include a short disclaimer derived from section 12.5.
+- **Forms:** the early-access form follows section 8 (visible labels, adjacent validation, preserved input, shared focus ring) and may not claim submission until a backend exists.
