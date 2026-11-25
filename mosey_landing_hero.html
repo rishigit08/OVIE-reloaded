@@ -456,7 +456,9 @@ function hdrTone(){hdr.classList.toggle('scrolled',window.scrollY>12)}
 window.addEventListener('scroll',hdrTone,{passive:true});hdrTone();
 
 var hero=$('#hero'),pin=$('#pin'),docsEl=$('#docs'),head=$('#head-group'),typedEl=$('#typed'),tc=$('#tc'),phone=$('#phone'),s2h=$('#s2h'),s2p=$('#s2p'),pts=$$('.pt'),cts=$$('.ct'),sbF=$('#sb-files'),sbC=$('#sb-cov'),sbA=$('#sb-ask'),sbB=$('#sb-beta'),fcard=$('#ea-form'),fwrap=$('#fwrap'),phTopA=$('#ph-top-a'),cis=$$('.ci'),wash=$('#wash'),phFrame=$('#ph-frame'),phTopF=$('#ph-top-f'),phTopC=$('#ph-top-c'),cue=$('#cue'),glow=$('#glow');
-var docs=$$('.doc',docsEl).map(function(el,i){var d=el.dataset,r=rng(40+i*7);return {spin:(i%2?1:-1)*(50+r()*90),ph:r()*6.28,fw:.75+r()*.55,fa:5+r()*5,el:el,fx:+d.fx,fy:+d.fy,mfx:+d.mfx,mfy:+d.mfy,rot:+d.rot,row:+d.row,w:+d.w,h:+d.h,depth:+d.depth,hideNarrow:d.nomobile!==undefined}});
+/* each document gets its own size so the scatter does not look uniform (fixed values, so the layout is the same on every load) */
+var SIZES=[1.15,.82,1.26,.9,1.1,.78,1.2,.95];
+var docs=$$('.doc',docsEl).map(function(el,i){var d=el.dataset,r=rng(40+i*7);return {sz:SIZES[i%SIZES.length],spin:(i%2?1:-1)*(50+r()*90),ph:r()*6.28,fw:.75+r()*.55,fa:5+r()*5,el:el,fx:+d.fx,fy:+d.fy,mfx:+d.mfx,mfy:+d.mfy,rot:+d.rot,row:+d.row,w:+d.w,h:+d.h,depth:+d.depth,hideNarrow:d.nomobile!==undefined}});
 
 /* Layout: docs fly in one after another and pile up at the top; the typed line sits beneath the pile */
 /* Mosaic wash: a grid of blocks. Each block has its own threshold set by its distance from the centre, so white spreads outward brick by brick. */
@@ -513,7 +515,7 @@ function layout(){
   W=staticMode?docsEl.clientWidth:pin.clientWidth;H=staticMode?docsEl.clientHeight:pin.clientHeight;
   s=(narrow?.56:clamp(pin.clientWidth/1280,.55,1))*.64;
   pileY=staticMode?H/2:H*(narrow?.26:.33);
-  var se=s*.92,pileBottom=pileY+(256*se)/2+14,textTop=pileBottom+(narrow?26:38);
+  var se=s*.92,pileBottom=pileY+(256*se*1.1)/2+14,textTop=pileBottom+(narrow?26:38);
   if(!staticMode){
     typedEl.style.top=textTop+'px';
     glow.style.setProperty('--gx','50%');glow.style.setProperty('--gy',(pileY/H*100)+'%');
@@ -622,7 +624,7 @@ function update(){
     var x=lerp(bx,d.ex,c)+mx*d.depth*40*calm+Math.cos(tsec*d.fw*.7+d.ph)*d.fa*.7*fl;
     var y=lerp(by,d.ey,c)+my*d.depth*30*calm+Math.sin(tsec*d.fw+d.ph)*d.fa*fl;
     var ro=lerp(d.rot0+d.spin*(1-io),d.rotE,c)+mx*d.depth*3*calm+Math.sin(tsec*d.fw*.8+d.ph)*1.3*fl;
-    var sc=lerp(s*(.25+.75*io),se,c),op=clamp(ip*3);
+    var sc=lerp(s*d.sz*(.25+.75*io),se*(1+(d.sz-1)*.35),c),op=clamp(ip*3);   /* scattered documents keep their own size; the pile evens them out a little */
     d._x=x;d._y=y;d._ro=ro;d._sc=sc;
     if(!staticMode){
       var f=easeIO(clamp((p-.54-d.row*.014)/.16)),ti=pts[d.row];
