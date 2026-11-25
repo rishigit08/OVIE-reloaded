@@ -22,6 +22,7 @@
   --focus-ring:0 0 0 3px rgba(243,184,226,.6);
   --motion-ease-out:cubic-bezier(0.23,1,0.32,1);--motion-ease-in-out:cubic-bezier(0.77,0,0.175,1);
   --gutter:32px;
+  --edge:max(var(--gutter),calc((100% - 1200px) / 2 + var(--gutter)));   /* same content edge as the header logo and button */
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:clip}
@@ -50,13 +51,13 @@ a{color:inherit}
 @media (hover:hover) and (pointer:fine){.btn-light:hover{background:var(--pink-1)}.btn-ghost:hover{border-color:#fff}}
 
 /* Pinned hero */
-.hero{position:relative;height:620vh}
+.hero{position:relative;height:1270vh}
 .pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:radial-gradient(900px 620px at 50% 38%,#87497F 0%,var(--plum) 40%,var(--plum-dark) 78%,var(--plum-deep) 100%)}
 .glow{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:0;background:radial-gradient(420px 300px at var(--gx,50%) var(--gy,38%),rgba(243,184,226,.34),transparent 70%)}
 
 /* Headline */
 .head-wrap{position:absolute;inset:0;display:grid;place-items:center;padding:0 var(--gutter);pointer-events:none;z-index:3}
-.head{text-align:center;font-family:var(--serif);font-size:clamp(34px,5.1vw,77px);line-height:1.02;font-weight:400;letter-spacing:-.012em;text-shadow:0 2px 30px rgba(63,35,57,.45);will-change:transform,opacity}
+.head{text-align:center;font-family:var(--serif);font-size:clamp(34px,5.1vw,77px);line-height:1.12;font-weight:400;letter-spacing:-.012em;text-shadow:0 2px 30px rgba(63,35,57,.45);will-change:transform,opacity}
 .head .ln{display:block;padding-bottom:.1em}
 .head .ln>span{display:inline-block}
 .head-group{will-change:transform,opacity;display:flex;flex-direction:column;align-items:center}
@@ -109,8 +110,8 @@ a{color:inherit}
 .h .amt{font-size:24px;line-height:28px;font-weight:700;color:#A63A33;margin-top:10px}.h small{color:#6B5D67}
 .h .pay{margin-top:10px;display:inline-block;background:#2A2230;color:#fff;border-radius:999px;padding:4px 12px;font-weight:700;font-size:9px}
 
-/* Page wash: the whole stage turns white as the phone screen does (scroll-linked) */
-.wash{position:absolute;inset:0;z-index:0;background:#FFFFFF;opacity:0;pointer-events:none}
+/* Page wash: the plum stage pixelates into blocks that turn lilac, then white, in a wave-like random order (scroll-linked) */
+.wash{position:absolute;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .brand img.on-light{display:none}
 .hdr.light .brand img.on-dark{display:none}
 .hdr.light .brand img.on-light{display:block}
@@ -118,28 +119,79 @@ a{color:inherit}
 .hdr.light .btn-light{background:var(--plum-dark);color:#fff}
 @media (hover:hover) and (pointer:fine){.hdr.light .btn-light:hover{background:var(--plum)}}
 /* Scene 2: phone mock with plum tiles (right) and the coverage message (left) */
-.phone{position:absolute;left:0;top:0;z-index:2;font-size:calc(var(--pw) / 20);pointer-events:none}
+.phone{position:absolute;left:0;top:0;z-index:2;font-family:Outfit,system-ui,sans-serif;font-size:calc(var(--pw) / 20);pointer-events:none}
 .ph-frame{position:absolute;inset:0;border-radius:calc(var(--pw) * .15);background:#1B0F19;padding:calc(var(--pw) * .024);box-shadow:0 36px 70px rgba(60,20,55,.3),inset 0 0 0 1.2px rgba(255,255,255,.16);will-change:transform,opacity}
-.ph-screen{position:relative;height:100%;background:#FBF5E8;border-radius:calc(var(--pw) * .12);overflow:hidden}
+.ph-screen{position:relative;height:100%;background:#F0E5ED;border-radius:calc(var(--pw) * .12);overflow:hidden}
 .ph-notch{position:absolute;top:.8em;left:50%;transform:translateX(-50%);width:28%;height:1.25em;border-radius:999px;background:#1B0F19}
-.ph-content{position:absolute;z-index:1;inset:calc(var(--pw) * .024);padding:2.6em .9em .9em;color:#111;font-family:Outfit,system-ui,sans-serif;line-height:1.25}
-.ph-top{display:flex;justify-content:space-between;align-items:baseline;margin:0 .2em .8em}
+.ph-content{position:absolute;z-index:1;inset:calc(var(--pw) * .024);color:#111;font-family:Outfit,system-ui,sans-serif;line-height:1.25}
+.ph-view{position:absolute;inset:2.6em .9em .9em}
+.ph-top{display:flex;justify-content:space-between;align-items:baseline;margin:0 .2em .7em}
 .ph-top b{font-size:1.1em;font-weight:700}.ph-top span{font-size:.8em;color:#5F6368}
+.ph-view svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;flex:none}
+/* Files view: every policy document in one list (what the scattered documents turn into) */
+.ph-list{display:flex;flex-direction:column;gap:.42em}
+.pt{display:flex;align-items:center;gap:.7em;min-height:3.7em;padding:.55em .75em;border-radius:.85em;background:#fff;box-shadow:0 1px 4px rgba(60,20,55,.1);will-change:transform,opacity}
+.pt .ic{width:2.3em;height:2.3em;border-radius:.65em;display:grid;place-items:center;background:var(--c);color:#fff;flex:none}
+.pt .ic svg{width:1.25em;height:1.25em}
+.pt .tx{flex:1;min-width:0}
+.pt b{display:block;font-size:.95em;font-weight:600;line-height:1.2}
+.pt small{display:block;font-size:.72em;color:#5F6368;margin-top:.1em}
+.pt .ch{width:1em;height:1em;color:#9A9A9A}
+/* Coverage view: the next section's plum tiles */
 .ph-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55em}
-.pt{border-radius:.9em;padding:.8em;min-height:5.6em;display:flex;flex-direction:column;justify-content:space-between;background:var(--c);color:var(--t,#fff);will-change:transform,opacity}
-.pt.span{grid-column:span 2;min-height:5em}
-.pt small{font-size:.74em;font-weight:600;opacity:.85}
-.pt b{display:block;font-size:.98em;font-weight:600;line-height:1.15}
-.pt i{font-style:normal;font-size:.8em;opacity:.85}
-.pt.gap{background:transparent;border:1.5px dashed #6B4062;color:#6B4062}
-.s2{position:absolute;z-index:3;left:clamp(20px,7vw,120px);top:0;bottom:0;width:min(560px,44vw);display:flex;align-items:center;pointer-events:none}
-.s2h{font-family:var(--serif);color:#1C0819;font-size:clamp(30px,3.7vw,56px);line-height:1.04;font-weight:400;letter-spacing:-.025em;will-change:transform,opacity}
+.ct{border-radius:.9em;padding:.8em;min-height:5.6em;display:flex;flex-direction:column;justify-content:space-between;background:var(--c);color:var(--t,#fff);will-change:transform,opacity}
+.ct.span{grid-column:span 2;min-height:5em}
+.ct small{font-size:.74em;font-weight:600;opacity:.85}
+.ct b{display:block;font-size:.98em;font-weight:600;line-height:1.15}
+.ct i{font-style:normal;font-size:.8em;opacity:.85}
+.ct.gap{background:transparent;border:1.5px dashed #6B4062;color:#6B4062}
+/* Ask Mosey view: a question, a cited answer and the composer */
+.v-ask{display:flex;flex-direction:column}
+.chat{display:flex;flex-direction:column;gap:.75em}
+.bubble-u{align-self:flex-end;max-width:86%;background:#6B4062;color:#fff;border-radius:.9em;padding:.6em .75em;font-size:.84em;line-height:1.35}
+.bubble-a{font-size:.84em;line-height:1.45;color:#111}
+.cites{display:flex;flex-wrap:wrap;gap:.4em}
+.cite{display:inline-flex;align-items:center;gap:.35em;background:#fff;border-radius:999px;padding:.35em .7em;font-size:.68em;font-weight:600;color:#333A3D}
+.cite svg{width:1.1em;height:1.1em;color:#5F6368}
+.composer{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:.6em;background:#fff;border-radius:.9em;padding:.5em .55em .5em .8em;font-size:.8em;color:#5F6368;box-shadow:0 1px 4px rgba(60,20,55,.1)}
+.send{width:1.9em;height:1.9em;border-radius:50%;background:#6B4062;color:#fff;display:grid;place-items:center;flex:none}
+.send svg{width:1em;height:1em}
+/* Final stage: the plum returns and the early-access form arrives */
+.sb.beta .s2h{color:#fff}
+.sb.beta .s2h em{color:var(--pink-2)}
+.sb.beta .s2p{color:var(--on-dark-2)}
+.fwrap{position:absolute;z-index:4;right:var(--edge);top:0;bottom:0;width:min(380px,36vw);display:flex;align-items:center;pointer-events:none}
+.fcard{width:100%;background:#fff;color:#1C0819;border-radius:20px;padding:24px;box-shadow:0 30px 80px rgba(30,10,28,.45);font-family:Outfit,system-ui,sans-serif;transform-origin:left center;will-change:transform,opacity}
+.fh{font-family:var(--serif);font-size:24px;line-height:33px;font-weight:400;margin:0 0 16px}
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:600;font-size:14px;line-height:20px;margin-bottom:6px}
+.field label small{font-weight:400;color:#6B5D67}
+.input{width:100%;min-height:44px;padding:0 12px;border:1px solid #D8CFD5;border-radius:12px;font:400 15px/20px Outfit,system-ui,sans-serif;color:#1C0819;background:#fff;transition:border-color 160ms ease}
+.input::placeholder{color:#6B5D67;opacity:.75}
+.input:focus-visible{border-color:var(--plum);box-shadow:0 0 0 3px rgba(107,64,98,.28)}
+.input[aria-invalid="true"]{border-color:#A63A33}
+.err{display:none;margin-top:6px;color:#A63A33;font-weight:600;font-size:12px;line-height:16px}
+.err.show{display:block}
+.btn-plum{width:100%;background:var(--plum-dark);color:#fff;margin-top:4px}
+@media (hover:hover) and (pointer:fine){.btn-plum:hover{background:var(--plum)}}
+.fine{margin:12px 0 0;font-size:12px;line-height:16px;color:#6B5D67;text-align:center}
+.done{display:none;text-align:center;padding:12px 0}
+.done.show{display:block}
+.done .ok{width:48px;height:48px;margin:0 auto 12px;border-radius:14px;background:var(--pink-1);color:var(--m1);display:grid;place-items:center}
+.done .ok svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.done h3{font-family:var(--serif);font-size:22px;line-height:31px;font-weight:400;margin:0}
+.done p{margin:6px 0 0;color:#4E3F4A}
+.ph-view .mk{width:1em;height:1em;display:inline-block;vertical-align:-.14em;margin-right:.35em;color:#6B4062}
+.s2{position:absolute;z-index:3;left:var(--edge);top:0;bottom:0;width:min(720px,50vw);display:grid;align-items:center;pointer-events:none}
+.sb{grid-area:1/1;align-self:center;justify-self:start;width:fit-content;max-width:100%;transform-origin:left center;will-change:transform,opacity}
+.s2h{font-family:var(--serif);color:#1C0819;font-size:clamp(30px,3.7vw,56px);line-height:1.14;font-weight:400;letter-spacing:-.025em;text-wrap:balance;will-change:transform,opacity}
 .s2h em{display:block;font-weight:400;color:#8A2C78}
-.s2p{margin-top:22px;max-width:440px;font-family:Outfit,system-ui,sans-serif;font-size:clamp(16px,1.45vw,19px);line-height:1.55;color:#4E3F4A;will-change:transform,opacity}
+.s2h em.in{display:inline}
+.s2p{margin-top:22px;width:0;min-width:100%;font-family:Outfit,system-ui,sans-serif;font-size:clamp(16px,1.45vw,19px);line-height:1.55;color:#4E3F4A;will-change:transform,opacity}
 .tc{position:absolute;inset:0;z-index:3;pointer-events:none}
 
 /* Typed line */
-.typed{position:absolute;left:50%;transform:translateX(-50%);z-index:3;width:min(1120px,calc(100% - 2*var(--gutter)));text-align:center;font-family:var(--serif);font-size:min(40px,calc((100vw - 2 * var(--gutter)) / 28.1));line-height:1.2;font-weight:400;letter-spacing:-.012em;min-height:2.6em}
+.typed{position:absolute;left:50%;transform:translateX(-50%);z-index:3;width:min(1120px,calc(100% - 2*var(--gutter)));text-align:center;font-family:var(--serif);font-size:min(40px,calc((100vw - 2 * var(--gutter)) / 30.6));line-height:1.32;font-weight:400;letter-spacing:-.012em;min-height:2.6em}
 .typed .em{color:var(--pink-2);font-style:italic}
 /* Each line fades in from its own bottom edge; the second follows a beat later. A class toggle, so scrolling back reverses it cleanly. */
 .seg{display:block;text-wrap:balance}
@@ -163,7 +215,11 @@ footer p{max-width:760px;margin:0 auto}
 .static .docs{position:relative;inset:auto;width:100%;max-width:700px;height:300px;order:1}
 .static .head-wrap{order:0}
 .static .tc{position:relative;inset:auto;order:2;display:flex;flex-direction:column;align-items:center;gap:32px;pointer-events:auto}
-.static .s2{position:relative;inset:auto;left:auto;width:min(560px,100%);order:3;background:#fff;border-radius:24px;padding:28px}
+.static .s2{position:relative;inset:auto;left:auto;width:min(560px,100%);order:3;background:#fff;border-radius:24px;padding:28px;display:block}
+.static .sb+.sb{margin-top:28px}
+.static .v-cov,.static .v-ask{display:none}
+.static .sb.beta .s2h{color:#1C0819}.static .sb.beta .s2h em{color:#8A2C78}.static .sb.beta .s2p{color:#4E3F4A}
+.static .fwrap{position:relative;inset:auto;right:auto;order:5;width:min(560px,100%);display:block;pointer-events:auto}
 .static .phone{position:relative;left:auto;top:auto;order:4;width:260px;height:533px;--pw:260px;opacity:1}
 .static .head-wrap{position:relative;inset:auto;padding:0}
 .static .typed{position:relative;left:auto;top:auto!important;transform:none;min-height:0}
@@ -172,12 +228,25 @@ footer p{max-width:760px;margin:0 auto}
 @media (max-width:700px){
   :root{--gutter:20px}
   .head{font-size:clamp(32px,9.6vw,46px)}
-  .s2{left:var(--gutter);right:var(--gutter);width:auto;top:84px;bottom:auto;align-items:flex-start}
+  .s2{left:var(--gutter);right:var(--gutter);width:auto;top:84px;bottom:auto;align-items:start}
+  .fwrap{left:var(--gutter);right:var(--gutter);top:290px;bottom:16px;width:auto;align-items:flex-start}
+  .fcard{padding:18px}
+  .fh{font-size:20px;line-height:29px;margin-bottom:12px}
+  .sb{align-self:start}
   .s2h{font-size:clamp(30px,9vw,40px)}
   /* phones: the sentence is 20% smaller than the phone-scene headline and wraps onto several lines, each animating on its own */
-  .typed{font-size:clamp(24px,7.2vw,32px);min-height:0}
+  .typed{font-size:clamp(26.4px,7.92vw,35.2px);min-height:0}
   .s2p{margin-top:14px;font-size:15px}
   .nonarrow{display:none}
+}
+/* web: the Ask Mosey headline stays on exactly two lines */
+@media (min-width:701px){#s4h{white-space:nowrap}}
+/* short phones: tighten the form so it stays on screen below the beta message */
+@media (max-width:700px) and (max-height:740px){
+  .fcard{padding:14px}
+  .fh,.fine{display:none}
+  .field{margin-bottom:8px}
+  .field label{margin-bottom:4px;font-size:13px;line-height:18px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -192,7 +261,7 @@ footer p{max-width:760px;margin:0 auto}
 <header class="hdr" id="hdr">
   <div class="wrap">
     <a class="brand" href="#" aria-label="Mosey home"><img class="on-dark" src="Mosey Word Mark - White.png" alt="Mosey"><img class="on-light" src="Mosey Word Mark - Brand.png" alt="" aria-hidden="true"></a>
-    <a class="btn btn-light" href="mosey_landing_mosaic.html#early-access">Request early access</a>
+    <a class="btn btn-light" id="hdr-cta" href="#ea-form">Request early access</a>
   </div>
 </header>
 
@@ -200,41 +269,41 @@ footer p{max-width:760px;margin:0 auto}
 <section class="hero" id="hero" aria-labelledby="hero-title">
   <div class="pin" id="pin">
     <div class="glow" id="glow" aria-hidden="true"></div>
-    <div class="wash" id="wash" aria-hidden="true"></div>
+    <canvas class="wash" id="wash" aria-hidden="true"></canvas>
 
     <div class="docs" id="docs" aria-hidden="true">
       <!-- A · homeowners declarations page -->
-      <div class="doc" data-fx=".10" data-fy=".30" data-rot="-8" data-w="190" data-h="250" data-depth="1" data-mfx=".16" data-mfy=".17">
+      <div class="doc" data-row="0" data-fx=".10" data-fy=".30" data-rot="-8" data-w="190" data-h="250" data-depth="1" data-mfx=".16" data-mfy=".17">
         <div class="dc a" style="--d:300ms"><div class="ah"><b>DECLARATIONS</b><span>Homeowners · HO-3</span></div>
           <div class="row"><span>Dwelling</span><b>$420,000</b></div><div class="row"><span>Deductible</span><b>$1,000</b></div><div class="row"><span>Liability</span><b>$300,000</b></div><div class="row"><span>Term</span><b>12 mo.</b></div>
           <i class="l m"></i><i class="l"></i><i class="l s"></i><span class="stamp">IN FORCE</span></div>
       </div>
       <!-- B · auto ID card -->
-      <div class="doc" data-fx=".89" data-fy=".27" data-rot="7" data-w="230" data-h="142" data-depth="1.4" data-mfx=".84" data-mfy=".19">
+      <div class="doc" data-row="1" data-fx=".89" data-fy=".27" data-rot="7" data-w="230" data-h="142" data-depth="1.4" data-mfx=".84" data-mfy=".19">
         <div class="dc b" style="--d:380ms"><div class="bar">PROOF OF INSURANCE</div><div class="bd"><small>Insured</small><b>Priya Raman</b><small>Vehicle</small><b>2021 Honda Civic</b></div><span class="bc"></span></div>
       </div>
       <!-- C · umbrella policy -->
-      <div class="doc" data-fx=".91" data-fy=".72" data-rot="-6" data-w="170" data-h="232" data-depth="1.2" data-mfx=".85" data-mfy=".82">
+      <div class="doc" data-row="2" data-fx=".91" data-fy=".72" data-rot="-6" data-w="170" data-h="232" data-depth="1.2" data-mfx=".85" data-mfy=".82">
         <div class="dc c" style="--d:460ms"><h4>PERSONAL UMBRELLA</h4><p class="sub">Excess liability policy</p><i class="l"></i><i class="l m"></i><i class="l"></i><i class="l s"></i><i class="l m"></i><i class="l"></i><i class="l s"></i><p class="sig">Authorized signature</p></div>
       </div>
       <!-- D · certificate -->
-      <div class="doc" data-fx=".12" data-fy=".74" data-rot="5" data-w="196" data-h="256" data-depth=".9" data-mfx=".16" data-mfy=".84">
+      <div class="doc" data-row="3" data-fx=".12" data-fy=".74" data-rot="5" data-w="196" data-h="256" data-depth=".9" data-mfx=".16" data-mfy=".84">
         <div class="dc d" style="--d:540ms"><p class="t">CERTIFICATE OF COVERAGE</p><h4>Group life</h4><p style="color:#6B5D67">Employer plan</p><i class="l m"></i><i class="l s"></i><i class="l m"></i><i class="seal" style="display:block"></i></div>
       </div>
       <!-- E · renewal envelope -->
-      <div class="doc" data-fx=".33" data-fy=".88" data-rot="-4" data-w="236" data-h="150" data-depth="1.6" data-mfx=".5" data-mfy=".9">
+      <div class="doc" data-row="5" data-fx=".33" data-fy=".88" data-rot="-4" data-w="236" data-h="150" data-depth="1.6" data-mfx=".5" data-mfy=".9">
         <div class="dc e" style="--d:620ms"><span class="flap"></span><span class="stp"></span><div class="win"><i class="l b" style="margin-top:0"></i><i class="l m"></i></div><span class="tag">RENEWAL NOTICE</span></div>
       </div>
       <!-- F · health card -->
-      <div class="doc" data-fx=".68" data-fy=".89" data-rot="6" data-w="224" data-h="140" data-depth="1.1" data-mfx=".86" data-mfy=".5" data-nomobile>
+      <div class="doc" data-row="4" data-fx=".68" data-fy=".89" data-rot="6" data-w="224" data-h="140" data-depth="1.1" data-mfx=".86" data-mfy=".5" data-nomobile>
         <div class="dc f" style="--d:700ms"><span class="chip"></span><b>Health Plan</b><p class="id">XJ 4821 0937</p><small>Member</small><b style="font-size:11px">Dev Raman</b></div>
       </div>
       <!-- G · car insurance slip -->
-      <div class="doc" data-fx=".28" data-fy=".15" data-rot="-9" data-w="132" data-h="248" data-depth="1.8" data-mfx=".07" data-mfy=".52" data-nomobile>
+      <div class="doc" data-row="1" data-fx=".28" data-fy=".15" data-rot="-9" data-w="132" data-h="248" data-depth="1.8" data-mfx=".07" data-mfy=".52" data-nomobile>
         <div class="dc g" style="--d:780ms"><svg viewBox="0 0 24 24" width="26" height="26" style="display:block;margin:0 auto 4px;fill:none;stroke:#2A2230;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg><p class="c2">AUTO POLICY</p><p class="c2" style="font-weight:400">2021 Honda Civic</p><div class="row"><span>Liability</span><span>$100k</span></div><div class="row"><span>Collision</span><span>$500 ded.</span></div><div class="row"><span>Comp.</span><span>$250 ded.</span></div><div class="row"><span>Rental</span><span>$40/day</span></div><div class="row" style="font-weight:700"><span>6 MO.</span><span>$712.40</span></div></div>
       </div>
       <!-- H · premium bill -->
-      <div class="doc" data-fx=".72" data-fy=".14" data-rot="5" data-w="240" data-h="150" data-depth="1" data-mfx=".52" data-mfy=".11">
+      <div class="doc" data-row="0" data-fx=".72" data-fy=".14" data-rot="5" data-w="240" data-h="150" data-depth="1" data-mfx=".52" data-mfy=".11">
         <div class="dc h" style="--d:860ms"><div class="top"><b>Premium due</b><span class="logo"></span></div><p class="amt">$1,248.00</p><small>Policy period Apr 30 – Apr 30</small><br><span class="pay">PAY BY MAY 12</span></div>
       </div>
     </div>
@@ -245,36 +314,100 @@ footer p{max-width:760px;margin:0 auto}
         <span class="ln"><span style="--d:600ms">All your insurance.</span></span>
         <span class="ln"><span class="soft" style="--d:780ms">One clear picture.</span></span>
       </h1>
-      <p class="hero-sub" id="hero-sub">Mosey reads every policy and fits them together in plain language, traced to your documents.</p>
+      <p class="hero-sub" id="hero-sub">Mosey reads the policies you already have and fits them together, in plain language.</p>
       </div>
     </div>
 
     <div class="tc" id="tc">
-      <p class="sr-only">You own several pieces of protection, but nobody ever shows you the clear picture.</p>
-      <p class="typed" id="typed" aria-hidden="true"><span class="tl">You own several pieces of protection,</span><span class="tl" style="--d:180ms">but nobody ever shows you <span class="em">the clear picture.</span></span></p>
+      <p class="sr-only">You own several pieces of protection. Nobody has ever shown you how they fit together.</p>
+      <p class="typed" id="typed" aria-hidden="true"><span class="tl">You own several pieces of protection.</span><span class="tl" style="--d:180ms">Nobody has ever shown you <span class="em">how they fit together.</span></span></p>
     </div>
 
     <div class="s2" id="s2">
-      <div>
-        <h2 class="s2h" id="s2h">Mosey knows<br>what's covered.<em>And what isn't.</em></h2>
-        <p class="s2p" id="s2p">We read every policy and flag the gaps, the overlaps and the details worth a second look.</p>
+      <div class="sb" id="sb-files">
+        <h2 class="s2h" id="s2h">It starts with <em class="in">one place.</em></h2>
+        <p class="s2p" id="s2p">Mosey stores all your policies together. Upload, scan or forward them, and every document stays in one list.</p>
+      </div>
+      <div class="sb" id="sb-cov">
+        <h2 class="s2h" id="s3h">Know what's covered.<em>And what isn't.</em></h2>
+        <p class="s2p" id="s3p">Mosey flags the gaps, the overlaps and the details worth a second look.</p>
+      </div>
+      <div class="sb" id="sb-ask">
+        <h2 class="s2h" id="s4h">Ask Mosey. Answers come<br><em class="in">from your policies.</em></h2>
+        <p class="s2p" id="s4p">Ask what a policy says, even right after something goes wrong. Every answer shows the page Mosey read it from.</p>
+      </div>
+      <div class="sb beta" id="sb-beta">
+        <h2 class="s2h" id="s5h">Mosey is in private beta.<em>There's more to see.</em></h2>
+        <p class="s2p" id="s5p">Beyond storing, reading and answering, more features that help you understand your insurance better are already built. Request early access to try them.</p>
       </div>
     </div>
 
     <div class="phone" id="phone" aria-hidden="true">
       <div class="ph-frame" id="ph-frame"><div class="ph-screen"><span class="ph-notch"></span></div></div>
       <div class="ph-content">
-        <div class="ph-top"><b>Coverage map</b><span>Priya</span></div>
-        <div class="ph-grid">
-          <div class="pt span" style="--c:#54324D"><small>Covered</small><div><b>Dwelling</b><i>$420,000 limit</i></div></div>
-          <div class="pt" style="--c:#6B4062"><small>Covered</small><div><b>Collision</b><i>$500 deductible</i></div></div>
-          <div class="pt" style="--c:#7D5274"><small>Covered</small><div><b>Term life</b><i>$500,000</i></div></div>
-          <div class="pt" style="--c:#DFC9D9;--t:#2A1226"><small>Overlap</small><div><b>Roadside</b><i>Auto and card</i></div></div>
-          <div class="pt" style="--c:#40243A"><small>Covered</small><div><b>Liability</b><i>$300,000</i></div></div>
-          <div class="pt gap"><small>Gap</small><div><b>Flood</b><i>No policy found</i></div></div>
-          <div class="pt gap"><small>Gap</small><div><b>Disability</b><i>No policy found</i></div></div>
+        <div class="ph-view v-files">
+          <div class="ph-top" id="ph-top-f"><b>Policies</b><span>6 policies</span></div>
+          <div class="ph-list">
+            <div class="pt"><span class="ic" style="--c:#54324D"><svg viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span class="tx"><b>Homeowners</b><small>Summit Mutual · ••4821</small></span><svg class="ch" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="pt"><span class="ic" style="--c:#6B4062"><svg viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span><span class="tx"><b>Auto</b><small>Harbor Insurance · ••7730</small></span><svg class="ch" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="pt"><span class="ic" style="--c:#7D5274"><svg viewBox="0 0 24 24"><path d="M22 12a10.06 10.06 1 0 0-20 0Z"/><path d="M12 12v8a2 2 0 0 0 4 0"/><path d="M12 2v1"/></svg></span><span class="tx"><b>Umbrella</b><small>Summit Mutual · ••1156</small></span><svg class="ch" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="pt"><span class="ic" style="--c:#40243A"><svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span><span class="tx"><b>Group life</b><small>Employer plan · ••0092</small></span><svg class="ch" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="pt"><span class="ic" style="--c:#916781"><svg viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="tx"><b>Health</b><small>Evergreen Health · ••3318</small></span><svg class="ch" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="pt"><span class="ic" style="--c:#6B4062"><svg viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span><span class="tx"><b>Renters</b><small>Lakeview Mutual · ••5604</small></span><svg class="ch" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+          </div>
+        </div>
+        <div class="ph-view v-cov">
+          <div class="ph-top" id="ph-top-c"><b>Coverage map</b><span>Priya</span></div>
+          <div class="ph-grid">
+            <div class="ct span" style="--c:#54324D"><small>Covered</small><div><b>Dwelling</b><i>$420,000 limit</i></div></div>
+            <div class="ct" style="--c:#6B4062"><small>Covered</small><div><b>Collision</b><i>$500 deductible</i></div></div>
+            <div class="ct" style="--c:#7D5274"><small>Covered</small><div><b>Term life</b><i>$500,000</i></div></div>
+            <div class="ct" style="--c:#DFC9D9;--t:#2A1226"><small>Overlap</small><div><b>Roadside</b><i>Auto and card</i></div></div>
+            <div class="ct" style="--c:#40243A"><small>Covered</small><div><b>Liability</b><i>$300,000</i></div></div>
+            <div class="ct gap"><small>Gap</small><div><b>Flood</b><i>No policy found</i></div></div>
+            <div class="ct gap"><small>Gap</small><div><b>Disability</b><i>No policy found</i></div></div>
+          </div>
+        </div>
+        <div class="ph-view v-ask">
+          <div class="ph-top" id="ph-top-a"><b><svg class="mk" viewBox="0 0 100 100"><path fill="currentColor" stroke="none" d="M2 50 A48 48 0 1 1 98 50 A48 48 0 1 1 2 50 Z M33.52 77.43 A32 32 0 1 0 22.57 66.48 L19.23 80.77 Z"/></svg>Ask Mosey</b><span>Your policies</span></div>
+          <div class="chat">
+            <div class="ci bubble-u">A tree fell on my garage. What do I do?</div>
+            <div class="ci bubble-a">Your homeowners policy lists other structures coverage at $25,000 with a $1,000 deductible. It asks you to give prompt notice and protect the property from further damage.</div>
+            <div class="ci cites"><span class="cite"><svg viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>Home policy · p. 3</span><span class="cite"><svg viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>Home policy · p. 11</span></div>
+          </div>
+          <div class="ci composer"><span>Ask about your policies</span><span class="send"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span></div>
         </div>
       </div>
+    </div>
+
+    <div class="fwrap" id="fwrap">
+      <form class="fcard" id="ea-form" novalidate>
+        <div id="ea-fields">
+          <h3 class="fh">Request early access</h3>
+          <div class="field">
+            <label for="ea-name">Name</label>
+            <input class="input" id="ea-name" name="name" autocomplete="name" placeholder="Alex Rivera" aria-describedby="ea-name-err">
+            <p class="err" id="ea-name-err" role="alert">Enter your name.</p>
+          </div>
+          <div class="field">
+            <label for="ea-email">Email</label>
+            <input class="input" id="ea-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" aria-describedby="ea-email-err">
+            <p class="err" id="ea-email-err" role="alert">Enter a valid email address.</p>
+          </div>
+          <div class="field">
+            <label for="ea-org">Organization <small>(optional)</small></label>
+            <input class="input" id="ea-org" name="organization" autocomplete="organization" placeholder="Where you work">
+          </div>
+          <button class="btn btn-plum btn-lg" type="submit">Request early access</button>
+          <p class="fine">We'll write to you when your spot is ready.</p>
+        </div>
+        <div class="done" id="ea-done" role="status" tabindex="-1">
+          <span class="ok"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <h3>You're on the list, <span id="ea-who"></span>.</h3>
+          <p>We'll write to <span id="ea-addr"></span> when your spot is ready.</p>
+        </div>
+        <!-- Preview: this form is not connected to a backend yet. -->
+      </form>
     </div>
 
     <a class="cue" id="cue" href="#after" aria-label="Scroll to begin">Scroll<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></a>
@@ -304,11 +437,59 @@ var hdr=$('#hdr');
 function hdrTone(){hdr.classList.toggle('scrolled',window.scrollY>12)}
 window.addEventListener('scroll',hdrTone,{passive:true});hdrTone();
 
-var hero=$('#hero'),pin=$('#pin'),docsEl=$('#docs'),head=$('#head-group'),typedEl=$('#typed'),tc=$('#tc'),phone=$('#phone'),s2h=$('#s2h'),s2p=$('#s2p'),pts=$$('.pt'),wash=$('#wash'),phFrame=$('#ph-frame'),phTop=$('.ph-top'),cue=$('#cue'),glow=$('#glow');
-var docs=$$('.doc',docsEl).map(function(el,i){var d=el.dataset,r=rng(40+i*7);return {spin:(i%2?1:-1)*(50+r()*90),ph:r()*6.28,fw:.75+r()*.55,fa:5+r()*5,el:el,fx:+d.fx,fy:+d.fy,mfx:+d.mfx,mfy:+d.mfy,rot:+d.rot,w:+d.w,h:+d.h,depth:+d.depth,hideNarrow:d.nomobile!==undefined}});
+var hero=$('#hero'),pin=$('#pin'),docsEl=$('#docs'),head=$('#head-group'),typedEl=$('#typed'),tc=$('#tc'),phone=$('#phone'),s2h=$('#s2h'),s2p=$('#s2p'),pts=$$('.pt'),cts=$$('.ct'),sbF=$('#sb-files'),sbC=$('#sb-cov'),sbA=$('#sb-ask'),sbB=$('#sb-beta'),fcard=$('#ea-form'),fwrap=$('#fwrap'),phTopA=$('#ph-top-a'),cis=$$('.ci'),wash=$('#wash'),phFrame=$('#ph-frame'),phTopF=$('#ph-top-f'),phTopC=$('#ph-top-c'),cue=$('#cue'),glow=$('#glow');
+var docs=$$('.doc',docsEl).map(function(el,i){var d=el.dataset,r=rng(40+i*7);return {spin:(i%2?1:-1)*(50+r()*90),ph:r()*6.28,fw:.75+r()*.55,fa:5+r()*5,el:el,fx:+d.fx,fy:+d.fy,mfx:+d.mfx,mfy:+d.mfy,rot:+d.rot,row:+d.row,w:+d.w,h:+d.h,depth:+d.depth,hideNarrow:d.nomobile!==undefined}});
 
 /* Layout: docs fly in one after another and pile up at the top; the typed line sits beneath the pile */
-var W=0,H=0,s=1,narrow=false,active=[],staticMode=reduce,pileY=0,Cx=0,Cy=0,pw=0,ph=0,slideD=0;
+/* Mosaic wash: a grid of blocks. Each block has its own threshold set by its distance from the centre, so white spreads outward brick by brick. */
+var wctx=wash.getContext&&wash.getContext('2d'),wCells=[],wCols=0,wRows=0,wSize=56,wW=0,wH=0,lastWb=-1,lastWp=-1;
+var WASH_TINTS=[[196,150,188],[222,190,214],[238,214,232]];   /* plum scale lilacs on the way to white */
+function buildWash(){
+  if(!wctx)return;
+  var dpr=Math.min(2,window.devicePixelRatio||1);
+  wW=pin.clientWidth;wH=pin.clientHeight;wash.width=Math.round(wW*dpr);wash.height=Math.round(wH*dpr);
+  wctx.setTransform(dpr,0,0,dpr,0,0);
+  wSize=wW<700?25:39;wCols=Math.ceil(wW/wSize);wRows=Math.ceil(wH/wSize);
+  var rr=rng(99);wCells=[];
+  for(var r=0;r<wRows;r++)for(var c=0;c<wCols;c++){
+    /* distance from the centre of the stage (0 at the middle, 1 at the corners) sets when a brick goes; a little jitter keeps the edge uneven */
+    var dx=((c+.5)*wSize-wW/2)/(wW/2),dy=((r+.5)*wSize-wH/2)/(wH/2),d=Math.min(1,Math.hypot(dx,dy)/1.4142);
+    wCells.push({x:c*wSize,y:r*wSize,thr:d*.78+rr()*.22,tint:WASH_TINTS[(rr()*3)|0],thr2:(1-(c+.5)/wCols)*.78+rr()*.22});
+  }
+  lastWb=-1;lastWp=-1;
+}
+function drawWash(wb,wp){
+  if(!wctx||(wb===lastWb&&wp===lastWp))return;
+  lastWb=wb;lastWp=wp;
+  wctx.clearRect(0,0,wW,wH);
+  if(wb<=0||wp>=1)return;
+  if(wb>=1){
+    wctx.fillStyle='#fff';wctx.fillRect(0,0,wW,wH);
+    if(wp>0){
+      /* the plum comes back: starting at the right edge, white blocks turn lilac and fall away to reveal it */
+      for(var j=0;j<wCells.length;j++){
+        var q=wCells[j],u=clamp((wp*1.5-q.thr2)/.5);
+        if(u<=0)continue;
+        wctx.clearRect(q.x,q.y,wSize+.6,wSize+.6);
+        var a2=1-clamp((u-.4)/.6),m2=clamp(u/.5),k2=q.tint;
+        if(a2>0){
+          wctx.fillStyle='rgba('+Math.round(lerp(255,k2[0],m2))+','+Math.round(lerp(255,k2[1],m2))+','+Math.round(lerp(255,k2[2],m2))+','+a2.toFixed(3)+')';
+          wctx.fillRect(q.x,q.y,wSize+.6,wSize+.6);
+        }
+      }
+    }
+    return;
+  }
+  /* t runs 0 -> 1 per block: first it pixelates into a lilac block, then turns white */
+  for(var i=0;i<wCells.length;i++){
+    var c=wCells[i],t=clamp((wb*1.5-c.thr)/.5);
+    if(t<=0)continue;
+    var a=Math.min(1,t*2.2),m=clamp((t-.45)/.55),k=c.tint;
+    wctx.fillStyle='rgba('+Math.round(lerp(k[0],255,m))+','+Math.round(lerp(k[1],255,m))+','+Math.round(lerp(k[2],255,m))+','+a.toFixed(3)+')';
+    wctx.fillRect(c.x,c.y,wSize+.6,wSize+.6);
+  }
+}
+var W=0,H=0,s=1,narrow=false,active=[],staticMode=reduce,pileY=0,Cx=0,Cy=0,pw=0,ph=0,slideD=0,rowSrc=[];
 function layout(){
   narrow=window.innerWidth<700;
   W=staticMode?docsEl.clientWidth:pin.clientWidth;H=staticMode?docsEl.clientHeight:pin.clientHeight;
@@ -318,6 +499,8 @@ function layout(){
   if(!staticMode){
     typedEl.style.top=textTop+'px';
     glow.style.setProperty('--gx','50%');glow.style.setProperty('--gy',(pileY/H*100)+'%');
+    /* phones: the form sits just below the beta message, whatever height that message is */
+    fwrap.style.top=narrow?(84+sbB.offsetHeight+24)+'px':'';
   }
   active=docs.filter(function(d){return !(narrow&&d.hideNarrow)});
   docs.forEach(function(d){d.el.style.display=(narrow&&d.hideNarrow)?'none':'';d.el.style.width=d.w+'px';d.el.style.height=d.h+'px'});
@@ -327,13 +510,16 @@ function layout(){
     var fx=narrow?d.mfx:d.fx,fy=narrow?d.mfy:d.fy;
     d.rank=k;d.el.style.zIndex=k+1;
     d.sx=fx*W;d.sy=fy*H;
+    if(narrow){d.sx=W/2+(d.sx-W/2)*.8;d.sy=H/2+(d.sy-H/2)*.8}   /* phones: scattered documents sit 20% closer to the headline */
     d.ex=W/2+(((k*5)%7)-3)*(narrow?12:24);d.ey=pileY+(((k*3)%5)-2)*(narrow?5:10);
     d.rot0=d.rot;d.rotE=(k%2?1:-1)*(1.5+(k%4)*1.8);
   });
+  /* the document each policy row grows out of (the first visible one that maps to it) */
+  rowSrc=pts.map(function(t,i){var m=active.filter(function(d){return d.row===i});return m.length?m[0]:active[i%active.length]});
   if(!staticMode){
     var PW=pin.clientWidth,PH=pin.clientHeight;
     if(narrow){pw=Math.min(PW*.5,(PH*.46)/2.05);Cx=PW/2;Cy=PH*.68}
-    else{pw=Math.min(290,PW*.27,(PH*.8)/2.05);Cx=PW*.70;Cy=PH*.53}
+    else{pw=Math.min(290,PW*.27,(PH*.8)/2.05);Cx=PW-Math.max(32,(PW-1200)/2+32)-pw/2;Cy=PH*.53}
     ph=pw*2.05;phone.style.width=pw+'px';phone.style.height=ph+'px';phone.style.setProperty('--pw',pw+'px');
     phone.style.left=(Cx-pw/2)+'px';phone.style.top=(Cy-ph/2)+'px';
     slideD=PH-(Cy-ph/2)+30;
@@ -346,6 +532,7 @@ function layout(){
     });
   }
   buildLines();
+  if(!staticMode)buildWash();
   update();kick();
 }
 
@@ -362,7 +549,7 @@ function easeBack(t){var c1=1.05,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow
 
 /* Sentence: every rendered line (a wrapped line counts as its own) fades in independently, one after another, once the pile is complete; it fades back out if the visitor scrolls back.
    The text is set into words first, the browser decides where it wraps, then each visual line becomes its own block. */
-var SEGS=[[{t:'You own several pieces of protection,'}],[{t:'but nobody ever shows you '},{t:'the clear picture.',em:1}]];
+var SEGS=[[{t:'You own several pieces of protection.'}],[{t:'Nobody has ever shown you '},{t:'how they fit together.',em:1}]];
 function buildLines(){
   var measure=[],lines=[];
   typedEl.innerHTML='';
@@ -401,7 +588,7 @@ function progress(){
   return run>0?clamp(-top/run):1;
 }
 function update(){
-  var p=staticMode?1:progress(),pA=staticMode?1:clamp(p/.52),now=performance.now(),el=now-t0,tsec=el/1000;
+  var raw=staticMode?1:progress(),p=staticMode?1:clamp(raw/.46),pC=staticMode?0:clamp((raw-.48)/.52),pC1=clamp(pC*3),pD=clamp(pC*3-1),pE=clamp(pC*3-2),pA=staticMode?1:clamp(p/.52),now=performance.now(),el=now-t0,tsec=el/1000;
   wantLoop=!staticMode&&!reduce&&pA<.65;
   if(fine&&!reduce){mx+=(tx-mx)*.09;my+=(ty-my)*.09}
   /* Scene 1: docs scatter out of the centre on load, hover and follow the cursor, then (scroll-linked) land one behind the other in the pile.
@@ -418,7 +605,7 @@ function update(){
     var sc=lerp(s*(.25+.75*io),se,c),op=clamp(ip*3);
     d._x=x;d._y=y;d._ro=ro;d._sc=sc;
     if(!staticMode){
-      var f=easeIO(clamp((p-.54-d.rank*.014)/.16)),ti=pts[d.rank];
+      var f=easeIO(clamp((p-.54-d.row*.014)/.16)),ti=pts[d.row];
       if(f>0){
         if(ti){x=lerp(x,ti._cx,f);y=lerp(y,ti._cy,f);ro*=1-f;sc=lerp(sc,clamp(ti._w/d.w,.2,1.2),f);op*=1-clamp((f-.1)/.45)}
         else{x=lerp(x,Cx,f);y=lerp(y,Cy,f);ro*=1-f;sc*=1-.75*f;op*=1-clamp((f-.2)/.5)}
@@ -441,35 +628,85 @@ function update(){
   var tcOp=1-clamp((p-.50)/.05);
   tc.style.opacity=tcOp.toFixed(3);tc.style.visibility=tcOp<=0?'hidden':'visible';
   /* the page turns white as the tiles form */
-  var wb=easeOut(clamp((p-.58)/.12));
-  wash.style.opacity=wb.toFixed(3);hdr.classList.toggle('light',wb>.55);
+  var wb=clamp((p-.56)/.17);
+  var wp=clamp(pE/.5);
+  drawWash(wb,wp);hdr.classList.toggle('light',wb>.5&&wp<.45);
   /* each document turns into its coverage tile, in place */
   pts.forEach(function(t,i){
-    var d=active[i]||active[i%active.length];
+    var d=rowSrc[i];
     var f=easeIO(clamp((p-.54-i*.014)/.16));
     var px=lerp(d._x,t._cx,f),py=lerp(d._y,t._cy,f),ro=lerp(d._ro,0,f),k=lerp(clamp(d.w*d._sc/t._w,.25,2.5),1,f);
     t.style.transform='translate('+(px-t._cx).toFixed(1)+'px,'+(py-t._cy).toFixed(1)+'px) rotate('+ro.toFixed(2)+'deg) scale('+k.toFixed(3)+')';
-    t.style.opacity=clamp((f-.2)/.4).toFixed(3);
+    t.style.opacity=(clamp((f-.2)/.4)*(1-easeOut(clamp((pC1-.12-i*.02)/.25)))).toFixed(3);
   });
   /* after a short beat the phone frame fades in from behind the tiles */
   var fe=easeOut(clamp((p-.80)/.12));
   phFrame.style.transform='scale('+(.93+.07*fe).toFixed(3)+')';
   phFrame.style.opacity=fe.toFixed(3);phFrame.style.visibility=fe<=0?'hidden':'visible';
-  phTop.style.opacity=clamp((p-.88)/.06).toFixed(3);
+  phTopF.style.opacity=(clamp((p-.88)/.06)*(1-clamp((pC1-.10)/.2))).toFixed(3);
   var sp=easeOut(clamp((p-.86)/.10)),sq=easeOut(clamp((p-.91)/.08));
   s2h.style.opacity=sp.toFixed(3);s2h.style.transform='translateY('+((1-sp)*36).toFixed(1)+'px)';
   s2p.style.opacity=sq.toFixed(3);s2p.style.transform='translateY('+((1-sq)*24).toFixed(1)+'px)';
+  /* Sections 3, 4 and 5 share the phone. Its content dissolves Policies -> Coverage map -> Ask Mosey chat, while the message beside it
+     scales down and fades out to the left and the next message scales up and fades in from the right. */
+  cts.forEach(function(t,i){
+    var vi=easeOut(clamp((pC1-.32-i*.035)/.25)),vo=easeOut(clamp((pD-i*.03)/.22));
+    t.style.opacity=(vi*(1-vo)).toFixed(3);t.style.transform='translateY('+((1-vi)*10).toFixed(1)+'px) scale('+(.9+.1*vi).toFixed(3)+')';
+  });
+  phTopC.style.opacity=(clamp((pC1-.40)/.2)*(1-clamp(pD/.2))).toFixed(3);
+  cis.forEach(function(t,i){
+    var v=easeOut(clamp((pD-.30-i*.08)/.22));
+    t.style.opacity=v.toFixed(3);t.style.transform='translateY('+((1-v)*10).toFixed(1)+'px)';
+  });
+  phTopA.style.opacity=clamp((pD-.28)/.18).toFixed(3);
+  var out=easeIO(clamp((pC1-.10)/.36)),inn=easeOut(clamp((pC1-.40)/.40));
+  var out2=easeIO(clamp((pD-.04)/.36)),inn2=easeOut(clamp((pD-.40)/.40));
+  sbF.style.opacity=(1-out).toFixed(3);sbF.style.transform='translateX('+(-out*90).toFixed(1)+'px) scale('+(1-.14*out).toFixed(3)+')';
+  sbC.style.opacity=(inn*(1-out2)).toFixed(3);sbC.style.transform='translateX('+(((1-inn)-out2)*90).toFixed(1)+'px) scale('+((.86+.14*inn)*(1-.14*out2)).toFixed(3)+')';
+  var out3=easeIO(clamp((pE-.04)/.36)),inn3=easeOut(clamp((pE-.40)/.40));
+  sbA.style.opacity=(inn2*(1-out3)).toFixed(3);sbA.style.transform='translateX('+(((1-inn2)-out3)*90).toFixed(1)+'px) scale('+((.86+.14*inn2)*(1-.14*out3)).toFixed(3)+')';
+  /* Final stage: the phone fades out as the plum returns; the beta message and the early-access form arrive from the right */
+  var pf=1-easeOut(clamp(pE/.3));
+  phone.style.opacity=pf.toFixed(3);phone.style.visibility=pf<=0?'hidden':'visible';phone.style.transform='scale('+(.94+.06*pf).toFixed(3)+')';
+  sbB.style.opacity=inn3.toFixed(3);sbB.style.transform='translateX('+((1-inn3)*90).toFixed(1)+'px) scale('+(.86+.14*inn3).toFixed(3)+')';
+  var fi=easeOut(clamp((pE-.45)/.40));
+  fcard.style.opacity=fi.toFixed(3);fcard.style.transform='translateX('+((1-fi)*90).toFixed(1)+'px) scale('+(.86+.14*fi).toFixed(3)+')';
+  fcard.style.visibility=fi<=0?'hidden':'visible';fcard.style.pointerEvents=fi>.6?'auto':'none';
 }
 
 if(reduce){
   hero.classList.add('static');
   typedEl.classList.add('on');shown=true;
 }
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(buildLines);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);
 window.addEventListener('scroll',kick,{passive:true});
 var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(layout,80)});
 window.addEventListener('load',layout);
 layout();
+
+/* Early-access form: front-end validation only (no backend yet) */
+(function(){
+  var f=$('#ea-form');if(!f)return;
+  var name=$('#ea-name'),email=$('#ea-email');
+  function show(el,id,bad){$('#'+id).classList.toggle('show',bad);if(el)el.setAttribute('aria-invalid',bad?'true':'false')}
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var okN=name.value.trim().length>0,okE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+    show(name,'ea-name-err',!okN);show(email,'ea-email-err',!okE);
+    if(!okN){name.focus();return}
+    if(!okE){email.focus();return}
+    $('#ea-who').textContent=name.value.trim().split(/\s+/)[0];$('#ea-addr').textContent=email.value.trim();
+    $('#ea-fields').style.display='none';var d=$('#ea-done');d.classList.add('show');d.focus();
+  });
+  var hc=$('#hdr-cta');
+  if(hc)hc.addEventListener('click',function(e){
+    e.preventDefault();
+    if(staticMode){f.scrollIntoView({behavior:'auto',block:'center'});name.focus({preventScroll:true});return}
+    var run=hero.offsetHeight-window.innerHeight;
+    window.scrollTo({top:hero.offsetTop+run,behavior:'smooth'});
+    setTimeout(function(){name.focus({preventScroll:true})},1600);
+  });
+})();
 })();
 </script>
 </body>
