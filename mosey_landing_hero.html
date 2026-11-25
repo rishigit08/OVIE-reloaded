@@ -312,7 +312,7 @@ var W=0,H=0,s=1,narrow=false,active=[],staticMode=reduce,pileY=0,Cx=0,Cy=0,pw=0,
 function layout(){
   narrow=window.innerWidth<700;
   W=staticMode?docsEl.clientWidth:pin.clientWidth;H=staticMode?docsEl.clientHeight:pin.clientHeight;
-  s=(narrow?.56:clamp(pin.clientWidth/1280,.55,1))*.8;
+  s=(narrow?.56:clamp(pin.clientWidth/1280,.55,1))*.64;
   pileY=staticMode?H/2:H*(narrow?.26:.33);
   var se=s*.92,pileBottom=pileY+(256*se)/2+14,textTop=pileBottom+(narrow?26:38);
   if(!staticMode){
