@@ -720,13 +720,28 @@ layout();
     $('#ea-who').textContent=name.value.trim().split(/\s+/)[0];$('#ea-addr').textContent=email.value.trim();
     $('#ea-fields').style.display='none';var d=$('#ea-done');d.classList.add('show');d.focus();
   });
-  var hc=$('#hdr-cta');
+  var hc=$('#hdr-cta'),jumping=false;
   if(hc)hc.addEventListener('click',function(e){
     e.preventDefault();
     if(staticMode){f.scrollIntoView({behavior:'auto',block:'center'});name.focus({preventScroll:true});return}
-    var run=hero.offsetHeight-window.innerHeight;
-    window.scrollTo({top:hero.offsetTop+run,behavior:'smooth'});
-    setTimeout(function(){name.focus({preventScroll:true})},1600);
+    /* No scrolling through the story: the current screen dissolves, the page jumps to the end, and the early-access section arrives from the left */
+    var run=hero.offsetHeight-window.innerHeight,end=hero.offsetTop+run,pinEl=hero.querySelector('.pin');
+    if(jumping)return;
+    if(Math.abs(window.pageYOffset-end)<4){name.focus({preventScroll:true});return}
+    jumping=true;
+    var ease='cubic-bezier(0.23, 1, 0.32, 1)';
+    pinEl.style.transition='opacity 240ms '+ease;pinEl.style.opacity='0';
+    setTimeout(function(){
+      window.scrollTo({top:end,behavior:'instant'});
+      update();
+      var from={opacity:0,transform:'translateX(90px) scale(.86)'};
+      [[sbB,0],[fcard,90]].forEach(function(x){
+        var to={opacity:x[0].style.opacity||1,transform:x[0].style.transform};
+        x[0].animate([from,to],{duration:480,delay:x[1],easing:ease,fill:'backwards'});
+      });
+      pinEl.style.opacity='1';
+      setTimeout(function(){pinEl.style.transition='';pinEl.style.opacity='';jumping=false;name.focus({preventScroll:true})},620);
+    },250);
   });
 })();
 })();
